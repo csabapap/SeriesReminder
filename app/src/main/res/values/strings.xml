@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">SeriesReminder</string>
+    <string name="trending_shows">Trending Shows</string>
+    <string name="popular_shows">Popular Shows</string>
+</resources>
