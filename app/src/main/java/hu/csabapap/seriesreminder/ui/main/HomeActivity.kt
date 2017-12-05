@@ -1,29 +1,18 @@
-package hu.csabapap.seriesreminder.ui.home
+package hu.csabapap.seriesreminder.ui.main
 
 import android.os.Bundle
 import android.support.design.widget.BottomNavigationView
 import android.support.v7.app.AppCompatActivity
+import dagger.android.support.DaggerAppCompatActivity
 import hu.csabapap.seriesreminder.R
+import hu.csabapap.seriesreminder.ui.main.home.HomeFragment
 import kotlinx.android.synthetic.main.activity_home.*
 
-class HomeActivity : AppCompatActivity() {
+class HomeActivity : DaggerAppCompatActivity() {
 
     private val mOnNavigationItemSelectedListener = BottomNavigationView.OnNavigationItemSelectedListener { item ->
-        when (item.itemId) {
-            R.id.navigation_home -> {
-                message.setText(R.string.title_home)
-                return@OnNavigationItemSelectedListener true
-            }
-            R.id.navigation_dashboard -> {
-                message.setText(R.string.title_dashboard)
-                return@OnNavigationItemSelectedListener true
-            }
-            R.id.navigation_notifications -> {
-                message.setText(R.string.title_notifications)
-                return@OnNavigationItemSelectedListener true
-            }
-        }
-        false
+        changeFragment(item.itemId)
+        true
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -36,5 +25,25 @@ class HomeActivity : AppCompatActivity() {
         setSupportActionBar(toolbar)
 
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener)
+    }
+
+    private fun changeFragment(id: Int) {
+        when (id) {
+            R.id.navigation_home -> {
+                supportFragmentManager.beginTransaction()
+                        .replace(R.id.content, HomeFragment())
+                        .commit()
+            }
+            R.id.navigation_dashboard -> {
+                supportFragmentManager.beginTransaction()
+                        .replace(R.id.content, BlankFragment())
+                        .commit()
+            }
+            R.id.navigation_notifications -> {
+                supportFragmentManager.beginTransaction()
+                        .replace(R.id.content, BlankFragment())
+                        .commit()
+            }
+        }
     }
 }

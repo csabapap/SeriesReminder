@@ -1,7 +1,16 @@
 package hu.csabapap.seriesreminder.ui.main.home
 
-/**
- * Created by csaba on 2017. 12. 05..
- */
-class HomeFragmentModule {
+import android.arch.lifecycle.ViewModel
+import dagger.Binds
+import dagger.Module
+import dagger.android.ContributesAndroidInjector
+
+@Module
+abstract class HomeFragmentModule {
+
+    @ContributesAndroidInjector
+    abstract fun provideFragment() : HomeFragment
+
+    @Binds
+    abstract fun provideViewModel(viewModel: HomeViewModel) : ViewModel
 }

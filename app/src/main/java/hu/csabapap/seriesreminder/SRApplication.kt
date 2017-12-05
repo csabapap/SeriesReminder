@@ -14,7 +14,6 @@ open class SRApplication : DaggerApplication() {
                 .builder()
                 .application(this)
                 .build()
-        appComponent.inject(this)
         return appComponent
     }
 

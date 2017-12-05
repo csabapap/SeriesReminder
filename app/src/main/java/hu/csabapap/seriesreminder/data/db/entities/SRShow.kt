@@ -4,9 +4,7 @@ import android.arch.persistence.room.*
 import kotlin.reflect.KMutableProperty0
 
 @Entity(tableName = "shows",
-        indices = arrayOf(
-                Index(value = "trakt_id", unique = true),
-                Index(value = "tvdb_id", unique = true)))
+        indices = [(Index(value = ["trakt_id"], unique = true)), (Index(value = ["tvdb_id"], unique = true))])
 data class SRShow(
         @PrimaryKey(autoGenerate = true) @ColumnInfo(name = "id") var id: Long? = null,
         @ColumnInfo(name="trakt_id") var traktId: Int = 0,

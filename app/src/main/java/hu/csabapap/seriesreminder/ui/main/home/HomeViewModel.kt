@@ -1,7 +1,10 @@
 package hu.csabapap.seriesreminder.ui.main.home
 
-/**
- * Created by csaba on 2017. 12. 04..
- */
-class HomeViewModel {
+import android.arch.lifecycle.ViewModel
+import hu.csabapap.seriesreminder.data.ShowsRepository
+import javax.inject.Inject
+
+class HomeViewModel @Inject constructor(val showsRepository: ShowsRepository) : ViewModel() {
+
+
 }
