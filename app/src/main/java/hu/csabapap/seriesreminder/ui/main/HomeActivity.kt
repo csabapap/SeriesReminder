@@ -3,7 +3,8 @@ package hu.csabapap.seriesreminder.ui.home
 import android.os.Bundle
 import android.support.design.widget.BottomNavigationView
 import android.support.v7.app.AppCompatActivity
-import kotlinx.android.synthetic.main.activity_home2.*
+import hu.csabapap.seriesreminder.R
+import kotlinx.android.synthetic.main.activity_home.*
 
 class HomeActivity : AppCompatActivity() {
 
@@ -27,7 +28,12 @@ class HomeActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_home2)
+        setContentView(R.layout.activity_home)
+
+        toolbar.let {
+            it.title = "Series Reminder"
+        }
+        setSupportActionBar(toolbar)
 
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener)
     }
