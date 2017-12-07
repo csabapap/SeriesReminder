@@ -12,9 +12,5 @@ abstract class ActivityBindingModule {
 
     @ActivityScope
     @ContributesAndroidInjector()
-    internal abstract fun mainActivity(): MainActivity
-
-    @ActivityScope
-    @ContributesAndroidInjector()
     internal abstract fun addShowActivity(): AddShowActivity
 }
