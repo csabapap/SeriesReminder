@@ -1,6 +1,5 @@
 package hu.csabapap.seriesreminder.data
 
-import android.util.Log
 import hu.csabapap.seriesreminder.data.db.daos.SRShowDao
 import hu.csabapap.seriesreminder.data.db.entities.SRShow
 import hu.csabapap.seriesreminder.data.network.TraktApi
@@ -9,19 +8,17 @@ import hu.csabapap.seriesreminder.data.network.entities.Image
 import hu.csabapap.seriesreminder.data.network.entities.Images
 import hu.csabapap.seriesreminder.data.network.entities.Show
 import io.reactivex.Flowable
+import timber.log.Timber
 
 class ShowsRepository(val traktApi: TraktApi, val tvdbApi: TvdbApi, val showDao: SRShowDao){
 
-    private val TAG = "ShowsRepository"
-
     var cachedTrendingShows: MutableList<SRShow> = mutableListOf()
+    var cachedPopularShows: MutableList<SRShow> = mutableListOf()
     var cachedShows: MutableMap<Int, SRShow> = mutableMapOf()
 
-    var cacheDirty = false
-
     fun getTrendingShows() : Flowable<List<SRShow>> {
-        Log.d(TAG, "number of cached trending shows: ${cachedTrendingShows.size}")
-        if(!cachedTrendingShows.isEmpty() && !cacheDirty){
+        if(!cachedTrendingShows.isEmpty()){
+            Timber.d("return trending shows from cache")
             return Flowable.just(cachedTrendingShows)
         }
         return getRemoteTrendingShows()
@@ -64,7 +61,7 @@ class ShowsRepository(val traktApi: TraktApi, val tvdbApi: TvdbApi, val showDao:
                             }
                 }
                 .doOnNext({
-                    cachedShows.put(it.traktId, it)
+                    cachedTrendingShows.add(it)
                 })
                 .toList()
                 .doOnSuccess {
@@ -74,6 +71,10 @@ class ShowsRepository(val traktApi: TraktApi, val tvdbApi: TvdbApi, val showDao:
     }
 
     fun popularShows() : Flowable<List<SRShow>> {
+        if(!cachedPopularShows.isEmpty()) {
+            Timber.d("return popular shows from cache")
+            return Flowable.just(cachedPopularShows)
+        }
         return traktApi.popularShows()
                 .flatMap({ Flowable.fromIterable(it) })
                 .flatMap {
@@ -110,7 +111,7 @@ class ShowsRepository(val traktApi: TraktApi, val tvdbApi: TvdbApi, val showDao:
                             }
                 }
                 .doOnNext({
-                    Log.d(TAG, "title: ${it.title}, rating: ${it.rating}, votes: ${it.votes}")
+                    cachedPopularShows.add(it)
                 })
                 .toList()
                 .doOnSuccess({showDao.insertAllShows(it)})
