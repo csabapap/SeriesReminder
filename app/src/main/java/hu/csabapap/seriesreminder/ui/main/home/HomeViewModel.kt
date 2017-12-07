@@ -11,6 +11,7 @@ import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_main.*
+import timber.log.Timber
 import javax.inject.Inject
 
 class HomeViewModel @Inject constructor(private val showsRepository: ShowsRepository) : ViewModel() {
@@ -18,6 +19,7 @@ class HomeViewModel @Inject constructor(private val showsRepository: ShowsReposi
     val compositeDisposable = CompositeDisposable()
 
     val trendingShowsLiveData = MutableLiveData<List<SRShow>>()
+    val popularShowsLiveData = MutableLiveData<List<SRShow>>()
 
     fun getTrendingShows() {
          val disposable = showsRepository.getTrendingShows()
@@ -28,6 +30,16 @@ class HomeViewModel @Inject constructor(private val showsRepository: ShowsReposi
                 },{})
 
         compositeDisposable.add(disposable)
+    }
+
+    fun getPopularShows() {
+        showsRepository.popularShows()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe({ it ->
+                    popularShowsLiveData.value = it
+                },
+                        {t: Throwable? -> Timber.e(t) })
     }
 
     override fun onCleared() {

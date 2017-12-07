@@ -25,6 +25,7 @@ class HomeFragment : DaggerFragment() {
 
     lateinit var layoutManager: LinearLayoutManager
     private val trendingShowsAdapter = TrendingShowsAdapter()
+    private val popularShowsAdapter = TrendingShowsAdapter()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -46,6 +47,12 @@ class HomeFragment : DaggerFragment() {
                 trendingShowsAdapter.shows = it
             }
         })
+
+        homeViewModel.popularShowsLiveData.observe(this, Observer {
+            it?.apply {
+                popularShowsAdapter.shows = it
+            }
+        })
     }
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
@@ -58,11 +65,18 @@ class HomeFragment : DaggerFragment() {
             adapter = trendingShowsAdapter
         }
 
+        val popularShowsLayoutManager = popular_shows_grid.layoutManager as LinearLayoutManager
+        popularShowsLayoutManager.orientation = LinearLayoutManager.HORIZONTAL
+        popular_shows_grid.apply {
+            adapter = popularShowsAdapter
+        }
+
     }
 
     override fun onStart() {
         super.onStart()
         homeViewModel.getTrendingShows()
+        homeViewModel.getPopularShows()
     }
 
 }
