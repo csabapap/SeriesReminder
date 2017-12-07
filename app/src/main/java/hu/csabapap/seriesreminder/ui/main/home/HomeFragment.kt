@@ -5,7 +5,10 @@ import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProvider
 import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
+import android.support.v4.content.ContextCompat
+import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.LinearLayoutManager
+import android.support.v7.widget.LinearSnapHelper
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
@@ -13,6 +16,7 @@ import android.view.ViewGroup
 import dagger.android.support.DaggerFragment
 import hu.csabapap.seriesreminder.R
 import hu.csabapap.seriesreminder.ui.adapters.TrendingShowsAdapter
+import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_home.*
 import javax.inject.Inject
 
@@ -42,6 +46,12 @@ class HomeFragment : DaggerFragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
+        homeViewModel.viewState.observe(this, Observer {
+            it?.apply {
+                render(it)
+            }
+        })
+
         homeViewModel.trendingShowsLiveData.observe(this, Observer {
             it?.apply {
                 trendingShowsAdapter.shows = it
@@ -58,17 +68,30 @@ class HomeFragment : DaggerFragment() {
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        layoutManager = shows_grid.layoutManager as LinearLayoutManager
+        LinearSnapHelper().attachToRecyclerView(trending_grid)
+
+        layoutManager = trending_grid.layoutManager as LinearLayoutManager
         layoutManager.orientation = LinearLayoutManager.HORIZONTAL
 
-        shows_grid.apply {
+        var itemDecorator = DividerItemDecoration(this.activity, layoutManager.orientation)
+        itemDecorator.setDrawable(ContextCompat.getDrawable(this.activity, R.drawable.horizontal_divider))
+
+        trending_grid.apply {
             adapter = trendingShowsAdapter
+            addItemDecoration(itemDecorator)
         }
 
-        val popularShowsLayoutManager = popular_shows_grid.layoutManager as LinearLayoutManager
+        LinearSnapHelper().attachToRecyclerView(popular_grid)
+
+        val popularShowsLayoutManager = popular_grid.layoutManager as LinearLayoutManager
         popularShowsLayoutManager.orientation = LinearLayoutManager.HORIZONTAL
-        popular_shows_grid.apply {
+
+        itemDecorator = DividerItemDecoration(this.activity, popularShowsLayoutManager.orientation)
+        itemDecorator.setDrawable(ContextCompat.getDrawable(this.activity, R.drawable.horizontal_divider))
+
+        popular_grid.apply {
             adapter = popularShowsAdapter
+            addItemDecoration(itemDecorator)
         }
 
     }
@@ -77,6 +100,23 @@ class HomeFragment : DaggerFragment() {
         super.onStart()
         homeViewModel.getTrendingShows()
         homeViewModel.getPopularShows()
+    }
+
+    private fun render(state: HomeViewState) {
+        when (state.displayProgressBar) {
+            true -> progress_bar.visibility = View.VISIBLE
+            false -> progress_bar.visibility = View.GONE
+        }
+
+        when (state.displayPopularCard) {
+            true -> popular_card.visibility = View.VISIBLE
+            false -> popular_card.visibility = View.GONE
+        }
+
+        when (state.displayTrendingCard) {
+            true -> trending_card.visibility = View.VISIBLE
+            false -> trending_card.visibility = View.GONE
+        }
     }
 
 }
