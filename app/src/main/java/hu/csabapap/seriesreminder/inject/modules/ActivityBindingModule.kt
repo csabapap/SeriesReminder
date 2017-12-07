@@ -4,15 +4,10 @@ import dagger.Module
 import dagger.android.ContributesAndroidInjector
 import hu.csabapap.seriesreminder.inject.ActivityScope
 import hu.csabapap.seriesreminder.ui.add_show.AddShowActivity
-import hu.csabapap.seriesreminder.ui.MainActivity
 
 
 @Module
 abstract class ActivityBindingModule {
-
-    @ActivityScope
-    @ContributesAndroidInjector()
-    internal abstract fun mainActivity(): MainActivity
 
     @ActivityScope
     @ContributesAndroidInjector()
