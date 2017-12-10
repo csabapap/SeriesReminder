@@ -3,7 +3,7 @@
 buildscript {
     ext.kotlin_version = '1.2.0'
     ext.versions = [
-            "support": '26.1.0',
+            "support": '27.0.2',
             "constraintLayout" : '1.0.2',
             "dagger" : '2.13',
             "rxJava" : '2.1.6',
