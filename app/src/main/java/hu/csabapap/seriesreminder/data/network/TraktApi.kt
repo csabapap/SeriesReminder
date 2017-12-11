@@ -1,27 +1,20 @@
 package hu.csabapap.seriesreminder.data.network
 
-import android.util.Log
 import hu.csabapap.seriesreminder.BuildConfig
 import hu.csabapap.seriesreminder.data.network.entities.Show
 import hu.csabapap.seriesreminder.data.network.entities.TrendingShow
 import hu.csabapap.seriesreminder.data.network.services.ShowsService
 import io.reactivex.Flowable
-import io.reactivex.Observable
+import io.reactivex.Single
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
-import org.intellij.lang.annotations.Flow
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.moshi.MoshiConverterFactory
+import timber.log.Timber
 
 class TraktApi {
-
-    val TAG = "TraktApi"
-
-    init {
-        Log.d(TAG, "init block called")
-    }
 
     val traktApiInterceptor : Interceptor = Interceptor { chain ->
         val request = chain.request()
@@ -34,7 +27,7 @@ class TraktApi {
     }
 
     val loggingInterceptor : HttpLoggingInterceptor = HttpLoggingInterceptor(
-            HttpLoggingInterceptor.Logger { Log.d("OkHttp", it) })
+            HttpLoggingInterceptor.Logger { Timber.d(it) })
             .setLevel(HttpLoggingInterceptor.Level.BODY)
 
     val okHttp: OkHttpClient = OkHttpClient.Builder()
@@ -49,7 +42,7 @@ class TraktApi {
             .addConverterFactory(MoshiConverterFactory.create())
             .build()
 
-    fun trendingShows(extended: String = "") : Flowable<List<TrendingShow>>{
+    fun trendingShows(extended: String = "") : Single<List<TrendingShow>> {
         return retrofit.create(ShowsService::class.java).trendingShows(extended)
     }
 

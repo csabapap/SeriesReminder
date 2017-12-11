@@ -29,7 +29,8 @@ class HomeViewModel @Inject constructor(private val showsRepository: ShowsReposi
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({
                     viewState.value = currentViewState().copy(displayProgressBar = false, displayTrendingCard = true)
-                    trendingShowsLiveData.value = it
+
+                    // TODO display trending shows
                 },{})
 
         compositeDisposable.add(disposable)

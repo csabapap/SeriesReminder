@@ -4,13 +4,15 @@ import hu.csabapap.seriesreminder.data.network.entities.Show
 import hu.csabapap.seriesreminder.data.network.entities.TrendingShow
 import io.reactivex.Flowable
 import io.reactivex.Observable
+import io.reactivex.Single
+import retrofit2.Call
 import retrofit2.http.GET
 import retrofit2.http.Path
 import retrofit2.http.Query
 
 interface ShowsService{
     @GET("shows/trending")
-    fun trendingShows(@Query("extended") extended: String = "") : Flowable<List<TrendingShow>>
+    fun trendingShows(@Query("extended") extended: String = "") : Single<List<TrendingShow>>
 
     @GET("shows/popular?extended=full")
     fun popularShows() : Flowable<List<Show>>
