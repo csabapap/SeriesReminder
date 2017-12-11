@@ -23,33 +23,33 @@ class AddShowPresenter @Inject constructor(
     }
 
     override fun loadShow(showId: Int) {
-        showsRepository.getShow(showId)
-                .flatMap { it ->
-                    showsRepository.images(it.tvdbId, "fanart")
-                            .flatMap { (data) ->
-                                var popularImage: Image? = null
-                                for (image in data) {
-                                    if (popularImage == null) {
-                                        popularImage = image
-                                        continue
-                                    }
-
-                                    if (image.ratings.average > popularImage.ratings.average) {
-                                        popularImage = image
-                                    }
-                                }
-
-                                it.apply {
-                                    updateProperty(this::coverUrl, popularImage?.fileName!!)
-                                    updateProperty(this::coverThumbUrl, popularImage?.thumbnail!!)
-                                }
-
-                                Flowable.just(it)
-                            }
-                }
-                .subscribeOn(schedulers.io)
-                .observeOn(schedulers.main)
-                .subscribe({ view?.displayShow(it) }, { Timber.e(it.message) })
+//        showsRepository.getShow(showId, )
+//                .flatMap { it ->
+//                    showsRepository.images(it.tvdbId, "fanart")
+//                            .flatMap { (data) ->
+//                                var popularImage: Image? = null
+//                                for (image in data) {
+//                                    if (popularImage == null) {
+//                                        popularImage = image
+//                                        continue
+//                                    }
+//
+//                                    if (image.ratings.average > popularImage.ratings.average) {
+//                                        popularImage = image
+//                                    }
+//                                }
+//
+//                                it.apply {
+//                                    updateProperty(this::coverUrl, popularImage?.fileName!!)
+//                                    updateProperty(this::coverThumbUrl, popularImage?.thumbnail!!)
+//                                }
+//
+//                                Flowable.just(it)
+//                            }
+//                }
+//                .subscribeOn(schedulers.io)
+//                .observeOn(schedulers.main)
+//                .subscribe({ view?.displayShow(it) }, { Timber.e(it.message) })
     }
 
     override fun loadCover(showId: Int) {

@@ -37,10 +37,9 @@ class HomeFragment : DaggerFragment() {
                 .get(HomeViewModel::class.java)
     }
 
-    override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?,
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
-        // Inflate the layout for this fragment
-        return inflater!!.inflate(R.layout.fragment_home, container, false)
+        return inflater.inflate(R.layout.fragment_blank, container, false)
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -65,7 +64,7 @@ class HomeFragment : DaggerFragment() {
         })
     }
 
-    override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         LinearSnapHelper().attachToRecyclerView(trending_grid)
@@ -74,7 +73,7 @@ class HomeFragment : DaggerFragment() {
         layoutManager.orientation = LinearLayoutManager.HORIZONTAL
 
         var itemDecorator = DividerItemDecoration(this.activity, layoutManager.orientation)
-        itemDecorator.setDrawable(ContextCompat.getDrawable(this.activity, R.drawable.horizontal_divider))
+        itemDecorator.setDrawable(ContextCompat.getDrawable(this.activity!!, R.drawable.horizontal_divider)!!)
 
         trending_grid.apply {
             adapter = trendingShowsAdapter
@@ -87,7 +86,7 @@ class HomeFragment : DaggerFragment() {
         popularShowsLayoutManager.orientation = LinearLayoutManager.HORIZONTAL
 
         itemDecorator = DividerItemDecoration(this.activity, popularShowsLayoutManager.orientation)
-        itemDecorator.setDrawable(ContextCompat.getDrawable(this.activity, R.drawable.horizontal_divider))
+        itemDecorator.setDrawable(ContextCompat.getDrawable(this.activity!!, R.drawable.horizontal_divider)!!)
 
         popular_grid.apply {
             adapter = popularShowsAdapter
