@@ -4,6 +4,7 @@ import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.ViewModel
 import hu.csabapap.seriesreminder.data.ShowsRepository
 import hu.csabapap.seriesreminder.data.db.entities.SRShow
+import hu.csabapap.seriesreminder.data.db.entities.TrendingGridItem
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
@@ -16,11 +17,15 @@ class HomeViewModel @Inject constructor(private val showsRepository: ShowsReposi
 
     val viewState = MutableLiveData<HomeViewState>()
 
-    val trendingShowsLiveData = MutableLiveData<List<SRShow>>()
+    val trendingShowsLiveData = MutableLiveData<List<TrendingGridItem>>()
     val popularShowsLiveData = MutableLiveData<List<SRShow>>()
 
     init {
         viewState.value = HomeViewState(displayProgressBar = true)
+        showsRepository.getRemoteTrendingShows()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe({}, {Timber.e(it)})
     }
 
     fun getTrendingShows() {
@@ -29,8 +34,7 @@ class HomeViewModel @Inject constructor(private val showsRepository: ShowsReposi
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({
                     viewState.value = currentViewState().copy(displayProgressBar = false, displayTrendingCard = true)
-
-                    // TODO display trending shows
+                    trendingShowsLiveData.value = it
                 },{})
 
         compositeDisposable.add(disposable)

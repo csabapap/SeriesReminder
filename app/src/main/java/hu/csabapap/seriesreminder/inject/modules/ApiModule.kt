@@ -4,6 +4,7 @@ import dagger.Module
 import dagger.Provides
 import hu.csabapap.seriesreminder.data.ShowsRepository
 import hu.csabapap.seriesreminder.data.db.daos.SRShowDao
+import hu.csabapap.seriesreminder.data.db.daos.TrendingDao
 import hu.csabapap.seriesreminder.data.network.TraktApi
 import hu.csabapap.seriesreminder.data.network.TvdbApi
 import javax.inject.Singleton
@@ -27,7 +28,8 @@ class ApiModule {
     @Provides
     fun provideShowsRepository(traktApi: TraktApi,
                                tvdbApi: TvdbApi,
-                               showDao: SRShowDao) : ShowsRepository {
-        return ShowsRepository(traktApi, tvdbApi, showDao)
+                               showDao: SRShowDao,
+                               trendingDao: TrendingDao) : ShowsRepository {
+        return ShowsRepository(traktApi, tvdbApi, showDao, trendingDao)
     }
 }

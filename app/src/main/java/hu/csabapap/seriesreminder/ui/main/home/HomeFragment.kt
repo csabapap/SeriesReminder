@@ -15,6 +15,7 @@ import android.view.View
 import android.view.ViewGroup
 import dagger.android.support.DaggerFragment
 import hu.csabapap.seriesreminder.R
+import hu.csabapap.seriesreminder.ui.adapters.PopularShowsAdapter
 import hu.csabapap.seriesreminder.ui.adapters.TrendingShowsAdapter
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_home.*
@@ -29,7 +30,7 @@ class HomeFragment : DaggerFragment() {
 
     lateinit var layoutManager: LinearLayoutManager
     private val trendingShowsAdapter = TrendingShowsAdapter()
-    private val popularShowsAdapter = TrendingShowsAdapter()
+    private val popularShowsAdapter = PopularShowsAdapter()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -39,7 +40,7 @@ class HomeFragment : DaggerFragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.fragment_blank, container, false)
+        return inflater.inflate(R.layout.fragment_home, container, false)
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {

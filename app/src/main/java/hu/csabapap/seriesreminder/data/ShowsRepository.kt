@@ -1,8 +1,10 @@
 package hu.csabapap.seriesreminder.data
 
 import hu.csabapap.seriesreminder.data.db.daos.SRShowDao
+import hu.csabapap.seriesreminder.data.db.daos.TrendingDao
 import hu.csabapap.seriesreminder.data.db.entities.SRShow
 import hu.csabapap.seriesreminder.data.db.entities.SRTrendingShow
+import hu.csabapap.seriesreminder.data.db.entities.TrendingGridItem
 import hu.csabapap.seriesreminder.data.network.TraktApi
 import hu.csabapap.seriesreminder.data.network.TvdbApi
 import hu.csabapap.seriesreminder.data.network.entities.*
@@ -11,21 +13,24 @@ import io.reactivex.Maybe
 import io.reactivex.Single
 import timber.log.Timber
 
-class ShowsRepository(val traktApi: TraktApi, val tvdbApi: TvdbApi, val showDao: SRShowDao){
+class ShowsRepository(val traktApi: TraktApi, val tvdbApi: TvdbApi,
+                      val showDao: SRShowDao, val trendingDao: TrendingDao){
 
     var cachedTrendingShows: MutableList<SRShow> = mutableListOf()
     var cachedPopularShows: MutableList<SRShow> = mutableListOf()
 
-    fun getTrendingShows() : Single<List<SRTrendingShow>> {
-        return getRemoteTrendingShows()
+    fun getTrendingShows() : Flowable<List<TrendingGridItem>> {
+        return trendingDao.getTrendingShows()
     }
 
-    private fun getRemoteTrendingShows(): Single<List<SRTrendingShow>> {
+    fun getRemoteTrendingShows(): Single<List<SRTrendingShow>> {
         return traktApi.trendingShows("full")
                 .toFlowable()
                 .flatMapIterable { it }
                 .flatMapMaybe {
                     getShow(it.show.ids.trakt, it.show)
+                            .map { showDao.insertOrUpdateShow(it) }
+                            .map { showDao.getShow(it.traktId)}
                             .map { srShow -> mapToSRTrendingShow(srShow.id!!, it.watchers) }
                 }
                 .toList()
@@ -67,12 +72,16 @@ class ShowsRepository(val traktApi: TraktApi, val tvdbApi: TvdbApi, val showDao:
                     cachedPopularShows.add(it)
                 })
                 .toList()
-                .doOnSuccess({showDao.insertAllShows(it)})
+                .doOnSuccess({
+                    it.forEach { show ->
+                        showDao.insert(show)
+                    }
+                })
                 .toFlowable()
     }
 
     fun getShow(traktId: Int, show: BaseShow?) : Maybe<SRShow> {
-        val showFromDb = showDao.getShow(traktId)
+        val showFromDb = showDao.getShowMaybe(traktId)
 
         val fromShow = show?.let { Maybe.just(mapToSRShow(show)) } ?: Maybe.empty<SRShow>()
 
@@ -110,6 +119,9 @@ class ShowsRepository(val traktApi: TraktApi, val tvdbApi: TvdbApi, val showDao:
     }
 
     private fun saveTrendingShows(trendingShows: List<SRTrendingShow>) {
-
+        Timber.d("insert trending shows")
+        trendingShows.forEach { trendingShow ->
+            trendingDao.insert(trendingShow)
+        }
     }
 }

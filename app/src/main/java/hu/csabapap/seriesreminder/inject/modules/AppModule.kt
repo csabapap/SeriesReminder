@@ -8,6 +8,7 @@ import dagger.Provides
 import hu.csabapap.seriesreminder.SRApplication
 import hu.csabapap.seriesreminder.data.db.SRDatabase
 import hu.csabapap.seriesreminder.data.db.daos.SRShowDao
+import hu.csabapap.seriesreminder.data.db.daos.TrendingDao
 import hu.csabapap.seriesreminder.utils.AppRxSchedulers
 import javax.inject.Singleton
 
@@ -30,12 +31,20 @@ class AppModule{
     @Singleton
     @Provides
     fun providesDatabase(context: Context) : SRDatabase {
-        return Room.databaseBuilder(context, SRDatabase::class.java, "series_reminder.db").build()
+        return Room.databaseBuilder(context, SRDatabase::class.java, "series_reminder.db")
+                .fallbackToDestructiveMigration()
+                .build()
     }
 
     @Singleton
     @Provides
     fun providesShowsDao(db: SRDatabase): SRShowDao {
         return db.showDao()
+    }
+
+    @Singleton
+    @Provides
+    fun providesTrendingDao(db: SRDatabase) : TrendingDao {
+        return db.trendingDao()
     }
 }
