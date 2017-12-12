@@ -15,6 +15,8 @@ import kotlinx.android.synthetic.main.item_trending_show.view.*
 
 class PopularShowsAdapter : RecyclerView.Adapter<PopularShowsAdapter.TrendingShowVh>() {
 
+    // TODO trending and popular shows use the same adapter !!! copy paste from TrendingShowAdapter... YUK
+
     interface TrendingShowListener{
         fun onItemClick(show: SRShow)
     }

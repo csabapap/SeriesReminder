@@ -16,6 +16,8 @@ import kotlinx.android.synthetic.main.item_trending_show.view.*
 
 class TrendingShowsAdapter : RecyclerView.Adapter<TrendingShowsAdapter.TrendingShowVh>() {
 
+    // TODO trending and popular shows use the same adapter !!!
+
     var context: Context? = null
     var shows: List<TrendingGridItem> = emptyList()
     set(value) {
