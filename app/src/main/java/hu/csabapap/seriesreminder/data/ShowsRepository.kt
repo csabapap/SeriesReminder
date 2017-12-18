@@ -83,18 +83,39 @@ class ShowsRepository(val traktApi: TraktApi, val tvdbApi: TvdbApi,
     fun getShow(traktId: Int, show: BaseShow?) : Maybe<SRShow> {
         val showFromDb = showDao.getShowMaybe(traktId)
 
-        val fromShow = show?.let { Maybe.just(mapToSRShow(show)) } ?: Maybe.empty<SRShow>()
+//        val fromShow = show?.let { Maybe.just(mapToSRShow(show)) } ?: Maybe.empty<SRShow>()
 
         val fromWeb = getShowFromWeb(traktId).singleElement()
                 .flatMap({
                     Maybe.just(mapToSRShow(it))
                 })
 
-        return Maybe.concat(showFromDb, fromShow, fromWeb).firstElement()
+        return Maybe.concat(showFromDb, fromWeb).firstElement()
     }
 
     fun getShowFromWeb(traktId: Int) : Flowable<Show>{
         return traktApi.show(traktId)
+                .flatMap {
+                    show ->tvdbApi.images(show.ids.tvdb)
+                            .flatMap { (data) ->
+                                var popularImage : Image? = null
+                                for (image in data) {
+                                    if (popularImage == null) {
+                                        popularImage = image
+                                        continue
+                                    }
+
+                                    if (image.ratings.average > popularImage.ratings.average){
+                                        popularImage = image
+                                    }
+                                }
+                                show.apply {
+                                    image = popularImage?.fileName!!
+                                    thumb = popularImage.thumbnail
+                                }
+                                Flowable.just(show)
+                            }
+                }
     }
 
     fun images(tvdbId : Int, type: String = "poster") :Flowable<Images>{
@@ -110,6 +131,8 @@ class ShowsRepository(val traktApi: TraktApi, val tvdbApi: TvdbApi,
             updateProperty(this::overview, show.overview)
             updateProperty(this::rating, show.rating)
             updateProperty(this::votes, show.votes)
+            updateProperty(this::poster, show.image)
+            updateProperty(this::posterThumb, show.thumb)
         }
         return srShow
     }

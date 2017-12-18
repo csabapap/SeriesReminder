@@ -34,8 +34,12 @@ class HomeViewModel @Inject constructor(private val showsRepository: ShowsReposi
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({
                     viewState.value = currentViewState().copy(displayProgressBar = false, displayTrendingCard = true)
+                    Timber.d("number of trending shows: ${it.size}")
                     trendingShowsLiveData.value = it
-                },{})
+                    it.forEach {
+                        Timber.d(it.show.toString())
+                    }
+                },{Timber.e(it)})
 
         compositeDisposable.add(disposable)
     }

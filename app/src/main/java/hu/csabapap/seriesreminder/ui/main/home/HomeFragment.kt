@@ -55,6 +55,7 @@ class HomeFragment : DaggerFragment() {
         homeViewModel.trendingShowsLiveData.observe(this, Observer {
             it?.apply {
                 trendingShowsAdapter.shows = it
+                trendingShowsAdapter.notifyDataSetChanged()
             }
         })
 
