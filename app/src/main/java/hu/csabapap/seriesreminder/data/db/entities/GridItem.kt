@@ -13,6 +13,6 @@ interface GridItem {
 
 data class TrendingGridItem(
         @Embedded override var entry: SRTrendingShow? = null,
-        @Relation(parentColumn = "show_id", entityColumn = "id") 
+        @Relation(parentColumn = "show_id", entityColumn = "trakt_id")
         override var relations: List<SRShow>? = null
 ) : GridItem

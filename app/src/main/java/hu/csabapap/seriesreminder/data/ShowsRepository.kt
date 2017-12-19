@@ -31,7 +31,7 @@ class ShowsRepository(val traktApi: TraktApi, val tvdbApi: TvdbApi,
                     getShow(it.show.ids.trakt, it.show)
                             .map { showDao.insertOrUpdateShow(it) }
                             .map { showDao.getShow(it.traktId)}
-                            .map { srShow -> mapToSRTrendingShow(srShow.id!!, it.watchers) }
+                            .map { srShow -> mapToSRTrendingShow(srShow.traktId, it.watchers) }
                 }
                 .toList()
                 .doOnSuccess { saveTrendingShows(it) }
@@ -137,7 +137,7 @@ class ShowsRepository(val traktApi: TraktApi, val tvdbApi: TvdbApi,
         return srShow
     }
 
-    private fun mapToSRTrendingShow(showId: Long, watchers: Int) : SRTrendingShow {
+    private fun mapToSRTrendingShow(showId: Int, watchers: Int) : SRTrendingShow {
         return SRTrendingShow(null, showId, watchers)
     }
 
