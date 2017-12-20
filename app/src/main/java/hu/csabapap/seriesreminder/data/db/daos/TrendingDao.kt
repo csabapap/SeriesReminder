@@ -7,6 +7,7 @@ import android.arch.persistence.room.Query
 import hu.csabapap.seriesreminder.data.db.entities.SRTrendingShow
 import hu.csabapap.seriesreminder.data.db.entities.TrendingGridItem
 import io.reactivex.Flowable
+import org.intellij.lang.annotations.Language
 
 @Dao
 interface TrendingDao {
@@ -14,7 +15,8 @@ interface TrendingDao {
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     fun insert(trendingShow: SRTrendingShow)
 
-    @Query("SELECT * FROM trending_shows ORDER BY watchers DESC")
+    @Language("RoomSql")
+    @Query("SELECT * FROM trending_shows ORDER BY watchers DESC LIMIT 10")
     fun getTrendingShows() : Flowable<List<TrendingGridItem>>
 
 }
