@@ -19,12 +19,12 @@ data class SRShow(
         @ColumnInfo(name="votes") var votes: Int = 0) {
     @Ignore var coverUrl = _cover
         get() {
-            return "https://thetvdb.com/banners/${field}"
+            return "https://thetvdb.com/banners/$field"
         }
 
     @Ignore var coverThumbUrl = _coverThumb
         get() {
-            return "https://thetvdb.com/banners/${field}"
+            return "https://thetvdb.com/banners/$field"
         }
 
     fun <T> updateProperty(entryVar : KMutableProperty0<T>, updateVal: T) {
