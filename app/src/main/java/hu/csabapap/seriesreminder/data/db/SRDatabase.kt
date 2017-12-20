@@ -5,9 +5,9 @@ import android.arch.persistence.room.RoomDatabase
 import hu.csabapap.seriesreminder.data.db.daos.SRShowDao
 import hu.csabapap.seriesreminder.data.db.daos.TrendingDao
 import hu.csabapap.seriesreminder.data.db.entities.SRShow
-import hu.csabapap.seriesreminder.data.db.entities.SRTrendingShow
+import hu.csabapap.seriesreminder.data.db.entities.SRTrendingItem
 
-@Database(entities = [(SRShow::class), (SRTrendingShow::class)], version = 2)
+@Database(entities = [(SRShow::class), (SRTrendingItem::class)], version = 2)
 abstract class SRDatabase : RoomDatabase(){
     abstract fun showDao() : SRShowDao
     abstract fun trendingDao() : TrendingDao

@@ -11,7 +11,8 @@ import android.arch.persistence.room.*
                         onUpdate = ForeignKey.CASCADE,
                         onDelete = ForeignKey.CASCADE))],
         indices = [(Index(value = ["show_id"], unique = true))])
-data class SRTrendingShow (
-        @PrimaryKey(autoGenerate = true) val id: Long? = null,
-        @ColumnInfo(name = "show_id") val showId: Int,
-        @ColumnInfo(name = "watchers") val watchers: Int = 0)
+data class SRTrendingItem(
+        @PrimaryKey(autoGenerate = true) override val id: Long? = null,
+        @ColumnInfo(name = "show_id") override val showId: Int,
+        @ColumnInfo(name = "watchers") val watchers: Int = 0
+) : Item

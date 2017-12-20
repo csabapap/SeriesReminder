@@ -3,7 +3,7 @@ package hu.csabapap.seriesreminder.data
 import hu.csabapap.seriesreminder.data.db.daos.SRShowDao
 import hu.csabapap.seriesreminder.data.db.daos.TrendingDao
 import hu.csabapap.seriesreminder.data.db.entities.SRShow
-import hu.csabapap.seriesreminder.data.db.entities.SRTrendingShow
+import hu.csabapap.seriesreminder.data.db.entities.SRTrendingItem
 import hu.csabapap.seriesreminder.data.db.entities.TrendingGridItem
 import hu.csabapap.seriesreminder.data.network.TraktApi
 import hu.csabapap.seriesreminder.data.network.TvdbApi
@@ -23,7 +23,7 @@ class ShowsRepository(val traktApi: TraktApi, val tvdbApi: TvdbApi,
         return trendingDao.getTrendingShows()
     }
 
-    fun getRemoteTrendingShows(): Single<List<SRTrendingShow>> {
+    fun getRemoteTrendingShows(): Single<List<SRTrendingItem>> {
         return traktApi.trendingShows("full")
                 .toFlowable()
                 .flatMapIterable { it }
@@ -137,13 +137,13 @@ class ShowsRepository(val traktApi: TraktApi, val tvdbApi: TvdbApi,
         return srShow
     }
 
-    private fun mapToSRTrendingShow(showId: Int, watchers: Int) : SRTrendingShow {
-        return SRTrendingShow(null, showId, watchers)
+    private fun mapToSRTrendingShow(showId: Int, watchers: Int) : SRTrendingItem {
+        return SRTrendingItem(null, showId, watchers)
     }
 
-    private fun saveTrendingShows(trendingShows: List<SRTrendingShow>) {
+    private fun saveTrendingShows(trendingItems: List<SRTrendingItem>) {
         Timber.d("insert trending shows")
-        trendingShows.forEach { trendingShow ->
+        trendingItems.forEach { trendingShow ->
             trendingDao.insert(trendingShow)
         }
     }

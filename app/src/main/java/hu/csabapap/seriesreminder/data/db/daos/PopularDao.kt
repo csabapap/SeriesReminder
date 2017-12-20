@@ -4,19 +4,19 @@ import android.arch.persistence.room.Dao
 import android.arch.persistence.room.Insert
 import android.arch.persistence.room.OnConflictStrategy
 import android.arch.persistence.room.Query
-import hu.csabapap.seriesreminder.data.db.entities.SRTrendingItem
-import hu.csabapap.seriesreminder.data.db.entities.TrendingGridItem
+import hu.csabapap.seriesreminder.data.db.entities.PopularGridItem
+import hu.csabapap.seriesreminder.data.db.entities.SRPopularItem
 import io.reactivex.Flowable
 import org.intellij.lang.annotations.Language
 
 @Dao
-interface TrendingDao {
+interface PopularDao {
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
-    fun insert(trendingItem: SRTrendingItem)
+    fun insert(popularShow: SRPopularItem)
 
     @Language("RoomSql")
-    @Query("SELECT * FROM trending_shows ORDER BY watchers DESC LIMIT 10")
-    fun getTrendingShows() : Flowable<List<TrendingGridItem>>
+    @Query("SELECT * FROM popular_shows ORDER BY watchers DESC LIMIT 10")
+    fun getPopularShows() : Flowable<List<PopularGridItem>>
 
 }
