@@ -15,7 +15,7 @@ interface ShowsService{
     fun trendingShows(@Query("extended") extended: String = "") : Single<List<TrendingShow>>
 
     @GET("shows/popular?extended=full")
-    fun popularShows() : Flowable<List<Show>>
+    fun popularShows() : Single<List<Show>>
 
     @GET("shows/{id}?extended=full")
     fun show(@Path("id") traktId: Int) : Flowable<Show>

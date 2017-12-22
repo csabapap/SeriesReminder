@@ -7,6 +7,7 @@ import dagger.Module
 import dagger.Provides
 import hu.csabapap.seriesreminder.SRApplication
 import hu.csabapap.seriesreminder.data.db.SRDatabase
+import hu.csabapap.seriesreminder.data.db.daos.PopularDao
 import hu.csabapap.seriesreminder.data.db.daos.SRShowDao
 import hu.csabapap.seriesreminder.data.db.daos.TrendingDao
 import hu.csabapap.seriesreminder.utils.AppRxSchedulers
@@ -46,5 +47,11 @@ class AppModule{
     @Provides
     fun providesTrendingDao(db: SRDatabase) : TrendingDao {
         return db.trendingDao()
+    }
+
+    @Singleton
+    @Provides
+    fun providesPopularDao(db: SRDatabase) : PopularDao {
+        return db.popularDao()
     }
 }

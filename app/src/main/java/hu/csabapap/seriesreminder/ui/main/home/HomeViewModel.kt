@@ -26,6 +26,11 @@ class HomeViewModel @Inject constructor(private val showsRepository: ShowsReposi
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({}, {Timber.e(it)})
+
+        showsRepository.getPopularShowsFromWeb()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe({}, {Timber.e(it)})
     }
 
     fun getTrendingShows() {

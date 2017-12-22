@@ -16,7 +16,7 @@ interface PopularDao {
     fun insert(popularShow: SRPopularItem)
 
     @Language("RoomSql")
-    @Query("SELECT * FROM popular_shows ORDER BY watchers DESC LIMIT 10")
+    @Query("SELECT * FROM popular_shows LIMIT 10")
     fun getPopularShows() : Flowable<List<PopularGridItem>>
 
 }

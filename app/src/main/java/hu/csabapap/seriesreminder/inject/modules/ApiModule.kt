@@ -3,6 +3,7 @@ package hu.csabapap.seriesreminder.inject.modules
 import dagger.Module
 import dagger.Provides
 import hu.csabapap.seriesreminder.data.ShowsRepository
+import hu.csabapap.seriesreminder.data.db.daos.PopularDao
 import hu.csabapap.seriesreminder.data.db.daos.SRShowDao
 import hu.csabapap.seriesreminder.data.db.daos.TrendingDao
 import hu.csabapap.seriesreminder.data.network.TraktApi
@@ -29,7 +30,9 @@ class ApiModule {
     fun provideShowsRepository(traktApi: TraktApi,
                                tvdbApi: TvdbApi,
                                showDao: SRShowDao,
-                               trendingDao: TrendingDao) : ShowsRepository {
-        return ShowsRepository(traktApi, tvdbApi, showDao, trendingDao)
+                               trendingDao: TrendingDao,
+                               popularDao: PopularDao)
+            : ShowsRepository {
+        return ShowsRepository(traktApi, tvdbApi, showDao, trendingDao, popularDao)
     }
 }
