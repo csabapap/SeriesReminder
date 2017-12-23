@@ -25,6 +25,7 @@ class HomeActivity : DaggerAppCompatActivity() {
         setSupportActionBar(toolbar)
 
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener)
+        navigation.selectedItemId = R.id.navigation_home
     }
 
     private fun changeFragment(id: Int) {
