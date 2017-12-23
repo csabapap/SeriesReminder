@@ -7,6 +7,9 @@ apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
 
 apply plugin: 'com.diffplug.gradle.spotless'
+
+apply plugin: 'com.getkeepsafe.dexcount'
+
 spotless {
     kotlin {
         target "**/*.kt"
