@@ -22,7 +22,7 @@ android {
         minSdkVersion 21
         targetSdkVersion 27
         versionCode 1
-        versionName "1.0"
+        versionName "0.1"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 
         buildConfigField "String", "TRAKT_CLIENT_ID", "\"" + propOrDef("SR_TRAKT_CLIENT_ID", "") + "\""
