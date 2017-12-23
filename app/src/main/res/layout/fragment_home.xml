@@ -62,7 +62,6 @@
                         android:id="@+id/trending_grid"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:minHeight="150dp"
                         android:paddingStart="8dp"
                         android:paddingEnd="8dp"
                         app:layoutManager="android.support.v7.widget.LinearLayoutManager"/>
@@ -115,7 +114,6 @@
                         android:id="@+id/popular_grid"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:minHeight="150dp"
                         android:paddingStart="8dp"
                         android:paddingEnd="8dp"
                         app:layoutManager="android.support.v7.widget.LinearLayoutManager"/>
