@@ -3,10 +3,7 @@ package hu.csabapap.seriesreminder.data
 import hu.csabapap.seriesreminder.data.db.daos.PopularDao
 import hu.csabapap.seriesreminder.data.db.daos.SRShowDao
 import hu.csabapap.seriesreminder.data.db.daos.TrendingDao
-import hu.csabapap.seriesreminder.data.db.entities.SRPopularItem
-import hu.csabapap.seriesreminder.data.db.entities.SRShow
-import hu.csabapap.seriesreminder.data.db.entities.SRTrendingItem
-import hu.csabapap.seriesreminder.data.db.entities.TrendingGridItem
+import hu.csabapap.seriesreminder.data.db.entities.*
 import hu.csabapap.seriesreminder.data.network.TraktApi
 import hu.csabapap.seriesreminder.data.network.TvdbApi
 import hu.csabapap.seriesreminder.data.network.entities.*
@@ -41,50 +38,8 @@ class ShowsRepository(val traktApi: TraktApi, val tvdbApi: TvdbApi,
                 .doOnSuccess { saveTrendingShows(it) }
     }
 
-    fun popularShows() : Flowable<List<SRShow>> {
-        if(!cachedPopularShows.isEmpty()) {
-            Timber.d("return popular shows from cache")
-            return Flowable.just(cachedPopularShows)
-        }
-
-        return Flowable.just(mutableListOf())
-//        return traktApi.popularShows()
-//                .toFlowable()
-//                .flatMap({ Flowable.fromIterable(it) })
-//                .flatMap {
-//                    Flowable.just(mapToSRShow(it))
-//                }
-//                .flatMap { it ->
-//                    tvdbApi.images(it.tvdbId)
-//                            .flatMap { (data) ->
-//                                var popularImage : Image? = null
-//                                for (image in data) {
-//                                    if (popularImage == null) {
-//                                        popularImage = image
-//                                        continue
-//                                    }
-//
-//                                    if (image.ratings.average > popularImage.ratings.average){
-//                                        popularImage = image
-//                                    }
-//                                }
-//                                it.apply {
-//                                    updateProperty(this::poster, popularImage?.fileName!!)
-//                                    updateProperty(this::posterThumb, popularImage.thumbnail)
-//                                }
-//                                Flowable.just(it)
-//                            }
-//                }
-//                .doOnNext({
-//                    cachedPopularShows.add(it)
-//                })
-//                .toList()
-//                .doOnSuccess({
-//                    it.forEach { show ->
-//                        showDao.insert(show)
-//                    }
-//                })
-//                .toFlowable()
+    fun popularShows() : Flowable<List<PopularGridItem>> {
+        return popularDao.getPopularShows()
     }
 
     fun getPopularShowsFromWeb() : Single<List<SRPopularItem>> {

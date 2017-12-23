@@ -9,6 +9,7 @@ import android.widget.ImageView
 import com.squareup.picasso.Callback
 import com.squareup.picasso.Picasso
 import hu.csabapap.seriesreminder.R
+import hu.csabapap.seriesreminder.data.db.entities.PopularGridItem
 import hu.csabapap.seriesreminder.data.db.entities.SRShow
 import kotlinx.android.synthetic.main.item_trending_show.view.*
 
@@ -22,7 +23,7 @@ class PopularShowsAdapter : RecyclerView.Adapter<PopularShowsAdapter.TrendingSho
     }
 
     var context: Context? = null
-    var shows: List<SRShow> = emptyList()
+    var popularShows: List<PopularGridItem> = emptyList()
     set(value) {
         field = value
         notifyDataSetChanged()
@@ -30,7 +31,7 @@ class PopularShowsAdapter : RecyclerView.Adapter<PopularShowsAdapter.TrendingSho
     var listener: TrendingShowListener? = null
 
     override fun getItemCount(): Int {
-        return shows.size
+        return popularShows.size
     }
 
     override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): TrendingShowVh {
@@ -40,16 +41,16 @@ class PopularShowsAdapter : RecyclerView.Adapter<PopularShowsAdapter.TrendingSho
         trendingShowVh.setOnClickListener(View.OnClickListener {
             val position = trendingShowVh.adapterPosition
             if (position != RecyclerView.NO_POSITION) {
-                val show = shows[position]
-                listener?.onItemClick(show)
+                val popularItem = popularShows[position]
+                listener?.onItemClick(popularItem.show!!)
             }
         })
         return trendingShowVh
     }
 
     override fun onBindViewHolder(holder: TrendingShowVh?, position: Int) {
-        val trendingShow  = shows[position]
-        holder?.bind(trendingShow)
+        val popularItem  = popularShows[position]
+        holder?.bind(popularItem.show!!)
     }
 
     inner class TrendingShowVh(itemView: View) : RecyclerView.ViewHolder(itemView){

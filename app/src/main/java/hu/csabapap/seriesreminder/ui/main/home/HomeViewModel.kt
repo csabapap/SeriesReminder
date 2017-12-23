@@ -3,6 +3,7 @@ package hu.csabapap.seriesreminder.ui.main.home
 import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.ViewModel
 import hu.csabapap.seriesreminder.data.ShowsRepository
+import hu.csabapap.seriesreminder.data.db.entities.PopularGridItem
 import hu.csabapap.seriesreminder.data.db.entities.SRShow
 import hu.csabapap.seriesreminder.data.db.entities.TrendingGridItem
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -18,7 +19,7 @@ class HomeViewModel @Inject constructor(private val showsRepository: ShowsReposi
     val viewState = MutableLiveData<HomeViewState>()
 
     val trendingShowsLiveData = MutableLiveData<List<TrendingGridItem>>()
-    val popularShowsLiveData = MutableLiveData<List<SRShow>>()
+    val popularShowsLiveData = MutableLiveData<List<PopularGridItem>>()
 
     init {
         viewState.value = HomeViewState(displayProgressBar = true)

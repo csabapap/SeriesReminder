@@ -61,7 +61,7 @@ class HomeFragment : DaggerFragment() {
 
         homeViewModel.popularShowsLiveData.observe(this, Observer {
             it?.apply {
-                popularShowsAdapter.shows = it
+                popularShowsAdapter.popularShows = it
             }
         })
     }
