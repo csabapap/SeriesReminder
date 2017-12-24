@@ -4,6 +4,7 @@ package hu.csabapap.seriesreminder.ui.main.home
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProvider
 import android.arch.lifecycle.ViewModelProviders
+import android.content.Context
 import android.os.Bundle
 import android.support.v4.content.ContextCompat
 import android.support.v7.widget.DividerItemDecoration
@@ -17,6 +18,7 @@ import dagger.android.support.DaggerFragment
 import hu.csabapap.seriesreminder.R
 import hu.csabapap.seriesreminder.ui.adapters.PopularShowsAdapter
 import hu.csabapap.seriesreminder.ui.adapters.TrendingShowsAdapter
+import hu.csabapap.seriesreminder.ui.main.discover.DiscoverFragment
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_home.*
 import javax.inject.Inject
@@ -32,10 +34,26 @@ class HomeFragment : DaggerFragment() {
     private val trendingShowsAdapter = TrendingShowsAdapter()
     private val popularShowsAdapter = PopularShowsAdapter()
 
+    private var listener: HomeFragmentListener? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         homeViewModel = ViewModelProviders.of(this, mainViewModelProvider)
                 .get(HomeViewModel::class.java)
+    }
+
+    override fun onAttach(context: Context?) {
+        super.onAttach(context)
+        if (context is HomeFragmentListener) {
+            listener = context
+        } else {
+            throw RuntimeException((context!!.toString() + " must implement HomeFragmentListener"))
+        }
+    }
+
+    override fun onDetach() {
+        super.onDetach()
+        listener = null
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
@@ -95,6 +113,13 @@ class HomeFragment : DaggerFragment() {
             addItemDecoration(itemDecorator)
         }
 
+        more_trending.setOnClickListener {
+            listener?.onMoreTrendingClick()
+        }
+
+        more_popular.setOnClickListener {
+            listener?.onMorePopularClick()
+        }
     }
 
     override fun onStart() {
@@ -120,4 +145,8 @@ class HomeFragment : DaggerFragment() {
         }
     }
 
+    interface HomeFragmentListener {
+        fun onMoreTrendingClick()
+        fun onMorePopularClick()
+    }
 }

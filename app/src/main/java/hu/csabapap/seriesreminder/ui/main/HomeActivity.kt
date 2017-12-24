@@ -7,8 +7,9 @@ import dagger.android.support.DaggerAppCompatActivity
 import hu.csabapap.seriesreminder.R
 import hu.csabapap.seriesreminder.ui.main.home.HomeFragment
 import kotlinx.android.synthetic.main.activity_home.*
+import timber.log.Timber
 
-class HomeActivity : DaggerAppCompatActivity() {
+class HomeActivity : DaggerAppCompatActivity(), HomeFragment.HomeFragmentListener {
 
     private val mOnNavigationItemSelectedListener = BottomNavigationView.OnNavigationItemSelectedListener { item ->
         changeFragment(item.itemId)
@@ -46,5 +47,13 @@ class HomeActivity : DaggerAppCompatActivity() {
                         .commit()
             }
         }
+    }
+
+    override fun onMoreTrendingClick() {
+        Timber.d("on more trending click")
+    }
+
+    override fun onMorePopularClick() {
+        Timber.d("on more popular click")
     }
 }
