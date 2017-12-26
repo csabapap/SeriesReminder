@@ -38,9 +38,11 @@ class HomeViewModel @Inject constructor(private val showsRepository: ShowsReposi
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({
-                    viewState.value = currentViewState().copy(displayProgressBar = false, displayTrendingCard = true)
-                    Timber.d("number of trending shows: ${it.size}")
-                    trendingShowsLiveData.value = it
+                    if (it.isEmpty().not()) {
+                        viewState.value = currentViewState().copy(displayProgressBar = false, displayTrendingCard = true)
+                        Timber.d("number of trending shows: ${it.size}")
+                        trendingShowsLiveData.value = it
+                    }
                 },{Timber.e(it)})
 
         compositeDisposable.add(disposable)
@@ -51,8 +53,10 @@ class HomeViewModel @Inject constructor(private val showsRepository: ShowsReposi
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({ it ->
-                    viewState.value = currentViewState().copy(displayProgressBar = false, displayPopularCard = true)
-                    popularShowsLiveData.value = it
+                    if (it.isEmpty().not()) {
+                        viewState.value = currentViewState().copy(displayProgressBar = false, displayPopularCard = true)
+                        popularShowsLiveData.value = it
+                    }
                 },
                         {t: Throwable? -> Timber.e(t) })
 
