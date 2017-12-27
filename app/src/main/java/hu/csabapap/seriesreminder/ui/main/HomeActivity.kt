@@ -2,12 +2,11 @@ package hu.csabapap.seriesreminder.ui.main
 
 import android.os.Bundle
 import android.support.design.widget.BottomNavigationView
-import android.support.v7.app.AppCompatActivity
 import dagger.android.support.DaggerAppCompatActivity
 import hu.csabapap.seriesreminder.R
+import hu.csabapap.seriesreminder.ui.main.discover.DiscoverFragment
 import hu.csabapap.seriesreminder.ui.main.home.HomeFragment
 import kotlinx.android.synthetic.main.activity_home.*
-import timber.log.Timber
 
 class HomeActivity : DaggerAppCompatActivity(), HomeFragment.HomeFragmentListener {
 
@@ -50,10 +49,16 @@ class HomeActivity : DaggerAppCompatActivity(), HomeFragment.HomeFragmentListene
     }
 
     override fun onMoreTrendingClick() {
-        Timber.d("on more trending click")
+        supportFragmentManager.beginTransaction()
+                .replace(R.id.content, DiscoverFragment.newInstance(DiscoverFragment.TYPE_TRENDING))
+                .addToBackStack("main")
+                .commit()
     }
 
     override fun onMorePopularClick() {
-        Timber.d("on more popular click")
+        supportFragmentManager.beginTransaction()
+                .replace(R.id.content, DiscoverFragment.newInstance(DiscoverFragment.TYPE_POPLAR))
+                .addToBackStack("main")
+                .commit()
     }
 }
