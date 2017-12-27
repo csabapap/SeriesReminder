@@ -87,6 +87,8 @@ class HomeFragment : DaggerFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        home_toolbar.title = getString(R.string.app_name)
+
         LinearSnapHelper().attachToRecyclerView(trending_grid)
 
         layoutManager = trending_grid.layoutManager as LinearLayoutManager

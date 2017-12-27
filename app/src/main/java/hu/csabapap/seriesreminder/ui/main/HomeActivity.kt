@@ -8,7 +8,9 @@ import hu.csabapap.seriesreminder.ui.main.discover.DiscoverFragment
 import hu.csabapap.seriesreminder.ui.main.home.HomeFragment
 import kotlinx.android.synthetic.main.activity_home.*
 
-class HomeActivity : DaggerAppCompatActivity(), HomeFragment.HomeFragmentListener {
+class HomeActivity : DaggerAppCompatActivity(), HomeFragment.HomeFragmentListener,
+        DiscoverFragment.DiscoverFragmentInteractionListener
+{
 
     private val mOnNavigationItemSelectedListener = BottomNavigationView.OnNavigationItemSelectedListener { item ->
         changeFragment(item.itemId)
@@ -18,11 +20,6 @@ class HomeActivity : DaggerAppCompatActivity(), HomeFragment.HomeFragmentListene
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_home)
-
-        toolbar.let {
-            it.title = "Series Reminder"
-        }
-        setSupportActionBar(toolbar)
 
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener)
         navigation.selectedItemId = R.id.navigation_home
@@ -60,5 +57,10 @@ class HomeActivity : DaggerAppCompatActivity(), HomeFragment.HomeFragmentListene
                 .replace(R.id.content, DiscoverFragment.newInstance(DiscoverFragment.TYPE_POPLAR))
                 .addToBackStack("main")
                 .commit()
+    }
+
+    override fun onNavigateBack() {
+        val fragmentManager = supportFragmentManager
+        fragmentManager.popBackStackImmediate()
     }
 }
