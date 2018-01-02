@@ -2,15 +2,32 @@ package hu.csabapap.seriesreminder.ui.main
 
 import android.arch.lifecycle.ViewModel
 import android.arch.lifecycle.ViewModelProvider
-import hu.csabapap.seriesreminder.ui.main.home.HomeViewModel
+import javax.inject.Inject
+import javax.inject.Provider
 
-class MainViewModelProvider(val homeViewModel: HomeViewModel) : ViewModelProvider.Factory {
+class MainViewModelProvider @Inject constructor(
+        private val viewModels: @JvmSuppressWildcards Map<Class<out ViewModel>, Provider<ViewModel>>
+) : ViewModelProvider.Factory {
 
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {
-        if (modelClass.isAssignableFrom(HomeViewModel::class.java)) {
-            return homeViewModel as T
-        }
 
-        throw IllegalArgumentException("unknown model class " + modelClass)
+        var viewModel: Provider<out ViewModel>? = viewModels[modelClass]
+        if (viewModel == null) {
+            for ((key, value) in viewModels) {
+                if (modelClass.isAssignableFrom(key)) {
+                    viewModel = value
+                    break
+                }
+            }
+        }
+        if (viewModel == null) {
+            throw IllegalArgumentException("unknown model class " + modelClass)
+        }
+        try {
+            @Suppress("UNCHECKED_CAST")
+            return viewModel.get() as T
+        } catch (e: Exception) {
+            throw RuntimeException(e)
+        }
     }
 }

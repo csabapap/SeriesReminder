@@ -1,4 +1,4 @@
-package hu.csabapap.seriesreminder.ui.main.home
+package hu.csabapap.seriesreminder.ui.main.discover
 
 import android.arch.lifecycle.ViewModel
 import dagger.Binds
@@ -8,13 +8,14 @@ import dagger.multibindings.IntoMap
 import hu.csabapap.seriesreminder.inject.ViewModelKey
 
 @Module
-abstract class HomeFragmentModule {
+abstract class DiscoverModule {
 
     @ContributesAndroidInjector
-    abstract fun provideFragment() : HomeFragment
+    abstract fun discoverFragment() : DiscoverFragment
 
     @Binds
     @IntoMap
-    @ViewModelKey(HomeViewModel::class)
-    abstract fun provideViewModel(viewModel: HomeViewModel) : ViewModel
+    @ViewModelKey(DiscoverViewModel::class)
+    abstract fun providesViewModel(viewModel: DiscoverViewModel) : ViewModel
+
 }

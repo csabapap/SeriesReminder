@@ -1,15 +1,22 @@
 package hu.csabapap.seriesreminder.ui.main.discover
 
+import android.arch.lifecycle.ViewModelProvider
+import android.arch.lifecycle.ViewModelProviders
 import android.content.Context
 import android.os.Bundle
-import android.support.v4.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import dagger.android.support.DaggerFragment
 import hu.csabapap.seriesreminder.R
 import kotlinx.android.synthetic.main.fragment_discover.*
+import javax.inject.Inject
 
-class DiscoverFragment : Fragment() {
+class DiscoverFragment : DaggerFragment() {
+
+    @Inject
+    lateinit var mainViewModelProvider: ViewModelProvider.Factory
+    private lateinit var discoverViewModel: DiscoverViewModel
 
     private var listType: Int? = null
 
@@ -17,6 +24,10 @@ class DiscoverFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        discoverViewModel = ViewModelProviders.of(this, mainViewModelProvider)
+                .get(DiscoverViewModel::class.java)
+
         if (arguments != null) {
             listType = arguments!!.getInt(ARG_DISCOVER_TYPE)
         }
