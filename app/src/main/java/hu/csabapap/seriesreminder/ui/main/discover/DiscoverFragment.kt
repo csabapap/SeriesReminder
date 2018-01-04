@@ -1,15 +1,19 @@
 package hu.csabapap.seriesreminder.ui.main.discover
 
+import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProvider
 import android.arch.lifecycle.ViewModelProviders
 import android.content.Context
 import android.os.Bundle
+import android.support.v7.widget.GridLayoutManager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import dagger.android.support.DaggerFragment
 import hu.csabapap.seriesreminder.R
+import hu.csabapap.seriesreminder.ui.adapters.GridAdapter
 import kotlinx.android.synthetic.main.fragment_discover.*
+import timber.log.Timber
 import javax.inject.Inject
 
 class DiscoverFragment : DaggerFragment() {
@@ -19,6 +23,7 @@ class DiscoverFragment : DaggerFragment() {
     private lateinit var discoverViewModel: DiscoverViewModel
 
     private var listType: Int? = null
+    private var adapter = GridAdapter()
 
     private var listener: DiscoverFragmentInteractionListener? = null
 
@@ -60,6 +65,21 @@ class DiscoverFragment : DaggerFragment() {
             setNavigationIcon(R.drawable.ic_arrow_back_24dp)
             setNavigationOnClickListener { listener?.onNavigateBack() }
         }
+
+        rv_grid.layoutManager = GridLayoutManager(activity, 3)
+        rv_grid.adapter = adapter
+
+        discoverViewModel.itemsLiveData.observe(this, Observer {
+            it?.apply {
+                Timber.d("nmb of items: ${it.size}")
+                adapter.shows = it
+            }
+        })
+    }
+
+    override fun onStart() {
+        super.onStart()
+        discoverViewModel.getItems(listType!!)
     }
 
     private fun setToolbarTitle() =

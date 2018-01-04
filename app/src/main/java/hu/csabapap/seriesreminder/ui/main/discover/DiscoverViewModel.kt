@@ -28,7 +28,7 @@ class DiscoverViewModel @Inject constructor(val showsRepository: ShowsRepository
                 }
     }
 
-    fun getPopularShows() {
+    private fun getPopularShows() {
 
     }
 }
