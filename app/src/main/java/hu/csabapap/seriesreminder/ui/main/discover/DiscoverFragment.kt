@@ -6,12 +6,14 @@ import android.arch.lifecycle.ViewModelProviders
 import android.content.Context
 import android.os.Bundle
 import android.support.v7.widget.GridLayoutManager
+import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import dagger.android.support.DaggerFragment
 import hu.csabapap.seriesreminder.R
 import hu.csabapap.seriesreminder.ui.adapters.GridAdapter
+import hu.csabapap.seriesreminder.utils.SpacingItemDecorator
 import kotlinx.android.synthetic.main.fragment_discover.*
 import timber.log.Timber
 import javax.inject.Inject
@@ -66,7 +68,9 @@ class DiscoverFragment : DaggerFragment() {
             setNavigationOnClickListener { listener?.onNavigateBack() }
         }
 
-        rv_grid.layoutManager = GridLayoutManager(activity, 3)
+        val gridLayoutManager = GridLayoutManager(activity, 4) as RecyclerView.LayoutManager
+        rv_grid.layoutManager = gridLayoutManager
+        rv_grid.addItemDecoration(SpacingItemDecorator(4, 4))
         rv_grid.adapter = adapter
 
         discoverViewModel.itemsLiveData.observe(this, Observer {
