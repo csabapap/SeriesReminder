@@ -9,7 +9,8 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import javax.inject.Inject
 
-class DiscoverViewModel @Inject constructor(val showsRepository: ShowsRepository) : ViewModel() {
+class DiscoverViewModel @Inject constructor(private val showsRepository: ShowsRepository)
+    : ViewModel() {
 
     val itemsLiveData = MutableLiveData<List<GridItem<Item>>>()
 
@@ -20,7 +21,7 @@ class DiscoverViewModel @Inject constructor(val showsRepository: ShowsRepository
     }
 
     private fun getTrendingShows() {
-        showsRepository.getTrendingShows()
+        showsRepository.getTrendingShows(20)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe {

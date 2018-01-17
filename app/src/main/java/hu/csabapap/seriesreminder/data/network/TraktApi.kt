@@ -42,8 +42,8 @@ class TraktApi {
             .addConverterFactory(MoshiConverterFactory.create())
             .build()
 
-    fun trendingShows(extended: String = "") : Single<List<TrendingShow>> {
-        return retrofit.create(ShowsService::class.java).trendingShows(extended)
+    fun trendingShows(extended: String = "", limit: Int = 20) : Single<List<TrendingShow>> {
+        return retrofit.create(ShowsService::class.java).trendingShows(extended, limit)
     }
 
     fun popularShows() : Single<List<Show>>{

@@ -20,8 +20,8 @@ class ShowsRepository(val traktApi: TraktApi, val tvdbApi: TvdbApi,
     var cachedTrendingShows: MutableList<SRShow> = mutableListOf()
     var cachedPopularShows: MutableList<SRShow> = mutableListOf()
 
-    fun getTrendingShows() : Flowable<List<TrendingGridItem>> {
-        return trendingDao.getTrendingShows()
+    fun getTrendingShows(limit: Int = 10) : Flowable<List<TrendingGridItem>> {
+        return trendingDao.getTrendingShows(limit)
     }
 
     fun getRemoteTrendingShows(): Single<List<SRTrendingItem>> {

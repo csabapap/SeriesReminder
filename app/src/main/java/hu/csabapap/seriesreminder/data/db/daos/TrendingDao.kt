@@ -16,7 +16,7 @@ interface TrendingDao {
     fun insert(trendingItem: SRTrendingItem)
 
     @Language("RoomSql")
-    @Query("SELECT * FROM trending_shows ORDER BY watchers DESC LIMIT 10")
-    fun getTrendingShows() : Flowable<List<TrendingGridItem>>
+    @Query("SELECT * FROM trending_shows ORDER BY watchers DESC LIMIT :limit")
+    fun getTrendingShows(limit: Int) : Flowable<List<TrendingGridItem>>
 
 }
