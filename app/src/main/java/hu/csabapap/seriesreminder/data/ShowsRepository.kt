@@ -38,12 +38,12 @@ class ShowsRepository(val traktApi: TraktApi, val tvdbApi: TvdbApi,
                 .doOnSuccess { saveTrendingShows(it) }
     }
 
-    fun popularShows() : Flowable<List<PopularGridItem>> {
-        return popularDao.getPopularShows()
+    fun popularShows(limit: Int = 10) : Flowable<List<PopularGridItem>> {
+        return popularDao.getPopularShows(limit)
     }
 
-    fun getPopularShowsFromWeb() : Single<List<SRPopularItem>> {
-        return traktApi.popularShows()
+    fun getPopularShowsFromWeb(limit: Int = 20) : Single<List<SRPopularItem>> {
+        return traktApi.popularShows(limit)
                 .toFlowable()
                 .flatMapIterable { it }
                 .flatMapMaybe {

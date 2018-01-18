@@ -89,7 +89,7 @@ class DiscoverFragment : DaggerFragment() {
     private fun setToolbarTitle() =
             when (listType) {
                 TYPE_TRENDING -> "Trending Shows"
-                TYPE_POPLAR -> "Popular Shows"
+                TYPE_POPULAR -> "Popular Shows"
                 else -> ""
             }
 
@@ -100,7 +100,7 @@ class DiscoverFragment : DaggerFragment() {
     companion object {
 
         val TYPE_TRENDING = 1
-        val TYPE_POPLAR = 2
+        val TYPE_POPULAR = 2
 
         private val ARG_DISCOVER_TYPE = "discover_type"
 
@@ -112,4 +112,4 @@ class DiscoverFragment : DaggerFragment() {
             return fragment
         }
     }
-}// Required empty public constructor
+}

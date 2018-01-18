@@ -17,7 +17,7 @@ interface ShowsService{
             : Single<List<TrendingShow>>
 
     @GET("shows/popular?extended=full")
-    fun popularShows() : Single<List<Show>>
+    fun popularShows(@Query("limit") limit: Int) : Single<List<Show>>
 
     @GET("shows/{id}?extended=full")
     fun show(@Path("id") traktId: Int) : Flowable<Show>

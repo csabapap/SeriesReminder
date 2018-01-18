@@ -54,7 +54,7 @@ class HomeActivity : DaggerAppCompatActivity(), HomeFragment.HomeFragmentListene
 
     override fun onMorePopularClick() {
         supportFragmentManager.beginTransaction()
-                .replace(R.id.content, DiscoverFragment.newInstance(DiscoverFragment.TYPE_POPLAR))
+                .replace(R.id.content, DiscoverFragment.newInstance(DiscoverFragment.TYPE_POPULAR))
                 .addToBackStack("main")
                 .commit()
     }

@@ -46,8 +46,8 @@ class TraktApi {
         return retrofit.create(ShowsService::class.java).trendingShows(extended, limit)
     }
 
-    fun popularShows() : Single<List<Show>>{
-        return retrofit.create(ShowsService::class.java).popularShows()
+    fun popularShows(limit: Int = 20) : Single<List<Show>>{
+        return retrofit.create(ShowsService::class.java).popularShows(limit)
     }
 
     fun show(traktId: Int) : Flowable<Show>{

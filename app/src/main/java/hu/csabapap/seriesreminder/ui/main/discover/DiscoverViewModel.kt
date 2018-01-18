@@ -20,6 +20,7 @@ class DiscoverViewModel @Inject constructor(private val showsRepository: ShowsRe
     fun getItems(type: Int) {
         when (type) {
             DiscoverFragment.TYPE_TRENDING -> getTrendingShows()
+            DiscoverFragment.TYPE_POPULAR -> getPopularShows()
         }
     }
 
@@ -33,7 +34,12 @@ class DiscoverViewModel @Inject constructor(private val showsRepository: ShowsRe
     }
 
     private fun getPopularShows() {
-
+        disposables += showsRepository.popularShows(20)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe ({
+                    itemsLiveData.value = it as List<GridItem<Item>>
+                }, { Timber.e(it) })
     }
 
     override fun onCleared() {
