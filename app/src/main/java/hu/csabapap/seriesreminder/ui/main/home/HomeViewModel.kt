@@ -7,6 +7,7 @@ import hu.csabapap.seriesreminder.data.db.entities.PopularGridItem
 import hu.csabapap.seriesreminder.data.db.entities.TrendingGridItem
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.rxkotlin.plusAssign
 import io.reactivex.schedulers.Schedulers
 import timber.log.Timber
 import javax.inject.Inject
@@ -22,12 +23,12 @@ class HomeViewModel @Inject constructor(private val showsRepository: ShowsReposi
 
     init {
         viewState.value = HomeViewState(displayProgressBar = true)
-        showsRepository.getRemoteTrendingShows()
+        compositeDisposable += showsRepository.getRemoteTrendingShows()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({}, {Timber.e(it)})
 
-        showsRepository.getPopularShowsFromWeb()
+        compositeDisposable += showsRepository.getPopularShowsFromWeb()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({}, {Timber.e(it)})
