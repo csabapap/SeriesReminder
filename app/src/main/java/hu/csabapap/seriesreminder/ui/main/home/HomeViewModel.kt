@@ -5,6 +5,8 @@ import android.arch.lifecycle.ViewModel
 import hu.csabapap.seriesreminder.data.ShowsRepository
 import hu.csabapap.seriesreminder.data.db.entities.PopularGridItem
 import hu.csabapap.seriesreminder.data.db.entities.TrendingGridItem
+import hu.csabapap.seriesreminder.ui.adapters.items.ShowItem
+import io.reactivex.Flowable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.plusAssign
@@ -18,8 +20,8 @@ class HomeViewModel @Inject constructor(private val showsRepository: ShowsReposi
 
     val viewState = MutableLiveData<HomeViewState>()
 
-    val trendingShowsLiveData = MutableLiveData<List<TrendingGridItem>>()
-    val popularShowsLiveData = MutableLiveData<List<PopularGridItem>>()
+    val trendingShowsLiveData = MutableLiveData<List<ShowItem>>()
+    val popularShowsLiveData = MutableLiveData<List<ShowItem>>()
 
     init {
         viewState.value = HomeViewState(displayProgressBar = true)
@@ -36,9 +38,17 @@ class HomeViewModel @Inject constructor(private val showsRepository: ShowsReposi
 
     fun getTrendingShows() {
          val disposable = showsRepository.getTrendingShows()
+                 .flatMap {
+                     val showItems : MutableList<ShowItem> = mutableListOf()
+                     it
+                             .map { ShowItem(it.show!!.traktId, it.show!!.title, it.show!!.posterThumb) }
+                             .forEach { showItems.add(it) }
+                     Flowable.just(showItems)
+                 }
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({
+                    Timber.d("number of trending show: ${it.size}")
                     if (it.isEmpty().not()) {
                         viewState.value = currentViewState().copy(displayProgressBar = false, displayTrendingCard = true)
                         trendingShowsLiveData.value = it
@@ -50,6 +60,13 @@ class HomeViewModel @Inject constructor(private val showsRepository: ShowsReposi
 
     fun getPopularShows() {
         val disposable = showsRepository.popularShows()
+                .flatMap {
+                    val showItems : MutableList<ShowItem> = mutableListOf()
+                    it
+                            .map { ShowItem(it.show!!.traktId, it.show!!.title, it.show!!.posterThumb) }
+                            .forEach { showItems.add(it) }
+                    Flowable.just(showItems)
+                }
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({ it ->

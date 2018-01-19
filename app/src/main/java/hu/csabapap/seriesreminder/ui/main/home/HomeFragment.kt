@@ -10,16 +10,12 @@ import android.support.v4.content.ContextCompat
 import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.LinearSnapHelper
-import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import dagger.android.support.DaggerFragment
 import hu.csabapap.seriesreminder.R
-import hu.csabapap.seriesreminder.ui.adapters.PopularShowsAdapter
-import hu.csabapap.seriesreminder.ui.adapters.TrendingShowsAdapter
-import hu.csabapap.seriesreminder.ui.main.discover.DiscoverFragment
-import kotlinx.android.synthetic.main.activity_main.*
+import hu.csabapap.seriesreminder.ui.adapters.DiscoverPreviewAdapter
 import kotlinx.android.synthetic.main.fragment_home.*
 import javax.inject.Inject
 
@@ -31,8 +27,8 @@ class HomeFragment : DaggerFragment() {
     private lateinit var homeViewModel: HomeViewModel
 
     lateinit var layoutManager: LinearLayoutManager
-    private val trendingShowsAdapter = TrendingShowsAdapter()
-    private val popularShowsAdapter = PopularShowsAdapter()
+    private val trendingShowsAdapter = DiscoverPreviewAdapter()
+    private val popularShowsAdapter = DiscoverPreviewAdapter()
 
     private var listener: HomeFragmentListener? = null
 
@@ -72,14 +68,13 @@ class HomeFragment : DaggerFragment() {
 
         homeViewModel.trendingShowsLiveData.observe(this, Observer {
             it?.apply {
-                trendingShowsAdapter.shows = it
-                trendingShowsAdapter.notifyDataSetChanged()
+                trendingShowsAdapter.showItems = it
             }
         })
 
         homeViewModel.popularShowsLiveData.observe(this, Observer {
             it?.apply {
-                popularShowsAdapter.popularShows = it
+                popularShowsAdapter.showItems = it
             }
         })
     }
