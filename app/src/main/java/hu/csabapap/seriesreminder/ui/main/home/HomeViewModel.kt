@@ -2,6 +2,7 @@ package hu.csabapap.seriesreminder.ui.main.home
 
 import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.ViewModel
+import hu.csabapap.seriesreminder.R
 import hu.csabapap.seriesreminder.data.ShowsRepository
 import hu.csabapap.seriesreminder.data.db.entities.PopularGridItem
 import hu.csabapap.seriesreminder.data.db.entities.TrendingGridItem
@@ -41,7 +42,13 @@ class HomeViewModel @Inject constructor(private val showsRepository: ShowsReposi
                  .flatMap {
                      val showItems : MutableList<ShowItem> = mutableListOf()
                      it
-                             .map { ShowItem(it.show!!.traktId, it.show!!.title, it.show!!.posterThumb) }
+                             .map {
+                                 ShowItem(it.show!!.traktId,
+                                         it.show!!.title,
+                                         it.show!!.posterThumb,
+                                         R.drawable.ic_watchers,
+                                         it.entry?.watchers.toString())
+                             }
                              .forEach { showItems.add(it) }
                      Flowable.just(showItems)
                  }
