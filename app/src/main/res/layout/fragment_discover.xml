@@ -8,7 +8,10 @@
         android:id="@+id/rv_grid"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:paddingTop="?attr/actionBarSize" />
+        android:layout_marginTop="2dp"
+        android:paddingTop="?attr/actionBarSize"
+        android:paddingBottom="2dp"
+        android:clipToPadding="false"/>
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/discover_toolbar"
@@ -16,6 +19,7 @@
         android:layout_height="?attr/actionBarSize"
         android:background="?attr/colorPrimary"
         android:minHeight="?attr/actionBarSize"
-        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"/>
+        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+        android:elevation="4dp" />
 
 </FrameLayout>

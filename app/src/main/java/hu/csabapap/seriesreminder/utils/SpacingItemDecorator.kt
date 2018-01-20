@@ -20,7 +20,7 @@ class SpacingItemDecorator(private val sizeGridSpacingPx: Int, private val gridS
             outRect?.top = sizeGridSpacingPx
         }
         if (itemPosition % gridSize == 0) {
-            outRect?.left = 0
+            outRect?.left = padding
             outRect?.right = padding
             needLeftSpacing = true
         } else if ((itemPosition + 1) % gridSize == 0) {
@@ -43,6 +43,10 @@ class SpacingItemDecorator(private val sizeGridSpacingPx: Int, private val gridS
             needLeftSpacing = false
             outRect?.left = sizeGridSpacingPx / 2
             outRect?.right = sizeGridSpacingPx / 2
+        }
+
+        if (itemPosition % gridSize == gridSize-1) {
+            outRect?.right = padding
         }
         outRect?.bottom = 0
     }
