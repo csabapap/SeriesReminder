@@ -19,7 +19,6 @@ import hu.csabapap.seriesreminder.R
 import hu.csabapap.seriesreminder.ui.adapters.DiscoverPreviewAdapter
 import hu.csabapap.seriesreminder.ui.addshow.AddShowActivity
 import kotlinx.android.synthetic.main.fragment_home.*
-import timber.log.Timber
 import javax.inject.Inject
 
 

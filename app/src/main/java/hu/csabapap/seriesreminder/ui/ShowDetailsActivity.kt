@@ -17,7 +17,7 @@ class ShowDetailsActivity : AppCompatActivity() {
 
     val TAG = "ShowDetailsActivity"
 
-    @Inject lateinit var showsRepository: ShowsRepository
+    lateinit var showsRepository: ShowsRepository
     var traktId: Int = -1
 
     override fun onCreate(savedInstanceState: Bundle?) {
