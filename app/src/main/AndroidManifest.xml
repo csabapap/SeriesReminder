@@ -22,7 +22,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".ui.ShowDetailsActivity" />
-        <activity android:name=".ui.add_show.AddShowActivity" />
+        <activity android:name=".ui.addshow.AddShowActivity" />
     </application>
 
 </manifest>

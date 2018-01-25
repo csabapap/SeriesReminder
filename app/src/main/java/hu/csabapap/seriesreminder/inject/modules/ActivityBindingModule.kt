@@ -3,7 +3,7 @@ package hu.csabapap.seriesreminder.inject.modules
 import dagger.Module
 import dagger.android.ContributesAndroidInjector
 import hu.csabapap.seriesreminder.inject.ActivityScope
-import hu.csabapap.seriesreminder.ui.add_show.AddShowActivity
+import hu.csabapap.seriesreminder.ui.addshow.AddShowActivity
 
 
 @Module

@@ -5,6 +5,7 @@ import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProvider
 import android.arch.lifecycle.ViewModelProviders
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.support.v4.content.ContextCompat
 import android.support.v7.widget.DividerItemDecoration
@@ -16,11 +17,13 @@ import android.view.ViewGroup
 import dagger.android.support.DaggerFragment
 import hu.csabapap.seriesreminder.R
 import hu.csabapap.seriesreminder.ui.adapters.DiscoverPreviewAdapter
+import hu.csabapap.seriesreminder.ui.addshow.AddShowActivity
 import kotlinx.android.synthetic.main.fragment_home.*
+import timber.log.Timber
 import javax.inject.Inject
 
 
-class HomeFragment : DaggerFragment() {
+class HomeFragment : DaggerFragment(), DiscoverPreviewAdapter.PreviewShowListener {
 
     @Inject
     lateinit var mainViewModelProvider: ViewModelProvider.Factory
@@ -59,6 +62,9 @@ class HomeFragment : DaggerFragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
+
+        trendingShowsAdapter.listener = this
+        popularShowsAdapter.listener = this
 
         homeViewModel.viewState.observe(this, Observer {
             it?.apply {
@@ -145,5 +151,11 @@ class HomeFragment : DaggerFragment() {
     interface HomeFragmentListener {
         fun onMoreTrendingClick()
         fun onMorePopularClick()
+    }
+
+    override fun onItemClick(traktId: Int) {
+        val intent = Intent(activity, AddShowActivity::class.java)
+        intent.putExtra("show_id", traktId)
+        activity?.startActivity(intent)
     }
 }
