@@ -2,11 +2,9 @@ package hu.csabapap.seriesreminder.ui.addshow
 
 import android.arch.lifecycle.ViewModelProvider
 import android.os.Bundle
-import dagger.android.DaggerActivity
 import dagger.android.support.DaggerAppCompatActivity
 import hu.csabapap.seriesreminder.R
 import hu.csabapap.seriesreminder.data.db.entities.SRShow
-import hu.csabapap.seriesreminder.ui.BaseActivity
 import kotlinx.android.synthetic.main.activity_add_show.*
 import org.apache.commons.cli.MissingArgumentException
 import javax.inject.Inject
