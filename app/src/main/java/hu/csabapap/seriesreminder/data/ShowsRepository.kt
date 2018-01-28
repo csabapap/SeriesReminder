@@ -57,7 +57,7 @@ class ShowsRepository(val traktApi: TraktApi, val tvdbApi: TvdbApi,
 
     }
 
-    fun getShow(traktId: Int, show: BaseShow?) : Maybe<SRShow> {
+    fun getShow(traktId: Int, show: BaseShow? = null) : Maybe<SRShow> {
         val showFromDb = showDao.getShowMaybe(traktId)
 
 //        val fromShow = show?.let { Maybe.just(mapToSRShow(show)) } ?: Maybe.empty<SRShow>()
