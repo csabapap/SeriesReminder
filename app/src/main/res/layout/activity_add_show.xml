@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -83,9 +84,9 @@
             android:layout_marginEnd="16dp"
             android:layout_marginStart="16dp"
             android:layout_marginTop="32dp"
-            android:text="In a future where humans can transfer their minds from body to body, a rebel is brought back to life to solve a twisted, high-stakes murder case. In a future where humans can transfer their minds from body to body, a rebel is brought back to life to solve a twisted, high-stakes murder case. In a future where humans can transfer their minds from body to body, a rebel is brought back to life to solve a twisted, high-stakes murder case. In a future where humans can transfer their minds from body to body, a rebel is brought back to life to solve a twisted, high-stakes murder case."
             android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-            android:textSize="18sp" />
+            android:textSize="18sp"
+            tools:text="In a future where humans can transfer their minds from body to body, a rebel is brought back to life to solve a twisted, high-stakes murder case. In a future where humans can transfer their minds from body to body, a rebel is brought back to life to solve a twisted, high-stakes murder case. In a future where humans can transfer their minds from body to body, a rebel is brought back to life to solve a twisted, high-stakes murder case. In a future where humans can transfer their minds from body to body, a rebel is brought back to life to solve a twisted, high-stakes murder case."/>
 
     </android.support.v4.widget.NestedScrollView>
 
@@ -108,8 +109,10 @@
         android:layout_marginEnd="16dp"
         android:layout_marginStart="8dp"
         android:clickable="true"
+        android:focusable="true"
+        android:scaleType="center"
         app:layout_anchor="@id/app_bar_layout"
         app:layout_anchorGravity="bottom|end"
-        app:srcCompat="@android:drawable/ic_input_add" />
+        app:srcCompat="@drawable/ic_add_24dp" />
 
 </android.support.design.widget.CoordinatorLayout>
