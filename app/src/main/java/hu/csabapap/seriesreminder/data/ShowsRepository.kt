@@ -132,4 +132,8 @@ class ShowsRepository(val traktApi: TraktApi, val tvdbApi: TvdbApi,
             popularDao.insert(it)
         }
     }
+
+    fun updateShow(show: SRShow) {
+        showDao.updateShow(show)
+    }
 }

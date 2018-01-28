@@ -2,9 +2,13 @@ package hu.csabapap.seriesreminder.ui.addshow
 
 import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.ViewModel
+import android.util.Log
 import hu.csabapap.seriesreminder.data.ShowsRepository
 import hu.csabapap.seriesreminder.utils.AppRxSchedulers
+import io.reactivex.Flowable
+import io.reactivex.Observable
 import timber.log.Timber
+import java.util.*
 import javax.inject.Inject
 
 class AddShowViewModel @Inject constructor(
@@ -16,6 +20,27 @@ class AddShowViewModel @Inject constructor(
 
     fun getShow(showId: Int) {
         showsRepository.getShow(traktId = showId)
+                .observeOn(schedulers.main)
+                .doAfterSuccess({
+                    showLiveData.value = AddShowState(it)
+                })
+                .observeOn(schedulers.io)
+                .toObservable()
+                .flatMap {
+                    if (it._coverThumb.isEmpty().not()) {
+                        Timber.d(it._coverThumb)
+                        Observable.just(it)
+                    } else {
+                        showsRepository.images(it.tvdbId, "fanart")
+                                .toObservable()
+                                .flatMap { (data) ->
+                                    it._coverThumb = data[0].fileName
+                                    Timber.d("_coverThumb: ${it._coverThumb}")
+                                    showsRepository.updateShow(it)
+                                    Observable.just(it)
+                                }
+                    }
+                }
                 .subscribeOn(schedulers.io)
                 .observeOn(schedulers.main)
                 .subscribe({
