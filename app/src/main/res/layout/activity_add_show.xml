@@ -62,6 +62,7 @@
                 android:layout_marginEnd="8dp"
                 android:layout_marginStart="124dp"
                 android:layout_marginTop="8dp"
+                android:fontFamily="monospace"
                 android:text="Altered Carbon"
                 android:textAppearance="@style/TextAppearance.AppCompat.Display1" />
 
