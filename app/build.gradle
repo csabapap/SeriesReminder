@@ -55,10 +55,10 @@ dependencies {
     implementation "com.android.support.constraint:constraint-layout:${versions.constraintLayout}"
 
     // architecture components
-    implementation "android.arch.lifecycle:extensions:1.0.0"
-    implementation "android.arch.lifecycle:common-java8:1.0.0"
-    implementation "android.arch.lifecycle:reactivestreams:1.0.0"
-    kapt "android.arch.lifecycle:compiler:1.0.0"
+    implementation "android.arch.lifecycle:extensions:1.1.0"
+    implementation "android.arch.lifecycle:common-java8:1.1.0"
+    implementation "android.arch.lifecycle:reactivestreams:1.1.0"
+    kapt "android.arch.lifecycle:compiler:1.1.0"
 
     implementation "android.arch.persistence.room:runtime:${versions.room}"
     implementation "android.arch.persistence.room:rxjava2:${versions.room}"
