@@ -19,4 +19,7 @@ interface TrendingDao {
     @Query("SELECT * FROM trending_shows ORDER BY watchers DESC LIMIT :limit")
     fun getTrendingShows(limit: Int) : Flowable<List<TrendingGridItem>>
 
+    @Query("DELETE FROM trending_shows")
+    fun deleteAll()
+
 }

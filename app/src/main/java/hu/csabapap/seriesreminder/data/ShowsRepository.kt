@@ -25,6 +25,7 @@ class ShowsRepository(val traktApi: TraktApi, val tvdbApi: TvdbApi,
     }
 
     fun getRemoteTrendingShows(): Single<List<SRTrendingItem>> {
+        val start = System.currentTimeMillis()
         return traktApi.trendingShows("full")
                 .toFlowable()
                 .flatMapIterable { it }
@@ -35,7 +36,10 @@ class ShowsRepository(val traktApi: TraktApi, val tvdbApi: TvdbApi,
                             .map { srShow -> mapToSRTrendingShow(srShow.traktId, it.watchers) }
                 }
                 .toList()
-                .doOnSuccess { saveTrendingShows(it) }
+                .doOnSuccess {
+                    trendingDao.deleteAll()
+                    saveTrendingShows(it)
+                }
     }
 
     fun popularShows(limit: Int = 10) : Flowable<List<PopularGridItem>> {
@@ -53,7 +57,10 @@ class ShowsRepository(val traktApi: TraktApi, val tvdbApi: TvdbApi,
                             .map { srShow -> mapToSRPopularItem(srShow.traktId) }
                 }
                 .toList()
-                .doOnSuccess { savePopularItem(it) }
+                .doOnSuccess {
+                    popularDao.deleteAll()
+                    savePopularItem(it)
+                }
 
     }
 
@@ -121,7 +128,6 @@ class ShowsRepository(val traktApi: TraktApi, val tvdbApi: TvdbApi,
 
 
     private fun saveTrendingShows(trendingItems: List<SRTrendingItem>) {
-        Timber.d("insert trending shows")
         trendingItems.forEach { trendingShow ->
             trendingDao.insert(trendingShow)
         }

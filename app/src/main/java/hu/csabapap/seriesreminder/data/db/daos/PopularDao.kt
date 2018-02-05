@@ -19,4 +19,7 @@ interface PopularDao {
     @Query("SELECT * FROM popular_shows LIMIT :limit")
     fun getPopularShows(limit: Int) : Flowable<List<PopularGridItem>>
 
+    @Query("DELETE FROM popular_shows")
+    fun deleteAll()
+
 }
