@@ -62,6 +62,6 @@ class AddShowActivity : DaggerAppCompatActivity() {
         tv_title.text = srShow.title
         tv_overview.text = srShow.overview
         poster.loadFromUrl("https://thetvdb.com/banners/${srShow.posterThumb}")
-        cover.loadFromUrl("https://thetvdb.com/banners/${srShow._coverThumb}")
+        cover.loadFromUrl("https://thetvdb.com/banners/${srShow._cover}")
     }
 }

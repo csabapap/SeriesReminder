@@ -34,9 +34,13 @@ class AddShowViewModel @Inject constructor(
                         showsRepository.images(it.tvdbId, "fanart")
                                 .toObservable()
                                 .flatMap { (data) ->
-                                    it._coverThumb = data[0].fileName
-                                    Timber.d("_coverThumb: ${it._coverThumb}")
-                                    showsRepository.updateShow(it)
+                                    val image = data
+                                            .maxBy { it.ratings }
+                                    image?.apply {
+                                        it._coverThumb = thumbnail
+                                        it._cover = fileName
+                                        showsRepository.updateShow(it)
+                                    }
                                     Observable.just(it)
                                 }
                     }
