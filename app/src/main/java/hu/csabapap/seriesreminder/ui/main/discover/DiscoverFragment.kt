@@ -4,6 +4,7 @@ import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProvider
 import android.arch.lifecycle.ViewModelProviders
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.support.v7.widget.GridLayoutManager
 import android.support.v7.widget.RecyclerView
@@ -13,12 +14,13 @@ import android.view.ViewGroup
 import dagger.android.support.DaggerFragment
 import hu.csabapap.seriesreminder.R
 import hu.csabapap.seriesreminder.ui.adapters.GridAdapter
+import hu.csabapap.seriesreminder.ui.addshow.AddShowActivity
 import hu.csabapap.seriesreminder.utils.SpacingItemDecorator
 import kotlinx.android.synthetic.main.fragment_discover.*
 import timber.log.Timber
 import javax.inject.Inject
 
-class DiscoverFragment : DaggerFragment() {
+class DiscoverFragment : DaggerFragment(), GridAdapter.GridItemClickListener {
 
     @Inject
     lateinit var mainViewModelProvider: ViewModelProvider.Factory
@@ -72,6 +74,7 @@ class DiscoverFragment : DaggerFragment() {
         rv_grid.layoutManager = gridLayoutManager
         rv_grid.addItemDecoration(SpacingItemDecorator(4, 4))
         rv_grid.adapter = adapter
+        adapter.listener = this
 
         discoverViewModel.itemsLiveData.observe(this, Observer {
             it?.apply {
@@ -92,6 +95,12 @@ class DiscoverFragment : DaggerFragment() {
                 TYPE_POPULAR -> "Popular Shows"
                 else -> ""
             }
+
+    override fun onItemClick(traktId: Int) {
+        val intent = Intent(activity, AddShowActivity::class.java)
+        intent.putExtra("show_id", traktId)
+        activity?.startActivity(intent)
+    }
 
     interface DiscoverFragmentInteractionListener {
         fun onNavigateBack()

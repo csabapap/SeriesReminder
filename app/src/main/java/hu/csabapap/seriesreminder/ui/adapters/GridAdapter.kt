@@ -14,6 +14,12 @@ import kotlinx.android.synthetic.main.grid_item.view.*
 
 internal class GridAdapter : RecyclerView.Adapter<GridAdapter.GridViewHolder>() {
 
+    interface GridItemClickListener {
+        fun onItemClick(traktId: Int)
+    }
+
+    var listener: GridItemClickListener? = null
+
     lateinit var context: Context
     var shows: List<GridItem<Item>>? = null
     set(value) {
@@ -23,11 +29,15 @@ internal class GridAdapter : RecyclerView.Adapter<GridAdapter.GridViewHolder>() 
 
     override fun onBindViewHolder(holder: GridViewHolder?, position: Int) {
 
-        val show = shows!![position].show
+        val show = shows!![position].show ?: return
 
         Picasso.with(context)
-                .load("https://thetvdb.com/banners/${show?.posterThumb}")
+                .load("https://thetvdb.com/banners/${show.posterThumb}")
                 .into(holder?.poster)
+        holder?.setOnClickListener(View.OnClickListener {
+            listener?.onItemClick(show.traktId)
+        })
+
     }
 
     override fun getItemCount(): Int {
@@ -44,5 +54,9 @@ internal class GridAdapter : RecyclerView.Adapter<GridAdapter.GridViewHolder>() 
 
     internal class GridViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val poster: ImageView = itemView.poster
+
+        fun setOnClickListener(listener: View.OnClickListener) {
+            itemView.setOnClickListener(listener)
+        }
     }
 }
