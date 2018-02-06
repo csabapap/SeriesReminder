@@ -2,13 +2,10 @@ package hu.csabapap.seriesreminder.ui.addshow
 
 import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.ViewModel
-import android.util.Log
 import hu.csabapap.seriesreminder.data.ShowsRepository
 import hu.csabapap.seriesreminder.utils.AppRxSchedulers
-import io.reactivex.Flowable
 import io.reactivex.Observable
 import timber.log.Timber
-import java.util.*
 import javax.inject.Inject
 
 class AddShowViewModel @Inject constructor(
