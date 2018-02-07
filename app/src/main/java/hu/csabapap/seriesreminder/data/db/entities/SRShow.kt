@@ -13,19 +13,10 @@ data class SRShow(
         @ColumnInfo(name="overview") var overview: String = "",
         @ColumnInfo(name="poster") var poster: String = "",
         @ColumnInfo(name="poster_thumb") var posterThumb: String = "",
-        @ColumnInfo(name="cover") var _cover: String = "",
-        @ColumnInfo(name="cover_thumb") var _coverThumb: String = "",
+        @ColumnInfo(name="cover") var cover: String = "",
+        @ColumnInfo(name="cover_thumb") var coverThumb: String = "",
         @ColumnInfo(name="rating") var rating: Float = 0f,
         @ColumnInfo(name="votes") var votes: Int = 0) {
-    @Ignore var coverUrl = _cover
-        get() {
-            return "https://thetvdb.com/banners/$field"
-        }
-
-    @Ignore var coverThumbUrl = _coverThumb
-        get() {
-            return "https://thetvdb.com/banners/$field"
-        }
 
     fun <T> updateProperty(entryVar : KMutableProperty0<T>, updateVal: T) {
         when {

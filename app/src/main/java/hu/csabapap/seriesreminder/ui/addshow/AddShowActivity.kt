@@ -10,7 +10,6 @@ import hu.csabapap.seriesreminder.data.db.entities.SRShow
 import hu.csabapap.seriesreminder.extensions.loadFromUrl
 import kotlinx.android.synthetic.main.activity_add_show.*
 import org.apache.commons.cli.MissingArgumentException
-import timber.log.Timber
 import javax.inject.Inject
 
 class AddShowActivity : DaggerAppCompatActivity() {
@@ -62,6 +61,6 @@ class AddShowActivity : DaggerAppCompatActivity() {
         tv_title.text = srShow.title
         tv_overview.text = srShow.overview
         poster.loadFromUrl("https://thetvdb.com/banners/${srShow.posterThumb}")
-        cover.loadFromUrl("https://thetvdb.com/banners/${srShow._cover}")
+        cover.loadFromUrl("https://thetvdb.com/banners/${srShow.cover}")
     }
 }

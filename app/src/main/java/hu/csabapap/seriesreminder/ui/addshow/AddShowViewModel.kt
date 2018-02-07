@@ -24,8 +24,8 @@ class AddShowViewModel @Inject constructor(
                 .observeOn(schedulers.io)
                 .toObservable()
                 .flatMap {
-                    if (it._coverThumb.isEmpty().not()) {
-                        Timber.d(it._coverThumb)
+                    if (it.coverThumb.isEmpty().not()) {
+                        Timber.d(it.coverThumb)
                         Observable.just(it)
                     } else {
                         showsRepository.images(it.tvdbId, "fanart")
@@ -34,8 +34,8 @@ class AddShowViewModel @Inject constructor(
                                     val image = data
                                             .maxBy { it.ratings }
                                     image?.apply {
-                                        it._coverThumb = thumbnail
-                                        it._cover = fileName
+                                        it.coverThumb = thumbnail
+                                        it.cover = fileName
                                         showsRepository.updateShow(it)
                                     }
                                     Observable.just(it)
