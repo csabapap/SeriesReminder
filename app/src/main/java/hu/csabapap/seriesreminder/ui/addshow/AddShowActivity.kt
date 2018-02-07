@@ -3,9 +3,11 @@ package hu.csabapap.seriesreminder.ui.addshow
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProvider
 import android.arch.lifecycle.ViewModelProviders
+import android.content.res.ColorStateList
 import android.graphics.Bitmap
 import android.graphics.drawable.BitmapDrawable
 import android.os.Bundle
+import android.support.v4.graphics.ColorUtils
 import android.support.v7.graphics.Palette
 import com.squareup.picasso.Callback
 import dagger.android.support.DaggerAppCompatActivity
@@ -64,6 +66,7 @@ class AddShowActivity : DaggerAppCompatActivity() {
     private fun displayShow(srShow: SRShow) {
         tv_title.text = srShow.title
         tv_overview.text = srShow.overview
+        ratings.text = "${(srShow.rating * 10).toInt()}% (${srShow.votes})"
         poster.loadFromUrl("https://thetvdb.com/banners/${srShow.posterThumb}", (object: Callback {
             override fun onSuccess() {
                 val drawable = poster.drawable as BitmapDrawable
@@ -86,7 +89,14 @@ class AddShowActivity : DaggerAppCompatActivity() {
                     val vibrant = it.vibrantSwatch
                     vibrant?.apply {
                         title_container.setBackgroundColor(rgb)
+                        cover_overflow.setBackgroundColor(
+                                ColorUtils.setAlphaComponent(rgb, /* 30% */ 0x40))
                         tv_title.setTextColor(titleTextColor)
+                    }
+                    val darkVibrant = it.darkVibrantSwatch
+                    darkVibrant?.apply {
+                        btn_add_show.backgroundTintList = ColorStateList.valueOf(rgb)
+                        btn_add_show.imageTintList = ColorStateList.valueOf(titleTextColor)
                     }
                 }
     }

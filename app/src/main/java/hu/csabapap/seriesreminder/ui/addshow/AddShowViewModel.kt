@@ -24,8 +24,7 @@ class AddShowViewModel @Inject constructor(
                 .observeOn(schedulers.io)
                 .toObservable()
                 .flatMap {
-                    if (it.coverThumb.isEmpty().not()) {
-                        Timber.d(it.coverThumb)
+                    if (it.cover.isEmpty().not()) {
                         Observable.just(it)
                     } else {
                         showsRepository.images(it.tvdbId, "fanart")
