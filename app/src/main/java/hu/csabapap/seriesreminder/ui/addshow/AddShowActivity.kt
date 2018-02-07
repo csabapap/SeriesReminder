@@ -66,7 +66,7 @@ class AddShowActivity : DaggerAppCompatActivity() {
     private fun displayShow(srShow: SRShow) {
         tv_title.text = srShow.title
         tv_overview.text = srShow.overview
-        ratings.text = "${(srShow.rating * 10).toInt()}% (${srShow.votes})"
+        ratings.text = String.format(getString(R.string.ratings_value), (srShow.rating * 10).toInt(), srShow.votes)
         poster.loadFromUrl("https://thetvdb.com/banners/${srShow.posterThumb}", (object: Callback {
             override fun onSuccess() {
                 val drawable = poster.drawable as BitmapDrawable

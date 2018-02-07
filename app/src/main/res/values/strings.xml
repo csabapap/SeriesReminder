@@ -13,4 +13,5 @@
     <string name="sample_text">In a future where humans can transfer their minds from body to body, a rebel is brought back to life to solve a twisted, high-stakes murder case. In a future where humans can transfer their minds from body to body, a rebel is brought back to life to solve a twisted, high-stakes murder case. In a future where humans can transfer their minds from body to body, a rebel is brought back to life to solve a twisted, high-stakes murder case. In a future where humans can transfer their minds from body to body, a rebel is brought back to life to solve a twisted, high-stakes murder case.</string>
     <string name="overview">Overview</string>
     <string name="ratings">Ratings</string>
+    <string name="ratings_value">%d%% (%d votes)</string>
 </resources>
