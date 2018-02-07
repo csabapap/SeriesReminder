@@ -1,7 +1,17 @@
 package hu.csabapap.seriesreminder.data.db.entities
 
-/**
- * Created by csaba on 2018. 02. 07..
- */
-class CollectionItem {
-}
+import android.arch.persistence.room.*
+
+@Entity(tableName = "collection",
+        foreignKeys = [(ForeignKey(
+                entity = SRShow::class,
+                parentColumns = ["trakt_id"],
+                childColumns = ["show_id"],
+                onUpdate = ForeignKey.CASCADE,
+                onDelete = ForeignKey.CASCADE))],
+        indices = [(Index(value = ["show_id"], unique = true))]
+)
+data class CollectionItem(
+        @PrimaryKey(autoGenerate = true) override val id: Long? = null,
+        @ColumnInfo(name = "show_id") override val showId: Int
+) : Item

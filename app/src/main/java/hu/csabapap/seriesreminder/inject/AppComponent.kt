@@ -17,6 +17,7 @@ import javax.inject.Singleton
             AndroidSupportInjectionModule::class,
             AppModule::class,
             ApiModule::class,
+            DbModule::class,
             SrViewModelModule::class,
             HomeModule::class,
             AddShowModule::class])

@@ -1,5 +1,6 @@
 package hu.csabapap.seriesreminder.ui.addshow
 
+import android.app.Activity
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProvider
 import android.arch.lifecycle.ViewModelProviders
@@ -46,6 +47,16 @@ class AddShowActivity : DaggerAppCompatActivity() {
                 displayShow(it.show)
             }
         })
+
+        addShowViewModel.addShowLiveData.observe(this, Observer {
+            success -> success?.apply {
+                if (success) {
+                    finish()
+                }
+            }
+        })
+
+        btn_add_show.setOnClickListener({addShowViewModel.addShowToCollection(showId)})
     }
 
     override fun onStart() {

@@ -2,7 +2,6 @@ package hu.csabapap.seriesreminder.ui.main
 
 import android.arch.lifecycle.ViewModel
 import android.arch.lifecycle.ViewModelProvider
-import hu.csabapap.seriesreminder.ui.addshow.AddShowViewModel
 import javax.inject.Inject
 import javax.inject.Provider
 

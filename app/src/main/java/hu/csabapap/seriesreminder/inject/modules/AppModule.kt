@@ -6,10 +6,15 @@ import android.content.Context
 import dagger.Module
 import dagger.Provides
 import hu.csabapap.seriesreminder.SRApplication
+import hu.csabapap.seriesreminder.data.CollectionRepository
+import hu.csabapap.seriesreminder.data.ShowsRepository
 import hu.csabapap.seriesreminder.data.db.SRDatabase
+import hu.csabapap.seriesreminder.data.db.daos.CollectionsDao
 import hu.csabapap.seriesreminder.data.db.daos.PopularDao
 import hu.csabapap.seriesreminder.data.db.daos.SRShowDao
 import hu.csabapap.seriesreminder.data.db.daos.TrendingDao
+import hu.csabapap.seriesreminder.data.network.TraktApi
+import hu.csabapap.seriesreminder.data.network.TvdbApi
 import hu.csabapap.seriesreminder.utils.AppRxSchedulers
 import javax.inject.Singleton
 
@@ -31,27 +36,17 @@ class AppModule{
 
     @Singleton
     @Provides
-    fun providesDatabase(context: Context) : SRDatabase {
-        return Room.databaseBuilder(context, SRDatabase::class.java, "series_reminder.db")
-                .fallbackToDestructiveMigration()
-                .build()
+    fun provideShowsRepository(traktApi: TraktApi,
+                               tvdbApi: TvdbApi,
+                               showDao: SRShowDao,
+                               trendingDao: TrendingDao,
+                               popularDao: PopularDao)
+            : ShowsRepository {
+        return ShowsRepository(traktApi, tvdbApi, showDao, trendingDao, popularDao)
     }
 
     @Singleton
-    @Provides
-    fun providesShowsDao(db: SRDatabase): SRShowDao {
-        return db.showDao()
-    }
-
-    @Singleton
-    @Provides
-    fun providesTrendingDao(db: SRDatabase) : TrendingDao {
-        return db.trendingDao()
-    }
-
-    @Singleton
-    @Provides
-    fun providesPopularDao(db: SRDatabase) : PopularDao {
-        return db.popularDao()
+    fun providesCollectionRepository(collectionsDao: CollectionsDao) : CollectionRepository {
+        return CollectionRepository(collectionsDao)
     }
 }

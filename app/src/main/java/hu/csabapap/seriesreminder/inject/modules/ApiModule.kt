@@ -24,15 +24,4 @@ class ApiModule {
     fun provideTvdbApiModule() : TvdbApi{
         return TvdbApi()
     }
-
-    @Singleton
-    @Provides
-    fun provideShowsRepository(traktApi: TraktApi,
-                               tvdbApi: TvdbApi,
-                               showDao: SRShowDao,
-                               trendingDao: TrendingDao,
-                               popularDao: PopularDao)
-            : ShowsRepository {
-        return ShowsRepository(traktApi, tvdbApi, showDao, trendingDao, popularDao)
-    }
 }
