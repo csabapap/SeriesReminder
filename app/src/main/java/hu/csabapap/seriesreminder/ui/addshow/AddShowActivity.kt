@@ -1,6 +1,5 @@
 package hu.csabapap.seriesreminder.ui.addshow
 
-import android.app.Activity
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProvider
 import android.arch.lifecycle.ViewModelProviders
@@ -78,6 +77,7 @@ class AddShowActivity : DaggerAppCompatActivity() {
         tv_title.text = srShow.title
         tv_overview.text = srShow.overview
         ratings.text = String.format(getString(R.string.ratings_value), (srShow.rating * 10).toInt(), srShow.votes)
+        genres.text = srShow.genres
         poster.loadFromUrl("https://thetvdb.com/banners/${srShow.posterThumb}", (object: Callback {
             override fun onSuccess() {
                 val drawable = poster.drawable as BitmapDrawable

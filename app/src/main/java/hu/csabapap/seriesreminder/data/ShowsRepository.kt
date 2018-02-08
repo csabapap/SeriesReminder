@@ -25,7 +25,6 @@ class ShowsRepository(val traktApi: TraktApi, val tvdbApi: TvdbApi,
     }
 
     fun getRemoteTrendingShows(): Single<List<SRTrendingItem>> {
-        val start = System.currentTimeMillis()
         return traktApi.trendingShows("full")
                 .toFlowable()
                 .flatMapIterable { it }
@@ -106,7 +105,7 @@ class ShowsRepository(val traktApi: TraktApi, val tvdbApi: TvdbApi,
         return tvdbApi.images(tvdbId, type)
     }
 
-    private fun mapToSRShow(show : BaseShow) : SRShow {
+    private fun mapToSRShow(show : Show) : SRShow {
         val srShow = SRShow()
         srShow.apply {
             updateProperty(this::traktId, show.ids.trakt)
@@ -117,6 +116,7 @@ class ShowsRepository(val traktApi: TraktApi, val tvdbApi: TvdbApi,
             updateProperty(this::votes, show.votes)
             updateProperty(this::poster, show.image)
             updateProperty(this::posterThumb, show.thumb)
+            updateProperty(this::genres, show.genres.joinToString())
         }
         return srShow
     }

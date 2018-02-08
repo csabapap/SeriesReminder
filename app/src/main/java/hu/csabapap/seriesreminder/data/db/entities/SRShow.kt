@@ -16,7 +16,8 @@ data class SRShow(
         @ColumnInfo(name="cover") var cover: String = "",
         @ColumnInfo(name="cover_thumb") var coverThumb: String = "",
         @ColumnInfo(name="rating") var rating: Float = 0f,
-        @ColumnInfo(name="votes") var votes: Int = 0) {
+        @ColumnInfo(name="votes") var votes: Int = 0,
+        @ColumnInfo(name="genres") var genres: String = "") {
 
     fun <T> updateProperty(entryVar : KMutableProperty0<T>, updateVal: T) {
         when {

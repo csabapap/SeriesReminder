@@ -14,4 +14,5 @@
     <string name="overview">Overview</string>
     <string name="ratings">Ratings</string>
     <string name="ratings_value">%d%% (%d votes)</string>
+    <string name="genres">Genres</string>
 </resources>
