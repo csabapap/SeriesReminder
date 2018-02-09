@@ -7,17 +7,18 @@ import android.arch.lifecycle.ViewModelProviders
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.support.design.widget.Snackbar
 import android.support.v4.content.ContextCompat
+import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.LinearSnapHelper
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import dagger.android.support.DaggerFragment
 import hu.csabapap.seriesreminder.R
 import hu.csabapap.seriesreminder.ui.adapters.DiscoverPreviewAdapter
 import hu.csabapap.seriesreminder.ui.addshow.AddShowActivity
+import kotlinx.android.synthetic.main.activity_home.*
 import kotlinx.android.synthetic.main.fragment_home.*
 import javax.inject.Inject
 
@@ -38,6 +39,7 @@ class HomeFragment : DaggerFragment(), DiscoverPreviewAdapter.PreviewShowListene
         super.onCreate(savedInstanceState)
         homeViewModel = ViewModelProviders.of(this, mainViewModelProvider)
                 .get(HomeViewModel::class.java)
+        setHasOptionsMenu(true)
     }
 
     override fun onAttach(context: Context?) {
@@ -88,6 +90,7 @@ class HomeFragment : DaggerFragment(), DiscoverPreviewAdapter.PreviewShowListene
         super.onViewCreated(view, savedInstanceState)
 
         home_toolbar.title = getString(R.string.app_name)
+        (activity as AppCompatActivity).setSupportActionBar(home_toolbar)
 
         LinearSnapHelper().attachToRecyclerView(trending_grid)
 
@@ -130,6 +133,21 @@ class HomeFragment : DaggerFragment(), DiscoverPreviewAdapter.PreviewShowListene
         homeViewModel.getPopularShows()
     }
 
+    override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
+        activity?.menuInflater?.inflate(R.menu.main, menu)
+        super.onCreateOptionsMenu(menu, inflater)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
+        when (item?.itemId) {
+            R.id.search -> {
+                search()
+                return true
+            }
+        }
+        return super.onOptionsItemSelected(item)
+    }
+
     private fun render(state: HomeViewState) {
         when (state.displayProgressBar) {
             true -> progress_bar.visibility = View.VISIBLE
@@ -145,6 +163,11 @@ class HomeFragment : DaggerFragment(), DiscoverPreviewAdapter.PreviewShowListene
             true -> trending_card.visibility = View.VISIBLE
             false -> trending_card.visibility = View.GONE
         }
+    }
+
+    private fun search() {
+        Snackbar.make(cards_container, "Search...", Snackbar.LENGTH_SHORT)
+                .show()
     }
 
     interface HomeFragmentListener {

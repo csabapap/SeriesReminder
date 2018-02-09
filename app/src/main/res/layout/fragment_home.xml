@@ -13,6 +13,7 @@
         android:paddingTop="?attr/actionBarSize">
 
         <LinearLayout
+            android:id="@+id/cards_container"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
