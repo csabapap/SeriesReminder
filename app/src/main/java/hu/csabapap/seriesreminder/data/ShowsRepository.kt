@@ -6,7 +6,6 @@ import hu.csabapap.seriesreminder.data.db.daos.TrendingDao
 import hu.csabapap.seriesreminder.data.db.entities.*
 import hu.csabapap.seriesreminder.data.network.TraktApi
 import hu.csabapap.seriesreminder.data.network.TvdbApi
-import hu.csabapap.seriesreminder.data.network.entities.BaseShow
 import hu.csabapap.seriesreminder.data.network.entities.Images
 import hu.csabapap.seriesreminder.data.network.entities.Show
 import io.reactivex.Flowable
@@ -14,12 +13,11 @@ import io.reactivex.Maybe
 import io.reactivex.Single
 import timber.log.Timber
 
-class ShowsRepository(val traktApi: TraktApi, val tvdbApi: TvdbApi,
-                      val showDao: SRShowDao, val trendingDao: TrendingDao,
-                      val popularDao: PopularDao){
+class ShowsRepository(private val traktApi: TraktApi, private val tvdbApi: TvdbApi,
+                      private val showDao: SRShowDao, private val trendingDao: TrendingDao,
+                      private val popularDao: PopularDao){
 
     var cachedTrendingShows: MutableList<SRShow> = mutableListOf()
-    var cachedPopularShows: MutableList<SRShow> = mutableListOf()
 
     fun getTrendingShows(limit: Int = 10) : Flowable<List<TrendingGridItem>> {
         return trendingDao.getTrendingShows(limit)
@@ -30,7 +28,7 @@ class ShowsRepository(val traktApi: TraktApi, val tvdbApi: TvdbApi,
                 .toFlowable()
                 .flatMapIterable { it }
                 .flatMapMaybe {
-                    getShow(it.show.ids.trakt, it.show)
+                    getShow(it.show.ids.trakt)
                             .map { showDao.insertOrUpdateShow(it) }
                             .map { showDao.getShow(it.traktId)}
                             .map { srShow -> mapToSRTrendingShow(srShow.traktId, it.watchers) }
@@ -59,7 +57,7 @@ class ShowsRepository(val traktApi: TraktApi, val tvdbApi: TvdbApi,
                 .toFlowable()
                 .flatMapIterable { it }
                 .flatMapMaybe {
-                    getShow(it.ids.trakt, it)
+                    getShow(it.ids.trakt)
                             .map { showDao.insertOrUpdateShow(it) }
                             .map { showDao.getShow(it.traktId)}
                             .map { srShow -> mapToSRPopularItem(srShow.traktId) }
@@ -80,10 +78,8 @@ class ShowsRepository(val traktApi: TraktApi, val tvdbApi: TvdbApi,
 
     }
 
-    fun getShow(traktId: Int, show: BaseShow? = null) : Maybe<SRShow> {
+    fun getShow(traktId: Int) : Maybe<SRShow> {
         val showFromDb = showDao.getShowMaybe(traktId)
-
-//        val fromShow = show?.let { Maybe.just(mapToSRShow(show)) } ?: Maybe.empty<SRShow>()
 
         val fromWeb = getShowFromWeb(traktId).singleElement()
 
