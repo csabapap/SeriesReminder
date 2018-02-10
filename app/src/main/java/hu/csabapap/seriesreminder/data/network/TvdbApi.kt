@@ -9,6 +9,7 @@ import hu.csabapap.seriesreminder.data.network.services.TvdbAuthService
 import hu.csabapap.seriesreminder.data.network.services.TvdbImagesService
 import io.reactivex.Flowable
 import io.reactivex.Observable
+import io.reactivex.Single
 import okhttp3.Authenticator
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -80,7 +81,7 @@ class TvdbApi {
         return retrofit.create(TvdbAuthService::class.java).login(loginRequest)
     }
 
-    fun images(tvdbId : Int, type : String = "poster"): Flowable<Images>{
+    fun images(tvdbId : Int, type : String = "poster"): Single<Images>{
         return retrofit.create(TvdbImagesService::class.java).images(tvdbId, type)
     }
 }

@@ -55,7 +55,7 @@ class HomeViewModel @Inject constructor(private val showsRepository: ShowsReposi
                 .subscribe({
                     Timber.d("number of trending show: ${it.size}")
                     if (it.isEmpty().not()) {
-                        viewState.value = currentViewState().copy(displayProgressBar = false, displayTrendingCard = true)
+                         viewState.value = currentViewState().copy(displayProgressBar = false, displayTrendingCard = true)
                         trendingShowsLiveData.value = it
                     }
                 },{Timber.e(it)})
