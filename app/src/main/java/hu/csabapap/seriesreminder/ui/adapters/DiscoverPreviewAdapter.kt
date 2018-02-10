@@ -7,8 +7,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
-import com.squareup.picasso.Picasso
+import com.squareup.picasso.Callback
 import hu.csabapap.seriesreminder.R
+import hu.csabapap.seriesreminder.extensions.loadFromUrl
 import hu.csabapap.seriesreminder.ui.adapters.items.ShowItem
 import kotlinx.android.synthetic.main.item_trending_show.view.*
 
@@ -47,17 +48,31 @@ class DiscoverPreviewAdapter : RecyclerView.Adapter<DiscoverPreviewAdapter.Disco
 
     override fun onBindViewHolder(holder: DiscoverShowVh?, position: Int) {
         val item  = showItems[position]
-        holder?.bind(item)
+        holder?.bind(item, position)
     }
 
     inner class DiscoverShowVh(itemView: View) : RecyclerView.ViewHolder(itemView){
 
         val poster : ImageView? = itemView.poster
 
-        fun bind(show: ShowItem){
-            Picasso.with(context)
-                    .load("https://thetvdb.com/banners/${show.poster}")
-                    .into(poster)
+        fun bind(show: ShowItem, position: Int){
+            if (show.poster.isEmpty()) {
+                itemView.show_title.text = show.title
+                itemView.show_title.visibility = View.VISIBLE
+                poster?.visibility = View.INVISIBLE
+            } else {
+                poster?.loadFromUrl("https://thetvdb.com/banners/${show.poster}", (object: Callback {
+                    override fun onSuccess() {
+                        poster.visibility = View.VISIBLE
+                        itemView.show_title.visibility = View.GONE
+                    }
+
+                    override fun onError() {
+
+                    }
+                }))
+
+            }
             if (show.extraDataIcon != -1) {
                 itemView.extra_icon.setImageDrawable(
                         ContextCompat.getDrawable(context!!, show.extraDataIcon))
@@ -71,6 +86,14 @@ class DiscoverPreviewAdapter : RecyclerView.Adapter<DiscoverPreviewAdapter.Disco
                 itemView.extra_value.visibility = View.VISIBLE
             } else {
                 itemView.extra_value.visibility = View.GONE
+            }
+
+            if (position % 2 == 0) {
+                itemView.setBackgroundColor(
+                        ContextCompat.getColor(context!!, R.color.item_background_light))
+            } else {
+                itemView.setBackgroundColor(
+                        ContextCompat.getColor(context!!, R.color.item_background_dark))
             }
         }
 

@@ -13,4 +13,6 @@
     <color name="overflow">#4Da4a4a4</color>
     <color name="white">#FFFFFF</color>
     <color name="window_background">#DADBDA</color>
+    <color name="item_background_light">#CECECE</color>
+    <color name="item_background_dark">#A2A0A0</color>
 </resources>

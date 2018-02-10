@@ -4,8 +4,6 @@ import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.ViewModel
 import hu.csabapap.seriesreminder.R
 import hu.csabapap.seriesreminder.data.ShowsRepository
-import hu.csabapap.seriesreminder.data.db.entities.PopularGridItem
-import hu.csabapap.seriesreminder.data.db.entities.TrendingGridItem
 import hu.csabapap.seriesreminder.ui.adapters.items.ShowItem
 import io.reactivex.Flowable
 import io.reactivex.android.schedulers.AndroidSchedulers

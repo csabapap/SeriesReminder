@@ -45,27 +45,27 @@ class ShowDetailsActivity : AppCompatActivity() {
     }
 
     private fun loadShow() {
-        showsRepository.getShowFromWeb(traktId)
-                .observeOn(AndroidSchedulers.mainThread())
-                .doOnNext {
-                    displayData(it)
-                }
-                .observeOn(Schedulers.io())
-                .flatMap { it : Show ->
-                    showsRepository.images(it.ids.tvdb, "fanart")
-                            .flatMap { (data) ->
-                                it.cover = data[0].fileName
-                                Log.d(TAG, "cover: ${it.cover}")
-                                Flowable.just(it)
-                            }
-                }
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe({ show ->
-                    Log.d(TAG, "show from trakt: $show")
-                    displayData(show)
-                },
-                        { Log.e(TAG, it.message, it) })
+//        showsRepository.getShowFromWeb(traktId)
+//                .observeOn(AndroidSchedulers.mainThread())
+//                .doOnNext {
+//                    displayData(it)
+//                }
+//                .observeOn(Schedulers.io())
+//                .flatMap { it : Show ->
+//                    showsRepository.images(it.ids.tvdb, "fanart")
+//                            .flatMap { (data) ->
+//                                it.cover = data[0].fileName
+//                                Log.d(TAG, "cover: ${it.cover}")
+//                                Flowable.just(it)
+//                            }
+//                }
+//                .subscribeOn(Schedulers.io())
+//                .observeOn(AndroidSchedulers.mainThread())
+//                .subscribe({ show ->
+//                    Log.d(TAG, "show from trakt: $show")
+//                    displayData(show)
+//                },
+//                        { Log.e(TAG, it.message, it) })
     }
 
     private fun displayData(show: Show) {

@@ -6,12 +6,13 @@ import hu.csabapap.seriesreminder.data.db.daos.TrendingDao
 import hu.csabapap.seriesreminder.data.db.entities.*
 import hu.csabapap.seriesreminder.data.network.TraktApi
 import hu.csabapap.seriesreminder.data.network.TvdbApi
-import hu.csabapap.seriesreminder.data.network.entities.*
+import hu.csabapap.seriesreminder.data.network.entities.BaseShow
+import hu.csabapap.seriesreminder.data.network.entities.Images
+import hu.csabapap.seriesreminder.data.network.entities.Show
 import io.reactivex.Flowable
 import io.reactivex.Maybe
 import io.reactivex.Single
 import timber.log.Timber
-import java.util.*
 
 class ShowsRepository(val traktApi: TraktApi, val tvdbApi: TvdbApi,
                       val showDao: SRShowDao, val trendingDao: TrendingDao,
@@ -21,6 +22,7 @@ class ShowsRepository(val traktApi: TraktApi, val tvdbApi: TvdbApi,
     var cachedPopularShows: MutableList<SRShow> = mutableListOf()
 
     fun getTrendingShows(limit: Int = 10) : Flowable<List<TrendingGridItem>> {
+        Timber.tag("DBCheck").d("get trending shows from db")
         return trendingDao.getTrendingShows(limit)
     }
 
@@ -69,40 +71,32 @@ class ShowsRepository(val traktApi: TraktApi, val tvdbApi: TvdbApi,
 //        val fromShow = show?.let { Maybe.just(mapToSRShow(show)) } ?: Maybe.empty<SRShow>()
 
         val fromWeb = getShowFromWeb(traktId).singleElement()
-                .flatMap({
-                    Maybe.just(mapToSRShow(it))
-                })
 
         return Maybe.concat(showFromDb, fromWeb).firstElement()
     }
 
-    fun getShowFromWeb(traktId: Int) : Flowable<Show>{
+    fun getShowFromWeb(traktId: Int) : Flowable<SRShow>{
         return traktApi.show(traktId)
-                .flatMap {
-                    show ->tvdbApi.images(show.ids.tvdb)
-                            .flatMap { (data) ->
-                                var popularImage : Image? = null
-                                for (image in data) {
-                                    if (popularImage == null) {
-                                        popularImage = image
-                                        continue
-                                    }
-
-                                    if (image.ratings.average > popularImage.ratings.average){
-                                        popularImage = image
-                                    }
-                                }
-                                show.apply {
-                                    image = popularImage?.fileName!!
-                                    thumb = popularImage.thumbnail
-                                }
-                                Flowable.just(show)
-                            }
-                }
+                .flatMap({
+                    Flowable.just(mapToSRShow(it))
+                })
     }
 
     fun images(tvdbId : Int, type: String = "poster") :Flowable<Images>{
         return tvdbApi.images(tvdbId, type)
+    }
+
+    fun updateShowWithImages(show: SRShow) : Maybe<SRShow> {
+        return tvdbApi.images(show.tvdbId)
+                .flatMap { (data) ->
+                    val popularImage = data.maxBy { it.ratings.average }
+                    show.apply {
+                        poster = popularImage?.fileName!!
+                        posterThumb = popularImage.thumbnail
+                    }
+                    Flowable.just(show)
+                }
+                .singleElement()
     }
 
     private fun mapToSRShow(show : Show) : SRShow {
@@ -130,6 +124,7 @@ class ShowsRepository(val traktApi: TraktApi, val tvdbApi: TvdbApi,
     private fun saveTrendingShows(trendingItems: List<SRTrendingItem>) {
         trendingItems.forEach { trendingShow ->
             trendingDao.insert(trendingShow)
+            Timber.tag("DBCheck").d("inserted")
         }
     }
 
