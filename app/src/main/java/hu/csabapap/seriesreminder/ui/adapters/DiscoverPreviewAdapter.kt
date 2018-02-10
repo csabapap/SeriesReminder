@@ -2,6 +2,8 @@ package hu.csabapap.seriesreminder.ui.adapters
 
 import android.content.Context
 import android.support.v4.content.ContextCompat
+import android.support.v7.recyclerview.extensions.DiffCallback
+import android.support.v7.util.DiffUtil
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
@@ -22,11 +24,14 @@ class DiscoverPreviewAdapter : RecyclerView.Adapter<DiscoverPreviewAdapter.Disco
 
     var context: Context? = null
     var showItems: List<ShowItem> = emptyList()
-    set(value) {
-        field = value
-        notifyDataSetChanged()
-    }
+
     var listener: PreviewShowListener? = null
+
+    fun updateItems(newItems: List<ShowItem>) {
+        val diffResult = DiffUtil.calculateDiff(PreviewDiffs(newItems, showItems))
+        showItems = newItems
+        diffResult.dispatchUpdatesTo(this)
+    }
 
     override fun getItemCount(): Int {
         return showItems.size
@@ -100,6 +105,31 @@ class DiscoverPreviewAdapter : RecyclerView.Adapter<DiscoverPreviewAdapter.Disco
         fun setOnClickListener(listener : View.OnClickListener){
             itemView.setOnClickListener(listener)
         }
+    }
+
+    inner class PreviewDiffs(private val newItems: List<ShowItem>,
+                             private val oldItems: List<ShowItem>)
+        : DiffUtil.Callback() {
+
+        override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
+            val oldItem = oldItems[oldItemPosition]
+            val newItem = newItems[newItemPosition]
+
+            return newItem.traktId == oldItem.traktId
+        }
+
+        override fun getOldListSize() = oldItems.size
+
+
+        override fun getNewListSize() = newItems.size
+
+        override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
+            val oldItem = oldItems[oldItemPosition]
+            val newItem = newItems[newItemPosition]
+
+            return oldItem == newItem
+        }
+
     }
 
 }

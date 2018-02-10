@@ -18,7 +18,6 @@ import dagger.android.support.DaggerFragment
 import hu.csabapap.seriesreminder.R
 import hu.csabapap.seriesreminder.ui.adapters.DiscoverPreviewAdapter
 import hu.csabapap.seriesreminder.ui.addshow.AddShowActivity
-import kotlinx.android.synthetic.main.activity_home.*
 import kotlinx.android.synthetic.main.fragment_home.*
 import javax.inject.Inject
 
@@ -75,13 +74,13 @@ class HomeFragment : DaggerFragment(), DiscoverPreviewAdapter.PreviewShowListene
 
         homeViewModel.trendingShowsLiveData.observe(this, Observer {
             it?.apply {
-                trendingShowsAdapter.showItems = it
+                trendingShowsAdapter.updateItems(it)
             }
         })
 
         homeViewModel.popularShowsLiveData.observe(this, Observer {
             it?.apply {
-                popularShowsAdapter.showItems = it
+                popularShowsAdapter.updateItems(it)
             }
         })
     }
