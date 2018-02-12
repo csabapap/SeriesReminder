@@ -4,7 +4,7 @@ import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.ViewModel
 import hu.csabapap.seriesreminder.data.CollectionRepository
 import hu.csabapap.seriesreminder.data.ShowsRepository
-import hu.csabapap.seriesreminder.data.db.entities.CollectionItem
+import hu.csabapap.seriesreminder.data.db.entities.CollectionEntry
 import hu.csabapap.seriesreminder.utils.AppRxSchedulers
 import io.reactivex.Observable
 import timber.log.Timber
@@ -54,7 +54,7 @@ class AddShowViewModel @Inject constructor(
     }
 
     fun addShowToCollection(showId: Int) {
-        collectionRepository.addToCollection(CollectionItem(showId = showId))
+        collectionRepository.addToCollection(CollectionEntry(showId = showId))
                 .subscribeOn(schedulers.io)
                 .observeOn(schedulers.main)
                 .subscribe({

@@ -4,12 +4,16 @@ import android.os.Bundle
 import android.support.design.widget.BottomNavigationView
 import dagger.android.support.DaggerAppCompatActivity
 import hu.csabapap.seriesreminder.R
+import hu.csabapap.seriesreminder.data.db.entities.SRShow
+import hu.csabapap.seriesreminder.ui.main.collection.CollectionFragment
 import hu.csabapap.seriesreminder.ui.main.discover.DiscoverFragment
 import hu.csabapap.seriesreminder.ui.main.home.HomeFragment
 import kotlinx.android.synthetic.main.activity_home.*
+import timber.log.Timber
 
 class HomeActivity : DaggerAppCompatActivity(), HomeFragment.HomeFragmentListener,
-        DiscoverFragment.DiscoverFragmentInteractionListener
+        DiscoverFragment.DiscoverFragmentInteractionListener,
+        CollectionFragment.CollectionItemClickListener
 {
 
     private val mOnNavigationItemSelectedListener = BottomNavigationView.OnNavigationItemSelectedListener { item ->
@@ -34,7 +38,7 @@ class HomeActivity : DaggerAppCompatActivity(), HomeFragment.HomeFragmentListene
             }
             R.id.navigation_dashboard -> {
                 supportFragmentManager.beginTransaction()
-                        .replace(R.id.content, BlankFragment())
+                        .replace(R.id.content, CollectionFragment())
                         .commit()
             }
             R.id.navigation_notifications -> {
@@ -62,5 +66,9 @@ class HomeActivity : DaggerAppCompatActivity(), HomeFragment.HomeFragmentListene
     override fun onNavigateBack() {
         val fragmentManager = supportFragmentManager
         fragmentManager.popBackStackImmediate()
+    }
+
+    override fun onCollectionItemClick(show: SRShow) {
+        Timber.d("item clicked")
     }
 }
