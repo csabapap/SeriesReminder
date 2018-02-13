@@ -1,12 +1,11 @@
 package hu.csabapap.seriesreminder.ui.main.collection
 
+import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProvider
 import android.arch.lifecycle.ViewModelProviders
 import android.content.Context
 import android.os.Bundle
-import android.support.v4.app.Fragment
 import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -15,6 +14,7 @@ import hu.csabapap.seriesreminder.R
 import hu.csabapap.seriesreminder.data.db.entities.SRShow
 import hu.csabapap.seriesreminder.ui.adapters.CollectionAdapter
 import kotlinx.android.synthetic.main.fragment_collection.*
+import timber.log.Timber
 import javax.inject.Inject
 
 class CollectionFragment : DaggerFragment() {
@@ -43,11 +43,13 @@ class CollectionFragment : DaggerFragment() {
         super.onViewCreated(view, savedInstanceState)
         rv_collection.layoutManager = LinearLayoutManager(activity)
         rv_collection.adapter = adapter
-    }
 
-    override fun onStart() {
-        super.onStart()
-        collectionViewModel.getCollection()
+        collectionViewModel.collectionsLiveData.observe(this, Observer {
+            it?.apply {
+                Timber.d("nmb of shows in collection: ${it.size}")
+                adapter.setList(it)
+            }
+        })
     }
 
 
@@ -68,4 +70,4 @@ class CollectionFragment : DaggerFragment() {
     interface CollectionItemClickListener {
         fun onCollectionItemClick(show: SRShow)
     }
-}// Required empty public constructor
+}

@@ -13,10 +13,9 @@ import hu.csabapap.seriesreminder.data.db.entities.SRShow
 import kotlinx.android.synthetic.main.item_collection.view.*
 
 class CollectionAdapter :
-        PagedListAdapter<List<CollectionItem>, CollectionAdapter.CollectionVH>(diffCallback) {
+        PagedListAdapter<CollectionItem, CollectionAdapter.CollectionVH>(diffCallback) {
 
     var context: Context? = null
-    val collection = emptyList<CollectionItem>()
 
     override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): CollectionVH {
         context = parent?.context
@@ -25,12 +24,8 @@ class CollectionAdapter :
     }
 
     override fun onBindViewHolder(holder: CollectionVH?, position: Int) {
-        val show = collection[position].show!!
+        val show = getItem(position)?.show!!
         holder?.bind(show)
-    }
-
-    override fun getItemCount(): Int {
-        return collection.size
     }
 
     inner class CollectionVH(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -42,12 +37,12 @@ class CollectionAdapter :
     }
 
     companion object {
-        val diffCallback = (object: DiffCallback<List<CollectionItem>>() {
-            override fun areItemsTheSame(oldItem: List<CollectionItem>, newItem: List<CollectionItem>): Boolean {
+        val diffCallback = (object: DiffCallback<CollectionItem>() {
+            override fun areItemsTheSame(oldItem: CollectionItem, newItem: CollectionItem): Boolean {
                 return newItem == oldItem
             }
 
-            override fun areContentsTheSame(oldItem: List<CollectionItem>, newItem: List<CollectionItem>): Boolean {
+            override fun areContentsTheSame(oldItem: CollectionItem, newItem: CollectionItem): Boolean {
                 return newItem == oldItem
             }
         })

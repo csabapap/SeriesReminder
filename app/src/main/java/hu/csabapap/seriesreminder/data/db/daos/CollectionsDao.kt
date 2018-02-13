@@ -1,5 +1,9 @@
 package hu.csabapap.seriesreminder.data.db.daos
 
+import android.arch.paging.DataSource
+import android.arch.paging.LivePagedListBuilder
+import android.arch.paging.LivePagedListProvider
+import android.arch.paging.PagedList
 import android.arch.persistence.room.Dao
 import android.arch.persistence.room.Insert
 import android.arch.persistence.room.OnConflictStrategy
@@ -15,8 +19,8 @@ interface CollectionsDao {
     fun insert(collectionItem: CollectionEntry)
 
     @Language("RoomSql")
-    @Query("SELECT * FROM collection LIMIT :limit")
-    fun getCollection(limit: Int) : Flowable<List<CollectionItem>>
+    @Query("SELECT * FROM collection")
+    fun getCollection() : DataSource.Factory<Int, CollectionItem>
 
     @Query("DELETE FROM collection")
     fun deleteAll()
