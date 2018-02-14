@@ -10,7 +10,9 @@ import android.view.ViewGroup
 import hu.csabapap.seriesreminder.R
 import hu.csabapap.seriesreminder.data.db.entities.CollectionItem
 import hu.csabapap.seriesreminder.data.db.entities.SRShow
+import hu.csabapap.seriesreminder.extensions.loadFromTmdbUrl
 import kotlinx.android.synthetic.main.item_collection.view.*
+import timber.log.Timber
 
 class CollectionAdapter :
         PagedListAdapter<CollectionItem, CollectionAdapter.CollectionVH>(diffCallback) {
@@ -31,6 +33,8 @@ class CollectionAdapter :
     inner class CollectionVH(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
         fun bind(show: SRShow) {
+            Timber.d("$show")
+            itemView.poster.loadFromTmdbUrl(show.posterThumb)
             itemView.show_title.text = show.title
         }
 

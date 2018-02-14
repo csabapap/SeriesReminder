@@ -5,8 +5,8 @@ import com.squareup.picasso.Callback
 import com.squareup.picasso.Picasso
 
 
-fun ImageView.loadFromUrl(url: String, callback: Callback? = null) {
+fun ImageView.loadFromTmdbUrl(url: String, callback: Callback? = null) {
     Picasso.with(context)
-            .load(url)
+            .load("https://thetvdb.com/banners/$url")
             .into(this, callback)
 }

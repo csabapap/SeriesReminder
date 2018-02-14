@@ -2,7 +2,6 @@ package hu.csabapap.seriesreminder.ui.adapters
 
 import android.content.Context
 import android.support.v4.content.ContextCompat
-import android.support.v7.recyclerview.extensions.DiffCallback
 import android.support.v7.util.DiffUtil
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
@@ -11,7 +10,7 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import com.squareup.picasso.Callback
 import hu.csabapap.seriesreminder.R
-import hu.csabapap.seriesreminder.extensions.loadFromUrl
+import hu.csabapap.seriesreminder.extensions.loadFromTmdbUrl
 import hu.csabapap.seriesreminder.ui.adapters.items.ShowItem
 import kotlinx.android.synthetic.main.item_trending_show.view.*
 
@@ -66,7 +65,7 @@ class DiscoverPreviewAdapter : RecyclerView.Adapter<DiscoverPreviewAdapter.Disco
                 itemView.show_title.visibility = View.VISIBLE
                 poster?.visibility = View.INVISIBLE
             } else {
-                poster?.loadFromUrl("https://thetvdb.com/banners/${show.poster}", (object: Callback {
+                poster?.loadFromTmdbUrl(show.poster, (object: Callback {
                     override fun onSuccess() {
                         poster.visibility = View.VISIBLE
                         itemView.show_title.visibility = View.GONE

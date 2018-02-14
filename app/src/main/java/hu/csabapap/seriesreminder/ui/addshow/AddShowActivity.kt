@@ -5,7 +5,10 @@ import android.arch.lifecycle.ViewModelProvider
 import android.arch.lifecycle.ViewModelProviders
 import android.content.res.ColorStateList
 import android.graphics.Bitmap
-import android.graphics.drawable.*
+import android.graphics.drawable.Animatable2
+import android.graphics.drawable.AnimatedVectorDrawable
+import android.graphics.drawable.BitmapDrawable
+import android.graphics.drawable.Drawable
 import android.os.Build
 import android.os.Bundle
 import android.support.graphics.drawable.Animatable2Compat
@@ -14,10 +17,9 @@ import android.support.v4.graphics.ColorUtils
 import android.support.v7.graphics.Palette
 import com.squareup.picasso.Callback
 import dagger.android.support.DaggerAppCompatActivity
-import hu.csabapap.seriesreminder.BuildConfig
 import hu.csabapap.seriesreminder.R
 import hu.csabapap.seriesreminder.data.db.entities.SRShow
-import hu.csabapap.seriesreminder.extensions.loadFromUrl
+import hu.csabapap.seriesreminder.extensions.loadFromTmdbUrl
 import kotlinx.android.synthetic.main.activity_add_show.*
 import org.apache.commons.cli.MissingArgumentException
 import javax.inject.Inject
@@ -94,7 +96,7 @@ class AddShowActivity : DaggerAppCompatActivity() {
         tv_overview.text = srShow.overview
         ratings.text = String.format(getString(R.string.ratings_value), (srShow.rating * 10).toInt(), srShow.votes)
         genres.text = srShow.genres
-        poster.loadFromUrl("https://thetvdb.com/banners/${srShow.posterThumb}", (object: Callback {
+        poster.loadFromTmdbUrl(srShow.posterThumb, (object: Callback {
             override fun onSuccess() {
                 val drawable = poster.drawable as BitmapDrawable
                 val bitmap = drawable.bitmap
@@ -106,7 +108,7 @@ class AddShowActivity : DaggerAppCompatActivity() {
             }
 
         }))
-        cover.loadFromUrl("https://thetvdb.com/banners/${srShow.cover}")
+        cover.loadFromTmdbUrl(srShow.cover)
     }
 
     private fun generatePalette(bitmap: Bitmap) {
