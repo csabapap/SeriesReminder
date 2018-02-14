@@ -5,12 +5,16 @@ import android.arch.lifecycle.ViewModelProvider
 import android.arch.lifecycle.ViewModelProviders
 import android.content.res.ColorStateList
 import android.graphics.Bitmap
-import android.graphics.drawable.BitmapDrawable
+import android.graphics.drawable.*
+import android.os.Build
 import android.os.Bundle
+import android.support.graphics.drawable.Animatable2Compat
+import android.support.graphics.drawable.AnimatedVectorDrawableCompat
 import android.support.v4.graphics.ColorUtils
 import android.support.v7.graphics.Palette
 import com.squareup.picasso.Callback
 import dagger.android.support.DaggerAppCompatActivity
+import hu.csabapap.seriesreminder.BuildConfig
 import hu.csabapap.seriesreminder.R
 import hu.csabapap.seriesreminder.data.db.entities.SRShow
 import hu.csabapap.seriesreminder.extensions.loadFromUrl
@@ -47,15 +51,27 @@ class AddShowActivity : DaggerAppCompatActivity() {
             }
         })
 
-        addShowViewModel.addShowLiveData.observe(this, Observer {
-            success -> success?.apply {
-                if (success) {
-                    finish()
-                }
+        btn_add_show.setOnClickListener({
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                val drawable = btn_add_show.drawable as AnimatedVectorDrawable
+                drawable.registerAnimationCallback((object: Animatable2.AnimationCallback() {
+                    override fun onAnimationEnd(drawable: Drawable?) {
+                        finish()
+                    }
+                }))
+                drawable.start()
+            } else {
+                val drawable = btn_add_show.drawable as AnimatedVectorDrawableCompat
+                drawable.registerAnimationCallback((object: Animatable2Compat.AnimationCallback() {
+                    override fun onAnimationEnd(drawable: Drawable?) {
+                        finish()
+                    }
+                }))
+                drawable.start()
             }
-        })
 
-        btn_add_show.setOnClickListener({addShowViewModel.addShowToCollection(showId)})
+            addShowViewModel.addShowToCollection(showId)
+        })
     }
 
     override fun onStart() {
