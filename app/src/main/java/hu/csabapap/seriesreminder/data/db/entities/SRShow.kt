@@ -17,7 +17,15 @@ data class SRShow(
         @ColumnInfo(name="cover_thumb") var coverThumb: String = "",
         @ColumnInfo(name="rating") var rating: Float = 0f,
         @ColumnInfo(name="votes") var votes: Int = 0,
-        @ColumnInfo(name="genres") var genres: String = "") {
+        @ColumnInfo(name="genres") var genres: String = "",
+        @ColumnInfo(name="runtime") var runtime: Int = 0,
+        @ColumnInfo(name="aired_episodes") var airedEpisodes: Int = 0,
+        @ColumnInfo(name="status") var status: String = "",
+        @ColumnInfo(name="network") var network: String = "",
+        @ColumnInfo(name="trailer") var trailer: String = "",
+        @ColumnInfo(name="homepage") var homepage: String = "",
+        @ColumnInfo(name="updated_at") var updatedAt: String = "",
+        @ColumnInfo(name="airs") var airingTime: AiringTime = AiringTime()) {
 
     fun <T> updateProperty(entryVar : KMutableProperty0<T>, updateVal: T) {
         when {

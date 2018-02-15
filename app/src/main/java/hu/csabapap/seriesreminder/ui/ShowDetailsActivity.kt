@@ -71,8 +71,8 @@ class ShowDetailsActivity : AppCompatActivity() {
     private fun displayData(show: Show) {
         show_title.text = show.title
         overview?.text = show.overview
-        Picasso.with(this)
-                .load(show.cover)
-                .into(cover)
+//        Picasso.with(this)
+//                .load(show.cover)
+//                .into(cover)
     }
 }

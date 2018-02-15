@@ -132,6 +132,17 @@ class ShowsRepository(private val traktApi: TraktApi, private val tvdbApi: TvdbA
             updateProperty(this::poster, show.image)
             updateProperty(this::posterThumb, show.thumb)
             updateProperty(this::genres, show.genres.joinToString())
+            updateProperty(this::runtime, show.runtime)
+            updateProperty(this::airedEpisodes, show.aired_episodes)
+            updateProperty(this::status, show.status)
+            updateProperty(this::network, show.network)
+            updateProperty(this::trailer, show.trailer)
+            updateProperty(this::homepage, show.homepage)
+            updateProperty(this::updatedAt, show.updated_at)
+            show.airs?.let {
+                updateProperty(this::airingTime, AiringTime(it.day,
+                        it.time,it.timezone))
+            }
         }
         return srShow
     }
