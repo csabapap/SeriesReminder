@@ -7,6 +7,7 @@ import dagger.android.support.AndroidSupportInjectionModule
 import dagger.android.support.DaggerApplication
 import hu.csabapap.seriesreminder.SRApplication
 import hu.csabapap.seriesreminder.inject.modules.*
+import hu.csabapap.seriesreminder.services.SyncService
 import hu.csabapap.seriesreminder.ui.addshow.AddShowModule
 import javax.inject.Singleton
 
@@ -20,7 +21,9 @@ import javax.inject.Singleton
             DbModule::class,
             SrViewModelModule::class,
             HomeModule::class,
-            AddShowModule::class])
+            AddShowModule::class,
+            ServiceModule::class
+        ])
 interface AppComponent : AndroidInjector<DaggerApplication>{
 
     @Component.Builder

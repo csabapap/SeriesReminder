@@ -23,6 +23,10 @@
         </activity>
         <activity android:name=".ui.ShowDetailsActivity" />
         <activity android:name=".ui.addshow.AddShowActivity" />
+
+        <service
+            android:name=".services.SyncService"
+            android:exported="false"></service>
     </application>
 
 </manifest>

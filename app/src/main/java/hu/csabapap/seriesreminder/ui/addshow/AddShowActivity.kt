@@ -20,6 +20,7 @@ import dagger.android.support.DaggerAppCompatActivity
 import hu.csabapap.seriesreminder.R
 import hu.csabapap.seriesreminder.data.db.entities.SRShow
 import hu.csabapap.seriesreminder.extensions.loadFromTmdbUrl
+import hu.csabapap.seriesreminder.services.SyncService
 import kotlinx.android.synthetic.main.activity_add_show.*
 import org.apache.commons.cli.MissingArgumentException
 import javax.inject.Inject
@@ -73,6 +74,7 @@ class AddShowActivity : DaggerAppCompatActivity() {
             }
 
             addShowViewModel.addShowToCollection(showId)
+            SyncService.syncShow(this, showId)
         })
     }
 

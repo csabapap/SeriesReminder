@@ -7,7 +7,7 @@ import hu.csabapap.seriesreminder.inject.DaggerAppComponent
 
 open class SRApplication : DaggerApplication() {
 
-    lateinit var appComponent : AppComponent
+    private lateinit var appComponent : AppComponent
 
     override fun applicationInjector(): AndroidInjector<out DaggerApplication> {
         appComponent = DaggerAppComponent

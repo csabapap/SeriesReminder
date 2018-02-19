@@ -168,4 +168,8 @@ class ShowsRepository(private val traktApi: TraktApi, private val tvdbApi: TvdbA
     fun updateShow(show: SRShow) {
         showDao.updateShow(show)
     }
+
+    fun fetchNextEpisode(showId: Int) {
+        Timber.d("fetch next episode for show with id $showId")
+    }
 }
