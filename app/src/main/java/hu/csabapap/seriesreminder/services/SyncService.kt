@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.Intent
 import dagger.android.DaggerIntentService
 import hu.csabapap.seriesreminder.data.ShowsRepository
+import timber.log.Timber
 import javax.inject.Inject
 
 class SyncService : DaggerIntentService("SyncService") {
@@ -26,6 +27,7 @@ class SyncService : DaggerIntentService("SyncService") {
 
     private fun syncShow(showId: Int) {
         showsRepository.fetchNextEpisode(showId)
+                .subscribe({Timber.d("next episode saved")}, {Timber.e(it)})
     }
 
     companion object {

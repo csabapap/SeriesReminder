@@ -9,10 +9,7 @@ import hu.csabapap.seriesreminder.SRApplication
 import hu.csabapap.seriesreminder.data.CollectionRepository
 import hu.csabapap.seriesreminder.data.ShowsRepository
 import hu.csabapap.seriesreminder.data.db.SRDatabase
-import hu.csabapap.seriesreminder.data.db.daos.CollectionsDao
-import hu.csabapap.seriesreminder.data.db.daos.PopularDao
-import hu.csabapap.seriesreminder.data.db.daos.SRShowDao
-import hu.csabapap.seriesreminder.data.db.daos.TrendingDao
+import hu.csabapap.seriesreminder.data.db.daos.*
 import hu.csabapap.seriesreminder.data.network.TraktApi
 import hu.csabapap.seriesreminder.data.network.TvdbApi
 import hu.csabapap.seriesreminder.utils.AppRxSchedulers
@@ -40,9 +37,10 @@ class AppModule{
                                tvdbApi: TvdbApi,
                                showDao: SRShowDao,
                                trendingDao: TrendingDao,
-                               popularDao: PopularDao)
+                               popularDao: PopularDao,
+                               nextEpisodeDao: NextEpisodeDao)
             : ShowsRepository {
-        return ShowsRepository(traktApi, tvdbApi, showDao, trendingDao, popularDao)
+        return ShowsRepository(traktApi, tvdbApi, showDao, trendingDao, popularDao, nextEpisodeDao)
     }
 
     @Singleton

@@ -12,8 +12,8 @@ import android.arch.persistence.room.*
         indices = [(Index(value = ["show_id"], unique = true))])
 class NextEpisodeEntry(
     @PrimaryKey(autoGenerate = true) val _id: Long?,
-    @ColumnInfo() val season: String,
-    @ColumnInfo() val number: String,
+    @ColumnInfo() val season: Int,
+    @ColumnInfo() val number: Int,
     @ColumnInfo() val title: String,
     @ColumnInfo(name = "trakt_id") val traktId: Int,
     @ColumnInfo(name = "tvdb_id") val tvdbId: Int,

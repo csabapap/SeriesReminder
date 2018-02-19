@@ -1,5 +1,6 @@
 package hu.csabapap.seriesreminder.data
 
+import hu.csabapap.seriesreminder.data.db.daos.NextEpisodeDao
 import hu.csabapap.seriesreminder.data.db.daos.PopularDao
 import hu.csabapap.seriesreminder.data.db.daos.SRShowDao
 import hu.csabapap.seriesreminder.data.db.daos.TrendingDao
@@ -7,6 +8,7 @@ import hu.csabapap.seriesreminder.data.db.entities.*
 import hu.csabapap.seriesreminder.data.network.TraktApi
 import hu.csabapap.seriesreminder.data.network.TvdbApi
 import hu.csabapap.seriesreminder.data.network.entities.Images
+import hu.csabapap.seriesreminder.data.network.entities.NextEpisode
 import hu.csabapap.seriesreminder.data.network.entities.Show
 import io.reactivex.Flowable
 import io.reactivex.Maybe
@@ -15,7 +17,8 @@ import timber.log.Timber
 
 class ShowsRepository(private val traktApi: TraktApi, private val tvdbApi: TvdbApi,
                       private val showDao: SRShowDao, private val trendingDao: TrendingDao,
-                      private val popularDao: PopularDao){
+                      private val popularDao: PopularDao,
+                      private val nextEpisodeDao: NextEpisodeDao){
 
     var cachedTrendingShows: MutableList<SRShow> = mutableListOf()
 
@@ -169,7 +172,23 @@ class ShowsRepository(private val traktApi: TraktApi, private val tvdbApi: TvdbA
         showDao.updateShow(show)
     }
 
-    fun fetchNextEpisode(showId: Int) {
-        Timber.d("fetch next episode for show with id $showId")
+    fun fetchNextEpisode(showId: Int): Single<NextEpisodeEntry> {
+        return traktApi.nextEpisode(showId)
+                .map { mapToNextEpisodeEntry(it, showId) }
+                .doAfterSuccess { saveNextEpisode(it) }
+    }
+
+    private fun mapToNextEpisodeEntry(nextEpisode: NextEpisode, showId: Int): NextEpisodeEntry {
+        return NextEpisodeEntry(null,
+                nextEpisode.season,
+                nextEpisode.number,
+                nextEpisode.title,
+                nextEpisode.ids.trakt,
+                nextEpisode.ids.tvdb,
+                showId)
+    }
+
+    private fun saveNextEpisode(nextEpisodeEntry: NextEpisodeEntry) {
+        nextEpisodeDao.insert(nextEpisodeEntry)
     }
 }

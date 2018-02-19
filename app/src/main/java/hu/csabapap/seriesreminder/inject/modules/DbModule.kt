@@ -5,10 +5,7 @@ import android.content.Context
 import dagger.Module
 import dagger.Provides
 import hu.csabapap.seriesreminder.data.db.SRDatabase
-import hu.csabapap.seriesreminder.data.db.daos.CollectionsDao
-import hu.csabapap.seriesreminder.data.db.daos.PopularDao
-import hu.csabapap.seriesreminder.data.db.daos.SRShowDao
-import hu.csabapap.seriesreminder.data.db.daos.TrendingDao
+import hu.csabapap.seriesreminder.data.db.daos.*
 import javax.inject.Singleton
 
 @Module
@@ -46,4 +43,9 @@ class DbModule {
         return db.collectionsDao()
     }
 
+    @Singleton
+    @Provides
+    fun providesNextEpisodesDao(db: SRDatabase) : NextEpisodeDao {
+        return db.nextEpisodesDao()
+    }
 }
