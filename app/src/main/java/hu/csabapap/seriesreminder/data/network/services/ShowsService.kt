@@ -1,5 +1,6 @@
 package hu.csabapap.seriesreminder.data.network.services
 
+import hu.csabapap.seriesreminder.data.network.entities.NextEpisode
 import hu.csabapap.seriesreminder.data.network.entities.Show
 import hu.csabapap.seriesreminder.data.network.entities.TrendingShow
 import io.reactivex.Flowable
@@ -21,4 +22,7 @@ interface ShowsService{
 
     @GET("shows/{id}?extended=full")
     fun show(@Path("id") traktId: Int) : Flowable<Show>
+
+    @GET("shows/{id}/next_episode")
+    fun nextEpisode(@Path("id") traktId: Int) : Single<NextEpisode>
 }

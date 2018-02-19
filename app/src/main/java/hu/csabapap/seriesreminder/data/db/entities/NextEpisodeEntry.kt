@@ -10,7 +10,7 @@ import android.arch.persistence.room.*
                 onUpdate = ForeignKey.CASCADE,
                 onDelete = ForeignKey.CASCADE))],
         indices = [(Index(value = ["show_id"], unique = true))])
-class NextEpisode(
+class NextEpisodeEntry(
     @PrimaryKey(autoGenerate = true) val _id: Long?,
     @ColumnInfo() val season: String,
     @ColumnInfo() val number: String,

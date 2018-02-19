@@ -4,10 +4,7 @@ import com.squareup.moshi.FromJson
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.ToJson
 import hu.csabapap.seriesreminder.BuildConfig
-import hu.csabapap.seriesreminder.data.network.entities.Airs
-import hu.csabapap.seriesreminder.data.network.entities.AirsJson
-import hu.csabapap.seriesreminder.data.network.entities.Show
-import hu.csabapap.seriesreminder.data.network.entities.TrendingShow
+import hu.csabapap.seriesreminder.data.network.entities.*
 import hu.csabapap.seriesreminder.data.network.services.ShowsService
 import io.reactivex.Flowable
 import io.reactivex.Single
@@ -27,11 +24,11 @@ class TraktApi {
                 Airs(airs.day ?: "", airs.time ?: "", airs.timezone ?: "")
     }
 
-    val moshi = Moshi.Builder()
+    private val moshi = Moshi.Builder()
             .add(AirsConverter)
             .build()
 
-    val traktApiInterceptor : Interceptor = Interceptor { chain ->
+    private val traktApiInterceptor : Interceptor = Interceptor { chain ->
         val request = chain.request()
         val newRequest = request.newBuilder()
                 .header("Content-type", "application/json")
@@ -41,16 +38,16 @@ class TraktApi {
         chain.proceed(newRequest)
     }
 
-    val loggingInterceptor : HttpLoggingInterceptor = HttpLoggingInterceptor(
+    private val loggingInterceptor : HttpLoggingInterceptor = HttpLoggingInterceptor(
             HttpLoggingInterceptor.Logger { Timber.d(it) })
             .setLevel(HttpLoggingInterceptor.Level.BODY)
 
-    val okHttp: OkHttpClient = OkHttpClient.Builder()
+    private val okHttp: OkHttpClient = OkHttpClient.Builder()
             .addInterceptor(loggingInterceptor)
             .addInterceptor(traktApiInterceptor)
             .build()
 
-    val retrofit: Retrofit = Retrofit.Builder()
+    private val retrofit: Retrofit = Retrofit.Builder()
             .client(okHttp)
             .baseUrl("https://api.trakt.tv")
             .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
@@ -69,4 +66,7 @@ class TraktApi {
         return retrofit.create(ShowsService::class.java).show(traktId)
     }
 
+    fun nextEpisode(traktId: Int) : Single<NextEpisode> {
+        return retrofit.create(ShowsService::class.java).nextEpisode(traktId)
+    }
 }
