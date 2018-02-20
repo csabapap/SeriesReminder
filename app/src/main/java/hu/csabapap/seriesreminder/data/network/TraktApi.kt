@@ -2,10 +2,13 @@ package hu.csabapap.seriesreminder.data.network
 
 import com.squareup.moshi.FromJson
 import com.squareup.moshi.Moshi
-import com.squareup.moshi.ToJson
 import hu.csabapap.seriesreminder.BuildConfig
 import hu.csabapap.seriesreminder.data.network.entities.*
 import hu.csabapap.seriesreminder.data.network.services.ShowsService
+import hu.csabapap.seriesreminder.data.network.states.NextEpisodeError
+import hu.csabapap.seriesreminder.data.network.states.NextEpisodeState
+import hu.csabapap.seriesreminder.data.network.states.NextEpisodeSuccess
+import hu.csabapap.seriesreminder.data.network.states.NoNextEpisode
 import io.reactivex.Flowable
 import io.reactivex.Single
 import okhttp3.Interceptor
@@ -15,6 +18,7 @@ import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.moshi.MoshiConverterFactory
 import timber.log.Timber
+import java.net.HttpURLConnection
 
 class TraktApi {
 

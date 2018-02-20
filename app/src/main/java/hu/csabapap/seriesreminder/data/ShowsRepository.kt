@@ -1,6 +1,6 @@
 package hu.csabapap.seriesreminder.data
 
-import hu.csabapap.seriesreminder.data.db.daos.NextEpisodeDao
+import hu.csabapap.seriesreminder.EpisodesRepository
 import hu.csabapap.seriesreminder.data.db.daos.PopularDao
 import hu.csabapap.seriesreminder.data.db.daos.SRShowDao
 import hu.csabapap.seriesreminder.data.db.daos.TrendingDao
@@ -10,6 +10,10 @@ import hu.csabapap.seriesreminder.data.network.TvdbApi
 import hu.csabapap.seriesreminder.data.network.entities.Images
 import hu.csabapap.seriesreminder.data.network.entities.NextEpisode
 import hu.csabapap.seriesreminder.data.network.entities.Show
+import hu.csabapap.seriesreminder.data.network.states.NextEpisodeError
+import hu.csabapap.seriesreminder.data.network.states.NextEpisodeState
+import hu.csabapap.seriesreminder.data.network.states.NextEpisodeSuccess
+import hu.csabapap.seriesreminder.data.network.states.NoNextEpisode
 import io.reactivex.Flowable
 import io.reactivex.Maybe
 import io.reactivex.Single
@@ -18,7 +22,7 @@ import timber.log.Timber
 class ShowsRepository(private val traktApi: TraktApi, private val tvdbApi: TvdbApi,
                       private val showDao: SRShowDao, private val trendingDao: TrendingDao,
                       private val popularDao: PopularDao,
-                      private val nextEpisodeDao: NextEpisodeDao){
+                      private val episodesRepository: EpisodesRepository){
 
     var cachedTrendingShows: MutableList<SRShow> = mutableListOf()
 
@@ -189,6 +193,6 @@ class ShowsRepository(private val traktApi: TraktApi, private val tvdbApi: TvdbA
     }
 
     private fun saveNextEpisode(nextEpisodeEntry: NextEpisodeEntry) {
-        nextEpisodeDao.insert(nextEpisodeEntry)
+        episodesRepository.insertNextEpisode(nextEpisodeEntry)
     }
 }

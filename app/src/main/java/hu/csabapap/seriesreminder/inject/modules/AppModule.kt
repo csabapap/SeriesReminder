@@ -5,6 +5,7 @@ import android.arch.persistence.room.RoomDatabase
 import android.content.Context
 import dagger.Module
 import dagger.Provides
+import hu.csabapap.seriesreminder.EpisodesRepository
 import hu.csabapap.seriesreminder.SRApplication
 import hu.csabapap.seriesreminder.data.CollectionRepository
 import hu.csabapap.seriesreminder.data.ShowsRepository
@@ -38,9 +39,9 @@ class AppModule{
                                showDao: SRShowDao,
                                trendingDao: TrendingDao,
                                popularDao: PopularDao,
-                               nextEpisodeDao: NextEpisodeDao)
+                               episodesRepository: EpisodesRepository)
             : ShowsRepository {
-        return ShowsRepository(traktApi, tvdbApi, showDao, trendingDao, popularDao, nextEpisodeDao)
+        return ShowsRepository(traktApi, tvdbApi, showDao, trendingDao, popularDao, episodesRepository)
     }
 
     @Singleton

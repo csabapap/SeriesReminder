@@ -1,6 +1,5 @@
 package hu.csabapap.seriesreminder.services
 
-import android.app.IntentService
 import android.content.Context
 import android.content.Intent
 import dagger.android.DaggerIntentService
