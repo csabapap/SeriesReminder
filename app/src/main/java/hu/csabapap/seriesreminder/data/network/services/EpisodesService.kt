@@ -8,7 +8,7 @@ import retrofit2.http.Path
 
 interface EpisodesService {
 
-    @GET("shows/{id}/season/{season_number}/episodes/{episode_number}")
+    @GET("shows/{id}/seasons/{season_number}/episodes/{episode_number}?extended=full")
     fun episode(@Path("id") showId: Int,
                     @Path("season_number") seasonNumber: Int,
                     @Path("episode_number") episodeNumber: Int)
