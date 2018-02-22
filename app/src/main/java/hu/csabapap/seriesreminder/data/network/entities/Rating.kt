@@ -1,16 +1,12 @@
 package hu.csabapap.seriesreminder.data.network.entities
 
-import timber.log.Timber
+import se.ansman.kotshi.JsonSerializable
 
-data class Rating (val average: Float, val count : Int) : Comparable<Rating> {
-    override fun compareTo(other: Rating): Int {
-        Timber.d("${this}; other: $other")
-        var result = when {
+@JsonSerializable
+data class Rating (var average: Float, var count : Int) : Comparable<Rating> {
+    override fun compareTo(other: Rating)  = when {
             average < other.average -> -1
             average > other.average -> 1
             else -> 0
-        }
-        Timber.d("result: $result")
-        return result
     }
 }

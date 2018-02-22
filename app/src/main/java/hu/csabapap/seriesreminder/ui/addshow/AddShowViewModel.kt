@@ -35,7 +35,7 @@ class AddShowViewModel @Inject constructor(
                                 .toObservable()
                                 .flatMap { (data) ->
                                     val image = data
-                                            .maxBy { it.ratings }
+                                            .maxBy { it.ratingsInfo }
                                     image?.apply {
                                         it.coverThumb = thumbnail
                                         it.cover = fileName

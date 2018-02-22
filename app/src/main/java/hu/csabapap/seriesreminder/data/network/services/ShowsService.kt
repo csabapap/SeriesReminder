@@ -25,5 +25,5 @@ interface ShowsService{
     fun show(@Path("id") traktId: Int) : Flowable<Show>
 
     @GET("shows/{id}/next_episode")
-    fun nextEpisode(@Path("id") traktId: Int) : Single<NextEpisode>
+    fun nextEpisode(@Path("id") traktId: Int) : Single<Response<NextEpisode>>
 }

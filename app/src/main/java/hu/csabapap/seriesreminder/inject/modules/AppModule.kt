@@ -1,15 +1,12 @@
 package hu.csabapap.seriesreminder.inject.modules
 
-import android.arch.persistence.room.Room
-import android.arch.persistence.room.RoomDatabase
 import android.content.Context
 import dagger.Module
 import dagger.Provides
-import hu.csabapap.seriesreminder.EpisodesRepository
+import hu.csabapap.seriesreminder.data.EpisodesRepository
 import hu.csabapap.seriesreminder.SRApplication
 import hu.csabapap.seriesreminder.data.CollectionRepository
 import hu.csabapap.seriesreminder.data.ShowsRepository
-import hu.csabapap.seriesreminder.data.db.SRDatabase
 import hu.csabapap.seriesreminder.data.db.daos.*
 import hu.csabapap.seriesreminder.data.network.TraktApi
 import hu.csabapap.seriesreminder.data.network.TvdbApi

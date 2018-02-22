@@ -3,7 +3,10 @@ package hu.csabapap.seriesreminder.services
 import android.content.Context
 import android.content.Intent
 import dagger.android.DaggerIntentService
+import hu.csabapap.seriesreminder.data.EpisodesRepository
 import hu.csabapap.seriesreminder.data.ShowsRepository
+import hu.csabapap.seriesreminder.data.states.*
+import io.reactivex.Single
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -11,6 +14,9 @@ class SyncService : DaggerIntentService("SyncService") {
 
     @Inject
     lateinit var showsRepository: ShowsRepository
+
+    @Inject
+    lateinit var episodesRepository: EpisodesRepository
 
     override fun onHandleIntent(intent: Intent?) {
         if (intent != null) {
@@ -26,11 +32,25 @@ class SyncService : DaggerIntentService("SyncService") {
 
     private fun syncShow(showId: Int) {
         showsRepository.fetchNextEpisode(showId)
-                .subscribe({Timber.d("next episode saved")}, {Timber.e(it)})
+                .flatMap {
+                    when (it) {
+                        is NextEpisodeSuccess -> episodesRepository
+                                .getEpisode(it.nextEpisode.showId, it.nextEpisode.season,
+                                        it.nextEpisode.number)
+                        is NextEpisodeError -> Single.just(EpisodeError)
+                        NoNextEpisode -> Single.just(EpisodeError)
+                    }
+                }
+                .subscribe({
+                    when (it) {
+                        is EpisodeSuccess -> Timber.d("episode: ${it.episode}")
+                        EpisodeError -> Timber.d("no episode found")
+                    }
+                }, {Timber.e(it)})
     }
 
     companion object {
-        private const val ACTION_SYNC_SHOW = "hu.csabapap.seriesreminder.services.action.FOO"
+        private const val ACTION_SYNC_SHOW = "hu.csabapap.seriesreminder.services.action.SyncEpisode"
 
         private const val EXTRA_SHOW_ID = "hu.csabapap.seriesreminder.services.extra.show_id"
 

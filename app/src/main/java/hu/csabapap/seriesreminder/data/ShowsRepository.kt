@@ -1,6 +1,5 @@
 package hu.csabapap.seriesreminder.data
 
-import hu.csabapap.seriesreminder.EpisodesRepository
 import hu.csabapap.seriesreminder.data.db.daos.PopularDao
 import hu.csabapap.seriesreminder.data.db.daos.SRShowDao
 import hu.csabapap.seriesreminder.data.db.daos.TrendingDao
@@ -10,10 +9,10 @@ import hu.csabapap.seriesreminder.data.network.TvdbApi
 import hu.csabapap.seriesreminder.data.network.entities.Images
 import hu.csabapap.seriesreminder.data.network.entities.NextEpisode
 import hu.csabapap.seriesreminder.data.network.entities.Show
-import hu.csabapap.seriesreminder.data.network.states.NextEpisodeError
-import hu.csabapap.seriesreminder.data.network.states.NextEpisodeState
-import hu.csabapap.seriesreminder.data.network.states.NextEpisodeSuccess
-import hu.csabapap.seriesreminder.data.network.states.NoNextEpisode
+import hu.csabapap.seriesreminder.data.states.NextEpisodeError
+import hu.csabapap.seriesreminder.data.states.NextEpisodeState
+import hu.csabapap.seriesreminder.data.states.NextEpisodeSuccess
+import hu.csabapap.seriesreminder.data.states.NoNextEpisode
 import io.reactivex.Flowable
 import io.reactivex.Maybe
 import io.reactivex.Single
@@ -112,7 +111,10 @@ class ShowsRepository(private val traktApi: TraktApi, private val tvdbApi: TvdbA
                         Timber.d("get images for $showId")
                         tvdbApi.images(it.tvdbId)
                                 .flatMap { (data) ->
-                                    val popularImage = data.maxBy { it.ratings.average }
+                                    val popularImage = data.maxBy { image ->
+                                        Timber.d("image: $image")
+                                        image.ratingsInfo.average
+                                    }
                                     it.apply {
                                         poster = popularImage?.fileName!!
                                         posterThumb = popularImage.thumbnail
@@ -136,15 +138,13 @@ class ShowsRepository(private val traktApi: TraktApi, private val tvdbApi: TvdbA
             updateProperty(this::overview, show.overview)
             updateProperty(this::rating, show.rating)
             updateProperty(this::votes, show.votes)
-            updateProperty(this::poster, show.image)
-            updateProperty(this::posterThumb, show.thumb)
             updateProperty(this::genres, show.genres.joinToString())
             updateProperty(this::runtime, show.runtime)
             updateProperty(this::airedEpisodes, show.aired_episodes)
             updateProperty(this::status, show.status)
             updateProperty(this::network, show.network)
-            updateProperty(this::trailer, show.trailer)
-            updateProperty(this::homepage, show.homepage)
+            updateProperty(this::trailer, show.trailer ?: "")
+            updateProperty(this::homepage, show.homepage ?: "")
             updateProperty(this::updatedAt, show.updated_at)
             show.airs?.let {
                 updateProperty(this::airingTime, AiringTime(it.day,
@@ -176,10 +176,20 @@ class ShowsRepository(private val traktApi: TraktApi, private val tvdbApi: TvdbA
         showDao.updateShow(show)
     }
 
-    fun fetchNextEpisode(showId: Int): Single<NextEpisodeEntry> {
+    fun fetchNextEpisode(showId: Int): Single<NextEpisodeState> {
         return traktApi.nextEpisode(showId)
-                .map { mapToNextEpisodeEntry(it, showId) }
-                .doAfterSuccess { saveNextEpisode(it) }
+                .flatMap {
+                    when (it.code()) {
+                        200 -> Single.just(NextEpisodeSuccess(mapToNextEpisodeEntry(it.body()!!, showId)))
+                        204 -> Single.just(NoNextEpisode)
+                        else -> Single.just(NextEpisodeError("error during next episode fetching"))
+                    }
+                }
+                .doAfterSuccess({
+                    if (it is NextEpisodeSuccess) {
+                        saveNextEpisode(it.nextEpisode)
+                    }
+                })
     }
 
     private fun mapToNextEpisodeEntry(nextEpisode: NextEpisode, showId: Int): NextEpisodeEntry {

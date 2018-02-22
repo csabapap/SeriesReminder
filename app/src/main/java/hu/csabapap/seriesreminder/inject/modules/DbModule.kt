@@ -48,4 +48,10 @@ class DbModule {
     fun providesNextEpisodesDao(db: SRDatabase) : NextEpisodeDao {
         return db.nextEpisodesDao()
     }
+
+    @Singleton
+    @Provides
+    fun providesEpisodesDao(db: SRDatabase) : EpisodeDao {
+        return db.episodesDao()
+    }
 }

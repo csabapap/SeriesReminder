@@ -1,35 +1,29 @@
 package hu.csabapap.seriesreminder.data.network
 
-import com.squareup.moshi.FromJson
 import com.squareup.moshi.Moshi
 import hu.csabapap.seriesreminder.BuildConfig
-import hu.csabapap.seriesreminder.data.network.entities.*
+import hu.csabapap.seriesreminder.data.ApplicationJsonAdapterFactory
+import hu.csabapap.seriesreminder.data.network.entities.Episode
+import hu.csabapap.seriesreminder.data.network.entities.NextEpisode
+import hu.csabapap.seriesreminder.data.network.entities.Show
+import hu.csabapap.seriesreminder.data.network.entities.TrendingShow
+import hu.csabapap.seriesreminder.data.network.services.EpisodesService
 import hu.csabapap.seriesreminder.data.network.services.ShowsService
-import hu.csabapap.seriesreminder.data.network.states.NextEpisodeError
-import hu.csabapap.seriesreminder.data.network.states.NextEpisodeState
-import hu.csabapap.seriesreminder.data.network.states.NextEpisodeSuccess
-import hu.csabapap.seriesreminder.data.network.states.NoNextEpisode
 import io.reactivex.Flowable
 import io.reactivex.Single
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
+import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.moshi.MoshiConverterFactory
 import timber.log.Timber
-import java.net.HttpURLConnection
 
 class TraktApi {
 
-    object AirsConverter{
-        @FromJson
-        fun fromAirsJson(airs: AirsJson) =
-                Airs(airs.day ?: "", airs.time ?: "", airs.timezone ?: "")
-    }
-
     private val moshi = Moshi.Builder()
-            .add(AirsConverter)
+            .add(ApplicationJsonAdapterFactory.INSTANCE)
             .build()
 
     private val traktApiInterceptor : Interceptor = Interceptor { chain ->
@@ -70,7 +64,11 @@ class TraktApi {
         return retrofit.create(ShowsService::class.java).show(traktId)
     }
 
-    fun nextEpisode(traktId: Int) : Single<NextEpisode> {
+    fun nextEpisode(traktId: Int) : Single<Response<NextEpisode>> {
         return retrofit.create(ShowsService::class.java).nextEpisode(traktId)
+    }
+
+    fun episode(showId: Int, seasonNumber: Int, number: Int) : Single<Response<Episode>> {
+        return retrofit.create(EpisodesService::class.java).episode(showId, seasonNumber, number)
     }
 }

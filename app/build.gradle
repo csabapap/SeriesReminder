@@ -62,7 +62,6 @@ dependencies {
 
     implementation "android.arch.persistence.room:runtime:${versions.room}"
     implementation "android.arch.persistence.room:rxjava2:${versions.room}"
-    annotationProcessor "android.arch.persistence.room:compiler:${versions.room}"
     kapt "android.arch.persistence.room:compiler:1.0.0"
 
     implementation "android.arch.paging:runtime:1.0.0-alpha4-1"
@@ -76,6 +75,9 @@ dependencies {
     implementation "com.squareup.retrofit2:converter-moshi:${versions.retrofit}"
     implementation "com.squareup.okhttp3:logging-interceptor:3.9.1"
     implementation "com.squareup.picasso:picasso:2.5.2"
+    implementation 'com.squareup.moshi:moshi-kotlin:1.5.0'
+    implementation 'se.ansman.kotshi:api:1.0.1'
+    kapt 'se.ansman.kotshi:compiler:1.0.1'
 
     implementation "com.google.dagger:dagger:${versions.dagger}"
     implementation "com.google.dagger:dagger-android:${versions.dagger}"
