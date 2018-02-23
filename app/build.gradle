@@ -84,6 +84,9 @@ dependencies {
     kapt "com.google.dagger:dagger-compiler:${versions.dagger}"
     kapt "com.google.dagger:dagger-android-processor:${versions.dagger}"
 
+    implementation "org.threeten:threetenbp:1.3.6:no-tzdb"
+    implementation 'com.gabrielittner.threetenbp:lazythreetenbp:0.2.0'
+
     testImplementation "org.mockito:mockito-all:1.10.19"
     testImplementation "org.hamcrest:hamcrest-all:1.3"
     testImplementation "com.nhaarman:mockito-kotlin-kt1.1:1.5.0"
