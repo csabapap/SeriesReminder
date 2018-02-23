@@ -1,6 +1,7 @@
 package hu.csabapap.seriesreminder.data.db.entities
 
 import android.arch.persistence.room.*
+import org.threeten.bp.OffsetDateTime
 import kotlin.reflect.KMutableProperty0
 
 @Entity(tableName = "shows",
@@ -24,7 +25,7 @@ data class SRShow(
         @ColumnInfo(name="network") var network: String = "",
         @ColumnInfo(name="trailer") var trailer: String = "",
         @ColumnInfo(name="homepage") var homepage: String = "",
-        @ColumnInfo(name="updated_at") var updatedAt: String = "",
+        @ColumnInfo(name="updated_at") var updatedAt: OffsetDateTime? = null,
         @ColumnInfo(name="airs") var airingTime: AiringTime = AiringTime()) {
 
     fun <T> updateProperty(entryVar : KMutableProperty0<T>, updateVal: T) {

@@ -16,6 +16,7 @@ import hu.csabapap.seriesreminder.data.states.NoNextEpisode
 import io.reactivex.Flowable
 import io.reactivex.Maybe
 import io.reactivex.Single
+import org.threeten.bp.OffsetDateTime
 import timber.log.Timber
 
 class ShowsRepository(private val traktApi: TraktApi, private val tvdbApi: TvdbApi,
@@ -145,7 +146,7 @@ class ShowsRepository(private val traktApi: TraktApi, private val tvdbApi: TvdbA
             updateProperty(this::network, show.network)
             updateProperty(this::trailer, show.trailer ?: "")
             updateProperty(this::homepage, show.homepage ?: "")
-            updateProperty(this::updatedAt, show.updated_at)
+            updateProperty(this::updatedAt, OffsetDateTime.parse(show.updated_at))
             show.airs?.let {
                 updateProperty(this::airingTime, AiringTime(it.day,
                         it.time,it.timezone))
