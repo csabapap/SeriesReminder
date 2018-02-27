@@ -9,11 +9,10 @@ import hu.csabapap.seriesreminder.R
 import hu.csabapap.seriesreminder.ui.adapters.items.CardItem
 import hu.csabapap.seriesreminder.ui.adapters.items.DiscoverCardItem
 import kotlinx.android.synthetic.main.item_discover_card.view.*
-import timber.log.Timber
 
 class HomeCardsAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
-    var cardItems: MutableList<CardItem> = mutableListOf()
+    private var cardItems: MutableList<CardItem> = mutableListOf()
 
     override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): RecyclerView.ViewHolder {
         val itemView = LayoutInflater.from(parent?.context).inflate(R.layout.item_discover_card, parent, false)
@@ -46,7 +45,7 @@ class HomeCardsAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     fun addCard(card: CardItem) {
         if (cardItems.indexOf(card) == -1) {
             cardItems.add(card)
-            cardItems.sorted()
+            cardItems = cardItems.sortedDescending().toMutableList()
         } else {
             val position = cardItems.indexOf(card)
             cardItems[position] = card
