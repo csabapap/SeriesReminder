@@ -22,7 +22,8 @@ import kotlinx.android.synthetic.main.fragment_home.*
 import javax.inject.Inject
 
 
-class HomeFragment : DaggerFragment(), DiscoverPreviewAdapter.PreviewShowListener {
+class HomeFragment : DaggerFragment(), DiscoverPreviewAdapter.PreviewShowListener,
+        HomeCardsAdapter.CardClickListener {
 
     @Inject
     lateinit var mainViewModelProvider: ViewModelProvider.Factory
@@ -31,7 +32,7 @@ class HomeFragment : DaggerFragment(), DiscoverPreviewAdapter.PreviewShowListene
     lateinit var layoutManager: LinearLayoutManager
     private val trendingShowsAdapter = DiscoverPreviewAdapter()
     private val popularShowsAdapter = DiscoverPreviewAdapter()
-    private val cardsAdapter = HomeCardsAdapter()
+    private val cardsAdapter = HomeCardsAdapter(this)
 
     private var listener: HomeFragmentListener? = null
 
@@ -101,6 +102,7 @@ class HomeFragment : DaggerFragment(), DiscoverPreviewAdapter.PreviewShowListene
         super.onStart()
         homeViewModel.getTrendingShows()
         homeViewModel.getPopularShows()
+        homeViewModel.getNextEpisodes()
     }
 
     override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
@@ -131,13 +133,16 @@ class HomeFragment : DaggerFragment(), DiscoverPreviewAdapter.PreviewShowListene
     }
 
     interface HomeFragmentListener {
-        fun onMoreTrendingClick()
-        fun onMorePopularClick()
+        fun onMoreButtonClick(type: Int)
     }
 
     override fun onItemClick(traktId: Int) {
         val intent = Intent(activity, AddShowActivity::class.java)
         intent.putExtra("show_id", traktId)
         activity?.startActivity(intent)
+    }
+
+    override fun onMoreButtonClick(type: Int) {
+        listener?.onMoreButtonClick(type)
     }
 }

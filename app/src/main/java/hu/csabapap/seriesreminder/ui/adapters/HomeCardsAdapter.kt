@@ -8,9 +8,15 @@ import android.view.ViewGroup
 import hu.csabapap.seriesreminder.R
 import hu.csabapap.seriesreminder.ui.adapters.items.CardItem
 import hu.csabapap.seriesreminder.ui.adapters.items.DiscoverCardItem
+import hu.csabapap.seriesreminder.ui.main.discover.DiscoverFragment
 import kotlinx.android.synthetic.main.item_discover_card.view.*
 
-class HomeCardsAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class HomeCardsAdapter(private val listener: CardClickListener)
+    : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+
+    interface CardClickListener{
+        fun onMoreButtonClick(type: Int)
+    }
 
     private var cardItems: MutableList<CardItem> = mutableListOf()
 
@@ -20,6 +26,16 @@ class HomeCardsAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         discoverCardVH.itemView.rv_shows.adapter = discoverCardVH.previewAdapter
         val layoutManager = discoverCardVH.itemView.rv_shows.layoutManager as LinearLayoutManager
         layoutManager.orientation = LinearLayoutManager.HORIZONTAL
+        discoverCardVH.itemView.more_btn.setOnClickListener {
+            val position = discoverCardVH.layoutPosition
+            if (position != -1) {
+                val cardItem = cardItems[position]
+                when (cardItem.type) {
+                    CardItem.TRENDING_CARD_TYPE -> listener.onMoreButtonClick(DiscoverFragment.TYPE_TRENDING)
+                    CardItem.POPULAR_CARD_TYPE -> listener.onMoreButtonClick(DiscoverFragment.TYPE_POPULAR)
+                }
+            }
+        }
         return discoverCardVH
     }
 

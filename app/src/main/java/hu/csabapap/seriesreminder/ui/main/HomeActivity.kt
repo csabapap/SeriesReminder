@@ -49,16 +49,9 @@ class HomeActivity : DaggerAppCompatActivity(), HomeFragment.HomeFragmentListene
         }
     }
 
-    override fun onMoreTrendingClick() {
+    override fun onMoreButtonClick(type: Int) {
         supportFragmentManager.beginTransaction()
-                .replace(R.id.content, DiscoverFragment.newInstance(DiscoverFragment.TYPE_TRENDING))
-                .addToBackStack("main")
-                .commit()
-    }
-
-    override fun onMorePopularClick() {
-        supportFragmentManager.beginTransaction()
-                .replace(R.id.content, DiscoverFragment.newInstance(DiscoverFragment.TYPE_POPULAR))
+                .replace(R.id.content, DiscoverFragment.newInstance(type))
                 .addToBackStack("main")
                 .commit()
     }

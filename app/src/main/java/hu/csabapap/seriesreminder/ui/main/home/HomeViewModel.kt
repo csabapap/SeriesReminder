@@ -3,6 +3,7 @@ package hu.csabapap.seriesreminder.ui.main.home
 import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.ViewModel
 import hu.csabapap.seriesreminder.R
+import hu.csabapap.seriesreminder.data.EpisodesRepository
 import hu.csabapap.seriesreminder.data.ShowsRepository
 import hu.csabapap.seriesreminder.ui.adapters.items.ShowItem
 import io.reactivex.Flowable
@@ -13,7 +14,9 @@ import io.reactivex.schedulers.Schedulers
 import timber.log.Timber
 import javax.inject.Inject
 
-class HomeViewModel @Inject constructor(private val showsRepository: ShowsRepository) : ViewModel() {
+class HomeViewModel @Inject constructor(private val showsRepository: ShowsRepository,
+                                        private val episodesRepository: EpisodesRepository)
+    : ViewModel() {
 
     private val compositeDisposable = CompositeDisposable()
 
@@ -83,6 +86,15 @@ class HomeViewModel @Inject constructor(private val showsRepository: ShowsReposi
                         {t: Throwable? -> Timber.e(t) })
 
         compositeDisposable.add(disposable)
+    }
+
+    fun getNextEpisodes() {
+        episodesRepository.getNextEpisodes()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe( { nextEpisodes ->
+                    nextEpisodes.forEach { Timber.d("next episode: $it") }
+                }, {Timber.e(it)})
     }
 
     private fun currentViewState() : HomeViewState {

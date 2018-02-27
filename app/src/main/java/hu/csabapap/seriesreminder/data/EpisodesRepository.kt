@@ -3,6 +3,7 @@ package hu.csabapap.seriesreminder.data
 import hu.csabapap.seriesreminder.data.db.daos.EpisodeDao
 import hu.csabapap.seriesreminder.data.db.daos.NextEpisodeDao
 import hu.csabapap.seriesreminder.data.db.entities.NextEpisodeEntry
+import hu.csabapap.seriesreminder.data.db.entities.NextEpisodeItem
 import hu.csabapap.seriesreminder.data.db.entities.SREpisode
 import hu.csabapap.seriesreminder.data.network.TraktApi
 import hu.csabapap.seriesreminder.data.network.TvdbApi
@@ -10,6 +11,7 @@ import hu.csabapap.seriesreminder.data.network.entities.Episode
 import hu.csabapap.seriesreminder.data.states.EpisodeError
 import hu.csabapap.seriesreminder.data.states.EpisodeState
 import hu.csabapap.seriesreminder.data.states.EpisodeSuccess
+import io.reactivex.Maybe
 import io.reactivex.Single
 import timber.log.Timber
 import javax.inject.Inject
@@ -54,4 +56,11 @@ class EpisodesRepository @Inject constructor(
                 showId)
     }
 
+    fun getNextEpisode(showId: Int) : Maybe<NextEpisodeItem> {
+        return nextEpisodeDao.getNextEpisode(showId)
+    }
+
+    fun getNextEpisodes(): Maybe<List<NextEpisodeItem>> {
+        return nextEpisodeDao.getNextEpisodes()
+    }
 }
