@@ -1,5 +1,7 @@
 package hu.csabapap.seriesreminder.ui.adapters.items
 
+import hu.csabapap.seriesreminder.data.db.entities.SREpisode
+
 
 open class CardItem(val type: Int, private val priority: Int) : Comparable<CardItem> {
     override fun compareTo(other: CardItem): Int {
@@ -30,6 +32,7 @@ open class CardItem(val type: Int, private val priority: Int) : Comparable<CardI
     companion object {
         const val TRENDING_CARD_TYPE = 0
         const val POPULAR_CARD_TYPE = 1
+        const val UPCOMING_EPISODE_TYPE = 3
 
         const val PRIORITY_LOW = 0
         const val PRIORITY_MEDIUM = 1
@@ -42,4 +45,10 @@ class DiscoverCardItem(
         val showItems: List<ShowItem>,
         type: Int,
         priority: Int = CardItem.PRIORITY_LOW)
+    : CardItem(type, priority)
+
+class UpcomingEpisodeCardItem(
+        val episode: SREpisode,
+        type: Int,
+        priority: Int = CardItem.PRIORITY_HIGH)
     : CardItem(type, priority)

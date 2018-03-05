@@ -5,6 +5,7 @@ import android.arch.lifecycle.ViewModel
 import hu.csabapap.seriesreminder.R
 import hu.csabapap.seriesreminder.data.EpisodesRepository
 import hu.csabapap.seriesreminder.data.ShowsRepository
+import hu.csabapap.seriesreminder.data.db.entities.SREpisode
 import hu.csabapap.seriesreminder.ui.adapters.items.ShowItem
 import io.reactivex.Flowable
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -24,6 +25,7 @@ class HomeViewModel @Inject constructor(private val showsRepository: ShowsReposi
 
     val trendingShowsLiveData = MutableLiveData<List<ShowItem>>()
     val popularShowsLiveData = MutableLiveData<List<ShowItem>>()
+    val upcomingEpisodesLiveData = MutableLiveData<List<SREpisode>>()
 
     init {
         viewState.value = HomeViewState(displayProgressBar = true)
@@ -90,10 +92,19 @@ class HomeViewModel @Inject constructor(private val showsRepository: ShowsReposi
 
     fun getNextEpisodes() {
         episodesRepository.getNextEpisodes()
+                .toObservable()
+                .flatMapIterable { it }
+                .map {
+                    it.episode!!
+                }
+                .toList()
+                .toMaybe()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe( { nextEpisodes ->
-                    nextEpisodes.forEach { Timber.d("next episode: $it") }
+                    if (nextEpisodes.isEmpty().not()) {
+                        upcomingEpisodesLiveData.value = nextEpisodes
+                    }
                 }, {Timber.e(it)})
     }
 

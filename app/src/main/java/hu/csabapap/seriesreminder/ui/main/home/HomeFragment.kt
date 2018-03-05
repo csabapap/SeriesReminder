@@ -17,6 +17,7 @@ import hu.csabapap.seriesreminder.ui.adapters.DiscoverPreviewAdapter
 import hu.csabapap.seriesreminder.ui.adapters.HomeCardsAdapter
 import hu.csabapap.seriesreminder.ui.adapters.items.CardItem
 import hu.csabapap.seriesreminder.ui.adapters.items.DiscoverCardItem
+import hu.csabapap.seriesreminder.ui.adapters.items.UpcomingEpisodeCardItem
 import hu.csabapap.seriesreminder.ui.addshow.AddShowActivity
 import kotlinx.android.synthetic.main.fragment_home.*
 import javax.inject.Inject
@@ -83,6 +84,12 @@ class HomeFragment : DaggerFragment(), DiscoverPreviewAdapter.PreviewShowListene
         homeViewModel.popularShowsLiveData.observe(this, Observer {
             it?.apply {
                 cardsAdapter.addCard(DiscoverCardItem(getString(R.string.popular_shows), it, CardItem.POPULAR_CARD_TYPE))
+            }
+        })
+
+        homeViewModel.upcomingEpisodesLiveData.observe(this, Observer {
+            it?.apply {
+                cardsAdapter.addCard(UpcomingEpisodeCardItem(it.first(), CardItem.UPCOMING_EPISODE_TYPE))
             }
         })
     }
