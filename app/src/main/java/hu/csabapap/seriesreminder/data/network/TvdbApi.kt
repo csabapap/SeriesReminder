@@ -4,7 +4,9 @@ import hu.csabapap.seriesreminder.BuildConfig
 import hu.csabapap.seriesreminder.data.network.entities.Images
 import hu.csabapap.seriesreminder.data.network.entities.LoginRequest
 import hu.csabapap.seriesreminder.data.network.entities.LoginResponse
+import hu.csabapap.seriesreminder.data.network.entities.TvdbEpisode
 import hu.csabapap.seriesreminder.data.network.services.TvdbAuthService
+import hu.csabapap.seriesreminder.data.network.services.TvdbEpisodeService
 import hu.csabapap.seriesreminder.data.network.services.TvdbImagesService
 import io.reactivex.Single
 import okhttp3.OkHttpClient
@@ -43,7 +45,7 @@ class TvdbApi {
             })
             .build()
 
-    var retrofit: Retrofit = Retrofit.Builder()
+    private var retrofit: Retrofit = Retrofit.Builder()
             .client(okHttp)
             .baseUrl("https://api.thetvdb.com/")
             .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
@@ -51,7 +53,6 @@ class TvdbApi {
             .build()
 
     var token: String? = null
-        get
         set(value){
             field = value
             reInitRetrofit()
@@ -80,5 +81,9 @@ class TvdbApi {
 
     fun images(tvdbId : Int, type : String = "poster"): Single<Images>{
         return retrofit.create(TvdbImagesService::class.java).images(tvdbId, type)
+    }
+
+    fun episode(tvdbId: Int): Single<TvdbEpisode>{
+        return retrofit.create(TvdbEpisodeService::class.java).episode(tvdbId)
     }
 }
