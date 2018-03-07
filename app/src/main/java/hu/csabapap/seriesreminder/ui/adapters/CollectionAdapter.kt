@@ -2,7 +2,7 @@ package hu.csabapap.seriesreminder.ui.adapters
 
 import android.arch.paging.PagedListAdapter
 import android.content.Context
-import android.support.v7.recyclerview.extensions.DiffCallback
+import android.support.v7.util.DiffUtil
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
@@ -41,7 +41,7 @@ class CollectionAdapter :
     }
 
     companion object {
-        val diffCallback = (object: DiffCallback<CollectionItem>() {
+        val diffCallback = (object: DiffUtil.ItemCallback<CollectionItem>() {
             override fun areItemsTheSame(oldItem: CollectionItem, newItem: CollectionItem): Boolean {
                 return newItem == oldItem
             }

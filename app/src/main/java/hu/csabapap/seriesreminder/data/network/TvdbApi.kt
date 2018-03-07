@@ -1,16 +1,12 @@
 package hu.csabapap.seriesreminder.data.network
 
-import android.util.Log
 import hu.csabapap.seriesreminder.BuildConfig
 import hu.csabapap.seriesreminder.data.network.entities.Images
 import hu.csabapap.seriesreminder.data.network.entities.LoginRequest
 import hu.csabapap.seriesreminder.data.network.entities.LoginResponse
 import hu.csabapap.seriesreminder.data.network.services.TvdbAuthService
 import hu.csabapap.seriesreminder.data.network.services.TvdbImagesService
-import io.reactivex.Flowable
-import io.reactivex.Observable
 import io.reactivex.Single
-import okhttp3.Authenticator
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Call
@@ -18,14 +14,15 @@ import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.moshi.MoshiConverterFactory
+import timber.log.Timber
 
 class TvdbApi {
 
-    val loggingInterceptor : HttpLoggingInterceptor = HttpLoggingInterceptor(
-            HttpLoggingInterceptor.Logger { Log.d("OkHttpTvdb", it) })
+    private val loggingInterceptor : HttpLoggingInterceptor = HttpLoggingInterceptor(
+            HttpLoggingInterceptor.Logger { Timber.tag("OkHttpTvdb").d(it) })
             .setLevel(HttpLoggingInterceptor.Level.BODY)
 
-    var okHttp: OkHttpClient = OkHttpClient.Builder()
+    private var okHttp: OkHttpClient = OkHttpClient.Builder()
             .addInterceptor(loggingInterceptor)
             .authenticator({ _, response ->
                 if ("Bearer $token" == response.header("Authentictor")){
@@ -33,7 +30,7 @@ class TvdbApi {
                 }else {
                     val loginResponse: Response<LoginResponse>? = login().execute()
                     val tokenResponse: LoginResponse? = loginResponse?.body()
-                    var authToken = ""
+                    val authToken: String
                     if (loginResponse != null && loginResponse.isSuccessful
                             && tokenResponse != null) {
                         authToken = tokenResponse.token
