@@ -21,4 +21,5 @@ data class SREpisode(@PrimaryKey val _id: Long?,
                      @ColumnInfo(name = "updated_at") val updatedAt: String,
                      val rating: Float,
                      val votes: Int,
+                     val image: String,
                      @ColumnInfo(name = "show_id") val showId: Int)

@@ -1,10 +1,7 @@
 package hu.csabapap.seriesreminder.data.network
 
 import hu.csabapap.seriesreminder.BuildConfig
-import hu.csabapap.seriesreminder.data.network.entities.Images
-import hu.csabapap.seriesreminder.data.network.entities.LoginRequest
-import hu.csabapap.seriesreminder.data.network.entities.LoginResponse
-import hu.csabapap.seriesreminder.data.network.entities.TvdbEpisode
+import hu.csabapap.seriesreminder.data.network.entities.*
 import hu.csabapap.seriesreminder.data.network.services.TvdbAuthService
 import hu.csabapap.seriesreminder.data.network.services.TvdbEpisodeService
 import hu.csabapap.seriesreminder.data.network.services.TvdbImagesService
@@ -83,7 +80,7 @@ class TvdbApi {
         return retrofit.create(TvdbImagesService::class.java).images(tvdbId, type)
     }
 
-    fun episode(tvdbId: Int): Single<TvdbEpisode>{
+    fun episode(tvdbId: Int): Single<EpisodeData>{
         return retrofit.create(TvdbEpisodeService::class.java).episode(tvdbId)
     }
 }
