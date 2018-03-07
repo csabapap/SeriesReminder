@@ -27,14 +27,14 @@ internal class GridAdapter : RecyclerView.Adapter<GridAdapter.GridViewHolder>() 
         notifyDataSetChanged()
     }
 
-    override fun onBindViewHolder(holder: GridViewHolder?, position: Int) {
+    override fun onBindViewHolder(holder: GridViewHolder, position: Int) {
 
         val show = shows!![position].show ?: return
 
         Picasso.with(context)
                 .load("https://thetvdb.com/banners/${show.posterThumb}")
-                .into(holder?.poster)
-        holder?.setOnClickListener(View.OnClickListener {
+                .into(holder.poster)
+        holder.setOnClickListener(View.OnClickListener {
             listener?.onItemClick(show.traktId)
         })
 
@@ -44,8 +44,8 @@ internal class GridAdapter : RecyclerView.Adapter<GridAdapter.GridViewHolder>() 
         return shows?.size ?: 0
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): GridViewHolder {
-        context = parent?.context!!
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): GridViewHolder {
+        context = parent.context!!
         val itemView = LayoutInflater.from(context).inflate(R.layout.grid_item, parent, false)
 
         return GridViewHolder(itemView)

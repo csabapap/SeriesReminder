@@ -22,9 +22,9 @@ class HomeCardsAdapter(private val listener: CardClickListener)
 
     private var cardItems: MutableList<CardItem> = mutableListOf()
 
-    override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): RecyclerView.ViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         if (viewType == CardItem.POPULAR_CARD_TYPE || viewType == CardItem.TRENDING_CARD_TYPE) {
-            val itemView = LayoutInflater.from(parent?.context).inflate(R.layout.item_discover_card, parent, false)
+            val itemView = LayoutInflater.from(parent.context).inflate(R.layout.item_discover_card, parent, false)
             val discoverCardVH = DiscoverCardVH(itemView)
             discoverCardVH.itemView.rv_shows.adapter = discoverCardVH.previewAdapter
             val layoutManager = discoverCardVH.itemView.rv_shows.layoutManager as LinearLayoutManager
@@ -42,7 +42,7 @@ class HomeCardsAdapter(private val listener: CardClickListener)
             return discoverCardVH
         }
 
-        val itemView = LayoutInflater.from(parent?.context).inflate(R.layout.item_episode_card, parent, false)
+        val itemView = LayoutInflater.from(parent.context).inflate(R.layout.item_episode_card, parent, false)
         return EpisodeCardVH(itemView)
 
     }

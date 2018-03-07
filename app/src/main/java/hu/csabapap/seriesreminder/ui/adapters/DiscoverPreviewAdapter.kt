@@ -36,8 +36,8 @@ class DiscoverPreviewAdapter : RecyclerView.Adapter<DiscoverPreviewAdapter.Disco
         return showItems.size
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): DiscoverShowVh {
-        context = parent?.context
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): DiscoverShowVh {
+        context = parent.context
         val itemView = LayoutInflater.from(context).inflate(R.layout.item_trending_show, parent, false)
         val showItem = DiscoverShowVh(itemView)
         showItem.setOnClickListener(View.OnClickListener {
@@ -50,9 +50,9 @@ class DiscoverPreviewAdapter : RecyclerView.Adapter<DiscoverPreviewAdapter.Disco
         return showItem
     }
 
-    override fun onBindViewHolder(holder: DiscoverShowVh?, position: Int) {
+    override fun onBindViewHolder(holder: DiscoverShowVh, position: Int) {
         val item  = showItems[position]
-        holder?.bind(item, position)
+        holder.bind(item, position)
     }
 
     inner class DiscoverShowVh(itemView: View) : RecyclerView.ViewHolder(itemView){

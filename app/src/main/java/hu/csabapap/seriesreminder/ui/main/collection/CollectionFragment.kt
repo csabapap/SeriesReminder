@@ -47,7 +47,7 @@ class CollectionFragment : DaggerFragment() {
         collectionViewModel.collectionsLiveData.observe(this, Observer {
             it?.apply {
                 Timber.d("nmb of shows in collection: ${it.size}")
-                adapter.setList(it)
+                adapter.submitList(it)
             }
         })
     }

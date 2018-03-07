@@ -19,15 +19,15 @@ class CollectionAdapter :
 
     var context: Context? = null
 
-    override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): CollectionVH {
-        context = parent?.context
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CollectionVH {
+        context = parent.context
         val itemView = LayoutInflater.from(context).inflate(R.layout.item_collection, parent, false)
         return CollectionVH(itemView)
     }
 
-    override fun onBindViewHolder(holder: CollectionVH?, position: Int) {
+    override fun onBindViewHolder(holder: CollectionVH, position: Int) {
         val show = getItem(position)?.show!!
-        holder?.bind(show)
+        holder.bind(show)
     }
 
     inner class CollectionVH(itemView: View) : RecyclerView.ViewHolder(itemView) {
