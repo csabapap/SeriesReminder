@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import hu.csabapap.seriesreminder.R
+import hu.csabapap.seriesreminder.extensions.loadFromTmdbUrl
 import hu.csabapap.seriesreminder.ui.adapters.items.CardItem
 import hu.csabapap.seriesreminder.ui.adapters.items.DiscoverCardItem
 import hu.csabapap.seriesreminder.ui.adapters.items.UpcomingEpisodeCardItem
@@ -87,6 +88,10 @@ class HomeCardsAdapter(private val listener: CardClickListener)
         fun bind(cardItem: UpcomingEpisodeCardItem) {
             itemView.title.text = cardItem.episode.title
             itemView.episode_overview.text = cardItem.episode.overview
+            val imagePath = cardItem.episode.image
+            if (imagePath.isEmpty().not()) {
+                itemView.episode_image.loadFromTmdbUrl(imagePath)
+            }
         }
     }
 }
