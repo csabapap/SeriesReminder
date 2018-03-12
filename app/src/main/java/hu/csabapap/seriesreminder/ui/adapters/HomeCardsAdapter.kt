@@ -21,6 +21,7 @@ class HomeCardsAdapter(private val listener: CardClickListener)
         fun onMoreButtonClick(type: Int)
     }
 
+    var previewShowListener: DiscoverPreviewAdapter.PreviewShowListener? = null
     private var cardItems: MutableList<CardItem> = mutableListOf()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
@@ -81,6 +82,9 @@ class HomeCardsAdapter(private val listener: CardClickListener)
         fun bind(discoverCardItem: DiscoverCardItem) {
             itemView.card_title.text = discoverCardItem.title
             previewAdapter.updateItems(discoverCardItem.showItems)
+            previewShowListener?.apply {
+                previewAdapter.listener = previewShowListener
+            }
         }
     }
 

@@ -31,8 +31,6 @@ class HomeFragment : DaggerFragment(), DiscoverPreviewAdapter.PreviewShowListene
     private lateinit var homeViewModel: HomeViewModel
 
     lateinit var layoutManager: LinearLayoutManager
-    private val trendingShowsAdapter = DiscoverPreviewAdapter()
-    private val popularShowsAdapter = DiscoverPreviewAdapter()
     private val cardsAdapter = HomeCardsAdapter(this)
 
     private var listener: HomeFragmentListener? = null
@@ -66,8 +64,7 @@ class HomeFragment : DaggerFragment(), DiscoverPreviewAdapter.PreviewShowListene
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
-        trendingShowsAdapter.listener = this
-        popularShowsAdapter.listener = this
+        cardsAdapter.previewShowListener = this
 
         homeViewModel.viewState.observe(this, Observer {
             it?.apply {
