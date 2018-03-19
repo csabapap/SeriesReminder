@@ -1,5 +1,6 @@
 package hu.csabapap.seriesreminder.ui.adapters
 
+import android.content.Context
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
@@ -21,12 +22,14 @@ class HomeCardsAdapter(private val listener: CardClickListener)
         fun onMoreButtonClick(type: Int)
     }
 
+    lateinit var context: Context
     var previewShowListener: DiscoverPreviewAdapter.PreviewShowListener? = null
     private var cardItems: MutableList<CardItem> = mutableListOf()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
+        context = parent.context
         if (viewType == CardItem.POPULAR_CARD_TYPE || viewType == CardItem.TRENDING_CARD_TYPE) {
-            val itemView = LayoutInflater.from(parent.context).inflate(R.layout.item_discover_card, parent, false)
+            val itemView = LayoutInflater.from(context).inflate(R.layout.item_discover_card, parent, false)
             val discoverCardVH = DiscoverCardVH(itemView)
             discoverCardVH.itemView.rv_shows.adapter = discoverCardVH.previewAdapter
             val layoutManager = discoverCardVH.itemView.rv_shows.layoutManager as LinearLayoutManager
@@ -44,7 +47,7 @@ class HomeCardsAdapter(private val listener: CardClickListener)
             return discoverCardVH
         }
 
-        val itemView = LayoutInflater.from(parent.context).inflate(R.layout.item_episode_card, parent, false)
+        val itemView = LayoutInflater.from(context).inflate(R.layout.item_episode_card, parent, false)
         return EpisodeCardVH(itemView)
 
     }
@@ -91,7 +94,10 @@ class HomeCardsAdapter(private val listener: CardClickListener)
     inner class EpisodeCardVH(itemView: View) : RecyclerView.ViewHolder(itemView) {
         fun bind(cardItem: UpcomingEpisodeCardItem) {
             itemView.title.text = cardItem.episode.title
-            itemView.episode_overview.text = cardItem.episode.overview
+            val episodeInfo = String.format(context.getString(R.string.episode_number),
+                    cardItem.episode.season,
+                    cardItem.episode.number)
+            itemView.episode_info.text = episodeInfo
             val imagePath = cardItem.episode.image
             if (imagePath.isEmpty().not()) {
                 itemView.episode_image.loadFromTmdbUrl(imagePath)
