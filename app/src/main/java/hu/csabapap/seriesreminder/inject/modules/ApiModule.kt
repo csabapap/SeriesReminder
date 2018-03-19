@@ -8,6 +8,8 @@ import hu.csabapap.seriesreminder.data.db.daos.SRShowDao
 import hu.csabapap.seriesreminder.data.db.daos.TrendingDao
 import hu.csabapap.seriesreminder.data.network.TraktApi
 import hu.csabapap.seriesreminder.data.network.TvdbApi
+import retrofit2.Retrofit
+import javax.inject.Named
 import javax.inject.Singleton
 
 @Module
@@ -15,8 +17,8 @@ class ApiModule {
 
     @Singleton
     @Provides
-    fun provideTraktApiModule() : TraktApi{
-        return TraktApi()
+    fun provideTraktApiModule(@Named("trakt") retrofit: Retrofit) : TraktApi{
+        return TraktApi(retrofit)
     }
 
     @Singleton
