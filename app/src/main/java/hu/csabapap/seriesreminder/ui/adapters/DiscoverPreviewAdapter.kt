@@ -65,7 +65,11 @@ class DiscoverPreviewAdapter : RecyclerView.Adapter<DiscoverPreviewAdapter.Disco
                 itemView.show_title.visibility = View.VISIBLE
                 poster?.visibility = View.INVISIBLE
             } else {
-                poster?.loadFromTmdbUrl(show.poster, (object: Callback {
+                var placeholder = R.color.item_background_light
+                if (position % 2 != 0) {
+                    placeholder = R.color.item_background_dark
+                }
+                poster?.loadFromTmdbUrl(show.poster, placeholder, (object: Callback {
                     override fun onSuccess() {
                         poster.visibility = View.VISIBLE
                         itemView.show_title.visibility = View.GONE
@@ -90,14 +94,6 @@ class DiscoverPreviewAdapter : RecyclerView.Adapter<DiscoverPreviewAdapter.Disco
                 itemView.extra_value.visibility = View.VISIBLE
             } else {
                 itemView.extra_value.visibility = View.GONE
-            }
-
-            if (position % 2 == 0) {
-                itemView.setBackgroundColor(
-                        ContextCompat.getColor(context!!, R.color.item_background_light))
-            } else {
-                itemView.setBackgroundColor(
-                        ContextCompat.getColor(context!!, R.color.item_background_dark))
             }
         }
 

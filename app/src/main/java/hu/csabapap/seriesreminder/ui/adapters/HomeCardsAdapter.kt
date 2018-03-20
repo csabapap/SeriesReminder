@@ -100,7 +100,7 @@ class HomeCardsAdapter(private val listener: CardClickListener)
             itemView.episode_info.text = episodeInfo
             val imagePath = cardItem.episode.image
             if (imagePath.isEmpty().not()) {
-                itemView.episode_image.loadFromTmdbUrl(imagePath)
+                itemView.episode_image.loadFromTmdbUrl(imagePath, R.color.item_background_dark)
             }
         }
     }
