@@ -40,7 +40,7 @@ class NetworkModule {
     @Provides
     fun providesOkHttp(traktApiInterceptor: Interceptor): OkHttpClient {
         val loggingInterceptor : HttpLoggingInterceptor = HttpLoggingInterceptor(
-                HttpLoggingInterceptor.Logger { Timber.d(it) })
+                HttpLoggingInterceptor.Logger { Timber.tag("TraktOkHttp").d(it) })
                 .setLevel(HttpLoggingInterceptor.Level.BODY)
         return OkHttpClient.Builder()
                 .addInterceptor(loggingInterceptor)

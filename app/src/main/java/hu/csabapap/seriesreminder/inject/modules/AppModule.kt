@@ -6,6 +6,7 @@ import dagger.Provides
 import hu.csabapap.seriesreminder.data.EpisodesRepository
 import hu.csabapap.seriesreminder.SRApplication
 import hu.csabapap.seriesreminder.data.CollectionRepository
+import hu.csabapap.seriesreminder.data.SeasonsRepository
 import hu.csabapap.seriesreminder.data.ShowsRepository
 import hu.csabapap.seriesreminder.data.db.daos.*
 import hu.csabapap.seriesreminder.data.network.TraktApi
@@ -36,9 +37,11 @@ class AppModule{
                                showDao: SRShowDao,
                                trendingDao: TrendingDao,
                                popularDao: PopularDao,
+                               seasonsRepository: SeasonsRepository,
                                episodesRepository: EpisodesRepository)
             : ShowsRepository {
-        return ShowsRepository(traktApi, tvdbApi, showDao, trendingDao, popularDao, episodesRepository)
+        return ShowsRepository(traktApi, tvdbApi, showDao, trendingDao, popularDao,
+                seasonsRepository, episodesRepository)
     }
 
     @Singleton

@@ -1,10 +1,8 @@
 package hu.csabapap.seriesreminder.data.network
 
-import hu.csabapap.seriesreminder.data.network.entities.Episode
-import hu.csabapap.seriesreminder.data.network.entities.NextEpisode
-import hu.csabapap.seriesreminder.data.network.entities.Show
-import hu.csabapap.seriesreminder.data.network.entities.TrendingShow
+import hu.csabapap.seriesreminder.data.network.entities.*
 import hu.csabapap.seriesreminder.data.network.services.EpisodesService
+import hu.csabapap.seriesreminder.data.network.services.SeasonsService
 import hu.csabapap.seriesreminder.data.network.services.ShowsService
 import io.reactivex.Flowable
 import io.reactivex.Single
@@ -25,6 +23,10 @@ class TraktApi(private val retrofit: Retrofit) {
 
     fun show(traktId: Int) : Flowable<Show>{
         return retrofit.create(ShowsService::class.java).show(traktId)
+    }
+
+    fun seasons(showId: Int): Single<List<Season>> {
+        return retrofit.create(SeasonsService::class.java).seasons(showId)
     }
 
     fun nextEpisode(traktId: Int) : Single<Response<NextEpisode>> {

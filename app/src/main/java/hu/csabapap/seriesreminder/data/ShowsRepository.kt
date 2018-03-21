@@ -22,6 +22,7 @@ import timber.log.Timber
 class ShowsRepository(private val traktApi: TraktApi, private val tvdbApi: TvdbApi,
                       private val showDao: SRShowDao, private val trendingDao: TrendingDao,
                       private val popularDao: PopularDao,
+                      private val seasonsRepository: SeasonsRepository,
                       private val episodesRepository: EpisodesRepository){
 
     var cachedTrendingShows: MutableList<SRShow> = mutableListOf()
@@ -205,5 +206,9 @@ class ShowsRepository(private val traktApi: TraktApi, private val tvdbApi: TvdbA
 
     private fun saveNextEpisode(nextEpisodeEntry: NextEpisodeEntry) {
         episodesRepository.insertNextEpisode(nextEpisodeEntry)
+    }
+
+    fun getSeasons(showId: Int): Single<List<SRSeason>> {
+        return seasonsRepository.getSeasons(showId)
     }
 }
