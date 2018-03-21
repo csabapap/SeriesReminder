@@ -11,7 +11,8 @@ import hu.csabapap.seriesreminder.data.db.entities.*
     (SRPopularItem::class),
     (CollectionEntry::class),
     (NextEpisodeEntry::class),
-    (SREpisode::class)], version = 2)
+    (SRSeason::class),
+    (SREpisode::class)], version = 1)
 @TypeConverters(AiringTime::class, SRTypeConverters::class)
 abstract class SRDatabase : RoomDatabase(){
     abstract fun showDao() : SRShowDao
