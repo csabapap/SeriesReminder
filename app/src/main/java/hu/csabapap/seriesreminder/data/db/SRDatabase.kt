@@ -20,5 +20,6 @@ abstract class SRDatabase : RoomDatabase(){
     abstract fun popularDao() : PopularDao
     abstract fun collectionsDao(): CollectionsDao
     abstract fun nextEpisodesDao(): NextEpisodeDao
+    abstract fun seasonsDao(): SeasonsDao
     abstract fun episodesDao(): EpisodeDao
 }

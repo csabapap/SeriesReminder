@@ -51,6 +51,12 @@ class DbModule {
 
     @Singleton
     @Provides
+    fun providesSeasonsDao(db: SRDatabase) : SeasonsDao {
+        return db.seasonsDao()
+    }
+
+    @Singleton
+    @Provides
     fun providesEpisodesDao(db: SRDatabase) : EpisodeDao {
         return db.episodesDao()
     }

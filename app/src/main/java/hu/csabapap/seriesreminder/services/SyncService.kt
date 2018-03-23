@@ -41,11 +41,10 @@ class SyncService : DaggerIntentService("SyncService") {
                         NoNextEpisode -> Single.just(EpisodeError)
                     }
                 }
+                .toCompletable()
+                .andThen(showsRepository.getSeasons(showId))
                 .subscribe({
-                    when (it) {
-                        is EpisodeSuccess -> Timber.d("episode: ${it.episode}")
-                        EpisodeError -> Timber.d("no episode found")
-                    }
+
                 }, {Timber.e(it)})
     }
 

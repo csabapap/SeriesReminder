@@ -209,6 +209,7 @@ class ShowsRepository(private val traktApi: TraktApi, private val tvdbApi: TvdbA
     }
 
     fun getSeasons(showId: Int): Single<List<SRSeason>> {
+        Timber.d("get seasons for show")
         return seasonsRepository.getSeasons(showId)
     }
 }
