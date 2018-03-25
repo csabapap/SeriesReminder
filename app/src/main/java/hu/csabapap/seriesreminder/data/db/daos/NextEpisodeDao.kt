@@ -5,6 +5,7 @@ import android.arch.persistence.room.Insert
 import android.arch.persistence.room.Query
 import hu.csabapap.seriesreminder.data.db.entities.NextEpisodeEntry
 import hu.csabapap.seriesreminder.data.db.entities.NextEpisodeItem
+import io.reactivex.Flowable
 import io.reactivex.Maybe
 
 @Dao
@@ -17,5 +18,5 @@ interface NextEpisodeDao {
     fun getNextEpisode(showId: Int) : Maybe<NextEpisodeItem>
 
     @Query("SELECT * FROM next_episodes LIMIT 5")
-    fun getNextEpisodes() : Maybe<List<NextEpisodeItem>>
+    fun getNextEpisodes() : Flowable<List<NextEpisodeItem>>
 }

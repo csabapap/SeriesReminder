@@ -58,7 +58,6 @@ class HomeViewModel @Inject constructor(private val showsRepository: ShowsReposi
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({
-                    Timber.d("number of trending show: ${it.size}")
                     if (it.isEmpty().not()) {
                          viewState.value = currentViewState().copy(displayProgressBar = false, displayTrendingCard = true)
                         trendingShowsLiveData.value = it
@@ -92,16 +91,19 @@ class HomeViewModel @Inject constructor(private val showsRepository: ShowsReposi
 
     fun getNextEpisodes() {
         episodesRepository.getNextEpisodes()
-                .toObservable()
-                .flatMapIterable { it }
                 .map {
-                    it.episode!!
+                    val episodes = mutableListOf<SREpisode>()
+                    it.forEach { nextEpisode ->
+                        nextEpisode.episode?.let { srEpisode ->
+                            episodes.add(srEpisode)
+                        }
+                    }
+                    episodes
                 }
-                .toList()
-                .toMaybe()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe( { nextEpisodes ->
+                    Timber.d("number of next episodes: ${nextEpisodes.size}")
                     if (nextEpisodes.isEmpty().not()) {
                         upcomingEpisodesLiveData.value = nextEpisodes
                     }

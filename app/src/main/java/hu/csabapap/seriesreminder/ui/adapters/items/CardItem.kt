@@ -48,7 +48,7 @@ class DiscoverCardItem(
     : CardItem(type, priority)
 
 class UpcomingEpisodeCardItem(
-        val episode: SREpisode,
+        val episodes: List<SREpisode>,
         type: Int,
         priority: Int = CardItem.PRIORITY_HIGH)
     : CardItem(type, priority)

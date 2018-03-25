@@ -86,7 +86,7 @@ class HomeFragment : DaggerFragment(), DiscoverPreviewAdapter.PreviewShowListene
 
         homeViewModel.upcomingEpisodesLiveData.observe(this, Observer {
             it?.apply {
-                cardsAdapter.addCard(UpcomingEpisodeCardItem(it.first(), CardItem.UPCOMING_EPISODE_TYPE))
+                cardsAdapter.addCard(UpcomingEpisodeCardItem(it, CardItem.UPCOMING_EPISODE_TYPE))
             }
         })
     }

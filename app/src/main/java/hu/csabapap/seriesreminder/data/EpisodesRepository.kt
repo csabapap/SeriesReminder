@@ -7,6 +7,7 @@ import hu.csabapap.seriesreminder.data.db.entities.SREpisode
 import hu.csabapap.seriesreminder.data.network.TraktApi
 import hu.csabapap.seriesreminder.data.network.TvdbApi
 import hu.csabapap.seriesreminder.data.network.entities.Episode
+import hu.csabapap.seriesreminder.data.network.entities.EpisodeData
 import hu.csabapap.seriesreminder.data.states.EpisodeError
 import hu.csabapap.seriesreminder.data.states.EpisodeState
 import hu.csabapap.seriesreminder.data.states.EpisodeSuccess
@@ -49,8 +50,21 @@ class EpisodesRepository @Inject constructor(
                     EpisodeError })
     }
 
+    fun fetchEpisodeImage(episode: SREpisode): Single<SREpisode> {
+        return tvdbApi.episode(episode.tvdbId)
+                .map {
+                    episode.copy(image = it.data.filename)
+                }
+                .doOnSuccess({
+                    updateEpisode(it)
+                })
+    }
+
+    private fun updateEpisode(episode: SREpisode) {
+        episodesDao.insert(episode)
+    }
+
     fun mapToSREpisode(episode: Episode, showId: Int) : SREpisode {
-        Timber.d("$episode")
         return SREpisode(null,
                 episode.season,
                 episode.number,
