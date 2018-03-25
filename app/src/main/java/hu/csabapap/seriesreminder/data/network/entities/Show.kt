@@ -1,11 +1,13 @@
 package hu.csabapap.seriesreminder.data.network.entities
 
 import se.ansman.kotshi.JsonDefaultValue
+import se.ansman.kotshi.JsonDefaultValueString
 import se.ansman.kotshi.JsonSerializable
 
 @JsonSerializable
 class Show(val title: String = "",
            val ids: Ids,
+           @JsonDefaultValueString(value = "")
            val overview: String,
            val runtime: Int,
            val rating: Float,

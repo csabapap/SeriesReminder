@@ -3,10 +3,7 @@ package hu.csabapap.seriesreminder.services
 import android.content.Context
 import android.content.Intent
 import dagger.android.DaggerIntentService
-import hu.csabapap.seriesreminder.data.EpisodesRepository
 import hu.csabapap.seriesreminder.data.ShowsRepository
-import hu.csabapap.seriesreminder.data.states.*
-import io.reactivex.Single
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -14,9 +11,6 @@ class SyncService : DaggerIntentService("SyncService") {
 
     @Inject
     lateinit var showsRepository: ShowsRepository
-
-    @Inject
-    lateinit var episodesRepository: EpisodesRepository
 
     override fun onHandleIntent(intent: Intent?) {
         if (intent != null) {
@@ -31,18 +25,9 @@ class SyncService : DaggerIntentService("SyncService") {
     }
 
     private fun syncShow(showId: Int) {
-        showsRepository.fetchNextEpisode(showId)
-                .flatMap {
-                    when (it) {
-                        is NextEpisodeSuccess -> episodesRepository
-                                .getEpisode(it.nextEpisode.showId, it.nextEpisode.season,
-                                        it.nextEpisode.number)
-                        is NextEpisodeError -> Single.just(EpisodeError)
-                        NoNextEpisode -> Single.just(EpisodeError)
-                    }
-                }
+        showsRepository.getSeasons(showId)
                 .toCompletable()
-                .andThen(showsRepository.getSeasons(showId))
+                .andThen(showsRepository.fetchNextEpisode(showId))
                 .subscribe({
 
                 }, {Timber.e(it)})

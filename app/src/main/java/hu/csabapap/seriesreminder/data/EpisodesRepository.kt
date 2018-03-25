@@ -49,7 +49,7 @@ class EpisodesRepository @Inject constructor(
                     EpisodeError })
     }
 
-    private fun mapToSREpisode(episode: Episode, showId: Int) : SREpisode {
+    fun mapToSREpisode(episode: Episode, showId: Int) : SREpisode {
         Timber.d("$episode")
         return SREpisode(null,
                 episode.season,
@@ -72,4 +72,8 @@ class EpisodesRepository @Inject constructor(
     fun getNextEpisodes() = nextEpisodeDao.getNextEpisodes()
 
     fun getEpisodeInfoFromTvdb(tvdbId: Int) = tvdbApi.episode(tvdbId)
+
+    fun saveEpisde(episode: SREpisode) {
+        episodesDao.insert(episode)
+    }
 }
