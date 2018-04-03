@@ -8,10 +8,13 @@ import hu.csabapap.seriesreminder.data.ShowsRepository
 import hu.csabapap.seriesreminder.data.db.entities.SREpisode
 import hu.csabapap.seriesreminder.ui.adapters.items.ShowItem
 import io.reactivex.Flowable
+import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.disposables.Disposable
 import io.reactivex.rxkotlin.plusAssign
 import io.reactivex.schedulers.Schedulers
+import org.intellij.lang.annotations.Flow
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -90,7 +93,7 @@ class HomeViewModel @Inject constructor(private val showsRepository: ShowsReposi
     }
 
     fun getNextEpisodes() {
-        episodesRepository.getNextEpisodes()
+        val disposable = episodesRepository.getNextEpisodes()
                 .map {
                     val episodes = mutableListOf<SREpisode>()
                     it.forEach { nextEpisode ->
@@ -103,11 +106,30 @@ class HomeViewModel @Inject constructor(private val showsRepository: ShowsReposi
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe( { nextEpisodes ->
-                    Timber.d("number of next episodes: ${nextEpisodes.size}")
+                    if (nextEpisodes.isEmpty().not()) {
+                        upcomingEpisodesLiveData.value = nextEpisodes
+                        fetchImages(nextEpisodes)
+                    }
+                }, {Timber.e(it)})
+        compositeDisposable.add(disposable)
+    }
+
+    private fun fetchImages(episodes: MutableList<SREpisode>) {
+         val disposable = Flowable.fromIterable(episodes)
+                .filter{it.image.isEmpty()}
+                .flatMap {
+                    episodesRepository.fetchEpisodeImage(it).toFlowable()
+                }
+                .toList()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe( { nextEpisodes ->
+                    Timber.d("")
                     if (nextEpisodes.isEmpty().not()) {
                         upcomingEpisodesLiveData.value = nextEpisodes
                     }
                 }, {Timber.e(it)})
+        compositeDisposable.add(disposable)
     }
 
     private fun currentViewState() : HomeViewState {

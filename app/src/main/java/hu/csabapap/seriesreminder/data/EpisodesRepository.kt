@@ -61,7 +61,7 @@ class EpisodesRepository @Inject constructor(
     }
 
     private fun updateEpisode(episode: SREpisode) {
-        episodesDao.insert(episode)
+        episodesDao.update(episode)
     }
 
     fun mapToSREpisode(episode: Episode, showId: Int) : SREpisode {
