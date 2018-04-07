@@ -17,4 +17,5 @@
     <string name="genres">Genres</string>
     <string name="search">Search</string>
     <string name="episode_number" translatable="false">S%1$02dE%2$02d</string>
+    <string name="sync_shows">Sync shows</string>
 </resources>

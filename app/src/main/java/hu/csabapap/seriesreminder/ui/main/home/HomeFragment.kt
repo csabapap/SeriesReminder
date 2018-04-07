@@ -13,6 +13,7 @@ import android.support.v7.widget.LinearLayoutManager
 import android.view.*
 import dagger.android.support.DaggerFragment
 import hu.csabapap.seriesreminder.R
+import hu.csabapap.seriesreminder.services.SyncService
 import hu.csabapap.seriesreminder.ui.adapters.DiscoverPreviewAdapter
 import hu.csabapap.seriesreminder.ui.adapters.HomeCardsAdapter
 import hu.csabapap.seriesreminder.ui.adapters.items.CardItem
@@ -120,6 +121,10 @@ class HomeFragment : DaggerFragment(), DiscoverPreviewAdapter.PreviewShowListene
                 search()
                 return true
             }
+            R.id.sync -> {
+                syncShows()
+                return true
+            }
         }
         return super.onOptionsItemSelected(item)
     }
@@ -134,6 +139,12 @@ class HomeFragment : DaggerFragment(), DiscoverPreviewAdapter.PreviewShowListene
     private fun search() {
         Snackbar.make(home_recycler_view, "Search...", Snackbar.LENGTH_SHORT)
                 .show()
+    }
+
+    private fun syncShows() {
+        activity?.let {
+            SyncService.syncMyShows(it.applicationContext)
+        }
     }
 
     interface HomeFragmentListener {
