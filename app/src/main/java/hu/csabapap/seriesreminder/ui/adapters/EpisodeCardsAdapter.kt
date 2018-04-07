@@ -47,6 +47,11 @@ class EpisodeCardsAdapter:  RecyclerView.Adapter<EpisodeCardsAdapter.CardVH>() {
             val imagePath = episode.image
             if (imagePath.isEmpty().not()) {
                 itemView.episode_image.loadFromTmdbUrl(imagePath, R.color.item_background_dark)
+                itemView.episode_image.visibility = View.VISIBLE
+                itemView.placeholder.visibility = View.GONE
+            } else {
+                itemView.placeholder.visibility = View.VISIBLE
+                itemView.episode_image.visibility = View.GONE
             }
         }
     }
