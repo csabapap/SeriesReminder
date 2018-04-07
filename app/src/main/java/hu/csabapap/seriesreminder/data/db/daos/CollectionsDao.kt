@@ -7,6 +7,7 @@ import android.arch.persistence.room.OnConflictStrategy
 import android.arch.persistence.room.Query
 import hu.csabapap.seriesreminder.data.db.entities.CollectionEntry
 import hu.csabapap.seriesreminder.data.db.entities.CollectionItem
+import io.reactivex.Single
 import org.intellij.lang.annotations.Language
 
 @Dao
@@ -17,6 +18,9 @@ interface CollectionsDao {
     @Language("RoomSql")
     @Query("SELECT * FROM collection")
     fun getCollection() : DataSource.Factory<Int, CollectionItem>
+
+    @Query("SELECT * FROM collection")
+    fun getCollectionSingle() : Single<List<CollectionItem>>
 
     @Query("DELETE FROM collection")
     fun deleteAll()

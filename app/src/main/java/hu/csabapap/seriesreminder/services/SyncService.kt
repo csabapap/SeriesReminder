@@ -37,6 +37,12 @@ class SyncService : DaggerIntentService("SyncService") {
 
     private fun syncCollection() {
         Timber.d("sync collection")
+        showsRepository.syncShows()
+                .subscribe({
+                    Timber.d("show updated: %d", it.size )
+                }, {
+                    Timber.e(it)
+                })
     }
 
     companion object {

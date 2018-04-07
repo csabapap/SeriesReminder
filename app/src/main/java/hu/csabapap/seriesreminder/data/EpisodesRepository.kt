@@ -56,7 +56,9 @@ class EpisodesRepository @Inject constructor(
                     episode.copy(image = it.data.filename)
                 }
                 .doOnSuccess({
-                    updateEpisode(it)
+                    if (it.image.isEmpty().not()) {
+                        updateEpisode(it)
+                    }
                 })
     }
 

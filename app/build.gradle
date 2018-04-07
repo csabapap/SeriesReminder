@@ -56,7 +56,7 @@ dependencies {
 
     // architecture components
     implementation "android.arch.lifecycle:extensions:${versions.lifecycle}"
-    implementation "android.arch.lifecycle:common-java8:${versions.lifecycle}"
+    annotationProcessor "android.arch.lifecycle:compiler:${versions.lifecycle}"
     implementation "android.arch.lifecycle:reactivestreams:${versions.lifecycle}"
     kapt "android.arch.lifecycle:compiler:${versions.lifecycle}"
 

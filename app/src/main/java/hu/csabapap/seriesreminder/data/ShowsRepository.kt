@@ -23,15 +23,20 @@ class ShowsRepository(private val traktApi: TraktApi, private val tvdbApi: TvdbA
                       private val showDao: SRShowDao, private val trendingDao: TrendingDao,
                       private val popularDao: PopularDao,
                       private val seasonsRepository: SeasonsRepository,
-                      private val episodesRepository: EpisodesRepository){
+                      private val episodesRepository: EpisodesRepository,
+                      private val collectionRepository: CollectionRepository){
 
-    var cachedTrendingShows: MutableList<SRShow> = mutableListOf()
+    var cachedTrendingShows: MutableList<SRTrendingItem> = mutableListOf()
+    var cachedPopularShows: MutableList<SRPopularItem> = mutableListOf()
 
     fun getTrendingShows(limit: Int = 10) : Flowable<List<TrendingGridItem>> {
         return trendingDao.getTrendingShows(limit)
     }
 
     fun getRemoteTrendingShows(): Single<List<SRTrendingItem>> {
+        if (cachedTrendingShows.isEmpty().not()) {
+            return Single.just(cachedTrendingShows.toList())
+        }
         return traktApi.trendingShows("full")
                 .toFlowable()
                 .flatMapIterable { it }
@@ -54,6 +59,9 @@ class ShowsRepository(private val traktApi: TraktApi, private val tvdbApi: TvdbA
                             .map { srShow ->  mapToSRTrendingShow(srShow.traktId, it.watchers) }
                 }
                 .toList()
+                .doAfterSuccess({
+                    cachedTrendingShows = it
+                })
     }
 
     fun popularShows(limit: Int = 10) : Flowable<List<PopularGridItem>> {
@@ -61,6 +69,9 @@ class ShowsRepository(private val traktApi: TraktApi, private val tvdbApi: TvdbA
     }
 
     fun getPopularShowsFromWeb(limit: Int = 20) : Single<List<SRPopularItem>> {
+        if (cachedPopularShows.isEmpty().not()) {
+            return Single.just(cachedPopularShows.toList())
+        }
         return traktApi.popularShows(limit)
                 .toFlowable()
                 .flatMapIterable { it }
@@ -83,6 +94,9 @@ class ShowsRepository(private val traktApi: TraktApi, private val tvdbApi: TvdbA
                             .map { srShow ->  mapToSRPopularItem(srShow.traktId) }
                 }
                 .toList()
+                .doAfterSuccess({
+                    cachedPopularShows = it
+                })
 
     }
 
@@ -210,5 +224,22 @@ class ShowsRepository(private val traktApi: TraktApi, private val tvdbApi: TvdbA
 
     fun getSeasons(showId: Int): Single<List<SRSeason>> {
         return seasonsRepository.getSeasons(showId)
+    }
+
+    fun syncShows(): Single<MutableList<SRShow>> {
+        return collectionRepository.getCollectionsSingle()
+                .flattenAsFlowable { it }
+                .filter { it.show != null }
+                .flatMap { Flowable.just(it.show) }
+                .flatMap {
+                    traktApi.show(it.traktId)
+                            .flatMap { show -> Flowable.just(mapToSRShow(show)) }
+                }
+                .flatMap {
+                    Timber.d("update show: %s", it.title)
+                    showDao.updateShow(it)
+                    Flowable.just(it)
+                }
+                .toList()
     }
 }

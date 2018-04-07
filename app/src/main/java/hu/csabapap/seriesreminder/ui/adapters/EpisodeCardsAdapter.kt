@@ -10,15 +10,16 @@ import hu.csabapap.seriesreminder.R
 import hu.csabapap.seriesreminder.data.db.entities.SREpisode
 import hu.csabapap.seriesreminder.extensions.loadFromTmdbUrl
 import kotlinx.android.synthetic.main.item_episode_card.view.*
+import timber.log.Timber
 
 class EpisodeCardsAdapter:  RecyclerView.Adapter<EpisodeCardsAdapter.CardVH>() {
 
     lateinit var context: Context
-    lateinit var episodes: MutableList<SREpisode>
+    var episodes: List<SREpisode> = emptyList()
 
     fun updateItems(newItems: List<SREpisode>) {
-        val diffResult = DiffUtil.calculateDiff(PreviewDiffs(newItems, newItems))
-        episodes = newItems.toMutableList()
+        val diffResult = DiffUtil.calculateDiff(PreviewDiffs(newItems, episodes))
+        episodes = newItems
         diffResult.dispatchUpdatesTo(this)
     }
 

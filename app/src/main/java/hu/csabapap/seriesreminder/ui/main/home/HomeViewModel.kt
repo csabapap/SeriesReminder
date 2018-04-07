@@ -8,13 +8,10 @@ import hu.csabapap.seriesreminder.data.ShowsRepository
 import hu.csabapap.seriesreminder.data.db.entities.SREpisode
 import hu.csabapap.seriesreminder.ui.adapters.items.ShowItem
 import io.reactivex.Flowable
-import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.disposables.Disposable
 import io.reactivex.rxkotlin.plusAssign
 import io.reactivex.schedulers.Schedulers
-import org.intellij.lang.annotations.Flow
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -116,7 +113,6 @@ class HomeViewModel @Inject constructor(private val showsRepository: ShowsReposi
 
     private fun fetchImages(episodes: MutableList<SREpisode>) {
          val disposable = Flowable.fromIterable(episodes)
-                .filter{it.image.isEmpty()}
                 .flatMap {
                     episodesRepository.fetchEpisodeImage(it).toFlowable()
                 }
@@ -124,7 +120,6 @@ class HomeViewModel @Inject constructor(private val showsRepository: ShowsReposi
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe( { nextEpisodes ->
-                    Timber.d("")
                     if (nextEpisodes.isEmpty().not()) {
                         upcomingEpisodesLiveData.value = nextEpisodes
                     }

@@ -38,10 +38,11 @@ class AppModule{
                                trendingDao: TrendingDao,
                                popularDao: PopularDao,
                                seasonsRepository: SeasonsRepository,
-                               episodesRepository: EpisodesRepository)
+                               episodesRepository: EpisodesRepository,
+                               collectionRepository: CollectionRepository)
             : ShowsRepository {
         return ShowsRepository(traktApi, tvdbApi, showDao, trendingDao, popularDao,
-                seasonsRepository, episodesRepository)
+                seasonsRepository, episodesRepository, collectionRepository)
     }
 
     @Singleton
