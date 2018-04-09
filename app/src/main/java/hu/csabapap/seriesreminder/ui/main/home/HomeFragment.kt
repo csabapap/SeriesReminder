@@ -125,6 +125,10 @@ class HomeFragment : DaggerFragment(), DiscoverPreviewAdapter.PreviewShowListene
                 syncShows()
                 return true
             }
+            R.id.sync_next_episodes -> {
+                syncNextEpisodes()
+                return true
+            }
         }
         return super.onOptionsItemSelected(item)
     }
@@ -144,6 +148,12 @@ class HomeFragment : DaggerFragment(), DiscoverPreviewAdapter.PreviewShowListene
     private fun syncShows() {
         activity?.let {
             SyncService.syncMyShows(it.applicationContext)
+        }
+    }
+
+    private fun syncNextEpisodes() {
+        activity?.let {
+            SyncService.syncNextEpisodes(it.applicationContext)
         }
     }
 
