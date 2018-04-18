@@ -9,8 +9,8 @@ import android.view.ViewGroup
 import hu.csabapap.seriesreminder.R
 import hu.csabapap.seriesreminder.data.db.entities.SREpisode
 import hu.csabapap.seriesreminder.extensions.loadFromTmdbUrl
+import hu.csabapap.seriesreminder.ui.views.EpisodeCardView
 import kotlinx.android.synthetic.main.item_episode_card.view.*
-import timber.log.Timber
 
 class EpisodeCardsAdapter:  RecyclerView.Adapter<EpisodeCardsAdapter.CardVH>() {
 
@@ -25,7 +25,9 @@ class EpisodeCardsAdapter:  RecyclerView.Adapter<EpisodeCardsAdapter.CardVH>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CardVH {
         context = parent.context
-        val itemView = LayoutInflater.from(context).inflate(R.layout.item_episode_card, parent, false)
+        val itemView = EpisodeCardView(context)
+        itemView.layoutParams = ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT)
         return CardVH(itemView)
     }
 
@@ -37,21 +39,23 @@ class EpisodeCardsAdapter:  RecyclerView.Adapter<EpisodeCardsAdapter.CardVH>() {
     }
 
 
-    inner class CardVH(itemView: View): RecyclerView.ViewHolder(itemView) {
+    inner class CardVH(itemView: EpisodeCardView): RecyclerView.ViewHolder(itemView) {
         fun bind(episode: SREpisode) {
-            itemView.title.text = episode.title
+            itemView as EpisodeCardView
+            itemView.episodeTitle.text = episode.title
             val episodeInfo = String.format(context.getString(R.string.episode_number),
                     episode.season,
                     episode.number)
-            itemView.episode_info.text = episodeInfo
+            itemView.episodeInfo.text = episodeInfo
+            itemView.airsInInfo.text = "in 4 days"
             val imagePath = episode.image
             if (imagePath.isEmpty().not()) {
-                itemView.episode_image.loadFromTmdbUrl(imagePath, R.color.item_background_dark)
-                itemView.episode_image.visibility = View.VISIBLE
+                itemView.image.loadFromTmdbUrl(imagePath, R.color.item_background_dark)
+                itemView.image.visibility = View.VISIBLE
                 itemView.placeholder.visibility = View.GONE
             } else {
                 itemView.placeholder.visibility = View.VISIBLE
-                itemView.episode_image.visibility = View.GONE
+                itemView.image.visibility = View.GONE
             }
         }
     }

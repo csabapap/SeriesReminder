@@ -3,7 +3,12 @@ package hu.csabapap.seriesreminder.services
 import android.content.Context
 import android.content.Intent
 import dagger.android.DaggerIntentService
+import hu.csabapap.seriesreminder.data.EpisodesRepository
 import hu.csabapap.seriesreminder.data.ShowsRepository
+import hu.csabapap.seriesreminder.data.states.EpisodeError
+import hu.csabapap.seriesreminder.data.states.NextEpisodeSuccess
+import io.reactivex.Flowable
+import io.reactivex.rxkotlin.Flowables
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -11,6 +16,9 @@ class SyncService : DaggerIntentService("SyncService") {
 
     @Inject
     lateinit var showsRepository: ShowsRepository
+
+    @Inject
+    lateinit var episodesRepository: EpisodesRepository
 
     override fun onHandleIntent(intent: Intent?) {
         if (intent != null) {
@@ -48,7 +56,31 @@ class SyncService : DaggerIntentService("SyncService") {
     }
 
     private fun syncUpcomingEpisodes() {
-        Timber.d("sync upcoming episodes")
+        episodesRepository.getNextEpisodes()
+                .flattenAsFlowable { it }
+                .flatMap {
+                    it.episode?.let {episode ->
+                        showsRepository.fetchNextEpisode(episode.showId)
+                                .toFlowable()
+                                .flatMap {
+                                    if (it is NextEpisodeSuccess) {
+                                        Timber.d("update episode, episode id: %d", episode.traktId)
+                                        episodesRepository.getEpisode(it.nextEpisode.showId,
+                                                it.nextEpisode.season, it.nextEpisode.number)
+                                                .toFlowable()
+                                    } else {
+                                        Flowable.just(EpisodeError)
+                                    }
+                                }
+                    }
+                }
+                .toList()
+                .subscribe({
+                    Timber.d("nmb of episodes updated: %d", it.size)
+                }, {
+                    Timber.e(it)
+                })
+
     }
 
     companion object {

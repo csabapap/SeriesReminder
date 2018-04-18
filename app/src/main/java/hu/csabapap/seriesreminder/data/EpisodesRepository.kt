@@ -53,7 +53,11 @@ class EpisodesRepository @Inject constructor(
     fun fetchEpisodeImage(episode: SREpisode): Single<SREpisode> {
         return tvdbApi.episode(episode.tvdbId)
                 .map {
-                    episode.copy(image = it.data.filename)
+                    var filename = "-1"
+                    if (it.data.filename.isEmpty().not()) {
+                        filename = it.data.filename
+                    }
+                    episode.copy(image = filename)
                 }
                 .doOnSuccess({
                     if (it.image.isEmpty().not()) {
@@ -85,7 +89,10 @@ class EpisodesRepository @Inject constructor(
 
     fun getNextEpisode(showId: Int) = nextEpisodeDao.getNextEpisode(showId)
 
+    fun getNextEpisodes(limit: Int) = nextEpisodeDao.getNextEpisodes(limit)
+
     fun getNextEpisodes() = nextEpisodeDao.getNextEpisodes()
+
 
     fun getEpisodeInfoFromTvdb(tvdbId: Int) = tvdbApi.episode(tvdbId)
 

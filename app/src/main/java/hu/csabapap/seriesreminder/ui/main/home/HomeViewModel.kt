@@ -90,7 +90,7 @@ class HomeViewModel @Inject constructor(private val showsRepository: ShowsReposi
     }
 
     fun getNextEpisodes() {
-        val disposable = episodesRepository.getNextEpisodes()
+        val disposable = episodesRepository.getNextEpisodes(5)
                 .map {
                     val episodes = mutableListOf<SREpisode>()
                     it.forEach { nextEpisode ->
@@ -113,6 +113,7 @@ class HomeViewModel @Inject constructor(private val showsRepository: ShowsReposi
 
     private fun fetchImages(episodes: MutableList<SREpisode>) {
          val disposable = Flowable.fromIterable(episodes)
+                .filter({it.image.isEmpty()})
                 .flatMap {
                     episodesRepository.fetchEpisodeImage(it).toFlowable()
                 }

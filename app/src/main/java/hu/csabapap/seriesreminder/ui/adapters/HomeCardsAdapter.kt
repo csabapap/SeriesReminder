@@ -2,7 +2,7 @@ package hu.csabapap.seriesreminder.ui.adapters
 
 import android.content.Context
 import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.LinearSnapHelper
+import android.support.v7.widget.PagerSnapHelper
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
@@ -53,7 +53,7 @@ class HomeCardsAdapter(private val listener: CardClickListener)
         episodesRv.adapter = episodeCardVH.episodesAdapter
         val layoutManager = episodesRv.layoutManager as LinearLayoutManager
         layoutManager.orientation = LinearLayoutManager.HORIZONTAL
-        val snapHelper = LinearSnapHelper()
+        val snapHelper = PagerSnapHelper()
         snapHelper.attachToRecyclerView(episodesRv)
         return episodeCardVH
 
