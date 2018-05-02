@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import hu.csabapap.seriesreminder.R
 import hu.csabapap.seriesreminder.data.db.entities.SREpisode
+import hu.csabapap.seriesreminder.extensions.diffInDays
 import hu.csabapap.seriesreminder.extensions.loadFromTmdbUrl
 import hu.csabapap.seriesreminder.ui.views.EpisodeCardView
 import kotlinx.android.synthetic.main.item_episode_card.view.*
@@ -47,7 +48,7 @@ class EpisodeCardsAdapter:  RecyclerView.Adapter<EpisodeCardsAdapter.CardVH>() {
                     episode.season,
                     episode.number)
             itemView.episodeInfo.text = episodeInfo
-            itemView.airsInInfo.text = "in 4 days"
+            itemView.airsInInfo.text = "in ${episode.firstAired?.diffInDays().toString()} days"
             val imagePath = episode.image
             if (imagePath.isEmpty().not()) {
                 itemView.image.loadFromTmdbUrl(imagePath, R.color.item_background_dark)

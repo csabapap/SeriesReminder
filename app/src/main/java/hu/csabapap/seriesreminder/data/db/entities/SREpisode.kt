@@ -1,6 +1,7 @@
 package hu.csabapap.seriesreminder.data.db.entities
 
 import android.arch.persistence.room.*
+import org.threeten.bp.OffsetDateTime
 
 @Entity(tableName = "episodes",
         foreignKeys = [ForeignKey(entity = SRShow::class,
@@ -17,7 +18,7 @@ data class SREpisode(@PrimaryKey val _id: Long?,
                      @ColumnInfo(name = "tvdb_id") val tvdbId: Int,
                      @ColumnInfo(name = "abs_number") val absNumber: Int,
                      val overview: String,
-                     @ColumnInfo(name = "first_aired") val firstAired: String,
+                     @ColumnInfo(name = "first_aired") var firstAired: OffsetDateTime? = null,
                      @ColumnInfo(name = "updated_at") val updatedAt: String,
                      val rating: Float,
                      val votes: Int,

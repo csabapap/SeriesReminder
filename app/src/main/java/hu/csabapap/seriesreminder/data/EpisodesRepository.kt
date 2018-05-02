@@ -7,11 +7,11 @@ import hu.csabapap.seriesreminder.data.db.entities.SREpisode
 import hu.csabapap.seriesreminder.data.network.TraktApi
 import hu.csabapap.seriesreminder.data.network.TvdbApi
 import hu.csabapap.seriesreminder.data.network.entities.Episode
-import hu.csabapap.seriesreminder.data.network.entities.EpisodeData
 import hu.csabapap.seriesreminder.data.states.EpisodeError
 import hu.csabapap.seriesreminder.data.states.EpisodeState
 import hu.csabapap.seriesreminder.data.states.EpisodeSuccess
 import io.reactivex.Single
+import org.threeten.bp.OffsetDateTime
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -79,7 +79,7 @@ class EpisodesRepository @Inject constructor(
                 episode.ids.tvdb,
                 episode.absNumber,
                 episode.overview,
-                episode.firstAired,
+                OffsetDateTime.parse(episode.firstAired),
                 episode.updatedAt,
                 episode.rating,
                 episode.votes,

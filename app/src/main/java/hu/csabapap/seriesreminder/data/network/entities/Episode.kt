@@ -15,7 +15,7 @@ data class Episode(val season: Int,
                    @field:Json(name = "number_abs") val absNumber: Int,
                    @JsonDefaultValueString(value = "")
                    val overview: String,
-                   @JsonDefaultValueString(value = "")
+                   @JsonDefaultValueString(value = "-999999999-01-01T00:00:00+18:00") // OffsetDateTime.MIN
                    @field:Json(name = "first_aired") val firstAired: String,
                    @field:Json(name = "updated_at") val updatedAt: String,
                    val rating: Float,
