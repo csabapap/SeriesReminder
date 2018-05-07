@@ -14,6 +14,9 @@ import hu.csabapap.seriesreminder.ui.adapters.items.UpcomingEpisodeCardItem
 import hu.csabapap.seriesreminder.ui.main.discover.DiscoverFragment
 import kotlinx.android.synthetic.main.item_discover_card.view.*
 import kotlinx.android.synthetic.main.item_episodes.view.*
+import android.support.v7.widget.DividerItemDecoration
+
+
 
 class HomeCardsAdapter(private val listener: CardClickListener)
     : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
@@ -34,6 +37,9 @@ class HomeCardsAdapter(private val listener: CardClickListener)
             discoverCardVH.itemView.rv_shows.adapter = discoverCardVH.previewAdapter
             val layoutManager = discoverCardVH.itemView.rv_shows.layoutManager as LinearLayoutManager
             layoutManager.orientation = LinearLayoutManager.HORIZONTAL
+            val dividerItemDecoration = DividerItemDecoration(context, layoutManager.orientation)
+            dividerItemDecoration.setDrawable(context.getDrawable(R.drawable.vertical_separator))
+            discoverCardVH.itemView.rv_shows.addItemDecoration(dividerItemDecoration)
             discoverCardVH.itemView.more_btn.setOnClickListener {
                 val position = discoverCardVH.layoutPosition
                 if (position != -1) {
