@@ -22,7 +22,6 @@ import hu.csabapap.seriesreminder.data.db.entities.SRShow
 import hu.csabapap.seriesreminder.extensions.loadFromTmdbUrl
 import hu.csabapap.seriesreminder.services.SyncService
 import kotlinx.android.synthetic.main.activity_add_show.*
-import org.apache.commons.cli.MissingArgumentException
 import javax.inject.Inject
 
 class AddShowActivity : DaggerAppCompatActivity() {
@@ -85,10 +84,10 @@ class AddShowActivity : DaggerAppCompatActivity() {
 
     private fun initParams(extras: Bundle?) {
         if(extras == null) {
-            throw MissingArgumentException("Missing required extras")
+            throw IllegalArgumentException("Missing required extras")
         }
         if (!extras.containsKey("show_id")) {
-            throw MissingArgumentException("Missing show id")
+            throw IllegalArgumentException("Missing show id")
         }
         showId = extras.getInt("show_id", -1)
     }
