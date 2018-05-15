@@ -65,7 +65,7 @@
                 android:layout_marginTop="8dp"
                 android:fontFamily="monospace"
                 android:textAppearance="@style/TextAppearance.AppCompat.Display1"
-                app:autoSizeTextType="uniform"
+                android:autoSizeTextType="uniform"
                 tools:text="Altered Carbon"/>
 
         </FrameLayout>

@@ -8,7 +8,6 @@ import hu.csabapap.seriesreminder.data.ShowsRepository
 import hu.csabapap.seriesreminder.data.states.EpisodeError
 import hu.csabapap.seriesreminder.data.states.NextEpisodeSuccess
 import io.reactivex.Flowable
-import io.reactivex.rxkotlin.Flowables
 import timber.log.Timber
 import javax.inject.Inject
 
