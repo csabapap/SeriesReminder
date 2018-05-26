@@ -5,6 +5,7 @@ import android.arch.lifecycle.ViewModel
 import hu.csabapap.seriesreminder.R
 import hu.csabapap.seriesreminder.data.EpisodesRepository
 import hu.csabapap.seriesreminder.data.ShowsRepository
+import hu.csabapap.seriesreminder.data.db.entities.NextEpisodeItem
 import hu.csabapap.seriesreminder.data.db.entities.SREpisode
 import hu.csabapap.seriesreminder.ui.adapters.items.ShowItem
 import io.reactivex.Flowable
@@ -25,7 +26,7 @@ class HomeViewModel @Inject constructor(private val showsRepository: ShowsReposi
 
     val trendingShowsLiveData = MutableLiveData<List<ShowItem>>()
     val popularShowsLiveData = MutableLiveData<List<ShowItem>>()
-    val upcomingEpisodesLiveData = MutableLiveData<List<SREpisode>>()
+    val upcomingEpisodesLiveData = MutableLiveData<List<NextEpisodeItem>>()
 
     init {
         viewState.value = HomeViewState(displayProgressBar = true)
@@ -90,22 +91,12 @@ class HomeViewModel @Inject constructor(private val showsRepository: ShowsReposi
     }
 
     fun getNextEpisodes() {
-        val disposable = episodesRepository.getNextEpisodes(5)
-                .map {
-                    val episodes = mutableListOf<SREpisode>()
-                    it.forEach { nextEpisode ->
-                        nextEpisode.episode?.let { srEpisode ->
-                            episodes.add(srEpisode)
-                        }
-                    }
-                    episodes
-                }
+        val disposable = episodesRepository.getNextEpisodes(3)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe( { nextEpisodes ->
                     if (nextEpisodes.isEmpty().not()) {
                         upcomingEpisodesLiveData.value = nextEpisodes
-                        fetchImages(nextEpisodes)
                     }
                 }, {Timber.e(it)})
         compositeDisposable.add(disposable)
@@ -122,7 +113,7 @@ class HomeViewModel @Inject constructor(private val showsRepository: ShowsReposi
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe( { nextEpisodes ->
                     if (nextEpisodes.isEmpty().not()) {
-                        upcomingEpisodesLiveData.value = nextEpisodes
+//                        upcomingEpisodesLiveData.value = nextEpisodes
                     }
                 }, {Timber.e(it)})
         compositeDisposable.add(disposable)

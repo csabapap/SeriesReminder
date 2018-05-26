@@ -1,5 +1,6 @@
 package hu.csabapap.seriesreminder.ui.adapters.items
 
+import hu.csabapap.seriesreminder.data.db.entities.NextEpisodeItem
 import hu.csabapap.seriesreminder.data.db.entities.SREpisode
 
 
@@ -48,7 +49,7 @@ class DiscoverCardItem(
     : CardItem(type, priority)
 
 class UpcomingEpisodeCardItem(
-        val episodes: List<SREpisode>,
+        val episodes: List<NextEpisodeItem>,
         type: Int,
         priority: Int = CardItem.PRIORITY_HIGH)
     : CardItem(type, priority)

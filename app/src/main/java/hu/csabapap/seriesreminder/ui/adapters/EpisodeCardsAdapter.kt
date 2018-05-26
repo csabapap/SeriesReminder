@@ -7,18 +7,18 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import hu.csabapap.seriesreminder.R
+import hu.csabapap.seriesreminder.data.db.entities.NextEpisodeItem
 import hu.csabapap.seriesreminder.data.db.entities.SREpisode
 import hu.csabapap.seriesreminder.extensions.diffInDays
 import hu.csabapap.seriesreminder.extensions.loadFromTmdbUrl
-import hu.csabapap.seriesreminder.ui.views.EpisodeCardView
 import kotlinx.android.synthetic.main.item_episode_card.view.*
 
 class EpisodeCardsAdapter:  RecyclerView.Adapter<EpisodeCardsAdapter.CardVH>() {
 
     lateinit var context: Context
-    var episodes: List<SREpisode> = emptyList()
+    var episodes: List<NextEpisodeItem> = emptyList()
 
-    fun updateItems(newItems: List<SREpisode>) {
+    fun updateItems(newItems: List<NextEpisodeItem>) {
         val diffResult = DiffUtil.calculateDiff(PreviewDiffs(newItems, episodes))
         episodes = newItems
         diffResult.dispatchUpdatesTo(this)
@@ -26,9 +26,8 @@ class EpisodeCardsAdapter:  RecyclerView.Adapter<EpisodeCardsAdapter.CardVH>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CardVH {
         context = parent.context
-        val itemView = EpisodeCardView(context)
-        itemView.layoutParams = ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
-                ViewGroup.LayoutParams.WRAP_CONTENT)
+        val itemView = LayoutInflater.from(parent.context).inflate(R.layout.item_episode_card,
+                parent, false)
         return CardVH(itemView)
     }
 
@@ -40,36 +39,31 @@ class EpisodeCardsAdapter:  RecyclerView.Adapter<EpisodeCardsAdapter.CardVH>() {
     }
 
 
-    inner class CardVH(itemView: EpisodeCardView): RecyclerView.ViewHolder(itemView) {
-        fun bind(episode: SREpisode) {
-            itemView as EpisodeCardView
-            itemView.episodeTitle.text = episode.title
+    inner class CardVH(itemView: View): RecyclerView.ViewHolder(itemView) {
+        fun bind(nextEpisode: NextEpisodeItem) {
+            val episode = nextEpisode.episode!!
+            itemView.title.text = episode.title
             val episodeInfo = String.format(context.getString(R.string.episode_number),
                     episode.season,
                     episode.number)
-            itemView.episodeInfo.text = episodeInfo
-            itemView.airsInInfo.text = "in ${episode.firstAired?.diffInDays().toString()} days"
-            val imagePath = episode.image
-            if (imagePath.isEmpty().not()) {
-                itemView.image.loadFromTmdbUrl(imagePath, R.color.item_background_dark)
-                itemView.image.visibility = View.VISIBLE
-                itemView.placeholder.visibility = View.GONE
-            } else {
-                itemView.placeholder.visibility = View.VISIBLE
-                itemView.image.visibility = View.GONE
+            itemView.episode_info.text = episodeInfo
+            itemView.airs_in_text.text = "in ${episode.firstAired?.diffInDays().toString()} days"
+            val thumb = nextEpisode.show?.posterThumb
+            thumb?.let {
+                itemView.episode_image.loadFromTmdbUrl(it)
             }
         }
     }
 
-    inner class PreviewDiffs(private val newItems: List<SREpisode>,
-                             private val oldItems: List<SREpisode>)
+    inner class PreviewDiffs(private val newItems: List<NextEpisodeItem>,
+                             private val oldItems: List<NextEpisodeItem>)
         : DiffUtil.Callback() {
 
         override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
             val oldItem = oldItems[oldItemPosition]
             val newItem = newItems[newItemPosition]
 
-            return newItem.traktId == oldItem.traktId
+            return newItem.episode?.traktId == oldItem.episode?.traktId
         }
 
         override fun getOldListSize() = oldItems.size

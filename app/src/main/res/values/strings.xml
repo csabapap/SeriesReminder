@@ -19,4 +19,5 @@
     <string name="episode_number" translatable="false">S%1$02dE%2$02d</string>
     <string name="sync_shows">Sync shows</string>
     <string name="sync_next_episodes">Sync next episodes</string>
+    <string name="upcoming_episodes">Upcoming episodes</string>
 </resources>
