@@ -19,6 +19,9 @@ spotless {
 
 android {
     compileSdkVersion 27
+    dataBinding {
+        enabled = true
+    }
     buildToolsVersion '27.0.3'
     defaultConfig {
         applicationId "hu.csabapap.seriesreminder"

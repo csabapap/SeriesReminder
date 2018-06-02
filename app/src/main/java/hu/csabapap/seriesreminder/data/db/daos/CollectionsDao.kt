@@ -1,5 +1,6 @@
 package hu.csabapap.seriesreminder.data.db.daos
 
+import android.arch.lifecycle.LiveData
 import android.arch.paging.DataSource
 import android.arch.persistence.room.Dao
 import android.arch.persistence.room.Insert
@@ -21,6 +22,9 @@ interface CollectionsDao {
 
     @Query("SELECT * FROM collection")
     fun getCollectionSingle() : Single<List<CollectionItem>>
+
+    @Query("SELECT * FROM collection WHERE show_id = :showId LIMIT 1")
+    fun getCollectionItem(showId: Int): LiveData<CollectionEntry>
 
     @Query("DELETE FROM collection")
     fun deleteAll()

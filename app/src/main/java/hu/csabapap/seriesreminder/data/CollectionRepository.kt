@@ -1,5 +1,6 @@
 package hu.csabapap.seriesreminder.data
 
+import android.arch.lifecycle.LiveData
 import android.arch.paging.DataSource
 import android.arch.paging.LivePagedListBuilder
 import android.arch.paging.PagedList
@@ -26,5 +27,9 @@ class CollectionRepository @Inject constructor(private val collectionsDao: Colle
 
     fun getCollectionsSingle() : Single<List<CollectionItem>> {
         return collectionsDao.getCollectionSingle()
+    }
+
+    fun getEntry(showId: Int): LiveData<CollectionEntry> {
+        return collectionsDao.getCollectionItem(showId)
     }
 }

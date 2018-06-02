@@ -4,6 +4,7 @@ import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProvider
 import android.arch.lifecycle.ViewModelProviders
 import android.content.res.ColorStateList
+import android.databinding.DataBindingUtil
 import android.graphics.Bitmap
 import android.graphics.drawable.Animatable2
 import android.graphics.drawable.AnimatedVectorDrawable
@@ -19,6 +20,7 @@ import com.squareup.picasso.Callback
 import dagger.android.support.DaggerAppCompatActivity
 import hu.csabapap.seriesreminder.R
 import hu.csabapap.seriesreminder.data.db.entities.SRShow
+import hu.csabapap.seriesreminder.databinding.ActivityAddShowBinding
 import hu.csabapap.seriesreminder.extensions.loadFromTmdbUrl
 import hu.csabapap.seriesreminder.services.SyncService
 import kotlinx.android.synthetic.main.activity_add_show.*
@@ -37,10 +39,15 @@ class AddShowActivity : DaggerAppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_add_show)
 
         addShowViewModel = ViewModelProviders.of(this, viewModelProvider)
                 .get(AddShowViewModel::class.java)
+
+        DataBindingUtil.setContentView<ActivityAddShowBinding>(this, R.layout.activity_add_show)
+                .apply {
+                    viewModel = addShowViewModel
+                    setLifecycleOwner(this@AddShowActivity)
+                }
 
         initParams(intent.extras)
 

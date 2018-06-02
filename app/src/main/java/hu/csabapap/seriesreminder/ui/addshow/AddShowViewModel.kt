@@ -2,6 +2,7 @@ package hu.csabapap.seriesreminder.ui.addshow
 
 import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MutableLiveData
+import android.arch.lifecycle.Transformations
 import android.arch.lifecycle.ViewModel
 import hu.csabapap.seriesreminder.data.CollectionRepository
 import hu.csabapap.seriesreminder.data.ShowsRepository
@@ -17,13 +18,13 @@ class AddShowViewModel(
         private val schedulers: AppRxSchedulers
 ) : ViewModel() {
 
-    val isAdded: LiveData<Boolean> = MutableLiveData<Boolean>()
+    var isAdded: LiveData<Boolean> = MutableLiveData<Boolean>()
     val showLiveData = MutableLiveData<AddShowState>()
     val addShowLiveData = MutableLiveData<Boolean>()
 
     init {
-        Timber.d("show id: $showId")
-//        val show = collectionRepository.getShowFromCollection()
+        val collectionEntry = collectionRepository.getEntry(showId)
+        isAdded = Transformations.map(collectionEntry) {it != null}
     }
 
     fun getShow(showId: Int) {
