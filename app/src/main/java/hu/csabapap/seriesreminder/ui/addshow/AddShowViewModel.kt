@@ -12,7 +12,7 @@ import io.reactivex.Observable
 import timber.log.Timber
 
 class AddShowViewModel(
-        private val showId: Int,
+        showId: Int,
         private val showsRepository: ShowsRepository,
         private val collectionRepository: CollectionRepository,
         private val schedulers: AppRxSchedulers

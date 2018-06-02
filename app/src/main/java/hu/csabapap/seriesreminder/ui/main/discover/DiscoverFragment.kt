@@ -28,7 +28,6 @@ class DiscoverFragment : DaggerFragment(), GridAdapter.GridItemClickListener {
     private lateinit var discoverViewModel: DiscoverViewModel
 
     private var listType: Int? = null
-    private var adapter = GridAdapter()
 
     private var listener: DiscoverFragmentInteractionListener? = null
 
@@ -71,6 +70,7 @@ class DiscoverFragment : DaggerFragment(), GridAdapter.GridItemClickListener {
             setNavigationOnClickListener { listener?.onNavigateBack() }
         }
 
+        val adapter = GridAdapter()
         val gridLayoutManager = GridLayoutManager(activity, 4) as RecyclerView.LayoutManager
         rv_grid.layoutManager = gridLayoutManager
         rv_grid.addItemDecoration(SpacingItemDecorator(4, 4))
@@ -81,6 +81,12 @@ class DiscoverFragment : DaggerFragment(), GridAdapter.GridItemClickListener {
             it?.apply {
                 Timber.d("nmb of items: ${it.size}")
                 adapter.shows = it
+            }
+        })
+
+        discoverViewModel.collectionLiveData.observe(this, Observer {
+            it?.apply {
+                Timber.d("nmb of shows in collection: ${it.size}")
             }
         })
     }

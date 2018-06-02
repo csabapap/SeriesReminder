@@ -1,5 +1,6 @@
 package hu.csabapap.seriesreminder.data
 
+import android.arch.lifecycle.LiveData
 import hu.csabapap.seriesreminder.data.db.daos.PopularDao
 import hu.csabapap.seriesreminder.data.db.daos.SRShowDao
 import hu.csabapap.seriesreminder.data.db.daos.TrendingDao
@@ -31,6 +32,10 @@ class ShowsRepository(private val traktApi: TraktApi, private val tvdbApi: TvdbA
 
     fun getTrendingShows(limit: Int = 10) : Flowable<List<TrendingGridItem>> {
         return trendingDao.getTrendingShows(limit)
+    }
+
+    fun getLiveTrendingShows(limit: Int = 10): LiveData<List<TrendingGridItem>> {
+        return trendingDao.getLiveTrendingShows(limit)
     }
 
     fun getRemoteTrendingShows(): Single<List<SRTrendingItem>> {

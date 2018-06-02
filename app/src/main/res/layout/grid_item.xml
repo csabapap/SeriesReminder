@@ -1,15 +1,34 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content">
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <ImageView
-        android:id="@+id/poster"
+    <data>
+        <variable
+            name="show"
+            type="hu.csabapap.seriesreminder.data.db.entities.SRShow" />
+    </data>
+    <android.support.constraint.ConstraintLayout xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="wrap_content"
-        android:layout_height="130dp"
-        android:scaleType="centerCrop"
-        app:layout_constraintDimensionRatio="2:3"/>
+        android:layout_height="wrap_content">
 
-</android.support.constraint.ConstraintLayout>
+        <ImageView
+            android:id="@+id/poster"
+            android:layout_width="wrap_content"
+            android:layout_height="130dp"
+            android:scaleType="centerCrop"
+            app:remoteSrc="@{show.posterThumb}"
+            app:layout_constraintDimensionRatio="2:3"
+            tools:src="@drawable/poster" />
+
+        <ImageView
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_marginBottom="2dp"
+            android:layout_marginEnd="4dp"
+            app:layout_constraintBottom_toBottomOf="@id/poster"
+            app:layout_constraintEnd_toEndOf="@id/poster"
+            app:srcCompat="@drawable/ic_check_box_24dp"
+            app:goneIf="@{!show.inCollection}"/>
+
+    </android.support.constraint.ConstraintLayout>
+</layout>

@@ -2,9 +2,11 @@ package hu.csabapap.seriesreminder.ui.main.discover
 
 import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.ViewModel
+import hu.csabapap.seriesreminder.data.CollectionRepository
 import hu.csabapap.seriesreminder.data.ShowsRepository
 import hu.csabapap.seriesreminder.data.db.entities.GridItem
 import hu.csabapap.seriesreminder.data.db.entities.Item
+import io.reactivex.Flowable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.plusAssign
@@ -12,10 +14,13 @@ import io.reactivex.schedulers.Schedulers
 import timber.log.Timber
 import javax.inject.Inject
 
-class DiscoverViewModel @Inject constructor(private val showsRepository: ShowsRepository)
+class DiscoverViewModel @Inject constructor(
+        private val showsRepository: ShowsRepository,
+        private val collectionRepository: CollectionRepository)
     : ViewModel() {
     private val disposables = CompositeDisposable()
     val itemsLiveData = MutableLiveData<List<GridItem<Item>>>()
+    val collectionLiveData = collectionRepository.getCollection()
 
     fun getItems(type: Int) {
         when (type) {
@@ -26,6 +31,20 @@ class DiscoverViewModel @Inject constructor(private val showsRepository: ShowsRe
 
     private fun getTrendingShows() {
         disposables += showsRepository.getTrendingShows(20)
+                .flatMap({ trendingItems ->
+                    collectionRepository.getCollectionsSingle().toFlowable()
+                            .flatMapIterable { it }
+                            .map { it.entry?.showId }
+                            .toList().toFlowable()
+                            .flatMap{
+                                for (item in trendingItems) {
+                                    if (it.contains(item.show?.traktId)) {
+                                        item.show?.inCollection = true
+                                    }
+                                }
+                                Flowable.just(trendingItems)
+                            }
+                })
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe ({

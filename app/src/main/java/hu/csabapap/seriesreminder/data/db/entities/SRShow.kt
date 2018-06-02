@@ -28,6 +28,9 @@ data class SRShow(
         @ColumnInfo(name="updated_at") var updatedAt: OffsetDateTime? = null,
         @ColumnInfo(name="airs") var airingTime: AiringTime = AiringTime()) {
 
+    @Ignore
+    var inCollection: Boolean = false
+
     fun <T> updateProperty(entryVar : KMutableProperty0<T>, updateVal: T) {
         when {
             updateVal != null -> entryVar.set(updateVal)
