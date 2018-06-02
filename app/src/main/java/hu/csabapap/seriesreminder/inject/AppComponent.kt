@@ -20,7 +20,6 @@ import javax.inject.Singleton
             ApiModule::class,
             DbModule::class,
             NetworkModule::class,
-            SrViewModelModule::class,
             HomeModule::class,
             AddShowModule::class,
             ServiceModule::class

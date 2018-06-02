@@ -16,10 +16,11 @@ import hu.csabapap.seriesreminder.ui.adapters.CollectionAdapter
 import kotlinx.android.synthetic.main.fragment_collection.*
 import timber.log.Timber
 import javax.inject.Inject
+import javax.inject.Named
 
 class CollectionFragment : DaggerFragment() {
 
-    @Inject
+    @field:[Inject Named("Main")]
     lateinit var mainViewModelProvider: ViewModelProvider.Factory
     private lateinit var collectionViewModel: CollectionViewModel
 

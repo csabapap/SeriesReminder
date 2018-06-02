@@ -1,5 +1,6 @@
 package hu.csabapap.seriesreminder.ui.addshow
 
+import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.ViewModel
 import hu.csabapap.seriesreminder.data.CollectionRepository
@@ -8,16 +9,22 @@ import hu.csabapap.seriesreminder.data.db.entities.CollectionEntry
 import hu.csabapap.seriesreminder.utils.AppRxSchedulers
 import io.reactivex.Observable
 import timber.log.Timber
-import javax.inject.Inject
 
-class AddShowViewModel @Inject constructor(
+class AddShowViewModel(
+        private val showId: Int,
         private val showsRepository: ShowsRepository,
         private val collectionRepository: CollectionRepository,
         private val schedulers: AppRxSchedulers
 ) : ViewModel() {
 
+    val isAdded: LiveData<Boolean> = MutableLiveData<Boolean>()
     val showLiveData = MutableLiveData<AddShowState>()
     val addShowLiveData = MutableLiveData<Boolean>()
+
+    init {
+        Timber.d("show id: $showId")
+//        val show = collectionRepository.getShowFromCollection()
+    }
 
     fun getShow(showId: Int) {
         showsRepository.getShow(traktId = showId)
@@ -52,6 +59,8 @@ class AddShowViewModel @Inject constructor(
                 },
                         { Timber.e(it)})
     }
+
+
 
     fun addShowToCollection(showId: Int) {
         collectionRepository.addToCollection(CollectionEntry(showId = showId))

@@ -22,12 +22,13 @@ import hu.csabapap.seriesreminder.ui.adapters.items.UpcomingEpisodeCardItem
 import hu.csabapap.seriesreminder.ui.addshow.AddShowActivity
 import kotlinx.android.synthetic.main.fragment_home.*
 import javax.inject.Inject
+import javax.inject.Named
 
 
 class HomeFragment : DaggerFragment(), DiscoverPreviewAdapter.PreviewShowListener,
         HomeCardsAdapter.CardClickListener {
 
-    @Inject
+    @field:[Inject Named("Main")]
     lateinit var mainViewModelProvider: ViewModelProvider.Factory
     private lateinit var homeViewModel: HomeViewModel
 

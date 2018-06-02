@@ -19,10 +19,11 @@ import hu.csabapap.seriesreminder.utils.SpacingItemDecorator
 import kotlinx.android.synthetic.main.fragment_discover.*
 import timber.log.Timber
 import javax.inject.Inject
+import javax.inject.Named
 
 class DiscoverFragment : DaggerFragment(), GridAdapter.GridItemClickListener {
 
-    @Inject
+    @field:[Inject Named("Main")]
     lateinit var mainViewModelProvider: ViewModelProvider.Factory
     private lateinit var discoverViewModel: DiscoverViewModel
 

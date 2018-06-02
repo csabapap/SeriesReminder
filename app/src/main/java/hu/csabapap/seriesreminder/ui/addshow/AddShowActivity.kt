@@ -23,11 +23,13 @@ import hu.csabapap.seriesreminder.extensions.loadFromTmdbUrl
 import hu.csabapap.seriesreminder.services.SyncService
 import kotlinx.android.synthetic.main.activity_add_show.*
 import javax.inject.Inject
+import javax.inject.Named
 
 class AddShowActivity : DaggerAppCompatActivity() {
 
-    @Inject
+    @Inject @field:Named("AddShowViewModelFactory")
     lateinit var viewModelProvider: ViewModelProvider.Factory
+
     private lateinit var addShowViewModel: AddShowViewModel
 
     private var showId: Int = -1
@@ -129,5 +131,9 @@ class AddShowActivity : DaggerAppCompatActivity() {
                         btn_add_show.imageTintList = ColorStateList.valueOf(titleTextColor)
                     }
                 }
+    }
+
+    fun getShowId(): Int {
+        return intent.extras.getInt("show_id", -1)
     }
 }

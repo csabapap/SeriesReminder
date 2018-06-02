@@ -1,20 +1,18 @@
 package hu.csabapap.seriesreminder.ui.addshow
 
-import android.arch.lifecycle.ViewModel
+import android.arch.lifecycle.ViewModelProvider
 import dagger.Binds
 import dagger.Module
 import dagger.android.ContributesAndroidInjector
-import dagger.multibindings.IntoMap
-import hu.csabapap.seriesreminder.inject.ViewModelKey
+import javax.inject.Named
 
 @Module
 abstract class AddShowModule {
 
-    @ContributesAndroidInjector
+    @ContributesAndroidInjector(modules = [AddShowParamsModule::class])
     internal abstract fun addShowActivity() : AddShowActivity
 
-    @Binds
-    @IntoMap
-    @ViewModelKey(AddShowViewModel::class)
-    abstract fun providesViewModel(viewModel: AddShowViewModel) : ViewModel
+    @Binds @Named("AddShowViewModelFactory")
+    abstract fun providesAddShowViewModelFactory(addShowViewModelProvider: AddShowViewModelProvider)
+            : ViewModelProvider.Factory
 }
