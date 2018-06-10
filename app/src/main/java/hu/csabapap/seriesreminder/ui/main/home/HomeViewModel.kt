@@ -49,9 +49,7 @@ class HomeViewModel @Inject constructor(private val showsRepository: ShowsReposi
                              .map {
                                  ShowItem(it.show!!.traktId,
                                          it.show!!.title,
-                                         it.show!!.posterThumb,
-                                         R.drawable.ic_watchers,
-                                         it.entry?.watchers.toString())
+                                         it.show!!.posterThumb)
                              }
                              .forEach { showItems.add(it) }
                      Flowable.just(showItems)

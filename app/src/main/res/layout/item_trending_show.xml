@@ -2,7 +2,6 @@
 <android.support.constraint.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content">
 
@@ -16,30 +15,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
-
-    <ImageView
-        android:id="@+id/extra_icon"
-        android:layout_width="20dp"
-        android:layout_height="20dp"
-        android:layout_marginEnd="4dp"
-        android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="@+id/extra_value"
-        app:layout_constraintEnd_toStartOf="@+id/extra_value"
-        app:layout_constraintTop_toTopOf="@+id/extra_value" />
-
-    <TextView
-        android:id="@+id/extra_value"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="4dp"
-        android:layout_marginTop="8dp"
-        android:textColor="@color/white"
-        android:textSize="8sp"
-        android:visibility="gone"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/poster"
-        tools:text="123"
-        tools:visibility="visible" />
 
     <TextView
         android:id="@+id/show_title"

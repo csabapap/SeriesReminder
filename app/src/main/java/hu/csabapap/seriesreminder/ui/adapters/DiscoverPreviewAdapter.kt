@@ -81,20 +81,6 @@ class DiscoverPreviewAdapter : RecyclerView.Adapter<DiscoverPreviewAdapter.Disco
                 }))
 
             }
-            if (show.extraDataIcon != -1) {
-                itemView.extra_icon.setImageDrawable(
-                        ContextCompat.getDrawable(context!!, show.extraDataIcon))
-                itemView.extra_icon.visibility = View.VISIBLE
-            } else {
-                itemView.extra_icon.visibility = View.GONE
-            }
-
-            if (show.extraDataValue.isEmpty().not()) {
-                itemView.extra_value.text = show.extraDataValue
-                itemView.extra_value.visibility = View.VISIBLE
-            } else {
-                itemView.extra_value.visibility = View.GONE
-            }
         }
 
         fun setOnClickListener(listener : View.OnClickListener){
