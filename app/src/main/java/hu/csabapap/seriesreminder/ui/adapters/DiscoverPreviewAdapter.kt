@@ -1,6 +1,7 @@
 package hu.csabapap.seriesreminder.ui.adapters
 
 import android.content.Context
+import android.databinding.DataBindingUtil
 import android.support.v4.content.ContextCompat
 import android.support.v7.util.DiffUtil
 import android.support.v7.widget.RecyclerView
@@ -10,6 +11,7 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import com.squareup.picasso.Callback
 import hu.csabapap.seriesreminder.R
+import hu.csabapap.seriesreminder.databinding.ItemTrendingShowBinding
 import hu.csabapap.seriesreminder.extensions.loadFromTmdbUrl
 import hu.csabapap.seriesreminder.ui.adapters.items.ShowItem
 import kotlinx.android.synthetic.main.item_trending_show.view.*
@@ -39,7 +41,9 @@ class DiscoverPreviewAdapter : RecyclerView.Adapter<DiscoverPreviewAdapter.Disco
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): DiscoverShowVh {
         context = parent.context
         val itemView = LayoutInflater.from(context).inflate(R.layout.item_trending_show, parent, false)
-        val showItem = DiscoverShowVh(itemView)
+        val binding = DataBindingUtil.inflate<ItemTrendingShowBinding>(LayoutInflater.from(context),
+                R.layout.item_trending_show, parent, false)
+        val showItem = DiscoverShowVh(binding)
         showItem.setOnClickListener(View.OnClickListener {
             val position = showItem.adapterPosition
             if (position != RecyclerView.NO_POSITION) {
@@ -55,32 +59,22 @@ class DiscoverPreviewAdapter : RecyclerView.Adapter<DiscoverPreviewAdapter.Disco
         holder.bind(item, position)
     }
 
-    inner class DiscoverShowVh(itemView: View) : RecyclerView.ViewHolder(itemView){
+    inner class DiscoverShowVh(private val binding: ItemTrendingShowBinding)
+        : RecyclerView.ViewHolder(binding.root){
 
         val poster : ImageView? = itemView.poster
 
         fun bind(show: ShowItem, position: Int){
-            if (show.poster.isEmpty()) {
-                itemView.show_title.text = show.title
-                itemView.show_title.visibility = View.VISIBLE
-                poster?.visibility = View.INVISIBLE
-            } else {
-                var placeholder = R.color.item_background_light
-                if (position % 2 != 0) {
-                    placeholder = R.color.item_background_dark
-                }
-                poster?.loadFromTmdbUrl(show.poster, placeholder, (object: Callback {
-                    override fun onSuccess() {
-                        poster.visibility = View.VISIBLE
-                        itemView.show_title.visibility = View.GONE
-                    }
-
-                    override fun onError() {
-
-                    }
-                }))
-
-            }
+            binding.show = show
+//            if (show.poster.isEmpty()) {
+//                poster?.visibility = View.INVISIBLE
+//            } else {
+//                var placeholder = R.color.item_background_light
+//                if (position % 2 != 0) {
+//                    placeholder = R.color.item_background_dark
+//                }
+//
+//            }
         }
 
         fun setOnClickListener(listener : View.OnClickListener){
