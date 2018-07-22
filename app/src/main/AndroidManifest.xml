@@ -21,12 +21,13 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".ui.ShowDetailsActivity" />
         <activity android:name=".ui.addshow.AddShowActivity" />
 
         <service
             android:name=".services.SyncService"
-            android:exported="false"/>
+            android:exported="false" />
+
+        <activity android:name=".ui.showdetails.ShowDetailsActivity" />
     </application>
 
 </manifest>
