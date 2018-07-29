@@ -77,10 +77,12 @@ class DiscoverFragment : DaggerFragment(), GridAdapter.GridItemClickListener {
         rv_grid.adapter = adapter
         adapter.listener = this
 
-        discoverViewModel.itemsLiveData.observe(this, Observer {
+        discoverViewModel.trendingShows.observe(this, Observer {
+            Timber.d("observe")
+            Timber.d("null? ${it == null}")
             it?.apply {
-                Timber.d("nmb of items: ${it.size}")
-                adapter.shows = it
+                Timber.d("submit list")
+                adapter.submitList(it)
             }
         })
 
@@ -93,7 +95,9 @@ class DiscoverFragment : DaggerFragment(), GridAdapter.GridItemClickListener {
 
     override fun onStart() {
         super.onStart()
-        discoverViewModel.getItems(listType!!)
+//        discoverViewModel.getItems(listType!!)
+        discoverViewModel.loadTrendingShows()
+
     }
 
     private fun setToolbarTitle() =
@@ -115,10 +119,10 @@ class DiscoverFragment : DaggerFragment(), GridAdapter.GridItemClickListener {
 
     companion object {
 
-        val TYPE_TRENDING = 1
-        val TYPE_POPULAR = 2
+        const val TYPE_TRENDING = 1
+        const val TYPE_POPULAR = 2
 
-        private val ARG_DISCOVER_TYPE = "discover_type"
+        private const val ARG_DISCOVER_TYPE = "discover_type"
 
         fun newInstance(type: Int): DiscoverFragment {
             val fragment = DiscoverFragment()

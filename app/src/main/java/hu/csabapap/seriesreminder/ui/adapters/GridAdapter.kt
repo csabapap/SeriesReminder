@@ -1,22 +1,21 @@
 package hu.csabapap.seriesreminder.ui.adapters
 
+import android.arch.paging.PagedListAdapter
 import android.content.Context
 import android.databinding.DataBindingUtil
+import android.support.v7.util.DiffUtil
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
-import com.squareup.picasso.Picasso
 import hu.csabapap.seriesreminder.R
 import hu.csabapap.seriesreminder.data.db.entities.GridItem
 import hu.csabapap.seriesreminder.data.db.entities.Item
 import hu.csabapap.seriesreminder.data.db.entities.SRShow
+import hu.csabapap.seriesreminder.data.db.entities.TrendingGridItem
 import hu.csabapap.seriesreminder.databinding.GridItemBinding
-import hu.csabapap.seriesreminder.ui.main.discover.DiscoverViewModel
-import kotlinx.android.synthetic.main.grid_item.view.*
 
-internal class GridAdapter : RecyclerView.Adapter<GridAdapter.GridViewHolder>() {
+internal class GridAdapter : PagedListAdapter<TrendingGridItem, GridAdapter.GridViewHolder>(GRID_ITEM_COMPARATOR) {
 
     interface GridItemClickListener {
         fun onItemClick(traktId: Int)
@@ -33,17 +32,14 @@ internal class GridAdapter : RecyclerView.Adapter<GridAdapter.GridViewHolder>() 
 
     override fun onBindViewHolder(holder: GridViewHolder, position: Int) {
 
-        val show = shows!![position].show ?: return
-
+        val gridItem = getItem(position) ?: return
+        val show = gridItem.show!!
+        show.inCollection = gridItem.inCollection
         holder.bind(show)
         holder.setOnClickListener(View.OnClickListener {
             listener?.onItemClick(show.traktId)
         })
 
-    }
-
-    override fun getItemCount(): Int {
-        return shows?.size ?: 0
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): GridViewHolder {
@@ -63,6 +59,19 @@ internal class GridAdapter : RecyclerView.Adapter<GridAdapter.GridViewHolder>() 
 
         fun setOnClickListener(listener: View.OnClickListener) {
             itemView.setOnClickListener(listener)
+        }
+    }
+
+    companion object {
+        private val GRID_ITEM_COMPARATOR = object : DiffUtil.ItemCallback<TrendingGridItem>() {
+            override fun areItemsTheSame(oldItem: TrendingGridItem?, newItem: TrendingGridItem?): Boolean {
+                return oldItem?.show?.traktId == newItem?.show?.traktId
+            }
+
+            override fun areContentsTheSame(oldItem: TrendingGridItem?, newItem: TrendingGridItem?): Boolean {
+                return oldItem?.show == newItem?.show
+            }
+
         }
     }
 }

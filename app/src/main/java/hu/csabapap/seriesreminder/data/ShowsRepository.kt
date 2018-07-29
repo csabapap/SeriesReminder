@@ -1,6 +1,10 @@
 package hu.csabapap.seriesreminder.data
 
 import android.arch.lifecycle.LiveData
+import android.arch.paging.DataSource
+import android.arch.paging.LivePagedListBuilder
+import android.arch.paging.PagedList
+import hu.csabapap.seriesreminder.data.db.TrendingShowsResult
 import hu.csabapap.seriesreminder.data.db.daos.PopularDao
 import hu.csabapap.seriesreminder.data.db.daos.SRShowDao
 import hu.csabapap.seriesreminder.data.db.daos.TrendingDao
@@ -36,6 +40,15 @@ class ShowsRepository(private val traktApi: TraktApi, private val tvdbApi: TvdbA
 
     fun getLiveTrendingShows(limit: Int = 10): LiveData<List<TrendingGridItem>> {
         return trendingDao.getLiveTrendingShows(limit)
+    }
+
+    fun getTrendingShowsLiveData(): TrendingShowsResult {
+        Timber.d("getTrendingShowsLiveData")
+        val dataSourceFactory = trendingDao.getTrendingShowsFactory()
+        val data: LiveData<PagedList<TrendingGridItem>> =
+                LivePagedListBuilder(dataSourceFactory, DATABASE_PAGE_SIZE)
+                        .build()
+        return TrendingShowsResult(data)
     }
 
     fun getRemoteTrendingShows(): Single<List<SRTrendingItem>> {
@@ -246,5 +259,9 @@ class ShowsRepository(private val traktApi: TraktApi, private val tvdbApi: TvdbA
                     Flowable.just(it)
                 }
                 .toList()
+    }
+
+    companion object {
+        private const val DATABASE_PAGE_SIZE = 20
     }
 }

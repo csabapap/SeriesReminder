@@ -1,6 +1,7 @@
 package hu.csabapap.seriesreminder.data.db.daos
 
 import android.arch.lifecycle.LiveData
+import android.arch.paging.DataSource
 import android.arch.persistence.room.Dao
 import android.arch.persistence.room.Insert
 import android.arch.persistence.room.OnConflictStrategy
@@ -19,6 +20,9 @@ interface TrendingDao {
     @Language("RoomSql")
     @Query("SELECT * FROM trending_shows ORDER BY watchers DESC LIMIT :limit")
     fun getTrendingShows(limit: Int) : Flowable<List<TrendingGridItem>>
+
+    @Query("SELECT * FROM trending_shows ORDER BY watchers DESC")
+    fun getTrendingShowsFactory(): DataSource.Factory<Int, TrendingGridItem>
 
     @Query("SELECT * FROM trending_shows ORDER BY watchers DESC LIMIT :limit")
     fun getLiveTrendingShows(limit: Int) : LiveData<List<TrendingGridItem>>
