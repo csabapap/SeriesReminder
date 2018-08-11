@@ -11,7 +11,7 @@ import hu.csabapap.seriesreminder.inject.ViewModelKey
 abstract class DiscoverModule {
 
     @ContributesAndroidInjector
-    abstract fun discoverFragment() : DiscoverFragment
+    abstract fun gridFragment() : GridFragment
 
     @Binds
     @IntoMap

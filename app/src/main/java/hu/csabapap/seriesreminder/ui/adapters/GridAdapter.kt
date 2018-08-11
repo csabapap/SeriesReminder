@@ -15,7 +15,7 @@ import hu.csabapap.seriesreminder.data.db.entities.SRShow
 import hu.csabapap.seriesreminder.data.db.entities.TrendingGridItem
 import hu.csabapap.seriesreminder.databinding.GridItemBinding
 
-internal class GridAdapter : PagedListAdapter<TrendingGridItem, GridAdapter.GridViewHolder>(GRID_ITEM_COMPARATOR) {
+internal class GridAdapter : PagedListAdapter<GridItem<Item>, GridAdapter.GridViewHolder>(GRID_ITEM_COMPARATOR) {
 
     interface GridItemClickListener {
         fun onItemClick(traktId: Int)
@@ -63,12 +63,12 @@ internal class GridAdapter : PagedListAdapter<TrendingGridItem, GridAdapter.Grid
     }
 
     companion object {
-        private val GRID_ITEM_COMPARATOR = object : DiffUtil.ItemCallback<TrendingGridItem>() {
-            override fun areItemsTheSame(oldItem: TrendingGridItem?, newItem: TrendingGridItem?): Boolean {
+        private val GRID_ITEM_COMPARATOR = object : DiffUtil.ItemCallback<GridItem<Item>>() {
+            override fun areItemsTheSame(oldItem: GridItem<Item>?, newItem: GridItem<Item>?): Boolean {
                 return oldItem?.show?.traktId == newItem?.show?.traktId
             }
 
-            override fun areContentsTheSame(oldItem: TrendingGridItem?, newItem: TrendingGridItem?): Boolean {
+            override fun areContentsTheSame(oldItem: GridItem<Item>?, newItem: GridItem<Item>?): Boolean {
                 return oldItem?.show == newItem?.show
             }
 

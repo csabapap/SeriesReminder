@@ -47,7 +47,7 @@ class HomeCardsAdapter(private val listener: CardClickListener)
                     val cardItem = cardItems[position]
                     when (cardItem.type) {
                         CardItem.TRENDING_CARD_TYPE -> listener.onMoreButtonClick(DiscoverFragment.TYPE_TRENDING)
-//                        CardItem.POPULAR_CARD_TYPE -> listener.onMoreButtonClick(DiscoverFragment.TYPE_POPULAR)
+                        CardItem.POPULAR_CARD_TYPE -> listener.onMoreButtonClick(DiscoverFragment.TYPE_POPULAR)
                     }
                 }
             }

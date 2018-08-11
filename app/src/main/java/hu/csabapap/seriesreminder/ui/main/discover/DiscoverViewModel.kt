@@ -7,9 +7,11 @@ import android.arch.lifecycle.ViewModel
 import android.arch.paging.PagedList
 import hu.csabapap.seriesreminder.data.CollectionRepository
 import hu.csabapap.seriesreminder.data.ShowsRepository
+import hu.csabapap.seriesreminder.data.db.PopularShowsResult
 import hu.csabapap.seriesreminder.data.db.TrendingShowsResult
 import hu.csabapap.seriesreminder.data.db.entities.GridItem
 import hu.csabapap.seriesreminder.data.db.entities.Item
+import hu.csabapap.seriesreminder.data.db.entities.PopularGridItem
 import hu.csabapap.seriesreminder.data.db.entities.TrendingGridItem
 import io.reactivex.Flowable
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -26,24 +28,38 @@ class DiscoverViewModel @Inject constructor(
     private val disposables = CompositeDisposable()
     val itemsLiveData = MutableLiveData<List<GridItem<Item>>>()
     private val loadTrendingShows = MutableLiveData<Boolean>()
+    private val loadPopularShows = MutableLiveData<Boolean>()
     val collectionLiveData = collectionRepository.getCollection()
 
-    private val trendingShowsResult: LiveData<TrendingShowsResult> = Transformations.map(loadTrendingShows, {
+    private val trendingShowsResult: LiveData<TrendingShowsResult> = Transformations.map(loadTrendingShows) {
         showsRepository.getTrendingShowsLiveData()
-    })
+    }
 
-    val trendingShows: LiveData<PagedList<TrendingGridItem>> = Transformations.switchMap(trendingShowsResult,
-            { it -> it.data })
+    private val popularShowsResult: LiveData<PopularShowsResult> = Transformations.map(loadPopularShows) {
+        showsRepository.getPopularShowsLiveData()
+    }
+
+    val trendingShows: LiveData<PagedList<TrendingGridItem>> = Transformations.switchMap(trendingShowsResult) {
+        it -> it.data
+    }
+
+    val popularShows: LiveData<PagedList<PopularGridItem>> = Transformations.switchMap(popularShowsResult) {
+        it -> it.data
+    }
 
     fun getItems(type: Int) {
         when (type) {
-            DiscoverFragment.TYPE_TRENDING -> getTrendingShows()
-            DiscoverFragment.TYPE_POPULAR -> getPopularShows()
+            DiscoverFragment.TYPE_TRENDING -> loadTrendingShows()
+            DiscoverFragment.TYPE_POPULAR -> loadPopularShows()
         }
     }
 
     fun loadTrendingShows() {
         loadTrendingShows.value = true
+    }
+
+    fun loadPopularShows() {
+        loadPopularShows.value = true
     }
 
     private fun getTrendingShows() {

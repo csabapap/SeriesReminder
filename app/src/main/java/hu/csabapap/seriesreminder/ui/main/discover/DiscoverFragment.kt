@@ -1,13 +1,12 @@
 package hu.csabapap.seriesreminder.ui.main.discover
 
-import android.arch.lifecycle.Observer
-import android.arch.lifecycle.ViewModelProvider
-import android.arch.lifecycle.ViewModelProviders
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.support.v7.widget.GridLayoutManager
-import android.support.v7.widget.RecyclerView
+import android.support.design.widget.TabLayout
+import android.support.v4.app.Fragment
+import android.support.v4.app.FragmentManager
+import android.support.v4.app.FragmentStatePagerAdapter
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -15,30 +14,19 @@ import dagger.android.support.DaggerFragment
 import hu.csabapap.seriesreminder.R
 import hu.csabapap.seriesreminder.ui.adapters.GridAdapter
 import hu.csabapap.seriesreminder.ui.addshow.AddShowActivity
-import hu.csabapap.seriesreminder.utils.SpacingItemDecorator
 import kotlinx.android.synthetic.main.fragment_discover.*
-import timber.log.Timber
-import javax.inject.Inject
-import javax.inject.Named
 
-class DiscoverFragment : DaggerFragment(), GridAdapter.GridItemClickListener {
-
-    @field:[Inject Named("Main")]
-    lateinit var mainViewModelProvider: ViewModelProvider.Factory
-    private lateinit var discoverViewModel: DiscoverViewModel
-
-    private var listType: Int? = null
+class DiscoverFragment : Fragment(), GridAdapter.GridItemClickListener {
 
     private var listener: DiscoverFragmentInteractionListener? = null
+
+    private var type = TYPE_TRENDING
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        discoverViewModel = ViewModelProviders.of(this, mainViewModelProvider)
-                .get(DiscoverViewModel::class.java)
-
-        if (arguments != null) {
-            listType = arguments!!.getInt(ARG_DISCOVER_TYPE)
+        arguments?.apply {
+            type = getInt(ARG_DISCOVER_TYPE, TYPE_TRENDING)
         }
     }
 
@@ -65,47 +53,40 @@ class DiscoverFragment : DaggerFragment(), GridAdapter.GridItemClickListener {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         discover_toolbar.apply {
-            title = setToolbarTitle()
+            title = "Discover"
             setNavigationIcon(R.drawable.ic_arrow_back_24dp)
             setNavigationOnClickListener { listener?.onNavigateBack() }
         }
 
-        val adapter = GridAdapter()
-        val gridLayoutManager = GridLayoutManager(activity, 4) as RecyclerView.LayoutManager
-        rv_grid.layoutManager = gridLayoutManager
-        rv_grid.addItemDecoration(SpacingItemDecorator(4, 4))
-        rv_grid.adapter = adapter
-        adapter.listener = this
+        tab_layout.addOnTabSelectedListener(object: TabLayout.OnTabSelectedListener {
+            override fun onTabReselected(tab: TabLayout.Tab?) {
 
-        discoverViewModel.trendingShows.observe(this, Observer {
-            Timber.d("observe")
-            Timber.d("null? ${it == null}")
-            it?.apply {
-                Timber.d("submit list")
-                adapter.submitList(it)
             }
-        })
 
-        discoverViewModel.collectionLiveData.observe(this, Observer {
-            it?.apply {
-                Timber.d("nmb of shows in collection: ${it.size}")
+            override fun onTabUnselected(tab: TabLayout.Tab?) {
+
             }
+
+            override fun onTabSelected(tab: TabLayout.Tab?) {
+
+            }
+
         })
+        tab_layout.setupWithViewPager(view_pager)
+        view_pager.adapter = DiscoverPagerAdapter(childFragmentManager)
+
+        if (type == TYPE_POPULAR) {
+            view_pager.currentItem = 1
+        }
+
     }
 
     override fun onStart() {
         super.onStart()
 //        discoverViewModel.getItems(listType!!)
-        discoverViewModel.loadTrendingShows()
+//        discoverViewModel.loadTrendingShows()
 
     }
-
-    private fun setToolbarTitle() =
-            when (listType) {
-                TYPE_TRENDING -> "Trending Shows"
-                TYPE_POPULAR -> "Popular Shows"
-                else -> ""
-            }
 
     override fun onItemClick(traktId: Int) {
         val intent = Intent(activity, AddShowActivity::class.java)
@@ -115,6 +96,26 @@ class DiscoverFragment : DaggerFragment(), GridAdapter.GridItemClickListener {
 
     interface DiscoverFragmentInteractionListener {
         fun onNavigateBack()
+    }
+
+    class DiscoverPagerAdapter(fragmentManager: FragmentManager): FragmentStatePagerAdapter(fragmentManager) {
+        override fun getItem(position: Int): Fragment {
+            return when (position) {
+                0 -> GridFragment.newInstance(GridFragment.TYPE_TRENDING)
+                1 -> GridFragment.newInstance(GridFragment.TYPE_POPULAR)
+                else -> throw IllegalArgumentException("invalid view pager position")
+            }
+        }
+
+        override fun getCount() = 2
+
+        override fun getPageTitle(position: Int): CharSequence? {
+            return when (position) {
+                0 -> "Trending"
+                1 -> "Popular"
+                else -> ""
+            }
+        }
     }
 
     companion object {

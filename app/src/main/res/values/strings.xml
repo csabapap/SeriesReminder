@@ -20,4 +20,6 @@
     <string name="sync_shows">Sync shows</string>
     <string name="sync_next_episodes">Sync next episodes</string>
     <string name="upcoming_episodes">Upcoming episodes</string>
+    <string name="title_trending">Trending</string>
+    <string name="title_popular">Popular</string>
 </resources>

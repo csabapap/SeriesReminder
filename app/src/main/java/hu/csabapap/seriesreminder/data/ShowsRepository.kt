@@ -4,6 +4,7 @@ import android.arch.lifecycle.LiveData
 import android.arch.paging.DataSource
 import android.arch.paging.LivePagedListBuilder
 import android.arch.paging.PagedList
+import hu.csabapap.seriesreminder.data.db.PopularShowsResult
 import hu.csabapap.seriesreminder.data.db.TrendingShowsResult
 import hu.csabapap.seriesreminder.data.db.daos.PopularDao
 import hu.csabapap.seriesreminder.data.db.daos.SRShowDao
@@ -49,6 +50,13 @@ class ShowsRepository(private val traktApi: TraktApi, private val tvdbApi: TvdbA
                 LivePagedListBuilder(dataSourceFactory, DATABASE_PAGE_SIZE)
                         .build()
         return TrendingShowsResult(data)
+    }
+
+    fun getPopularShowsLiveData(): PopularShowsResult {
+        val dataSourceFactory = popularDao.getPopularShowsLiveFactory()
+        val data: LiveData<PagedList<PopularGridItem>> =
+                LivePagedListBuilder(dataSourceFactory, DATABASE_PAGE_SIZE).build()
+        return PopularShowsResult(data)
     }
 
     fun getRemoteTrendingShows(): Single<List<SRTrendingItem>> {
