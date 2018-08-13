@@ -1,13 +1,37 @@
-*.iml
-.gradle
-/local.properties
-/.idea/workspace.xml
-/.idea/libraries
-/.idea/misc.xml
-/.idea/codeStyles
-/.idea/caches
-/projectFilesBackup
-.DS_Store
 /build
 /captures
+/app/production
+
+# Gradle generated files
+.gradle
+
+# Local configuration file (sdk path, etc)
+/local.properties
+
+# OS-specific files
+.DS_Store
+.DS_Store?
+
+# IntelliJ
+.idea/libraries/
+.idea/workspace.xml
+.idea/tasks.xml
+.idea/.name
+.idea/compiler.xml
+.idea/copyright/profiles_settings.xml
+.idea/encodings.xml
+.idea/misc.xml
+.idea/modules.xml
+.idea/scopes/scope_settings.xml
+.idea/vcs.xml
+.idea/inspectionProfiles
+.idea/markdown-navigator
+.idea/markdown-navigator.xml
+.idea/markdown-exported-files.xml
+.idea/caches
+.idea/assetWizardSettings.xml
+*.iml
+
+# Log Files
+*.log
 .externalNativeBuild
