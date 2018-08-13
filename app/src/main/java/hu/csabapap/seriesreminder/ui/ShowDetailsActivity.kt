@@ -11,6 +11,7 @@ import io.reactivex.Flowable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_show_details.*
+import timber.log.Timber
 import javax.inject.Inject
 
 class ShowDetailsActivity : AppCompatActivity() {
@@ -30,7 +31,7 @@ class ShowDetailsActivity : AppCompatActivity() {
 
         traktId = intent.extras.getInt("trakt_id")
 
-        Log.d(TAG, "trakt id: $traktId")
+        Timber.d("trakt id: $traktId")
     }
 
     override fun onStart() {
