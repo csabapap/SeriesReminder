@@ -1,17 +1,17 @@
 package hu.csabapap.seriesreminder.ui.showdetails
 
+import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
-import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
-import android.support.design.widget.AppBarLayout
-import android.util.Log
 import android.view.View
+import dagger.android.support.DaggerAppCompatActivity
 import hu.csabapap.seriesreminder.R
+import hu.csabapap.seriesreminder.utils.ShowDetails
 import kotlinx.android.synthetic.main.activity_show_details.*
 import javax.inject.Inject
 import javax.inject.Named
 
-class ShowDetailsActivity : AppCompatActivity() {
+class ShowDetailsActivity : DaggerAppCompatActivity() {
     @Inject @Named("ShowDetailsViewModelFactory")
     lateinit var viewModelProvider: ShowDetailsViewModelProvider
     private lateinit var viewModel: ShowDetailsViewModel
@@ -19,6 +19,13 @@ class ShowDetailsActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_show_details)
+
+        val showId = intent.getIntExtra(ShowDetails.EXTRA_SHOW_ID, -1)
+
+        if (showId == -1) {
+            finish()
+            return
+        }
 
         viewModel = ViewModelProviders.of(this, viewModelProvider)
                 .get(ShowDetailsViewModel::class.java)
@@ -49,12 +56,17 @@ class ShowDetailsActivity : AppCompatActivity() {
                         poster.scaleY = scale
                         poster.translationY = (poster.height - poster.height.toFloat() * scale) / 2f
                     }
-                    Log.d("CustomBehavior", "poster's y: " + poster.y)
-                    Log.d("CustomBehavior", "poster's y: " + poster.y)
                 }
             }
         }
+
+        viewModel.getShow(showId)
+
+        viewModel.showLiveData.observe(this, Observer {
+            it?.let {
+                show_title.text = it.title
+                overview.text = it.overview
+            }
+        })
     }
-
-
 }

@@ -11,7 +11,7 @@ import javax.inject.Named
 abstract class ShowDetailsModule {
 
     @ContributesAndroidInjector()
-    internal abstract fun addShowActivity() : AddShowActivity
+    internal abstract fun showDetailsActivity() : ShowDetailsActivity
 
     @Binds
     @Named("ShowDetailsViewModelFactory")

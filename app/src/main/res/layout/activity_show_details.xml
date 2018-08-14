@@ -107,7 +107,7 @@
         android:elevation="0dp"
         app:layout_anchor="@id/title_container"
         app:layout_anchorGravity="bottom|start"
-        app:layout_behavior="hu.csabapap.appbarbehaviours.ScaleBehavior"
+        app:layout_behavior="hu.csabapap.seriesreminder.utils.ScaleBehavior"
         tools:visibility="gone"/>
 
 </android.support.design.widget.CoordinatorLayout>

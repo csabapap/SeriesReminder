@@ -5,6 +5,7 @@ import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProvider
 import android.arch.lifecycle.ViewModelProviders
 import android.arch.paging.PagedList
+import android.content.Intent
 import android.os.Bundle
 import android.support.v7.widget.GridLayoutManager
 import android.support.v7.widget.RecyclerView
@@ -16,13 +17,15 @@ import hu.csabapap.seriesreminder.R
 import hu.csabapap.seriesreminder.data.db.entities.GridItem
 import hu.csabapap.seriesreminder.data.db.entities.Item
 import hu.csabapap.seriesreminder.ui.adapters.GridAdapter
+import hu.csabapap.seriesreminder.ui.addshow.AddShowActivity
+import hu.csabapap.seriesreminder.ui.showdetails.ShowDetailsActivity
+import hu.csabapap.seriesreminder.utils.ShowDetails
 import hu.csabapap.seriesreminder.utils.SpacingItemDecorator
 import kotlinx.android.synthetic.main.fragment_grid.*
-import timber.log.Timber
 import javax.inject.Inject
 import javax.inject.Named
 
-class GridFragment : DaggerFragment() {
+class GridFragment : DaggerFragment(), GridAdapter.GridItemClickListener {
 
     @field:[Inject Named("Main")]
     lateinit var mainViewModelProvider: ViewModelProvider.Factory
@@ -46,6 +49,7 @@ class GridFragment : DaggerFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val adapter = GridAdapter()
+        adapter.listener = this
         val gridLayoutManager = GridLayoutManager(activity, 4) as RecyclerView.LayoutManager
         rv_grid.layoutManager = gridLayoutManager
         rv_grid.addItemDecoration(SpacingItemDecorator(4, 4))
@@ -73,6 +77,18 @@ class GridFragment : DaggerFragment() {
         super.onStart()
 
         discoverViewModel.getItems(listType)
+    }
+
+    override fun onItemClick(traktId: Int, inCollection: Boolean) {
+        if (inCollection) {
+            val intent = Intent(activity, ShowDetailsActivity::class.java)
+            intent.putExtra(ShowDetails.EXTRA_SHOW_ID, traktId)
+            activity?.startActivity(intent)
+        } else {
+            val intent = Intent(activity, AddShowActivity::class.java)
+            intent.putExtra("show_id", traktId)
+            activity?.startActivity(intent)
+        }
     }
 
     companion object {

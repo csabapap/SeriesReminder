@@ -18,7 +18,7 @@ import hu.csabapap.seriesreminder.databinding.GridItemBinding
 internal class GridAdapter : PagedListAdapter<GridItem<Item>, GridAdapter.GridViewHolder>(GRID_ITEM_COMPARATOR) {
 
     interface GridItemClickListener {
-        fun onItemClick(traktId: Int)
+        fun onItemClick(traktId: Int, inCollection: Boolean)
     }
 
     var listener: GridItemClickListener? = null
@@ -37,7 +37,7 @@ internal class GridAdapter : PagedListAdapter<GridItem<Item>, GridAdapter.GridVi
         show.inCollection = gridItem.inCollection
         holder.bind(show)
         holder.setOnClickListener(View.OnClickListener {
-            listener?.onItemClick(show.traktId)
+            listener?.onItemClick(show.traktId, show.inCollection)
         })
 
     }
