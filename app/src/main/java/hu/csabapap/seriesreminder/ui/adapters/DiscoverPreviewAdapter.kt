@@ -20,11 +20,11 @@ import kotlinx.android.synthetic.main.item_trending_show.view.*
 class DiscoverPreviewAdapter : RecyclerView.Adapter<DiscoverPreviewAdapter.DiscoverShowVh>() {
 
     interface PreviewShowListener{
-        fun onItemClick(traktId: Int)
+        fun onItemClick(traktId: Int, inCollection: Boolean)
     }
 
     var context: Context? = null
-    var showItems: List<ShowItem> = emptyList()
+    private var showItems: List<ShowItem> = emptyList()
 
     var listener: PreviewShowListener? = null
 
@@ -40,7 +40,6 @@ class DiscoverPreviewAdapter : RecyclerView.Adapter<DiscoverPreviewAdapter.Disco
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): DiscoverShowVh {
         context = parent.context
-        val itemView = LayoutInflater.from(context).inflate(R.layout.item_trending_show, parent, false)
         val binding = DataBindingUtil.inflate<ItemTrendingShowBinding>(LayoutInflater.from(context),
                 R.layout.item_trending_show, parent, false)
         val showItem = DiscoverShowVh(binding)
@@ -48,7 +47,8 @@ class DiscoverPreviewAdapter : RecyclerView.Adapter<DiscoverPreviewAdapter.Disco
             val position = showItem.adapterPosition
             if (position != RecyclerView.NO_POSITION) {
                 val item = showItems[position]
-                listener?.onItemClick(item.traktId)
+                // TODO set in collection flag
+                listener?.onItemClick(item.traktId, false)
             }
         })
         return showItem
@@ -66,15 +66,6 @@ class DiscoverPreviewAdapter : RecyclerView.Adapter<DiscoverPreviewAdapter.Disco
 
         fun bind(show: ShowItem, position: Int){
             binding.show = show
-//            if (show.poster.isEmpty()) {
-//                poster?.visibility = View.INVISIBLE
-//            } else {
-//                var placeholder = R.color.item_background_light
-//                if (position % 2 != 0) {
-//                    placeholder = R.color.item_background_dark
-//                }
-//
-//            }
         }
 
         fun setOnClickListener(listener : View.OnClickListener){
