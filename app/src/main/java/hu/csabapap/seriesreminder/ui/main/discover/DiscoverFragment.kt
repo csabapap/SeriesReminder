@@ -1,7 +1,6 @@
 package hu.csabapap.seriesreminder.ui.main.discover
 
 import android.content.Context
-import android.content.Intent
 import android.os.Bundle
 import android.support.design.widget.TabLayout
 import android.support.v4.app.Fragment
@@ -10,13 +9,10 @@ import android.support.v4.app.FragmentStatePagerAdapter
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import dagger.android.support.DaggerFragment
 import hu.csabapap.seriesreminder.R
-import hu.csabapap.seriesreminder.ui.adapters.GridAdapter
-import hu.csabapap.seriesreminder.ui.addshow.AddShowActivity
 import kotlinx.android.synthetic.main.fragment_discover.*
 
-class DiscoverFragment : Fragment(), GridAdapter.GridItemClickListener {
+class DiscoverFragment : Fragment() {
 
     private var listener: DiscoverFragmentInteractionListener? = null
 
@@ -79,19 +75,6 @@ class DiscoverFragment : Fragment(), GridAdapter.GridItemClickListener {
             view_pager.currentItem = 1
         }
 
-    }
-
-    override fun onStart() {
-        super.onStart()
-//        discoverViewModel.getItems(listType!!)
-//        discoverViewModel.loadTrendingShows()
-
-    }
-
-    override fun onItemClick(traktId: Int) {
-        val intent = Intent(activity, AddShowActivity::class.java)
-        intent.putExtra("show_id", traktId)
-        activity?.startActivity(intent)
     }
 
     interface DiscoverFragmentInteractionListener {

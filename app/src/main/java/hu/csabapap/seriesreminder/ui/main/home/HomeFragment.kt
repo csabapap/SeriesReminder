@@ -162,7 +162,7 @@ class HomeFragment : DaggerFragment(), DiscoverPreviewAdapter.PreviewShowListene
         fun onMoreButtonClick(type: Int)
     }
 
-    override fun onItemClick(traktId: Int) {
+    override fun onItemClick(traktId: Int, inCollection: Boolean) {
         val intent = Intent(activity, AddShowActivity::class.java)
         intent.putExtra("show_id", traktId)
         activity?.startActivity(intent)
