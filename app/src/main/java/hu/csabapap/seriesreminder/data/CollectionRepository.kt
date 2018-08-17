@@ -1,9 +1,9 @@
 package hu.csabapap.seriesreminder.data
 
-import android.arch.lifecycle.LiveData
-import android.arch.paging.DataSource
-import android.arch.paging.LivePagedListBuilder
-import android.arch.paging.PagedList
+import androidx.lifecycle.LiveData
+import androidx.paging.DataSource
+import androidx.paging.LivePagedListBuilder
+import androidx.paging.PagedList
 import hu.csabapap.seriesreminder.data.db.daos.CollectionsDao
 import hu.csabapap.seriesreminder.data.db.entities.CollectionEntry
 import hu.csabapap.seriesreminder.data.db.entities.CollectionItem

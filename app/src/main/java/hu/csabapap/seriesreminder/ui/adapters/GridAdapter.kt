@@ -1,18 +1,17 @@
 package hu.csabapap.seriesreminder.ui.adapters
 
-import android.arch.paging.PagedListAdapter
+import androidx.paging.PagedListAdapter
 import android.content.Context
-import android.databinding.DataBindingUtil
-import android.support.v7.util.DiffUtil
-import android.support.v7.widget.RecyclerView
+import androidx.databinding.DataBindingUtil
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.RecyclerView
 import hu.csabapap.seriesreminder.R
 import hu.csabapap.seriesreminder.data.db.entities.GridItem
 import hu.csabapap.seriesreminder.data.db.entities.Item
 import hu.csabapap.seriesreminder.data.db.entities.SRShow
-import hu.csabapap.seriesreminder.data.db.entities.TrendingGridItem
 import hu.csabapap.seriesreminder.databinding.GridItemBinding
 
 internal class GridAdapter : PagedListAdapter<GridItem<Item>, GridAdapter.GridViewHolder>(GRID_ITEM_COMPARATOR) {
@@ -64,12 +63,12 @@ internal class GridAdapter : PagedListAdapter<GridItem<Item>, GridAdapter.GridVi
 
     companion object {
         private val GRID_ITEM_COMPARATOR = object : DiffUtil.ItemCallback<GridItem<Item>>() {
-            override fun areItemsTheSame(oldItem: GridItem<Item>?, newItem: GridItem<Item>?): Boolean {
-                return oldItem?.show?.traktId == newItem?.show?.traktId
+            override fun areItemsTheSame(oldItem: GridItem<Item>, newItem: GridItem<Item>): Boolean {
+                return oldItem.show?.traktId == newItem.show?.traktId
             }
 
-            override fun areContentsTheSame(oldItem: GridItem<Item>?, newItem: GridItem<Item>?): Boolean {
-                return oldItem?.show == newItem?.show
+            override fun areContentsTheSame(oldItem: GridItem<Item>, newItem: GridItem<Item>): Boolean {
+                return oldItem.show == newItem.show
             }
 
         }

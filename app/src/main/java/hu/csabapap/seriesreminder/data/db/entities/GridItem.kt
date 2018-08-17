@@ -1,7 +1,7 @@
 package hu.csabapap.seriesreminder.data.db.entities
 
-import android.arch.persistence.room.Embedded
-import android.arch.persistence.room.Relation
+import androidx.room.Embedded
+import androidx.room.Relation
 
 interface GridItem<T: Item> {
     var entry: T?

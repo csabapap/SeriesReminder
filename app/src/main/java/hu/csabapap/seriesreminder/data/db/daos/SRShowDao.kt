@@ -1,6 +1,6 @@
 package hu.csabapap.seriesreminder.data.db.daos
 
-import android.arch.persistence.room.*
+import androidx.room.*
 import hu.csabapap.seriesreminder.data.db.entities.SRShow
 import io.reactivex.Maybe
 import io.reactivex.Single

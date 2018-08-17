@@ -1,7 +1,7 @@
 package hu.csabapap.seriesreminder.data.db.daos
 
-import android.arch.persistence.room.Dao
-import android.arch.persistence.room.Insert
+import androidx.room.Dao
+import androidx.room.Insert
 import hu.csabapap.seriesreminder.data.db.entities.SRSeason
 
 @Dao

@@ -1,7 +1,7 @@
 package hu.csabapap.seriesreminder.ui.main.collection
 
-import android.arch.lifecycle.ViewModel
-import android.arch.paging.LivePagedListBuilder
+import androidx.lifecycle.ViewModel
+import androidx.paging.LivePagedListBuilder
 import hu.csabapap.seriesreminder.data.CollectionRepository
 import hu.csabapap.seriesreminder.data.db.entities.CollectionItem
 import hu.csabapap.seriesreminder.utils.AppRxSchedulers

@@ -1,10 +1,10 @@
 package hu.csabapap.seriesreminder.utils
 
 import android.content.Context
-import android.support.design.widget.CoordinatorLayout
 import android.util.AttributeSet
 import android.view.View
 import android.widget.ImageView
+import androidx.coordinatorlayout.widget.CoordinatorLayout
 import hu.csabapap.seriesreminder.R
 
 class ScaleBehavior(context: Context, attributeSet: AttributeSet)

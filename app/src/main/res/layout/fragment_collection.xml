@@ -4,13 +4,13 @@
     android:layout_height="match_parent"
     tools:context="hu.csabapap.seriesreminder.ui.main.collection.CollectionFragment">
 
-    <android.support.v7.widget.RecyclerView
+    <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_collection"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:paddingTop="?attr/actionBarSize"/>
 
-    <android.support.v7.widget.Toolbar
+    <androidx.appcompat.widget.Toolbar
         android:id="@+id/collection_toolbar"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"

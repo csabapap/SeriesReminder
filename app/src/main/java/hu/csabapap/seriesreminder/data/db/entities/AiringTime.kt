@@ -1,6 +1,6 @@
 package hu.csabapap.seriesreminder.data.db.entities
 
-import android.arch.persistence.room.TypeConverter
+import androidx.room.TypeConverter
 
 data class AiringTime(val day: String = "", val time: String = "", val timezone: String = "") {
 

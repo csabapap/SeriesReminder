@@ -1,6 +1,6 @@
 package hu.csabapap.seriesreminder.data.db.entities
 
-import android.arch.persistence.room.*
+import androidx.room.*
 
 @Entity(tableName = "trending_shows",
         foreignKeys = [(

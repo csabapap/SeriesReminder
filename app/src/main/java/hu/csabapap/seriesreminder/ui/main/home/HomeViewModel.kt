@@ -1,7 +1,7 @@
 package hu.csabapap.seriesreminder.ui.main.home
 
-import android.arch.lifecycle.MutableLiveData
-import android.arch.lifecycle.ViewModel
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
 import hu.csabapap.seriesreminder.R
 import hu.csabapap.seriesreminder.data.EpisodesRepository
 import hu.csabapap.seriesreminder.data.ShowsRepository

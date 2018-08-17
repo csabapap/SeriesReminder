@@ -6,7 +6,7 @@
             name="show"
             type="hu.csabapap.seriesreminder.data.db.entities.SRShow" />
     </data>
-    <android.support.constraint.ConstraintLayout xmlns:app="http://schemas.android.com/apk/res-auto"
+    <androidx.constraintlayout.widget.ConstraintLayout xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content">
@@ -30,5 +30,5 @@
             app:srcCompat="@drawable/ic_check_box_24dp"
             app:goneIf="@{!show.inCollection}"/>
 
-    </android.support.constraint.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

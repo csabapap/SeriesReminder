@@ -1,13 +1,14 @@
 package hu.csabapap.seriesreminder.ui.adapters
 
 import android.content.Context
-import android.support.v4.content.ContextCompat
-import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.PagerSnapHelper
-import android.support.v7.widget.RecyclerView
+import androidx.core.content.ContextCompat
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.recyclerview.widget.DividerItemDecoration
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.PagerSnapHelper
+import androidx.recyclerview.widget.RecyclerView
 import hu.csabapap.seriesreminder.R
 import hu.csabapap.seriesreminder.ui.adapters.items.CardItem
 import hu.csabapap.seriesreminder.ui.adapters.items.DiscoverCardItem
@@ -15,7 +16,6 @@ import hu.csabapap.seriesreminder.ui.adapters.items.UpcomingEpisodeCardItem
 import hu.csabapap.seriesreminder.ui.main.discover.DiscoverFragment
 import kotlinx.android.synthetic.main.item_discover_card.view.*
 import kotlinx.android.synthetic.main.item_episodes.view.*
-import android.support.v7.widget.DividerItemDecoration
 
 
 

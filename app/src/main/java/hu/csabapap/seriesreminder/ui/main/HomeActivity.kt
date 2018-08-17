@@ -1,7 +1,7 @@
 package hu.csabapap.seriesreminder.ui.main
 
 import android.os.Bundle
-import android.support.design.widget.BottomNavigationView
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import dagger.android.support.DaggerAppCompatActivity
 import hu.csabapap.seriesreminder.R
 import hu.csabapap.seriesreminder.data.db.entities.SRShow

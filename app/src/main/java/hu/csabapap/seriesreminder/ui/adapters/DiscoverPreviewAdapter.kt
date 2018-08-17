@@ -1,18 +1,15 @@
 package hu.csabapap.seriesreminder.ui.adapters
 
 import android.content.Context
-import android.databinding.DataBindingUtil
-import android.support.v4.content.ContextCompat
-import android.support.v7.util.DiffUtil
-import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
-import com.squareup.picasso.Callback
+import androidx.databinding.DataBindingUtil
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.RecyclerView
 import hu.csabapap.seriesreminder.R
 import hu.csabapap.seriesreminder.databinding.ItemTrendingShowBinding
-import hu.csabapap.seriesreminder.extensions.loadFromTmdbUrl
 import hu.csabapap.seriesreminder.ui.adapters.items.ShowItem
 import kotlinx.android.synthetic.main.item_trending_show.view.*
 

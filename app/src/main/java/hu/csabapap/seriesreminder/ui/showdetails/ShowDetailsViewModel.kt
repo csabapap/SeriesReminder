@@ -1,7 +1,7 @@
 package hu.csabapap.seriesreminder.ui.showdetails
 
-import android.arch.lifecycle.MutableLiveData
-import android.arch.lifecycle.ViewModel
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
 import hu.csabapap.seriesreminder.data.ShowsRepository
 import hu.csabapap.seriesreminder.data.db.entities.SRShow
 import io.reactivex.android.schedulers.AndroidSchedulers

@@ -1,6 +1,6 @@
 package hu.csabapap.seriesreminder.ui.showdetails
 
-import android.arch.lifecycle.ViewModelProvider
+import androidx.lifecycle.ViewModelProvider
 import dagger.Binds
 import dagger.Module
 import dagger.android.ContributesAndroidInjector

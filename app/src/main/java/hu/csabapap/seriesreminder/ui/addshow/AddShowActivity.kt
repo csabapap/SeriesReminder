@@ -1,10 +1,10 @@
 package hu.csabapap.seriesreminder.ui.addshow
 
-import android.arch.lifecycle.Observer
-import android.arch.lifecycle.ViewModelProvider
-import android.arch.lifecycle.ViewModelProviders
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.ViewModelProviders
 import android.content.res.ColorStateList
-import android.databinding.DataBindingUtil
+import androidx.databinding.DataBindingUtil
 import android.graphics.Bitmap
 import android.graphics.drawable.Animatable2
 import android.graphics.drawable.AnimatedVectorDrawable
@@ -12,10 +12,10 @@ import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
 import android.os.Build
 import android.os.Bundle
-import android.support.graphics.drawable.Animatable2Compat
-import android.support.graphics.drawable.AnimatedVectorDrawableCompat
-import android.support.v4.graphics.ColorUtils
-import android.support.v7.graphics.Palette
+import androidx.vectordrawable.graphics.drawable.Animatable2Compat
+import androidx.vectordrawable.graphics.drawable.AnimatedVectorDrawableCompat
+import androidx.core.graphics.ColorUtils
+import androidx.palette.graphics.Palette
 import com.squareup.picasso.Callback
 import dagger.android.support.DaggerAppCompatActivity
 import hu.csabapap.seriesreminder.R
@@ -125,14 +125,14 @@ class AddShowActivity : DaggerAppCompatActivity() {
         Palette.from(bitmap)
                 .clearFilters()
                 .generate {
-                    val vibrant = it.vibrantSwatch
+                    val vibrant = it?.vibrantSwatch
                     vibrant?.apply {
                         title_container.setBackgroundColor(rgb)
                         cover_overflow.setBackgroundColor(
                                 ColorUtils.setAlphaComponent(rgb, /* 30% */ 0x40))
                         tv_title.setTextColor(titleTextColor)
                     }
-                    val darkVibrant = it.darkVibrantSwatch
+                    val darkVibrant = it?.darkVibrantSwatch
                     darkVibrant?.apply {
                         btn_add_show.backgroundTintList = ColorStateList.valueOf(rgb)
                         btn_add_show.imageTintList = ColorStateList.valueOf(titleTextColor)
