@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.view.View
 import dagger.android.support.DaggerAppCompatActivity
 import hu.csabapap.seriesreminder.R
+import hu.csabapap.seriesreminder.extensions.loadFromTmdbUrl
 import hu.csabapap.seriesreminder.utils.ShowDetails
 import kotlinx.android.synthetic.main.activity_show_details.*
 import javax.inject.Inject
@@ -66,6 +67,10 @@ class ShowDetailsActivity : DaggerAppCompatActivity() {
             it?.let {
                 show_title.text = it.title
                 overview.text = it.overview
+                ratings.text = String.format(getString(R.string.ratings_value), (it.rating * 10).toInt(), it.votes)
+                genres.text = it.genres
+                poster.loadFromTmdbUrl(it.posterThumb)
+                cover.loadFromTmdbUrl(it.cover)
             }
         })
     }
