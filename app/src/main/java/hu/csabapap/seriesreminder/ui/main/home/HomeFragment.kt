@@ -10,6 +10,7 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import android.view.*
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.snackbar.Snackbar
 import dagger.android.support.DaggerFragment
 import hu.csabapap.seriesreminder.R
@@ -101,7 +102,7 @@ class HomeFragment : DaggerFragment(), DiscoverPreviewAdapter.PreviewShowListene
 
         home_recycler_view.adapter = cardsAdapter
         layoutManager = home_recycler_view.layoutManager as LinearLayoutManager
-        layoutManager.orientation = LinearLayoutManager.VERTICAL
+        layoutManager.orientation = RecyclerView.VERTICAL
     }
 
     override fun onStart() {

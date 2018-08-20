@@ -62,7 +62,7 @@ class HomeCardsAdapter(private val listener: CardClickListener)
         val decoration = DividerItemDecoration(context, LinearLayoutManager.HORIZONTAL)
         decoration.setDrawable(ContextCompat.getDrawable(context, R.drawable.horizontal_separator)!!)
         episodesRv.addItemDecoration(decoration)
-        layoutManager.orientation = LinearLayoutManager.VERTICAL
+        layoutManager.orientation = RecyclerView.VERTICAL
         episodesRv.setHasFixedSize(true)
         val snapHelper = PagerSnapHelper()
         snapHelper.attachToRecyclerView(episodesRv)
