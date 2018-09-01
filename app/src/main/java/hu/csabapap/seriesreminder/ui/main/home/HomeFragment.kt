@@ -1,17 +1,16 @@
 package hu.csabapap.seriesreminder.ui.main.home
 
 
-import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.ViewModelProviders
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
 import android.view.*
+import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.google.android.material.snackbar.Snackbar
 import dagger.android.support.DaggerFragment
 import hu.csabapap.seriesreminder.R
 import hu.csabapap.seriesreminder.services.SyncService
@@ -21,6 +20,7 @@ import hu.csabapap.seriesreminder.ui.adapters.items.CardItem
 import hu.csabapap.seriesreminder.ui.adapters.items.DiscoverCardItem
 import hu.csabapap.seriesreminder.ui.adapters.items.UpcomingEpisodeCardItem
 import hu.csabapap.seriesreminder.ui.addshow.AddShowActivity
+import hu.csabapap.seriesreminder.ui.search.SearchActivity
 import kotlinx.android.synthetic.main.fragment_home.*
 import javax.inject.Inject
 import javax.inject.Named
@@ -143,8 +143,7 @@ class HomeFragment : DaggerFragment(), DiscoverPreviewAdapter.PreviewShowListene
     }
 
     private fun search() {
-        Snackbar.make(home_recycler_view, "Search...", Snackbar.LENGTH_SHORT)
-                .show()
+        startActivity(Intent(this.activity, SearchActivity::class.java))
     }
 
     private fun syncShows() {

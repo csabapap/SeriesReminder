@@ -9,6 +9,7 @@ import hu.csabapap.seriesreminder.SRApplication
 import hu.csabapap.seriesreminder.inject.modules.*
 import hu.csabapap.seriesreminder.services.SyncService
 import hu.csabapap.seriesreminder.ui.addshow.AddShowModule
+import hu.csabapap.seriesreminder.ui.search.SearchModule
 import hu.csabapap.seriesreminder.ui.showdetails.ShowDetailsModule
 import javax.inject.Singleton
 
@@ -23,8 +24,9 @@ import javax.inject.Singleton
             NetworkModule::class,
             HomeModule::class,
             AddShowModule::class,
-            ShowDetailsModule::class,
-            ServiceModule::class
+            SearchModule::class,
+            ServiceModule::class,
+            ShowDetailsModule::class
         ])
 interface AppComponent : AndroidInjector<DaggerApplication>{
 
