@@ -2,6 +2,7 @@ package hu.csabapap.seriesreminder.data.network
 
 import hu.csabapap.seriesreminder.data.network.entities.*
 import hu.csabapap.seriesreminder.data.network.services.EpisodesService
+import hu.csabapap.seriesreminder.data.network.services.SearchService
 import hu.csabapap.seriesreminder.data.network.services.SeasonsService
 import hu.csabapap.seriesreminder.data.network.services.ShowsService
 import io.reactivex.Flowable
@@ -35,5 +36,9 @@ class TraktApi(private val retrofit: Retrofit) {
 
     fun episode(showId: Int, seasonNumber: Int, number: Int) : Single<Response<Episode>> {
         return retrofit.create(EpisodesService::class.java).episode(showId, seasonNumber, number)
+    }
+
+    fun search(type: String, query: String): Single<List<SearchResult>> {
+        return retrofit.create(SearchService::class.java).search(type, query)
     }
 }

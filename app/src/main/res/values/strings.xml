@@ -22,4 +22,5 @@
     <string name="upcoming_episodes">Upcoming episodes</string>
     <string name="title_trending">Trending</string>
     <string name="title_popular">Popular</string>
+    <string name="search_hint">Search Shows</string>
 </resources>
