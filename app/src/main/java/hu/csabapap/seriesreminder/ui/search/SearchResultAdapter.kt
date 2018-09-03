@@ -10,6 +10,11 @@ import kotlinx.android.synthetic.main.item_search_result.view.*
 
 class SearchResultAdapter: RecyclerView.Adapter<SearchResultAdapter.ResultVH>() {
 
+    interface SearchItemClickListener{
+        fun onAddClick(showId: Int)
+    }
+
+    lateinit var listener: SearchItemClickListener
     var searchResult: List<BaseShow>? = null
     set(value) {
         field = value
@@ -36,6 +41,7 @@ class SearchResultAdapter: RecyclerView.Adapter<SearchResultAdapter.ResultVH>() 
         fun bind(show: BaseShow) {
             itemView.show_title.text = show.title
             itemView.overview.text = show.overview
+            itemView.add_show_btn.setOnClickListener { listener.onAddClick(show.ids.trakt) }
         }
     }
 

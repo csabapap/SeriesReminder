@@ -12,12 +12,13 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import dagger.android.support.DaggerAppCompatActivity
 import hu.csabapap.seriesreminder.R
 import hu.csabapap.seriesreminder.data.network.entities.BaseShow
+import hu.csabapap.seriesreminder.services.SyncService
 import hu.csabapap.seriesreminder.utils.hideKeyboard
 import kotlinx.android.synthetic.main.activity_search.*
 import javax.inject.Inject
 import javax.inject.Named
 
-class SearchActivity : DaggerAppCompatActivity() {
+class SearchActivity : DaggerAppCompatActivity(), SearchResultAdapter.SearchItemClickListener {
 
     @Inject
     @field:Named("SearchViewModelFactory")
@@ -36,6 +37,7 @@ class SearchActivity : DaggerAppCompatActivity() {
 
         search_result.let {
             it.layoutManager = LinearLayoutManager(this)
+            adapter.listener = this
             it.adapter = adapter
         }
         searchViewModel.searchResult.observe(this,
@@ -69,5 +71,10 @@ class SearchActivity : DaggerAppCompatActivity() {
 
             })
         }
+    }
+
+    override fun onAddClick(showId: Int) {
+        searchViewModel.addShowToCollection(showId)
+        SyncService.syncShow(this, showId)
     }
 }

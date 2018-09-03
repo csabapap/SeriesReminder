@@ -134,6 +134,10 @@ class ShowsRepository(private val traktApi: TraktApi, private val tvdbApi: TvdbA
         return Maybe.concat(showFromDb, fromWeb).firstElement()
     }
 
+    fun insertShow(show: SRShow) {
+        showDao.insertOrUpdateShow(show)
+    }
+
     private fun getShowFromWeb(traktId: Int) : Flowable<SRShow>{
         return traktApi.show(traktId)
                 .flatMap({

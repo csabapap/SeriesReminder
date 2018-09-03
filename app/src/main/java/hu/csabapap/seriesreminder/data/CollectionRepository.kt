@@ -16,9 +16,9 @@ import javax.inject.Inject
 class CollectionRepository @Inject constructor(private val collectionsDao: CollectionsDao) {
 
     fun addToCollection(item: CollectionEntry) : Completable {
-        return Completable.fromCallable({
+        return Completable.fromCallable {
             collectionsDao.insert(item)
-        })
+        }
     }
 
     fun getCollections() : DataSource.Factory<Int, CollectionItem> {
