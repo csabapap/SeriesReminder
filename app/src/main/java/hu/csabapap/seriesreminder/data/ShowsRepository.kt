@@ -1,7 +1,6 @@
 package hu.csabapap.seriesreminder.data
 
 import androidx.lifecycle.LiveData
-import androidx.paging.DataSource
 import androidx.paging.LivePagedListBuilder
 import androidx.paging.PagedList
 import hu.csabapap.seriesreminder.data.db.PopularShowsResult
@@ -12,7 +11,6 @@ import hu.csabapap.seriesreminder.data.db.daos.TrendingDao
 import hu.csabapap.seriesreminder.data.db.entities.*
 import hu.csabapap.seriesreminder.data.network.TraktApi
 import hu.csabapap.seriesreminder.data.network.TvdbApi
-import hu.csabapap.seriesreminder.data.network.entities.Images
 import hu.csabapap.seriesreminder.data.network.entities.NextEpisode
 import hu.csabapap.seriesreminder.data.network.entities.Show
 import hu.csabapap.seriesreminder.data.states.NextEpisodeError
@@ -76,18 +74,8 @@ class ShowsRepository(private val traktApi: TraktApi, private val tvdbApi: TvdbA
                 .doOnSuccess {
                     trendingDao.deleteAll()
                     saveTrendingShows(it)
-                }
-                .toObservable()
-                .flatMapIterable { it }
-                .flatMap {
-                    updateShowWithImages(it.showId)
-                            .toObservable()
-                            .map { srShow ->  mapToSRTrendingShow(srShow.traktId, it.watchers) }
-                }
-                .toList()
-                .doAfterSuccess({
                     cachedTrendingShows = it
-                })
+                }
     }
 
     fun popularShows(limit: Int = 10) : Flowable<List<PopularGridItem>> {
@@ -111,19 +99,8 @@ class ShowsRepository(private val traktApi: TraktApi, private val tvdbApi: TvdbA
                 .doOnSuccess {
                     popularDao.deleteAll()
                     savePopularItem(it)
-                }
-                .toObservable()
-                .flatMapIterable { it }
-                .flatMap {
-                    updateShowWithImages(it.showId)
-                            .toObservable()
-                            .map { srShow ->  mapToSRPopularItem(srShow.traktId) }
-                }
-                .toList()
-                .doAfterSuccess({
                     cachedPopularShows = it
-                })
-
+                }
     }
 
     fun getShow(traktId: Int) : Maybe<SRShow> {
@@ -136,39 +113,9 @@ class ShowsRepository(private val traktApi: TraktApi, private val tvdbApi: TvdbA
 
     private fun getShowFromWeb(traktId: Int) : Flowable<SRShow>{
         return traktApi.show(traktId)
-                .flatMap({
+                .flatMap {
                     Flowable.just(mapToSRShow(it))
-                })
-    }
-
-    fun images(tvdbId : Int, type: String = "poster") : Single<Images>{
-        return tvdbApi.images(tvdbId, type)
-    }
-
-    private fun updateShowWithImages(showId: Int) : Single<SRShow> {
-        Timber.d("$showId")
-        return getShow(showId)
-                .flatMapSingle{
-                    if (it.poster.isEmpty()) {
-                        Timber.d("get images for $showId")
-                        tvdbApi.images(it.tvdbId)
-                                .flatMap { (data) ->
-                                    val popularImage = data.maxBy { image ->
-                                        Timber.d("image: $image")
-                                        image.ratingsInfo.average
-                                    }
-                                    it.apply {
-                                        poster = popularImage?.fileName!!
-                                        posterThumb = popularImage.thumbnail
-                                    }
-                                    updateShow(it)
-                                    Single.just(it)
-                                }
-                    } else {
-                        Single.just(it)
-                    }
                 }
-
     }
 
     private fun mapToSRShow(show : Show) : SRShow {

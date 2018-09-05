@@ -26,7 +26,7 @@ import javax.inject.Singleton
             ShowDetailsModule::class,
             ServiceModule::class
         ])
-interface AppComponent : AndroidInjector<DaggerApplication>{
+interface AppComponent : AndroidInjector<SRApplication>{
 
     @Component.Builder
     interface Builder {

@@ -20,7 +20,7 @@
             android:layout_width="83dp"
             android:layout_height="125dp"
             android:scaleType="centerCrop"
-            app:remoteSrc="@{show.poster}"
+            app:remoteSrc="@{show.tvdbId}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintDimensionRatio="2:3"
             app:layout_constraintEnd_toEndOf="parent"
