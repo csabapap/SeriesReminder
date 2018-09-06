@@ -106,7 +106,7 @@ class AddShowActivity : DaggerAppCompatActivity() {
         tv_overview.text = srShow.overview
         ratings.text = String.format(getString(R.string.ratings_value), (srShow.rating * 10).toInt(), srShow.votes)
         genres.text = srShow.genres
-        poster.loadFromTmdbUrl(srShow.posterThumb, callback = (object: Callback {
+        poster.loadFromTmdbUrl(srShow.tvdbId, callback = (object: Callback {
             override fun onSuccess() {
                 val drawable = poster.drawable as BitmapDrawable
                 val bitmap = drawable.bitmap
@@ -118,7 +118,7 @@ class AddShowActivity : DaggerAppCompatActivity() {
             }
 
         }))
-        cover.loadFromTmdbUrl(srShow.cover)
+//        cover.loadFromTmdbUrl(srShow.cover)
     }
 
     private fun generatePalette(bitmap: Bitmap) {

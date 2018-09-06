@@ -50,7 +50,7 @@ class EpisodeCardsAdapter:  RecyclerView.Adapter<EpisodeCardsAdapter.CardVH>() {
             itemView.airs_in_text.text = "in ${episode.firstAired?.diffInDays().toString()} days"
             val thumb = nextEpisode.show?.posterThumb
             thumb?.let {
-                itemView.episode_image.loadFromTmdbUrl(it)
+//                itemView.episode_image.loadFromTmdbUrl(it)
             }
         }
     }

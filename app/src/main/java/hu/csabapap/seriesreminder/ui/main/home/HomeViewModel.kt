@@ -48,6 +48,7 @@ class HomeViewModel @Inject constructor(private val showsRepository: ShowsReposi
                      it
                              .map {
                                  ShowItem(it.show!!.traktId,
+                                         it.show!!.tvdbId,
                                          it.show!!.title,
                                          it.show!!.posterThumb)
                              }
@@ -71,7 +72,7 @@ class HomeViewModel @Inject constructor(private val showsRepository: ShowsReposi
                 .flatMap {
                     val showItems : MutableList<ShowItem> = mutableListOf()
                     it
-                            .map { ShowItem(it.show!!.traktId, it.show!!.title, it.show!!.posterThumb) }
+                            .map { ShowItem(it.show!!.traktId, it.show!!.tvdbId, it.show!!.title, it.show!!.posterThumb) }
                             .forEach { showItems.add(it) }
                     Flowable.just(showItems)
                 }

@@ -23,7 +23,7 @@ class TvdbApi {
 
     private var okHttp: OkHttpClient = OkHttpClient.Builder()
             .addInterceptor(loggingInterceptor)
-            .authenticator({ _, response ->
+            .authenticator { _, response ->
                 if ("Bearer $token" == response.header("Authentictor")){
                     null
                 }else {
@@ -39,7 +39,7 @@ class TvdbApi {
                             .header("Authorization", "Bearer $token")
                             .build()
                 }
-            })
+            }
             .build()
 
     private var retrofit: Retrofit = Retrofit.Builder()
@@ -57,13 +57,13 @@ class TvdbApi {
 
     private fun reInitRetrofit(){
         okHttp = okHttp.newBuilder()
-                .addInterceptor({ chain ->
+                .addInterceptor { chain ->
                     val request = chain.request()
                     val newRequest = request.newBuilder()
                             .header("Authorization", "Bearer $token")
                             .build()
                     chain.proceed(newRequest)
-                })
+                }
                 .build()
 
         retrofit = retrofit.newBuilder()
@@ -71,12 +71,12 @@ class TvdbApi {
                 .build()
     }
 
-    fun login() : Call<LoginResponse> {
+    private fun login() : Call<LoginResponse> {
         val loginRequest = LoginRequest(BuildConfig.TVDB_CLIENT_ID)
         return retrofit.create(TvdbAuthService::class.java).login(loginRequest)
     }
 
-    fun images(tvdbId : Int, type : String = "poster"): Single<Images>{
+    fun images(tvdbId : Int, type : String = "poster"): Call<Images>{
         return retrofit.create(TvdbImagesService::class.java).images(tvdbId, type)
     }
 

@@ -11,12 +11,9 @@ fun goneIf(view: View, isGone: Boolean) {
 }
 
 @BindingAdapter("app:remoteSrc")
-fun setImageUri(view: ImageView, imageUri: String?) {
-    if (imageUri == null) {
-        view.setImageURI(null)
-    } else {
-        Picasso.with(view.context)
-                .load("https://thetvdb.com/banners/$imageUri")
-                .into(view)
-    }
+fun setImageUri(view: ImageView, tvdbId: Int) {
+    Picasso.with(view.context)
+            .load("tvdb://$tvdbId")
+            .into(view)
+
 }

@@ -34,7 +34,7 @@ class CollectionAdapter :
 
         fun bind(show: SRShow) {
             Timber.d("$show")
-            itemView.poster.loadFromTmdbUrl(show.posterThumb)
+            itemView.poster.loadFromTmdbUrl(show.tvdbId)
             itemView.show_title.text = show.title
         }
 

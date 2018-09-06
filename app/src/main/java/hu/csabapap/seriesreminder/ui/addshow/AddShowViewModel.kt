@@ -36,22 +36,7 @@ class AddShowViewModel(
                 .observeOn(schedulers.io)
                 .toObservable()
                 .flatMap {
-                    if (it.cover.isEmpty().not()) {
-                        Observable.just(it)
-                    } else {
-                        showsRepository.images(it.tvdbId, "fanart")
-                                .toObservable()
-                                .flatMap { (data) ->
-                                    val image = data
-                                            .maxBy { it.ratingsInfo }
-                                    image?.apply {
-                                        it.coverThumb = thumbnail
-                                        it.cover = fileName
-                                        showsRepository.updateShow(it)
-                                    }
-                                    Observable.just(it)
-                                }
-                    }
+                    Observable.just(it)
                 }
                 .subscribeOn(schedulers.io)
                 .observeOn(schedulers.main)
