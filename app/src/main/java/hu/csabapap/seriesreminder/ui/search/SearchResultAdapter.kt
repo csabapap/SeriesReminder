@@ -6,6 +6,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import hu.csabapap.seriesreminder.R
 import hu.csabapap.seriesreminder.data.network.entities.BaseShow
+import hu.csabapap.seriesreminder.extensions.loadFromTmdbUrl
 import kotlinx.android.synthetic.main.item_search_result.view.*
 
 class SearchResultAdapter: RecyclerView.Adapter<SearchResultAdapter.ResultVH>() {
@@ -39,6 +40,7 @@ class SearchResultAdapter: RecyclerView.Adapter<SearchResultAdapter.ResultVH>() 
 
     inner class ResultVH(itemView: View): RecyclerView.ViewHolder(itemView) {
         fun bind(show: BaseShow) {
+            itemView.poster.loadFromTmdbUrl(show.ids.tvdb)
             itemView.show_title.text = show.title
             itemView.overview.text = show.overview
             itemView.add_show_btn.setOnClickListener { listener.onAddClick(show.ids.trakt) }
