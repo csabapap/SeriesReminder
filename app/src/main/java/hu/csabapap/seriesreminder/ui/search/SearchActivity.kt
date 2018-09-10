@@ -11,6 +11,7 @@ import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import dagger.android.support.DaggerAppCompatActivity
 import hu.csabapap.seriesreminder.R
+import hu.csabapap.seriesreminder.data.models.SrSearchResult
 import hu.csabapap.seriesreminder.data.network.entities.BaseShow
 import hu.csabapap.seriesreminder.services.SyncService
 import hu.csabapap.seriesreminder.utils.hideKeyboard
@@ -41,7 +42,7 @@ class SearchActivity : DaggerAppCompatActivity(), SearchResultAdapter.SearchItem
             it.adapter = adapter
         }
         searchViewModel.searchResult.observe(this,
-                Observer<List<BaseShow>> { results ->
+                Observer<List<SrSearchResult>> { results ->
                     adapter.searchResult = results
                 })
 

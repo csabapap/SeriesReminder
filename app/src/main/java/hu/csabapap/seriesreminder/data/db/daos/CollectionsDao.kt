@@ -29,6 +29,9 @@ interface CollectionsDao {
     @Query("SELECT * FROM collection")
     fun getCollectionEntries() : LiveData<List<CollectionEntry>>
 
+    @Query("SELECT show_id  FROM collection WHERE show_id IN (:showIds)")
+    fun getIdsFromCollection(showIds: List<Int>) : Single<List<Int>>
+
     @Query("DELETE FROM collection")
     fun deleteAll()
 }

@@ -1,11 +1,13 @@
 package hu.csabapap.seriesreminder.ui.search
 
+import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import hu.csabapap.seriesreminder.R
-import hu.csabapap.seriesreminder.data.network.entities.BaseShow
+import hu.csabapap.seriesreminder.data.models.SrSearchResult
 import hu.csabapap.seriesreminder.extensions.loadFromTmdbUrl
 import kotlinx.android.synthetic.main.item_search_result.view.*
 
@@ -16,15 +18,17 @@ class SearchResultAdapter: RecyclerView.Adapter<SearchResultAdapter.ResultVH>() 
         fun onAddClick(showId: Int)
     }
 
+    lateinit var context: Context
     lateinit var listener: SearchItemClickListener
-    var searchResult: List<BaseShow>? = null
+    var searchResult: List<SrSearchResult>? = null
     set(value) {
         field = value
         notifyDataSetChanged()
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ResultVH {
-        val itemView = LayoutInflater.from(parent.context).inflate(R.layout.item_search_result, parent, false)
+        context = parent.context
+        val itemView = LayoutInflater.from(context).inflate(R.layout.item_search_result, parent, false)
         return ResultVH(itemView)
     }
 
@@ -40,11 +44,22 @@ class SearchResultAdapter: RecyclerView.Adapter<SearchResultAdapter.ResultVH>() 
     }
 
     inner class ResultVH(itemView: View): RecyclerView.ViewHolder(itemView) {
-        fun bind(show: BaseShow) {
-            itemView.poster.loadFromTmdbUrl(show.ids.tvdb)
-            itemView.show_title.text = show.title
-            itemView.overview.text = show.overview
-            itemView.add_show_btn.setOnClickListener { listener.onAddClick(show.ids.trakt) }
+        fun bind(searchResult: SrSearchResult) {
+            itemView.poster.loadFromTmdbUrl(searchResult.show.ids.tvdb)
+            itemView.show_title.text = searchResult.show.title
+            itemView.overview.text = searchResult.show.overview
+            if (searchResult.inCollection) {
+                itemView.add_show_btn.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_check_24dp))
+            } else {
+                itemView.add_show_btn.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_add_24dp))
+            }
+            itemView.add_show_btn.setOnClickListener {
+                if (searchResult.inCollection) {
+                    listener.onItemClick(searchResult.show.ids.trakt)
+                } else {
+                    listener.onAddClick(searchResult.show.ids.trakt)
+                }
+            }
         }
     }
 

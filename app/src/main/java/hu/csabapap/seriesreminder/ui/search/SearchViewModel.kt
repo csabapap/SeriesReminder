@@ -5,9 +5,10 @@ import androidx.lifecycle.ViewModel
 import hu.csabapap.seriesreminder.data.CollectionRepository
 import hu.csabapap.seriesreminder.data.ShowsRepository
 import hu.csabapap.seriesreminder.data.db.entities.CollectionEntry
+import hu.csabapap.seriesreminder.data.models.SrSearchResult
 import hu.csabapap.seriesreminder.data.network.TraktApi
-import hu.csabapap.seriesreminder.data.network.entities.BaseShow
 import hu.csabapap.seriesreminder.utils.AppRxSchedulers
+import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
@@ -19,15 +20,25 @@ class SearchViewModel(val api: TraktApi,
                       private val schedulers: AppRxSchedulers)
     : ViewModel() {
 
-    val searchResult = MutableLiveData<List<BaseShow>>()
+    val searchResult = MutableLiveData<List<SrSearchResult>>()
     private val disposables = CompositeDisposable()
 
     fun search(query: String) {
         val disposable = api.search("show", query)
-                .toFlowable()
-                .flatMapIterable { it }
-                .map { it.show }
-                .toList()
+                .flatMap { searchResult ->
+                    val ids = mutableListOf<Int>()
+                    searchResult.forEach {
+                        ids.add(it.show.ids.trakt)
+                    }
+                    collectionRepository.getItemsFromCollection(ids)
+                            .flatMap {
+                                val srSearchResult = mutableListOf<SrSearchResult>()
+                                searchResult.forEach { item ->
+                                    srSearchResult.add(SrSearchResult(item.show, it.contains(item.show.ids.trakt)))
+                                }
+                                Single.just(srSearchResult)
+                            }
+                }
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({

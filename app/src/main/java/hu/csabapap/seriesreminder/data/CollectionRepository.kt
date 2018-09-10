@@ -36,4 +36,8 @@ class CollectionRepository @Inject constructor(private val collectionsDao: Colle
     fun getCollection(): LiveData<List<CollectionEntry>> {
         return collectionsDao.getCollectionEntries()
     }
+
+    fun getItemsFromCollection(ids: List<Int>): Single<List<Int>> {
+        return collectionsDao.getIdsFromCollection(ids)
+    }
 }
