@@ -73,6 +73,10 @@ class SearchActivity : DaggerAppCompatActivity(), SearchResultAdapter.SearchItem
         }
     }
 
+    override fun onItemClick(showId: Int) {
+
+    }
+
     override fun onAddClick(showId: Int) {
         searchViewModel.addShowToCollection(showId)
         SyncService.syncShow(this, showId)

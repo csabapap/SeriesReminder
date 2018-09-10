@@ -11,7 +11,8 @@ import kotlinx.android.synthetic.main.item_search_result.view.*
 
 class SearchResultAdapter: RecyclerView.Adapter<SearchResultAdapter.ResultVH>() {
 
-    interface SearchItemClickListener{
+    interface SearchItemClickListener {
+        fun onItemClick(showId: Int)
         fun onAddClick(showId: Int)
     }
 

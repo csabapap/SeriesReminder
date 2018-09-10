@@ -6,6 +6,7 @@ import com.squareup.picasso.Picasso
 import com.squareup.picasso.Request
 import com.squareup.picasso.RequestHandler
 import hu.csabapap.seriesreminder.data.network.TvdbApi
+import hu.csabapap.seriesreminder.data.network.getThumbnailUrl
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -26,7 +27,10 @@ class TvdbRequestHandler @Inject constructor(private val tvdbApi: TvdbApi,
                 image.ratingsInfo.average
             }
 
-            val posterUrl = "https://thetvdb.com/banners/${popularImage?.thumbnail}"
+            val posterUrl = getThumbnailUrl(popularImage?.thumbnail)
+            if (posterUrl.isEmpty()) {
+                return null
+            }
             return downloadImage(
                     Uri.parse(posterUrl),
                     networkPolicy)
