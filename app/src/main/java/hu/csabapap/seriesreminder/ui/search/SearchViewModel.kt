@@ -14,16 +14,17 @@ import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import timber.log.Timber
 
-class SearchViewModel(val api: TraktApi,
+class SearchViewModel(private val api: TraktApi,
                       private val showsRepository: ShowsRepository,
                       private val collectionRepository: CollectionRepository,
                       private val schedulers: AppRxSchedulers)
     : ViewModel() {
 
-    val searchResult = MutableLiveData<List<SrSearchResult>>()
+    val searchState = MutableLiveData<SearchState>()
     private val disposables = CompositeDisposable()
 
     fun search(query: String) {
+        searchState.value = SearchState.Loading
         val disposable = api.search("show", query)
                 .flatMap { searchResult ->
                     val ids = mutableListOf<Int>()
@@ -42,8 +43,7 @@ class SearchViewModel(val api: TraktApi,
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({
-                    Timber.d("number of results: ${it.size}")
-                    searchResult.value = it
+                    searchState.value = SearchState.SearchResultLoaded(it)
                 }, {
                     Timber.e(it)
                 })

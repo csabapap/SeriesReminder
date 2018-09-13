@@ -3,6 +3,9 @@ package hu.csabapap.seriesreminder.ui.search
 import android.app.SearchManager
 import android.content.Context
 import android.os.Bundle
+import android.transition.TransitionInflater
+import android.transition.TransitionManager
+import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.widget.SearchView
 import androidx.lifecycle.Observer
@@ -12,7 +15,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import dagger.android.support.DaggerAppCompatActivity
 import hu.csabapap.seriesreminder.R
 import hu.csabapap.seriesreminder.data.models.SrSearchResult
-import hu.csabapap.seriesreminder.data.network.entities.BaseShow
 import hu.csabapap.seriesreminder.services.SyncService
 import hu.csabapap.seriesreminder.utils.hideKeyboard
 import kotlinx.android.synthetic.main.activity_search.*
@@ -41,9 +43,12 @@ class SearchActivity : DaggerAppCompatActivity(), SearchResultAdapter.SearchItem
             adapter.listener = this
             it.adapter = adapter
         }
-        searchViewModel.searchResult.observe(this,
-                Observer<List<SrSearchResult>> { results ->
-                    adapter.searchResult = results
+        searchViewModel.searchState.observe(this,
+                Observer<SearchState> { state ->
+                    when(state) {
+                        is SearchState.Loading -> displayLoader()
+                        is SearchState.SearchResultLoaded -> displaySearchResult(state.result)
+                    }
                 })
 
         setupSearchView()
@@ -81,5 +86,21 @@ class SearchActivity : DaggerAppCompatActivity(), SearchResultAdapter.SearchItem
     override fun onAddClick(showId: Int) {
         searchViewModel.addShowToCollection(showId)
         SyncService.syncShow(this, showId)
+    }
+
+    private fun displayLoader() {
+        val transition = TransitionInflater.from(this)
+                .inflateTransition(R.transition.auto)
+        TransitionManager.beginDelayedTransition(content, transition)
+        progress_bar.visibility = View.VISIBLE
+    }
+
+    private fun displaySearchResult(result: List<SrSearchResult>) {
+        progress_bar.visibility = View.GONE
+        val transition = TransitionInflater.from(this)
+                .inflateTransition(R.transition.auto)
+        TransitionManager.beginDelayedTransition(content, transition)
+        adapter.searchResult = result
+        search_result.visibility = View.VISIBLE
     }
 }

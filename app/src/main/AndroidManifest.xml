@@ -29,7 +29,8 @@
 
         <activity android:name=".ui.showdetails.ShowDetailsActivity" />
         <activity android:name=".ui.search.SearchActivity"
-            android:launchMode="singleTop">
+            android:launchMode="singleTop"
+            android:theme="@style/AppTheme.Translucent">
             <intent-filter>
                 <action android:name="android.intent.action.SEARCH" />
             </intent-filter>
