@@ -17,7 +17,7 @@
         <item name="android:backgroundDimEnabled">false</item>
     </style>
     
-    <style name="SearchViewTheme" parent="ThemeOverlay.AppCompat.Dark.ActionBar">
+    <style name="SearchViewTheme" parent="ThemeOverlay.AppCompat.Light">
         <item name="android:searchViewStyle">@style/Widget.SeriesReminder.SearchView</item>
     </style>
 

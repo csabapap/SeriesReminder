@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">SeriesReminder</string>
+    <string name="app_name">Series Reminder</string>
     <string name="trending_shows">Trending Shows</string>
     <string name="popular_shows">Popular Shows</string>
     <string name="title_activity_home">HomeActivity</string>
@@ -23,4 +23,5 @@
     <string name="title_trending">Trending</string>
     <string name="title_popular">Popular</string>
     <string name="search_hint">Search Shows</string>
+    <string name="title_my_shows">My shows</string>
 </resources>

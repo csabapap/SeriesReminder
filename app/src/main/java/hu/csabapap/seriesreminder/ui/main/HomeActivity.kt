@@ -36,7 +36,7 @@ class HomeActivity : DaggerAppCompatActivity(), HomeFragment.HomeFragmentListene
                         .replace(R.id.content, HomeFragment())
                         .commit()
             }
-            R.id.navigation_dashboard -> {
+            R.id.navigation_my_shows -> {
                 supportFragmentManager.beginTransaction()
                         .replace(R.id.content, CollectionFragment())
                         .commit()

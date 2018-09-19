@@ -42,6 +42,8 @@ class CollectionFragment : DaggerFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        collection_toolbar.setTitle(R.string.title_my_shows)
+
         rv_collection.layoutManager = LinearLayoutManager(activity)
         rv_collection.adapter = adapter
 
