@@ -5,20 +5,22 @@ import androidx.lifecycle.ViewModelProvider
 import hu.csabapap.seriesreminder.data.CollectionRepository
 import hu.csabapap.seriesreminder.data.ShowsRepository
 import hu.csabapap.seriesreminder.data.network.TraktApi
+import hu.csabapap.seriesreminder.domain.GetSearchResultUseCase
 import hu.csabapap.seriesreminder.utils.AppRxSchedulers
+import hu.csabapap.seriesreminder.utils.RxSchedulers
 import javax.inject.Inject
 
 @Suppress( "UNCHECKED_CAST")
 class SearchViewModelProvider @Inject constructor(
-        private val api: TraktApi,
+        private val getSearchResultUseCase: GetSearchResultUseCase,
         private val showsRepository: ShowsRepository,
         private val collectionRepository: CollectionRepository,
-        private val schedulers: AppRxSchedulers)
+        private val schedulers: RxSchedulers)
     : ViewModelProvider.NewInstanceFactory() {
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {
         if (modelClass != SearchViewModel::class.java) {
             throw IllegalArgumentException("Unknown ViewModel class")
         }
-        return SearchViewModel(api, showsRepository, collectionRepository, schedulers) as T
+        return SearchViewModel(getSearchResultUseCase, showsRepository, collectionRepository, schedulers) as T
     }
 }

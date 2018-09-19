@@ -12,6 +12,8 @@ import hu.csabapap.seriesreminder.data.db.daos.*
 import hu.csabapap.seriesreminder.data.network.TraktApi
 import hu.csabapap.seriesreminder.data.network.TvdbApi
 import hu.csabapap.seriesreminder.utils.AppRxSchedulers
+import hu.csabapap.seriesreminder.utils.RxSchedulers
+import hu.csabapap.seriesreminder.utils.SRRxSchedulers
 import javax.inject.Singleton
 
 
@@ -28,6 +30,12 @@ class AppModule{
     @Provides
     fun provideRxSchedulers() : AppRxSchedulers {
         return AppRxSchedulers()
+    }
+
+    @Singleton
+    @Provides
+    fun provideSrRxSchedulers() : RxSchedulers {
+        return SRRxSchedulers()
     }
 
     @Singleton
