@@ -62,7 +62,7 @@ class AddShowActivity : DaggerAppCompatActivity() {
             }
         })
 
-        btn_add_show.setOnClickListener({
+        btn_add_show.setOnClickListener {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                 val drawable = btn_add_show.drawable as AnimatedVectorDrawable
                 drawable.registerAnimationCallback((object: Animatable2.AnimationCallback() {
@@ -83,7 +83,7 @@ class AddShowActivity : DaggerAppCompatActivity() {
 
             addShowViewModel.addShowToCollection(showId)
             SyncService.syncShow(this, showId)
-        })
+        }
     }
 
     override fun onStart() {
