@@ -8,6 +8,7 @@ import androidx.fragment.app.FragmentStatePagerAdapter
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.os.bundleOf
 import com.google.android.material.tabs.TabLayout
 import hu.csabapap.seriesreminder.R
 import kotlinx.android.synthetic.main.fragment_discover.*
@@ -110,9 +111,7 @@ class DiscoverFragment : Fragment() {
 
         fun newInstance(type: Int): DiscoverFragment {
             val fragment = DiscoverFragment()
-            val args = Bundle()
-            args.putInt(ARG_DISCOVER_TYPE, type)
-            fragment.arguments = args
+            fragment.arguments = bundleOf(ARG_DISCOVER_TYPE to type)
             return fragment
         }
     }

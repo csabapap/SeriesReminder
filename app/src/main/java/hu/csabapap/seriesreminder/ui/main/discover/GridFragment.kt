@@ -10,6 +10,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.os.bundleOf
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import dagger.android.support.DaggerFragment
@@ -100,9 +101,7 @@ class GridFragment : DaggerFragment(), GridAdapter.GridItemClickListener {
 
         fun newInstance(type: Int): GridFragment {
             val fragment = GridFragment()
-            val args = Bundle()
-            args.putInt(ARG_DISCOVER_TYPE, type)
-            fragment.arguments = args
+            fragment.arguments = bundleOf(ARG_DISCOVER_TYPE to type)
             return fragment
         }
     }

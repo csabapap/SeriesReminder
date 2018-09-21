@@ -6,6 +6,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.*
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.os.bundleOf
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProviders
@@ -164,7 +165,7 @@ class HomeFragment : DaggerFragment(), DiscoverPreviewAdapter.PreviewShowListene
 
     override fun onItemClick(traktId: Int, inCollection: Boolean) {
         val intent = Intent(activity, AddShowActivity::class.java)
-        intent.putExtra("show_id", traktId)
+        intent.putExtras(bundleOf("show_id" to traktId))
         activity?.startActivity(intent)
     }
 
