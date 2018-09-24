@@ -13,6 +13,7 @@ import hu.csabapap.seriesreminder.data.db.entities.GridItem
 import hu.csabapap.seriesreminder.data.db.entities.Item
 import hu.csabapap.seriesreminder.data.db.entities.PopularGridItem
 import hu.csabapap.seriesreminder.data.db.entities.TrendingGridItem
+import hu.csabapap.seriesreminder.data.repositories.trendingshows.TrendingShowsRepository
 import io.reactivex.Flowable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
@@ -22,6 +23,7 @@ import timber.log.Timber
 import javax.inject.Inject
 
 class DiscoverViewModel @Inject constructor(
+        private val trendingShowsRepository: TrendingShowsRepository,
         private val showsRepository: ShowsRepository,
         private val collectionRepository: CollectionRepository)
     : ViewModel() {
@@ -32,7 +34,7 @@ class DiscoverViewModel @Inject constructor(
     val collectionLiveData = collectionRepository.getCollection()
 
     private val trendingShowsResult: LiveData<TrendingShowsResult> = Transformations.map(loadTrendingShows) {
-        showsRepository.getTrendingShowsLiveData()
+        trendingShowsRepository.getTrendingShows(enablePaging = true)
     }
 
     private val popularShowsResult: LiveData<PopularShowsResult> = Transformations.map(loadPopularShows) {
@@ -60,38 +62,6 @@ class DiscoverViewModel @Inject constructor(
 
     fun loadPopularShows() {
         loadPopularShows.value = true
-    }
-
-    private fun getTrendingShows() {
-        disposables += showsRepository.getTrendingShows(20)
-                .flatMap({ trendingItems ->
-                    collectionRepository.getCollectionsSingle().toFlowable()
-                            .flatMapIterable { it }
-                            .map { it.entry?.showId }
-                            .toList().toFlowable()
-                            .flatMap{
-                                for (item in trendingItems) {
-                                    if (it.contains(item.show?.traktId)) {
-                                        item.show?.inCollection = true
-                                    }
-                                }
-                                Flowable.just(trendingItems)
-                            }
-                })
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe ({
-                    itemsLiveData.value = it as List<GridItem<Item>>
-                }, { Timber.e(it) })
-    }
-
-    private fun getPopularShows() {
-        disposables += showsRepository.popularShows(20)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe ({
-                    itemsLiveData.value = it as List<GridItem<Item>>
-                }, { Timber.e(it) })
     }
 
     override fun onCleared() {

@@ -1,15 +1,16 @@
 package hu.csabapap.seriesreminder.ui.main.home
 
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.Transformations
 import androidx.lifecycle.ViewModel
-import hu.csabapap.seriesreminder.R
 import hu.csabapap.seriesreminder.data.EpisodesRepository
 import hu.csabapap.seriesreminder.data.ShowsRepository
 import hu.csabapap.seriesreminder.data.db.entities.NextEpisodeItem
-import hu.csabapap.seriesreminder.data.db.entities.SREpisode
+import hu.csabapap.seriesreminder.data.repositories.trendingshows.TrendingShowsRepository
 import hu.csabapap.seriesreminder.ui.adapters.items.ShowItem
+import hu.csabapap.seriesreminder.utils.AppRxSchedulers
 import io.reactivex.Flowable
-import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.plusAssign
 import io.reactivex.schedulers.Schedulers
@@ -17,54 +18,39 @@ import timber.log.Timber
 import javax.inject.Inject
 
 class HomeViewModel @Inject constructor(private val showsRepository: ShowsRepository,
-                                        private val episodesRepository: EpisodesRepository)
+                                        private val trendingShowsRepository: TrendingShowsRepository,
+                                        private val episodesRepository: EpisodesRepository,
+                                        private val rxSchedulers: AppRxSchedulers)
     : ViewModel() {
 
     private val compositeDisposable = CompositeDisposable()
 
     val viewState = MutableLiveData<HomeViewState>()
 
-    val trendingShowsLiveData = MutableLiveData<List<ShowItem>>()
     val popularShowsLiveData = MutableLiveData<List<ShowItem>>()
     val upcomingEpisodesLiveData = MutableLiveData<List<NextEpisodeItem>>()
+
+    val trendingShows: LiveData<List<ShowItem>> = Transformations.map(trendingShowsRepository.getTrendingShows().data) { result ->
+        result.map {
+            ShowItem(it.show!!.traktId,
+                    it.show!!.tvdbId,
+                    it.show!!.title,
+                    it.show!!.posterThumb,
+                    it.show!!.inCollection)
+        }
+    }
 
     init {
         viewState.value = HomeViewState(displayProgressBar = true)
         compositeDisposable += showsRepository.getRemoteTrendingShows()
                 .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
+                .observeOn(rxSchedulers.main)
                 .subscribe({}, {Timber.e(it)})
 
         compositeDisposable += showsRepository.getPopularShowsFromWeb()
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(rxSchedulers.io)
+                .observeOn(rxSchedulers.main)
                 .subscribe({}, {Timber.e(it)})
-    }
-
-    fun getTrendingShows() {
-         val disposable = showsRepository.getTrendingShows()
-                 .flatMap {
-                     val showItems : MutableList<ShowItem> = mutableListOf()
-                     it
-                             .map {
-                                 ShowItem(it.show!!.traktId,
-                                         it.show!!.tvdbId,
-                                         it.show!!.title,
-                                         it.show!!.posterThumb)
-                             }
-                             .forEach { showItems.add(it) }
-                     Flowable.just(showItems)
-                 }
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe({
-                    if (it.isEmpty().not()) {
-                         viewState.value = currentViewState().copy(displayProgressBar = false, displayTrendingCard = true)
-                        trendingShowsLiveData.value = it
-                    }
-                },{Timber.e(it)})
-
-        compositeDisposable.add(disposable)
     }
 
     fun getPopularShows() {
@@ -76,8 +62,8 @@ class HomeViewModel @Inject constructor(private val showsRepository: ShowsReposi
                             .forEach { showItems.add(it) }
                     Flowable.just(showItems)
                 }
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(rxSchedulers.io)
+                .observeOn(rxSchedulers.main)
                 .subscribe({ it ->
                     if (it.isEmpty().not()) {
                         viewState.value = currentViewState().copy(displayProgressBar = false, displayPopularCard = true)
@@ -91,28 +77,11 @@ class HomeViewModel @Inject constructor(private val showsRepository: ShowsReposi
 
     fun getNextEpisodes() {
         val disposable = episodesRepository.getNextEpisodes(3)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(rxSchedulers.io)
+                .observeOn(rxSchedulers.main)
                 .subscribe( { nextEpisodes ->
                     if (nextEpisodes.isEmpty().not()) {
                         upcomingEpisodesLiveData.value = nextEpisodes
-                    }
-                }, {Timber.e(it)})
-        compositeDisposable.add(disposable)
-    }
-
-    private fun fetchImages(episodes: MutableList<SREpisode>) {
-         val disposable = Flowable.fromIterable(episodes)
-                .filter({it.image.isEmpty()})
-                .flatMap {
-                    episodesRepository.fetchEpisodeImage(it).toFlowable()
-                }
-                .toList()
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe( { nextEpisodes ->
-                    if (nextEpisodes.isEmpty().not()) {
-//                        upcomingEpisodesLiveData.value = nextEpisodes
                     }
                 }, {Timber.e(it)})
         compositeDisposable.add(disposable)

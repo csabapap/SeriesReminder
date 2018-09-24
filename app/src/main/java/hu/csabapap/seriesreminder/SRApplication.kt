@@ -1,5 +1,6 @@
 package hu.csabapap.seriesreminder
 
+import android.os.Build
 import com.gabrielittner.threetenbp.LazyThreeTen
 import com.jakewharton.picasso.OkHttp3Downloader
 import com.squareup.picasso.Picasso
@@ -39,6 +40,7 @@ open class SRApplication : DaggerApplication() {
         val picasso = Picasso.Builder(this)
                 .downloader(downloader)
                 .addRequestHandler(requestHandler)
+                .indicatorsEnabled(BuildConfig.DEBUG)
                 .build()
         Picasso.setSingletonInstance(picasso)
     }

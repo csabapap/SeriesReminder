@@ -76,7 +76,7 @@ class HomeFragment : DaggerFragment(), DiscoverPreviewAdapter.PreviewShowListene
             }
         })
 
-        homeViewModel.trendingShowsLiveData.observe(this, Observer {
+        homeViewModel.trendingShows.observe(this, Observer {
             it?.apply {
                 cardsAdapter.addCard(DiscoverCardItem(getString(R.string.trending_shows), it, CardItem.TRENDING_CARD_TYPE,  CardItem.PRIORITY_MEDIUM))
             }
@@ -108,7 +108,6 @@ class HomeFragment : DaggerFragment(), DiscoverPreviewAdapter.PreviewShowListene
 
     override fun onStart() {
         super.onStart()
-        homeViewModel.getTrendingShows()
         homeViewModel.getPopularShows()
         homeViewModel.getNextEpisodes()
     }

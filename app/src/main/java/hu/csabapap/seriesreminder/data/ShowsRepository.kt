@@ -115,6 +115,8 @@ class ShowsRepository(private val traktApi: TraktApi, private val tvdbApi: TvdbA
         showDao.insertOrUpdateShow(show)
     }
 
+    fun insertOrUpdateShow(show: SRShow) = showDao.insertOrUpdateShow(show)
+
     private fun getShowFromWeb(traktId: Int) : Flowable<SRShow>{
         return traktApi.show(traktId)
                 .flatMap {
@@ -222,5 +224,6 @@ class ShowsRepository(private val traktApi: TraktApi, private val tvdbApi: TvdbA
 
     companion object {
         private const val DATABASE_PAGE_SIZE = 20
+        private const val NETWORK_PAGE_SIZE = 20
     }
 }

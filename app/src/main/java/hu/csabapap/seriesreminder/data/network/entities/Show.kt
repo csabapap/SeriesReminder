@@ -15,6 +15,7 @@ class Show(val title: String = "",
            val genres: Array<String>,
            var aired_episodes: Int,
            var status: String,
+           @JsonDefaultValueString(value = "")
            var network: String,
            var trailer: String?,
            var homepage: String?,

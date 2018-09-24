@@ -7,16 +7,15 @@ import hu.csabapap.seriesreminder.data.network.services.SeasonsService
 import hu.csabapap.seriesreminder.data.network.services.ShowsService
 import io.reactivex.Flowable
 import io.reactivex.Single
+import retrofit2.Call
 import retrofit2.Response
 import retrofit2.Retrofit
-import javax.inject.Inject
-import javax.inject.Named
+import retrofit2.adapter.rxjava2.Result
 
 class TraktApi(private val retrofit: Retrofit) {
 
-    fun trendingShows(extended: String = "", limit: Int = 20) : Single<List<TrendingShow>> {
-        return retrofit.create(ShowsService::class.java).trendingShows(extended, limit)
-    }
+    fun trendingShows(extended: String = "", page: Int = 1, limit: Int = 20) =
+            retrofit.create(ShowsService::class.java).trendingShows(extended, page, limit)
 
     fun popularShows(limit: Int = 20) : Single<List<Show>>{
         return retrofit.create(ShowsService::class.java).popularShows(limit)

@@ -8,6 +8,7 @@ import io.reactivex.Observable
 import io.reactivex.Single
 import retrofit2.Call
 import retrofit2.Response
+import retrofit2.adapter.rxjava2.Result
 import retrofit2.http.GET
 import retrofit2.http.Path
 import retrofit2.http.Query
@@ -15,6 +16,7 @@ import retrofit2.http.Query
 interface ShowsService{
     @GET("shows/trending")
     fun trendingShows(@Query("extended") extended: String = "",
+                      @Query("page") page: Int,
                       @Query("limit") limit: Int)
             : Single<List<TrendingShow>>
 
