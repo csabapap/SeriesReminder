@@ -6,6 +6,7 @@ import androidx.lifecycle.Transformations
 import androidx.lifecycle.ViewModel
 import hu.csabapap.seriesreminder.data.EpisodesRepository
 import hu.csabapap.seriesreminder.data.ShowsRepository
+import hu.csabapap.seriesreminder.data.db.TrendingShowsResult
 import hu.csabapap.seriesreminder.data.db.entities.NextEpisodeItem
 import hu.csabapap.seriesreminder.data.repositories.trendingshows.TrendingShowsRepository
 import hu.csabapap.seriesreminder.ui.adapters.items.ShowItem
@@ -13,7 +14,6 @@ import hu.csabapap.seriesreminder.utils.AppRxSchedulers
 import io.reactivex.Flowable
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.plusAssign
-import io.reactivex.schedulers.Schedulers
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -42,10 +42,6 @@ class HomeViewModel @Inject constructor(private val showsRepository: ShowsReposi
 
     init {
         viewState.value = HomeViewState(displayProgressBar = true)
-        compositeDisposable += showsRepository.getRemoteTrendingShows()
-                .subscribeOn(Schedulers.io())
-                .observeOn(rxSchedulers.main)
-                .subscribe({}, {Timber.e(it)})
 
         compositeDisposable += showsRepository.getPopularShowsFromWeb()
                 .subscribeOn(rxSchedulers.io)

@@ -24,10 +24,14 @@ class TrendingShowsRepository @Inject constructor(private val localTrendingDataS
                 LivePagedListBuilder(dataSourceFactory, DATABASE_PAGE_SIZE)
                         .setBoundaryCallback(object : PagedList.BoundaryCallback<TrendingGridItem>() {
                             var page  = 1
+
+                            override fun onZeroItemsLoaded() {
+                                updateTrendingShows(1)
+                            }
+
                             override fun onItemAtEndLoaded(itemAtEnd: TrendingGridItem) {
                                 if (enablePaging.not()) return
                                 page += 1
-                                Timber.d("on item at end loaded")
                                 if (page < 4) {
                                     updateTrendingShows(page)
                                 }

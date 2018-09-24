@@ -23,6 +23,7 @@ import hu.csabapap.seriesreminder.ui.adapters.items.UpcomingEpisodeCardItem
 import hu.csabapap.seriesreminder.ui.addshow.AddShowActivity
 import hu.csabapap.seriesreminder.ui.search.SearchActivity
 import kotlinx.android.synthetic.main.fragment_home.*
+import timber.log.Timber
 import javax.inject.Inject
 import javax.inject.Named
 
@@ -78,7 +79,8 @@ class HomeFragment : DaggerFragment(), DiscoverPreviewAdapter.PreviewShowListene
 
         homeViewModel.trendingShows.observe(this, Observer {
             it?.apply {
-                cardsAdapter.addCard(DiscoverCardItem(getString(R.string.trending_shows), it, CardItem.TRENDING_CARD_TYPE,  CardItem.PRIORITY_MEDIUM))
+                cardsAdapter.addCard(DiscoverCardItem(getString(R.string.trending_shows), it,
+                        CardItem.TRENDING_CARD_TYPE,  CardItem.PRIORITY_MEDIUM))
             }
         })
 
