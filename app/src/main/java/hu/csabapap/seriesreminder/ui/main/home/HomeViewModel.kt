@@ -4,9 +4,9 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations
 import androidx.lifecycle.ViewModel
+import hu.csabapap.seriesreminder.data.CollectionRepository
 import hu.csabapap.seriesreminder.data.EpisodesRepository
 import hu.csabapap.seriesreminder.data.ShowsRepository
-import hu.csabapap.seriesreminder.data.db.TrendingShowsResult
 import hu.csabapap.seriesreminder.data.db.entities.NextEpisodeItem
 import hu.csabapap.seriesreminder.data.repositories.trendingshows.TrendingShowsRepository
 import hu.csabapap.seriesreminder.ui.adapters.items.ShowItem
@@ -18,7 +18,8 @@ import timber.log.Timber
 import javax.inject.Inject
 
 class HomeViewModel @Inject constructor(private val showsRepository: ShowsRepository,
-                                        private val trendingShowsRepository: TrendingShowsRepository,
+                                        trendingShowsRepository: TrendingShowsRepository,
+                                        collectionRepository: CollectionRepository,
                                         private val episodesRepository: EpisodesRepository,
                                         private val rxSchedulers: AppRxSchedulers)
     : ViewModel() {
@@ -32,6 +33,16 @@ class HomeViewModel @Inject constructor(private val showsRepository: ShowsReposi
 
     val trendingShows: LiveData<List<ShowItem>> = Transformations.map(trendingShowsRepository.getTrendingShows().data) { result ->
         result.map {
+            ShowItem(it.show!!.traktId,
+                    it.show!!.tvdbId,
+                    it.show!!.title,
+                    it.show!!.posterThumb,
+                    it.show!!.inCollection)
+        }
+    }
+
+    val myShowsLiveData: LiveData<List<ShowItem>> = Transformations.map(collectionRepository.getCollectionGridItems()) {
+        result -> result.map {
             ShowItem(it.show!!.traktId,
                     it.show!!.tvdbId,
                     it.show!!.title,

@@ -32,7 +32,7 @@ class HomeCardsAdapter(private val listener: CardClickListener)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         context = parent.context
-        if (viewType == CardItem.POPULAR_CARD_TYPE || viewType == CardItem.TRENDING_CARD_TYPE) {
+        if (viewType == CardItem.POPULAR_CARD_TYPE || viewType == CardItem.TRENDING_CARD_TYPE || viewType == CardItem.MY_SHOWS_TYPE) {
             val itemView = LayoutInflater.from(context).inflate(R.layout.item_discover_card, parent, false)
             val discoverCardVH = DiscoverCardVH(itemView)
             discoverCardVH.itemView.rv_shows.adapter = discoverCardVH.previewAdapter

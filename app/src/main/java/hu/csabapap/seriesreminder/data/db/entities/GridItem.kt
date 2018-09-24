@@ -30,3 +30,11 @@ data class PopularGridItem(
         @Relation(parentColumn = "show_id", entityColumn = "show_id")
         override var collectionEntry: List<CollectionEntry>? = null
 ) : GridItem<SRPopularItem>
+
+data class MyShowGridItem(
+        @Embedded var entry: CollectionEntry? = null,
+        @Relation(parentColumn = "show_id", entityColumn = "trakt_id")
+        var relations: List<SRShow>? = null) {
+    val show: SRShow?
+        get() = relations?.getOrNull(0)
+}

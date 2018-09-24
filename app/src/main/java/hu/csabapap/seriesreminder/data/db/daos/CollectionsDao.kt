@@ -8,6 +8,7 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import hu.csabapap.seriesreminder.data.db.entities.CollectionEntry
 import hu.csabapap.seriesreminder.data.db.entities.CollectionItem
+import hu.csabapap.seriesreminder.data.db.entities.MyShowGridItem
 import io.reactivex.Single
 import org.intellij.lang.annotations.Language
 
@@ -28,6 +29,9 @@ interface CollectionsDao {
 
     @Query("SELECT * FROM collection")
     fun getCollectionEntries() : LiveData<List<CollectionEntry>>
+
+    @Query("SELECT * FROM collection")
+    fun getCollectionGridItems() : LiveData<List<MyShowGridItem>>
 
     @Query("SELECT show_id  FROM collection WHERE show_id IN (:showIds)")
     fun getIdsFromCollection(showIds: List<Int>) : Single<List<Int>>

@@ -34,6 +34,7 @@ open class CardItem(val type: Int, private val priority: Int) : Comparable<CardI
         const val TRENDING_CARD_TYPE = 0
         const val POPULAR_CARD_TYPE = 1
         const val UPCOMING_EPISODE_TYPE = 3
+        const val MY_SHOWS_TYPE = 4
 
         const val PRIORITY_LOW = 0
         const val PRIORITY_MEDIUM = 1
@@ -46,6 +47,13 @@ class DiscoverCardItem(
         val showItems: List<ShowItem>,
         type: Int,
         priority: Int = CardItem.PRIORITY_LOW)
+    : CardItem(type, priority)
+
+class MyShowsCardItem(
+        val title: String,
+        val showItems: List<ShowItem>,
+        type: Int,
+        priority: Int = CardItem.PRIORITY_MEDIUM)
     : CardItem(type, priority)
 
 class UpcomingEpisodeCardItem(

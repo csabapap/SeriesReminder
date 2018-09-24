@@ -7,6 +7,7 @@ import androidx.paging.PagedList
 import hu.csabapap.seriesreminder.data.db.daos.CollectionsDao
 import hu.csabapap.seriesreminder.data.db.entities.CollectionEntry
 import hu.csabapap.seriesreminder.data.db.entities.CollectionItem
+import hu.csabapap.seriesreminder.data.db.entities.MyShowGridItem
 import hu.csabapap.seriesreminder.data.network.TraktApi
 import io.reactivex.Completable
 import io.reactivex.Flowable
@@ -39,5 +40,9 @@ class CollectionRepository @Inject constructor(private val collectionsDao: Colle
 
     fun getItemsFromCollection(ids: List<Int>): Single<List<Int>> {
         return collectionsDao.getIdsFromCollection(ids)
+    }
+
+    fun getCollectionGridItems(): LiveData<List<MyShowGridItem>> {
+        return collectionsDao.getCollectionGridItems()
     }
 }
