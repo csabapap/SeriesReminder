@@ -16,37 +16,13 @@ class HomeActivity : DaggerAppCompatActivity(), HomeFragment.HomeFragmentListene
         CollectionFragment.CollectionItemClickListener
 {
 
-    private val mOnNavigationItemSelectedListener = BottomNavigationView.OnNavigationItemSelectedListener { item ->
-        changeFragment(item.itemId)
-        true
-    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_home)
 
-        navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener)
-        navigation.selectedItemId = R.id.navigation_home
-    }
-
-    private fun changeFragment(id: Int) {
-        when (id) {
-            R.id.navigation_home -> {
-                supportFragmentManager.beginTransaction()
-                        .replace(R.id.content, HomeFragment())
-                        .commit()
-            }
-            R.id.navigation_my_shows -> {
-                supportFragmentManager.beginTransaction()
-                        .replace(R.id.content, CollectionFragment())
-                        .commit()
-            }
-            R.id.navigation_notifications -> {
-                supportFragmentManager.beginTransaction()
-                        .replace(R.id.content, BlankFragment())
-                        .commit()
-            }
-        }
+        supportFragmentManager.beginTransaction()
+                .replace(R.id.content, HomeFragment())
+                .commit()
     }
 
     override fun onMoreButtonClick(type: Int) {
