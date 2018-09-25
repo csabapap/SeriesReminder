@@ -17,6 +17,7 @@ import androidx.vectordrawable.graphics.drawable.AnimatedVectorDrawableCompat
 import androidx.core.graphics.ColorUtils
 import androidx.palette.graphics.Palette
 import com.squareup.picasso.Callback
+import com.squareup.picasso.Picasso
 import dagger.android.support.DaggerAppCompatActivity
 import hu.csabapap.seriesreminder.R
 import hu.csabapap.seriesreminder.data.db.entities.SRShow
@@ -118,7 +119,9 @@ class AddShowActivity : DaggerAppCompatActivity() {
             }
 
         }))
-//        cover.loadFromTmdbUrl(srShow.cover)
+        Picasso.with(this)
+                .load("tvdb://fanart?tvdbid=${srShow.tvdbId}")
+                .into(cover)
     }
 
     private fun generatePalette(bitmap: Bitmap) {

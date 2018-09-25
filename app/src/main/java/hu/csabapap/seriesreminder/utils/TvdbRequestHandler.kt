@@ -6,8 +6,8 @@ import com.squareup.picasso.Picasso
 import com.squareup.picasso.Request
 import com.squareup.picasso.RequestHandler
 import hu.csabapap.seriesreminder.data.network.TvdbApi
+import hu.csabapap.seriesreminder.data.network.getFullSizeUrl
 import hu.csabapap.seriesreminder.data.network.getThumbnailUrl
-import timber.log.Timber
 import javax.inject.Inject
 
 
@@ -20,19 +20,31 @@ class TvdbRequestHandler @Inject constructor(private val tvdbApi: TvdbApi,
     }
 
     override fun load(request: Request?, networkPolicy: Int): Result? {
-        val tvdbId = request?.uri?.host?.toInt() ?: throw IllegalArgumentException("invalid tvdb id")
-        val response = tvdbApi.images(tvdbId).execute().body()
+        val uri = request?.uri ?: return null
+        var type = "poster"
+        val tvdbId = if (uri.host == "fanart") {
+            type = "fanart"
+            uri.getQueryParameter("tvdbid").toInt()
+        } else {
+            uri.host?.toInt()
+                    ?: throw IllegalArgumentException("invalid tvdb id")
+        }
+        val response = tvdbApi.images(tvdbId, type).execute().body()
         response?.let {
             val popularImage = it.data.maxBy { image ->
                 image.ratingsInfo.average
             }
 
-            val posterUrl = getThumbnailUrl(popularImage?.thumbnail)
-            if (posterUrl.isEmpty()) {
+            val imageUrl = if(type == "poster") {
+                getThumbnailUrl(popularImage?.thumbnail)
+            } else {
+                getFullSizeUrl(popularImage?.fileName)
+            }
+            if (imageUrl.isEmpty()) {
                 return null
             }
             return downloadImage(
-                    Uri.parse(posterUrl),
+                    Uri.parse(imageUrl),
                     networkPolicy)
         }
 
