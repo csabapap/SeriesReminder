@@ -8,10 +8,11 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import hu.csabapap.seriesreminder.R
 import hu.csabapap.seriesreminder.data.db.entities.NextEpisodeItem
-import hu.csabapap.seriesreminder.data.db.entities.SREpisode
 import hu.csabapap.seriesreminder.extensions.diffInDays
-import hu.csabapap.seriesreminder.extensions.loadFromTmdbUrl
+import hu.csabapap.seriesreminder.utils.getDateTimeForNextAir
 import kotlinx.android.synthetic.main.item_episode_card.view.*
+import org.threeten.bp.OffsetDateTime
+import org.threeten.bp.ZoneOffset
 
 class EpisodeCardsAdapter:  RecyclerView.Adapter<EpisodeCardsAdapter.CardVH>() {
 
@@ -47,10 +48,10 @@ class EpisodeCardsAdapter:  RecyclerView.Adapter<EpisodeCardsAdapter.CardVH>() {
                     episode.season,
                     episode.number)
             itemView.episode_info.text = episodeInfo
-            itemView.airs_in_text.text = "in ${episode.firstAired?.diffInDays().toString()} days"
-            val thumb = nextEpisode.show?.posterThumb
-            thumb?.let {
-//                itemView.episode_image.loadFromTmdbUrl(it)
+            val day = nextEpisode.show?.airingTime?.day ?: ""
+            val hours = nextEpisode.show?.airingTime?.time ?: ""
+            if (day.isEmpty().not() && hours.isEmpty().not()) {
+                itemView.airs_in_text.text = "in ${getDateTimeForNextAir(OffsetDateTime.now(ZoneOffset.UTC), day, hours).diffInDays()} days"
             }
         }
     }

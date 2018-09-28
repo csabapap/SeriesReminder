@@ -6,7 +6,7 @@ data class AiringTime(val day: String = "", val time: String = "", val timezone:
 
     @TypeConverter
     fun airingTimeToString(airingTime: AiringTime): String {
-        if (day.isEmpty() && time.isEmpty() && timezone.isEmpty()) {
+        if (airingTime.day.isEmpty() && airingTime.time.isEmpty() && airingTime.timezone.isEmpty()) {
             return ""
         }
         return "${airingTime.day}|${airingTime.time}|${airingTime.timezone}"

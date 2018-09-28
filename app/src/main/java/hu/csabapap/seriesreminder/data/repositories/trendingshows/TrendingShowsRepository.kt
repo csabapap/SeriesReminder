@@ -19,6 +19,7 @@ class TrendingShowsRepository @Inject constructor(private val localTrendingDataS
 
     fun getTrendingShows(enablePaging: Boolean = false): TrendingShowsResult {
         Timber.d("get trending shows")
+        // todo filter null items
         val dataSourceFactory = localTrendingDataSource.getShows()
         val data: LiveData<PagedList<TrendingGridItem>> =
                 LivePagedListBuilder(dataSourceFactory, DATABASE_PAGE_SIZE)

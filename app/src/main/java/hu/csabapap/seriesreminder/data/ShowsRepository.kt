@@ -142,8 +142,9 @@ class ShowsRepository(private val traktApi: TraktApi, private val tvdbApi: TvdbA
             updateProperty(this::homepage, show.homepage ?: "")
             updateProperty(this::updatedAt, OffsetDateTime.parse(show.updated_at))
             show.airs?.let {
-                updateProperty(this::airingTime, AiringTime(it.day,
-                        it.time,it.timezone))
+                val updateVal = AiringTime(it.day,
+                        it.time, it.timezone)
+                updateProperty(this::airingTime, updateVal)
             }
         }
         return srShow
