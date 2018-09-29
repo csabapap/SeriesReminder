@@ -37,7 +37,7 @@ class HomeViewModel @Inject constructor(private val showsRepository: ShowsReposi
                     it.show!!.tvdbId,
                     it.show!!.title,
                     it.show!!.posterThumb,
-                    it.show!!.inCollection)
+                    it.inCollection)
         }
     }
 

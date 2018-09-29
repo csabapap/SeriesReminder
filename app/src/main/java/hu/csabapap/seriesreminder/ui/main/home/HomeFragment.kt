@@ -22,6 +22,8 @@ import hu.csabapap.seriesreminder.ui.adapters.items.DiscoverCardItem
 import hu.csabapap.seriesreminder.ui.adapters.items.UpcomingEpisodeCardItem
 import hu.csabapap.seriesreminder.ui.addshow.AddShowActivity
 import hu.csabapap.seriesreminder.ui.search.SearchActivity
+import hu.csabapap.seriesreminder.ui.showdetails.ShowDetailsActivity
+import hu.csabapap.seriesreminder.utils.ShowDetails
 import kotlinx.android.synthetic.main.fragment_home.*
 import javax.inject.Inject
 import javax.inject.Named
@@ -173,8 +175,20 @@ class HomeFragment : DaggerFragment(), DiscoverPreviewAdapter.PreviewShowListene
     }
 
     override fun onItemClick(traktId: Int, inCollection: Boolean) {
-        val intent = Intent(activity, AddShowActivity::class.java)
-        intent.putExtras(bundleOf("show_id" to traktId))
+        if (inCollection) {
+
+        }
+        val intent = if (inCollection) {
+            Intent(activity, ShowDetailsActivity::class.java)
+                    .apply {
+                        putExtras(bundleOf(ShowDetails.EXTRA_SHOW_ID to traktId))
+                    }
+        } else {
+            Intent(activity, AddShowActivity::class.java)
+                    .apply {
+                        putExtras(bundleOf("show_id" to traktId))
+                    }
+        }
         activity?.startActivity(intent)
     }
 

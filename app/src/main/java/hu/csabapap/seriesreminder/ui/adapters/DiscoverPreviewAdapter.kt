@@ -44,8 +44,7 @@ class DiscoverPreviewAdapter : RecyclerView.Adapter<DiscoverPreviewAdapter.Disco
             val position = showItem.adapterPosition
             if (position != RecyclerView.NO_POSITION) {
                 val item = showItems[position]
-                // TODO set in collection flag
-                listener?.onItemClick(item.traktId, false)
+                listener?.onItemClick(item.traktId, item.inCollection)
             }
         })
         return showItem
