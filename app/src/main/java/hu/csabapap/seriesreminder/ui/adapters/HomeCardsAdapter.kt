@@ -106,6 +106,11 @@ class HomeCardsAdapter(private val listener: CardClickListener)
             previewShowListener?.apply {
                 previewAdapter.listener = previewShowListener
             }
+
+            if (discoverCardItem.type == CardItem.MY_SHOWS_TYPE) {
+                itemView.more_btn.visibility = View.GONE
+            }
+
         }
     }
 

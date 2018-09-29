@@ -78,8 +78,10 @@ class HomeFragment : DaggerFragment(), DiscoverPreviewAdapter.PreviewShowListene
 
         homeViewModel.myShowsLiveData.observe(this, Observer {
             it.apply {
-                cardsAdapter.addCard(DiscoverCardItem(getString(R.string.title_my_shows), it,
-                        CardItem.MY_SHOWS_TYPE,  CardItem.PRIORITY_MEDIUM))
+                if (isEmpty().not()) {
+                    cardsAdapter.addCard(DiscoverCardItem(getString(R.string.title_my_shows), it,
+                            CardItem.MY_SHOWS_TYPE, CardItem.PRIORITY_MEDIUM))
+                }
             }
         })
 

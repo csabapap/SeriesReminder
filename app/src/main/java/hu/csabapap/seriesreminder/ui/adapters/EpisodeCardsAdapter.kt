@@ -6,9 +6,11 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
+import com.squareup.picasso.Picasso
 import hu.csabapap.seriesreminder.R
 import hu.csabapap.seriesreminder.data.db.entities.NextEpisodeItem
 import hu.csabapap.seriesreminder.extensions.diffInDays
+import hu.csabapap.seriesreminder.extensions.loadFromTmdbUrl
 import hu.csabapap.seriesreminder.utils.getDateTimeForNextAir
 import kotlinx.android.synthetic.main.item_episode_card.view.*
 import org.threeten.bp.OffsetDateTime
@@ -48,10 +50,14 @@ class EpisodeCardsAdapter:  RecyclerView.Adapter<EpisodeCardsAdapter.CardVH>() {
                     episode.season,
                     episode.number)
             itemView.episode_info.text = episodeInfo
-            val day = nextEpisode.show?.airingTime?.day ?: ""
-            val hours = nextEpisode.show?.airingTime?.time ?: ""
-            if (day.isEmpty().not() && hours.isEmpty().not()) {
-                itemView.airs_in_text.text = "in ${getDateTimeForNextAir(OffsetDateTime.now(ZoneOffset.UTC), day, hours).diffInDays()} days"
+            val show = nextEpisode.show
+            show?.apply {
+                val day = airingTime.day
+                val hours = airingTime.time
+                if (day.isEmpty().not() && hours.isEmpty().not()) {
+                    itemView.airs_in_text.text = "in ${getDateTimeForNextAir(OffsetDateTime.now(ZoneOffset.UTC), day, hours).diffInDays()} days"
+                }
+                itemView.show_poster.loadFromTmdbUrl(tvdbId)
             }
         }
     }
