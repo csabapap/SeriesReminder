@@ -18,5 +18,6 @@ import androidx.room.PrimaryKey
 )
 data class SRPopularItem(
     @PrimaryKey(autoGenerate = true) override val id: Long? = null,
-    @ColumnInfo(name = "show_id") override val showId: Int
+    @ColumnInfo(name = "show_id") override val showId: Int,
+    @ColumnInfo(name = "page") val page: Int = 0
 ) : Item

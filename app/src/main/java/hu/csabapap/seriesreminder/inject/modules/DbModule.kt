@@ -2,6 +2,8 @@ package hu.csabapap.seriesreminder.inject.modules
 
 import androidx.room.Room
 import android.content.Context
+import androidx.room.migration.Migration
+import androidx.sqlite.db.SupportSQLiteDatabase
 import dagger.Module
 import dagger.Provides
 import hu.csabapap.seriesreminder.data.db.SRDatabase
@@ -15,6 +17,7 @@ class DbModule {
     @Provides
     fun providesDatabase(context: Context) : SRDatabase {
         return Room.databaseBuilder(context, SRDatabase::class.java, "series_reminder.db")
+                .addMigrations(MIGRATION_1_2)
                 .fallbackToDestructiveMigration()
                 .build()
     }
@@ -59,5 +62,15 @@ class DbModule {
     @Provides
     fun providesEpisodesDao(db: SRDatabase) : EpisodeDao {
         return db.episodesDao()
+    }
+
+    companion object {
+        val MIGRATION_1_2 = object : Migration(1,2) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.execSQL("ALTER TABLE trending_shows ADD COLUMN page INTEGER DEFAULT 0")
+                database.execSQL("ALTER TABLE popular_shows ADD COLUMN page INTEGER DEFAULT 0")
+            }
+
+        }
     }
 }

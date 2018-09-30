@@ -17,10 +17,10 @@ class TrendingShowsRepository @Inject constructor(private val localTrendingDataS
                               private val remoteTrendingDataSource: RemoteTrendingDataSource,
                               private val showsRepository: ShowsRepository) {
 
-    fun getTrendingShows(enablePaging: Boolean = false): TrendingShowsResult {
+    fun getTrendingShows(limit: Int = DATABASE_PAGE_SIZE): TrendingShowsResult {
         Timber.d("get trending shows")
         // todo filter null items
-        val dataSourceFactory = localTrendingDataSource.getShows()
+        val dataSourceFactory = localTrendingDataSource.getShows(limit)
         val data: LiveData<PagedList<TrendingGridItem>> =
                 LivePagedListBuilder(dataSourceFactory, DATABASE_PAGE_SIZE)
                         .setBoundaryCallback(object : PagedList.BoundaryCallback<TrendingGridItem>() {
@@ -31,7 +31,6 @@ class TrendingShowsRepository @Inject constructor(private val localTrendingDataS
                             }
 
                             override fun onItemAtEndLoaded(itemAtEnd: TrendingGridItem) {
-                                if (enablePaging.not()) return
                                 page += 1
                                 if (page < 4) {
                                     updateTrendingShows(page)
@@ -50,17 +49,18 @@ class TrendingShowsRepository @Inject constructor(private val localTrendingDataS
                     showsRepository.getShow(trendingShow.show.ids.trakt)
                             .map { showsRepository.insertOrUpdateShow(it) }
                             .map { showsRepository.getShow(it.traktId)}
-                            .map { srShow -> mapToSRTrendingShow(srShow.blockingGet().traktId, trendingShow.watchers) }
+                            .map { srShow -> mapToSRTrendingShow(srShow.blockingGet().traktId,
+                                    trendingShow.watchers, page) }
                 }
                 .toList()
-                .doOnSuccess { trendingShows -> localTrendingDataSource.insertShows(trendingShows)}
+                .doOnSuccess { trendingShows -> localTrendingDataSource.insertShows(page, trendingShows)}
                 .subscribeOn(Schedulers.io())
                 .subscribe({Timber.d("nmb of shows loaded: %d", it.size)},
                         {Timber.e(it)})
     }
 
-    private fun mapToSRTrendingShow(showId: Int, watchers: Int) : SRTrendingItem =
-            SRTrendingItem(null, showId, watchers)
+    private fun mapToSRTrendingShow(showId: Int, watchers: Int, page: Int) : SRTrendingItem =
+            SRTrendingItem(null, showId, watchers, page)
 
     companion object {
         private const val DATABASE_PAGE_SIZE = 20

@@ -14,5 +14,6 @@ import androidx.room.*
 data class SRTrendingItem(
         @PrimaryKey(autoGenerate = true) override val id: Long? = null,
         @ColumnInfo(name = "show_id") override val showId: Int,
-        @ColumnInfo(name = "watchers") val watchers: Int = 0
+        @ColumnInfo(name = "watchers") val watchers: Int = 0,
+        @ColumnInfo(name = "page") val page: Int = 0
 ) : Item

@@ -4,7 +4,6 @@ import androidx.lifecycle.LiveData
 import androidx.paging.LivePagedListBuilder
 import androidx.paging.PagedList
 import hu.csabapap.seriesreminder.data.db.PopularShowsResult
-import hu.csabapap.seriesreminder.data.db.TrendingShowsResult
 import hu.csabapap.seriesreminder.data.db.daos.PopularDao
 import hu.csabapap.seriesreminder.data.db.daos.SRShowDao
 import hu.csabapap.seriesreminder.data.db.daos.TrendingDao
@@ -41,41 +40,11 @@ class ShowsRepository(private val traktApi: TraktApi, private val tvdbApi: TvdbA
         return trendingDao.getLiveTrendingShows(limit)
     }
 
-    fun getTrendingShowsLiveData(): TrendingShowsResult {
-        Timber.d("getTrendingShowsLiveData")
-        val dataSourceFactory = trendingDao.getTrendingShowsFactory()
-        val data: LiveData<PagedList<TrendingGridItem>> =
-                LivePagedListBuilder(dataSourceFactory, DATABASE_PAGE_SIZE)
-                        .build()
-        return TrendingShowsResult(data)
-    }
-
     fun getPopularShowsLiveData(): PopularShowsResult {
         val dataSourceFactory = popularDao.getPopularShowsLiveFactory()
         val data: LiveData<PagedList<PopularGridItem>> =
                 LivePagedListBuilder(dataSourceFactory, DATABASE_PAGE_SIZE).build()
         return PopularShowsResult(data)
-    }
-
-    fun getRemoteTrendingShows(): Single<List<SRTrendingItem>> {
-        if (cachedTrendingShows.isEmpty().not()) {
-            return Single.just(cachedTrendingShows.toList())
-        }
-        return traktApi.trendingShows("full")
-                .toFlowable()
-                .flatMapIterable { it }
-                .flatMapMaybe {
-                    getShow(it.show.ids.trakt)
-                            .map { showDao.insertOrUpdateShow(it) }
-                            .map { showDao.getShow(it.traktId)}
-                            .map { srShow -> mapToSRTrendingShow(srShow.traktId, it.watchers) }
-                }
-                .toList()
-                .doOnSuccess {
-                    trendingDao.deleteAll()
-                    saveTrendingShows(it)
-                    cachedTrendingShows = it
-                }
     }
 
     fun popularShows(limit: Int = 10) : Flowable<List<PopularGridItem>> {
@@ -150,17 +119,8 @@ class ShowsRepository(private val traktApi: TraktApi, private val tvdbApi: TvdbA
         return srShow
     }
 
-    private fun mapToSRTrendingShow(showId: Int, watchers: Int) : SRTrendingItem =
-            SRTrendingItem(null, showId, watchers)
+    private fun mapToSRPopularItem(showId: Int) : SRPopularItem = SRPopularItem(showId = showId, page = 0)
 
-    private fun mapToSRPopularItem(showId: Int) : SRPopularItem = SRPopularItem(showId = showId)
-
-
-    private fun saveTrendingShows(trendingItems: List<SRTrendingItem>) {
-        trendingItems.forEach { trendingShow ->
-            trendingDao.insert(trendingShow)
-        }
-    }
 
     private fun savePopularItem(popularItems: List<SRPopularItem>) {
         popularItems.forEach {

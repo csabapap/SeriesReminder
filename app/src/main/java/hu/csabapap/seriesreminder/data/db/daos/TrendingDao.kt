@@ -21,16 +21,19 @@ interface TrendingDao {
     fun insert(trendingItems: List<SRTrendingItem>)
 
     @Language("RoomSql")
-    @Query("SELECT * FROM trending_shows ORDER BY watchers DESC LIMIT :limit")
+    @Query("SELECT * FROM trending_shows ORDER BY page ASC, watchers DESC LIMIT :limit")
     fun getTrendingShows(limit: Int) : Flowable<List<TrendingGridItem>>
 
-    @Query("SELECT * FROM trending_shows ORDER BY watchers DESC")
-    fun getTrendingShowsFactory(): DataSource.Factory<Int, TrendingGridItem>
+    @Query("SELECT * FROM trending_shows ORDER BY page ASC, watchers DESC LIMIT :limit")
+    fun getTrendingShowsFactory(limit: Int): DataSource.Factory<Int, TrendingGridItem>
 
     @Query("SELECT * FROM trending_shows ORDER BY watchers DESC LIMIT :limit")
     fun getLiveTrendingShows(limit: Int) : LiveData<List<TrendingGridItem>>
 
     @Query("DELETE FROM trending_shows")
     fun deleteAll()
+
+    @Query("DELETE FROM trending_shows WHERE page = :page")
+    fun delete(page:Int)
 
 }

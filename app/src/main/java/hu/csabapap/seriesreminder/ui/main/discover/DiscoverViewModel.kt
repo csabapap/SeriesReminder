@@ -34,7 +34,7 @@ class DiscoverViewModel @Inject constructor(
     val collectionLiveData = collectionRepository.getCollection()
 
     private val trendingShowsResult: LiveData<TrendingShowsResult> = Transformations.map(loadTrendingShows) {
-        trendingShowsRepository.getTrendingShows(enablePaging = true)
+        trendingShowsRepository.getTrendingShows(60)
     }
 
     private val popularShowsResult: LiveData<PopularShowsResult> = Transformations.map(loadPopularShows) {
