@@ -29,47 +29,13 @@ class ShowsRepository(private val traktApi: TraktApi, private val tvdbApi: TvdbA
                       private val episodesRepository: EpisodesRepository,
                       private val collectionRepository: CollectionRepository){
 
-    var cachedTrendingShows: MutableList<SRTrendingItem> = mutableListOf()
     var cachedPopularShows: MutableList<SRPopularItem> = mutableListOf()
 
-    fun getTrendingShows(limit: Int = 10) : Flowable<List<TrendingGridItem>> {
-        return trendingDao.getTrendingShows(limit)
-    }
-
-    fun getLiveTrendingShows(limit: Int = 10): LiveData<List<TrendingGridItem>> {
-        return trendingDao.getLiveTrendingShows(limit)
-    }
-
     fun getPopularShowsLiveData(): PopularShowsResult {
-        val dataSourceFactory = popularDao.getPopularShowsLiveFactory()
+        val dataSourceFactory = popularDao.getPopularShowsLiveFactory(20)
         val data: LiveData<PagedList<PopularGridItem>> =
                 LivePagedListBuilder(dataSourceFactory, DATABASE_PAGE_SIZE).build()
         return PopularShowsResult(data)
-    }
-
-    fun popularShows(limit: Int = 10) : Flowable<List<PopularGridItem>> {
-        return popularDao.getPopularShows(limit)
-    }
-
-    fun getPopularShowsFromWeb(limit: Int = 20) : Single<List<SRPopularItem>> {
-        if (cachedPopularShows.isEmpty().not()) {
-            return Single.just(cachedPopularShows.toList())
-        }
-        return traktApi.popularShows(limit)
-                .toFlowable()
-                .flatMapIterable { it }
-                .flatMapMaybe {
-                    getShow(it.ids.trakt)
-                            .map { showDao.insertOrUpdateShow(it) }
-                            .map { showDao.getShow(it.traktId)}
-                            .map { srShow -> mapToSRPopularItem(srShow.traktId) }
-                }
-                .toList()
-                .doOnSuccess {
-                    popularDao.deleteAll()
-                    savePopularItem(it)
-                    cachedPopularShows = it
-                }
     }
 
     fun getShow(traktId: Int) : Maybe<SRShow> {

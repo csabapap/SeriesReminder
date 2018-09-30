@@ -72,12 +72,6 @@ class HomeFragment : DaggerFragment(), DiscoverPreviewAdapter.PreviewShowListene
 
         cardsAdapter.previewShowListener = this
 
-        homeViewModel.viewState.observe(this, Observer {
-            it?.apply {
-                render(it)
-            }
-        })
-
         homeViewModel.myShowsLiveData.observe(this, Observer {
             it.apply {
                 if (isEmpty().not()) {
@@ -94,9 +88,10 @@ class HomeFragment : DaggerFragment(), DiscoverPreviewAdapter.PreviewShowListene
             }
         })
 
-        homeViewModel.popularShowsLiveData.observe(this, Observer {
+        homeViewModel.popularShows.observe(this, Observer {
             it?.apply {
-                cardsAdapter.addCard(DiscoverCardItem(getString(R.string.popular_shows), it, CardItem.POPULAR_CARD_TYPE))
+                cardsAdapter.addCard(DiscoverCardItem(getString(R.string.popular_shows), it,
+                        CardItem.POPULAR_CARD_TYPE))
             }
         })
 
@@ -120,7 +115,6 @@ class HomeFragment : DaggerFragment(), DiscoverPreviewAdapter.PreviewShowListene
 
     override fun onStart() {
         super.onStart()
-        homeViewModel.getPopularShows()
         homeViewModel.getNextEpisodes()
     }
 
@@ -145,13 +139,6 @@ class HomeFragment : DaggerFragment(), DiscoverPreviewAdapter.PreviewShowListene
             }
         }
         return super.onOptionsItemSelected(item)
-    }
-
-    private fun render(state: HomeViewState) {
-        when (state.displayProgressBar) {
-            true -> progress_bar.visibility = View.VISIBLE
-            false -> progress_bar.visibility = View.GONE
-        }
     }
 
     private fun search() {

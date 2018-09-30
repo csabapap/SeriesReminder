@@ -16,11 +16,17 @@ interface PopularDao {
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     fun insert(popularShow: SRPopularItem)
 
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    fun insert(popularShows: List<SRPopularItem>)
+
     @Query("SELECT * FROM popular_shows LIMIT :limit")
     fun getPopularShows(limit: Int) : Flowable<List<PopularGridItem>>
 
-    @Query("SELECT * FROM popular_shows")
-    fun getPopularShowsLiveFactory(): DataSource.Factory<Int, PopularGridItem>
+    @Query("SELECT * FROM popular_shows ORDER BY page ASC LIMIT :limit")
+    fun getPopularShowsLiveFactory(limit: Int): DataSource.Factory<Int, PopularGridItem>
+
+    @Query("DELETE FROM popular_shows WHERE page = :page")
+    fun delete(page: Int)
 
     @Query("DELETE FROM popular_shows")
     fun deleteAll()
