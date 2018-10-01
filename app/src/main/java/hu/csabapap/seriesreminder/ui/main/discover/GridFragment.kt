@@ -18,6 +18,7 @@ import hu.csabapap.seriesreminder.R
 import hu.csabapap.seriesreminder.data.db.entities.GridItem
 import hu.csabapap.seriesreminder.data.db.entities.Item
 import hu.csabapap.seriesreminder.ui.adapters.GridAdapter
+import hu.csabapap.seriesreminder.ui.adapters.items.ShowItem
 import hu.csabapap.seriesreminder.ui.addshow.AddShowActivity
 import hu.csabapap.seriesreminder.ui.showdetails.ShowDetailsActivity
 import hu.csabapap.seriesreminder.utils.ShowDetails

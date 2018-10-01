@@ -7,6 +7,7 @@ import hu.csabapap.seriesreminder.data.ShowsRepository
 import hu.csabapap.seriesreminder.data.db.TrendingShowsResult
 import hu.csabapap.seriesreminder.data.db.entities.SRTrendingItem
 import hu.csabapap.seriesreminder.data.db.entities.TrendingGridItem
+import hu.csabapap.seriesreminder.ui.adapters.items.ShowItem
 import io.reactivex.schedulers.Schedulers
 import timber.log.Timber
 import javax.inject.Inject

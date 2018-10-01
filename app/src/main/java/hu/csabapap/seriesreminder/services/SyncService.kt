@@ -5,9 +5,11 @@ import android.content.Intent
 import dagger.android.DaggerIntentService
 import hu.csabapap.seriesreminder.data.EpisodesRepository
 import hu.csabapap.seriesreminder.data.ShowsRepository
+import hu.csabapap.seriesreminder.data.network.TvdbApi
 import hu.csabapap.seriesreminder.data.states.EpisodeError
 import hu.csabapap.seriesreminder.data.states.NextEpisodeSuccess
 import io.reactivex.Flowable
+import io.reactivex.Maybe
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -15,6 +17,9 @@ class SyncService : DaggerIntentService("SyncService") {
 
     @Inject
     lateinit var showsRepository: ShowsRepository
+
+    @Inject
+    lateinit var tvdbApi: TvdbApi
 
     @Inject
     lateinit var episodesRepository: EpisodesRepository
@@ -36,11 +41,58 @@ class SyncService : DaggerIntentService("SyncService") {
     }
 
     private fun syncShow(showId: Int) {
-        showsRepository.getSeasons(showId)
+        showsRepository.getShow(showId)
+                .flatMap {show ->
+                    var poster = ""
+                    var posterThumb = ""
+                    var cover = ""
+                    var coverThumb = ""
+                    if (show.posterThumb.isEmpty()) {
+                        val response = tvdbApi.images(show.tvdbId, "poster").execute()
+                        if (response.isSuccessful) {
+                            response.body()?.let {
+                                val popularImage = it.data.maxBy { image ->
+                                    image.ratingsInfo.average
+                                }
+                                poster = popularImage?.fileName ?: ""
+                                posterThumb = popularImage?.thumbnail ?: ""
+                            }
+                        }
+                    }
+
+                    if (show.coverThumb.isEmpty()) {
+                        val response = tvdbApi.images(show.tvdbId, "fanart").execute()
+                        if (response.isSuccessful) {
+                            response.body()?.let {
+                                val popularImage = it.data.maxBy { image ->
+                                    image.ratingsInfo.average
+                                }
+                                cover = popularImage?.fileName ?: ""
+                                coverThumb = popularImage?.thumbnail ?: ""
+                            }
+                        }
+                    }
+
+                    val newShow = if(poster.isEmpty().not() || cover.isEmpty().not()){
+                        show.copy(poster = poster, posterThumb = posterThumb,
+                                cover = cover, coverThumb = coverThumb)
+                                .also {
+                                    showsRepository.updateShow(it)
+                                }
+                    } else {
+                        show
+                    }
+
+                    Maybe.just(newShow)
+                }
+                .toSingle()
+                .flatMap {
+                    showsRepository.getSeasons(it.traktId)
+                }
                 .toCompletable()
                 .andThen(showsRepository.fetchNextEpisode(showId))
                 .subscribe({
-
+                    Timber.d("next episode: %s", it)
                 }, {Timber.e(it)})
     }
 
