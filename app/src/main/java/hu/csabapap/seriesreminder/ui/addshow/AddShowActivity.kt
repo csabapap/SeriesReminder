@@ -21,6 +21,7 @@ import com.squareup.picasso.Picasso
 import dagger.android.support.DaggerAppCompatActivity
 import hu.csabapap.seriesreminder.R
 import hu.csabapap.seriesreminder.data.db.entities.SRShow
+import hu.csabapap.seriesreminder.data.network.getThumbnailUrl
 import hu.csabapap.seriesreminder.databinding.ActivityAddShowBinding
 import hu.csabapap.seriesreminder.extensions.loadFromTmdbUrl
 import hu.csabapap.seriesreminder.services.SyncService
@@ -119,8 +120,13 @@ class AddShowActivity : DaggerAppCompatActivity() {
             }
 
         }))
+        val url = if (srShow.coverThumb.isEmpty()) {
+            "tvdb://fanart?tvdbid=${srShow.tvdbId}"
+        } else {
+            getThumbnailUrl(srShow.coverThumb)
+        }
         Picasso.with(this)
-                .load("tvdb://fanart?tvdbid=${srShow.tvdbId}")
+                .load(url)
                 .into(cover)
     }
 
