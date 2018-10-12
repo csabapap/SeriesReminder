@@ -7,7 +7,8 @@ import hu.csabapap.seriesreminder.data.ShowsRepository
 import hu.csabapap.seriesreminder.data.db.TrendingShowsResult
 import hu.csabapap.seriesreminder.data.db.entities.SRTrendingItem
 import hu.csabapap.seriesreminder.data.db.entities.TrendingGridItem
-import hu.csabapap.seriesreminder.ui.adapters.items.ShowItem
+import io.reactivex.SingleObserver
+import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 import timber.log.Timber
 import javax.inject.Inject
@@ -19,8 +20,6 @@ class TrendingShowsRepository @Inject constructor(private val localTrendingDataS
                               private val showsRepository: ShowsRepository) {
 
     fun getTrendingShows(limit: Int = DATABASE_PAGE_SIZE): TrendingShowsResult {
-        Timber.d("get trending shows")
-        // todo filter null items
         val dataSourceFactory = localTrendingDataSource.getShows(limit)
         val data: LiveData<PagedList<TrendingGridItem>> =
                 LivePagedListBuilder(dataSourceFactory, DATABASE_PAGE_SIZE)
@@ -56,8 +55,20 @@ class TrendingShowsRepository @Inject constructor(private val localTrendingDataS
                 .toList()
                 .doOnSuccess { trendingShows -> localTrendingDataSource.insertShows(page, trendingShows)}
                 .subscribeOn(Schedulers.io())
-                .subscribe({Timber.d("nmb of shows loaded: %d", it.size)},
-                        {Timber.e(it)})
+                .subscribe(object : SingleObserver<List<SRTrendingItem>> {
+                    override fun onSuccess(t: List<SRTrendingItem>) {
+
+                    }
+
+                    override fun onSubscribe(d: Disposable) {
+
+                    }
+
+                    override fun onError(e: Throwable) {
+                        Timber.e(e)
+                    }
+
+                })
     }
 
     private fun mapToSRTrendingShow(showId: Int, watchers: Int, page: Int) : SRTrendingItem =

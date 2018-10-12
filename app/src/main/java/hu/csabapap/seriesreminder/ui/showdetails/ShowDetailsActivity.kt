@@ -3,8 +3,10 @@ package hu.csabapap.seriesreminder.ui.showdetails
 import android.os.Bundle
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
+import com.squareup.picasso.Picasso
 import dagger.android.support.DaggerAppCompatActivity
 import hu.csabapap.seriesreminder.R
+import hu.csabapap.seriesreminder.data.network.getThumbnailUrl
 import hu.csabapap.seriesreminder.extensions.loadFromTmdbUrl
 import hu.csabapap.seriesreminder.utils.ShowDetails
 import kotlinx.android.synthetic.main.activity_show_details.*
@@ -44,7 +46,14 @@ class ShowDetailsActivity : DaggerAppCompatActivity() {
 //                ratings.text = String.format(getString(R.string.ratings_value), (it.rating * 10).toInt(), it.votes)
 //                genres.text = it.genres
                 poster.loadFromTmdbUrl(it.tvdbId)
-//                cover.loadFromTmdbUrl(it.cover)
+                val url = if (it.coverThumb.isEmpty()) {
+                    "tvdb://fanart?tvdbid=${it.tvdbId}"
+                } else {
+                    getThumbnailUrl(it.coverThumb)
+                }
+                Picasso.with(this)
+                        .load(url)
+                        .into(cover)
             }
         })
     }
