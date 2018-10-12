@@ -16,14 +16,15 @@
     <ConstraintSet android:id="@+id/expanded">
         <Constraint
             android:id="@id/cover"
-            android:layout_height="200dp"
+            android:layout_height="240dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"/>
 
         <Constraint
             android:id="@id/poster"
-            android:layout_height="150dp"
+            android:layout_height="148dp"
+            android:layout_marginStart="8dp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintBottom_toBottomOf="@+id/title_background"/>
     </ConstraintSet>

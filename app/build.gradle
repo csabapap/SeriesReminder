@@ -79,11 +79,11 @@ dependencies {
     implementation 'androidx.lifecycle:lifecycle-reactivestreams:2.0.0'
     kapt 'androidx.lifecycle:lifecycle-compiler:2.0.0'
 
-    implementation 'androidx.room:room-runtime:2.0.0-rc01'
-    implementation 'androidx.room:room-rxjava2:2.0.0-rc01'
-    kapt 'androidx.room:room-compiler:2.0.0-rc01'
+    implementation 'androidx.room:room-runtime:2.0.0'
+    implementation 'androidx.room:room-rxjava2:2.0.0'
+    kapt 'androidx.room:room-compiler:2.0.0'
 
-    implementation "androidx.paging:paging-runtime:2.0.0-rc01"
+    implementation "androidx.paging:paging-runtime:2.0.0"
 
     implementation "io.reactivex.rxjava2:rxjava:${versions.rxJava}"
     implementation 'io.reactivex.rxjava2:rxandroid:2.0.2'

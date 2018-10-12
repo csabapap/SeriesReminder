@@ -84,14 +84,14 @@ class HomeFragment : DaggerFragment(), DiscoverPreviewAdapter.PreviewShowListene
         homeViewModel.trendingShows.observe(this, Observer {
             it?.apply {
                 cardsAdapter.addCard(DiscoverCardItem(getString(R.string.trending_shows), it,
-                        CardItem.TRENDING_CARD_TYPE,  CardItem.PRIORITY_MEDIUM))
+                        CardItem.TRENDING_CARD_TYPE, CardItem.PRIORITY_TRENDING))
             }
         })
 
         homeViewModel.popularShows.observe(this, Observer {
             it?.apply {
                 cardsAdapter.addCard(DiscoverCardItem(getString(R.string.popular_shows), it,
-                        CardItem.POPULAR_CARD_TYPE))
+                        CardItem.POPULAR_CARD_TYPE, CardItem.PRIORITY_POPULAR))
             }
         })
 

@@ -73,8 +73,9 @@
     <ImageView
         android:id="@+id/poster"
         android:layout_width="100dp"
-        android:layout_height="150dp"
+        android:layout_height="149dp"
         android:layout_marginStart="8dp"
+        android:scaleType="centerInside"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintBottom_toBottomOf="@+id/title_background"/>
 
