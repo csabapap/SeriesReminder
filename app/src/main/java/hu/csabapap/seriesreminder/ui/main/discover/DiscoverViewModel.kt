@@ -4,24 +4,22 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations
 import androidx.lifecycle.ViewModel
-import androidx.paging.LivePagedListBuilder
 import androidx.paging.PagedList
 import hu.csabapap.seriesreminder.data.CollectionRepository
-import hu.csabapap.seriesreminder.data.ShowsRepository
 import hu.csabapap.seriesreminder.data.db.PopularShowsResult
 import hu.csabapap.seriesreminder.data.db.TrendingShowsResult
 import hu.csabapap.seriesreminder.data.db.entities.GridItem
 import hu.csabapap.seriesreminder.data.db.entities.Item
 import hu.csabapap.seriesreminder.data.db.entities.PopularGridItem
 import hu.csabapap.seriesreminder.data.db.entities.TrendingGridItem
+import hu.csabapap.seriesreminder.data.repositories.popularshows.PopularShowsRepository
 import hu.csabapap.seriesreminder.data.repositories.trendingshows.TrendingShowsRepository
-import hu.csabapap.seriesreminder.ui.adapters.items.ShowItem
 import io.reactivex.disposables.CompositeDisposable
 import javax.inject.Inject
 
 class DiscoverViewModel @Inject constructor(
         private val trendingShowsRepository: TrendingShowsRepository,
-        private val showsRepository: ShowsRepository,
+        private val popularShowsRepository: PopularShowsRepository,
         private val collectionRepository: CollectionRepository)
     : ViewModel() {
     private val disposables = CompositeDisposable()
@@ -35,7 +33,7 @@ class DiscoverViewModel @Inject constructor(
     }
 
     private val popularShowsResult: LiveData<PopularShowsResult> = Transformations.map(loadPopularShows) {
-        showsRepository.getPopularShowsLiveData()
+        popularShowsRepository.getPopularShows(60)
     }
 
     val trendingShows: LiveData<PagedList<TrendingGridItem>> = Transformations.switchMap(trendingShowsResult) {
