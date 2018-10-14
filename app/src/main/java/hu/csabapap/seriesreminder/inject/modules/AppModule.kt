@@ -39,21 +39,6 @@ class AppModule{
     }
 
     @Singleton
-    @Provides
-    fun provideShowsRepository(traktApi: TraktApi,
-                               tvdbApi: TvdbApi,
-                               showDao: SRShowDao,
-                               trendingDao: TrendingDao,
-                               popularDao: PopularDao,
-                               seasonsRepository: SeasonsRepository,
-                               episodesRepository: EpisodesRepository,
-                               collectionRepository: CollectionRepository)
-            : ShowsRepository {
-        return ShowsRepository(traktApi, tvdbApi, showDao, trendingDao, popularDao,
-                seasonsRepository, episodesRepository, collectionRepository)
-    }
-
-    @Singleton
     fun providesCollectionRepository(collectionsDao: CollectionsDao) : CollectionRepository {
         return CollectionRepository(collectionsDao)
     }

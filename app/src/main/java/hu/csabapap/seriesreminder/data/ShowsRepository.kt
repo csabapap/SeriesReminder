@@ -1,15 +1,11 @@
 package hu.csabapap.seriesreminder.data
 
-import androidx.lifecycle.LiveData
-import androidx.paging.LivePagedListBuilder
-import androidx.paging.PagedList
-import hu.csabapap.seriesreminder.data.db.PopularShowsResult
-import hu.csabapap.seriesreminder.data.db.daos.PopularDao
 import hu.csabapap.seriesreminder.data.db.daos.SRShowDao
-import hu.csabapap.seriesreminder.data.db.daos.TrendingDao
-import hu.csabapap.seriesreminder.data.db.entities.*
+import hu.csabapap.seriesreminder.data.db.entities.AiringTime
+import hu.csabapap.seriesreminder.data.db.entities.NextEpisodeEntry
+import hu.csabapap.seriesreminder.data.db.entities.SRSeason
+import hu.csabapap.seriesreminder.data.db.entities.SRShow
 import hu.csabapap.seriesreminder.data.network.TraktApi
-import hu.csabapap.seriesreminder.data.network.TvdbApi
 import hu.csabapap.seriesreminder.data.network.entities.NextEpisode
 import hu.csabapap.seriesreminder.data.network.entities.Show
 import hu.csabapap.seriesreminder.data.states.NextEpisodeError
@@ -21,22 +17,15 @@ import io.reactivex.Maybe
 import io.reactivex.Single
 import org.threeten.bp.OffsetDateTime
 import timber.log.Timber
+import javax.inject.Inject
+import javax.inject.Singleton
 
-class ShowsRepository(private val traktApi: TraktApi, private val tvdbApi: TvdbApi,
-                      private val showDao: SRShowDao, private val trendingDao: TrendingDao,
-                      private val popularDao: PopularDao,
-                      private val seasonsRepository: SeasonsRepository,
-                      private val episodesRepository: EpisodesRepository,
-                      private val collectionRepository: CollectionRepository){
-
-    var cachedPopularShows: MutableList<SRPopularItem> = mutableListOf()
-
-    fun getPopularShowsLiveData(): PopularShowsResult {
-        val dataSourceFactory = popularDao.getPopularShowsLiveFactory(20)
-        val data: LiveData<PagedList<PopularGridItem>> =
-                LivePagedListBuilder(dataSourceFactory, DATABASE_PAGE_SIZE).build()
-        return PopularShowsResult(data)
-    }
+@Singleton
+class ShowsRepository @Inject constructor(private val traktApi: TraktApi,
+                                          private val showDao: SRShowDao,
+                                          private val seasonsRepository: SeasonsRepository,
+                                          private val episodesRepository: EpisodesRepository,
+                                          private val collectionRepository: CollectionRepository){
 
     fun getShow(traktId: Int) : Maybe<SRShow> {
         val showFromDb = showDao.getShowMaybe(traktId)
@@ -85,15 +74,6 @@ class ShowsRepository(private val traktApi: TraktApi, private val tvdbApi: TvdbA
         return srShow
     }
 
-    private fun mapToSRPopularItem(showId: Int) : SRPopularItem = SRPopularItem(showId = showId, page = 0)
-
-
-    private fun savePopularItem(popularItems: List<SRPopularItem>) {
-        popularItems.forEach {
-            popularDao.insert(it)
-        }
-    }
-
     fun updateShow(show: SRShow) {
         showDao.updateShow(show)
     }
@@ -107,11 +87,11 @@ class ShowsRepository(private val traktApi: TraktApi, private val tvdbApi: TvdbA
                         else -> Single.just(NextEpisodeError("error during next episode fetching"))
                     }
                 }
-                .doAfterSuccess({
+                .doAfterSuccess {
                     if (it is NextEpisodeSuccess) {
                         saveNextEpisode(it.nextEpisode)
                     }
-                })
+                }
     }
 
     private fun mapToNextEpisodeEntry(nextEpisode: NextEpisode, showId: Int): NextEpisodeEntry {
@@ -147,10 +127,5 @@ class ShowsRepository(private val traktApi: TraktApi, private val tvdbApi: TvdbA
                     Flowable.just(it)
                 }
                 .toList()
-    }
-
-    companion object {
-        private const val DATABASE_PAGE_SIZE = 20
-        private const val NETWORK_PAGE_SIZE = 20
     }
 }
