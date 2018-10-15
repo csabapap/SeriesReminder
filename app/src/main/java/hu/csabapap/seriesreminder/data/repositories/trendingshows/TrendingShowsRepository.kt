@@ -46,7 +46,8 @@ class TrendingShowsRepository @Inject constructor(private val localTrendingDataS
                 .toFlowable()
                 .flatMapIterable { it }
                 .flatMapMaybe { trendingShow ->
-                    showsRepository.getShow(trendingShow.show.ids.trakt)
+                    val ids = trendingShow.show.ids
+                    showsRepository.getShowWithImages(ids.trakt, ids.tvdb)
                             .map { showsRepository.insertOrUpdateShow(it) }
                             .map { showsRepository.getShow(it.traktId)}
                             .map { srShow -> mapToSRTrendingShow(srShow.blockingGet().traktId,

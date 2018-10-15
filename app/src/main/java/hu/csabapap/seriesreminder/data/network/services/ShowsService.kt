@@ -26,7 +26,7 @@ interface ShowsService{
                      @Query("limit") limit: Int) : Single<List<Show>>
 
     @GET("shows/{id}?extended=full")
-    fun show(@Path("id") traktId: Int) : Flowable<Show>
+    fun show(@Path("id") traktId: Int) : Single<Show>
 
     @GET("shows/{id}/next_episode")
     fun nextEpisode(@Path("id") traktId: Int) : Single<Response<NextEpisode>>

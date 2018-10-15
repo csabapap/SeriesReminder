@@ -17,4 +17,8 @@ interface TvdbImagesService {
     fun images(@Path("tvdb_id") tvdbId: Int, @Query("keyType") type: String = "poster")
             : Call<Images>
 
+    @GET("/series/{tvdb_id}/images/query")
+    fun imagesSingle(@Path("tvdb_id") tvdbId: Int, @Query("keyType") type: String = "poster")
+            : Single<Images>
+
 }

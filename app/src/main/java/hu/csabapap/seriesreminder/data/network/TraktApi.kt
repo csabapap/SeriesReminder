@@ -21,7 +21,7 @@ class TraktApi(private val retrofit: Retrofit) {
         retrofit.create(ShowsService::class.java).popularShows(extended, page, limit)
 
 
-    fun show(traktId: Int) : Flowable<Show>{
+    fun show(traktId: Int) : Single<Show>{
         return retrofit.create(ShowsService::class.java).show(traktId)
     }
 

@@ -80,6 +80,10 @@ class TvdbApi {
         return retrofit.create(TvdbImagesService::class.java).images(tvdbId, type)
     }
 
+    fun imagesSingle(tvdbId : Int, type : String = "poster"): Single<Images>{
+        return retrofit.create(TvdbImagesService::class.java).imagesSingle(tvdbId, type)
+    }
+
     fun episode(tvdbId: Int): Single<EpisodeData>{
         return retrofit.create(TvdbEpisodeService::class.java).episode(tvdbId)
     }
