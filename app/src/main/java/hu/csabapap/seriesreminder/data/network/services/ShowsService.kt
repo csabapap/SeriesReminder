@@ -15,7 +15,11 @@ import retrofit2.http.Query
 
 interface ShowsService{
     @GET("shows/trending")
-    fun trendingShows(@Query("extended") extended: String,
+    fun trendingShows(@Query("extended") extended: String)
+            : Single<List<TrendingShow>>
+
+    @GET("shows/trending")
+    fun paginatedTrendingShows(@Query("extended") extended: String,
                       @Query("page") page: Int,
                       @Query("limit") limit: Int)
             : Single<List<TrendingShow>>

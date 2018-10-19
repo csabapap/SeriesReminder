@@ -28,10 +28,10 @@ fun setImageUri(view: ImageView, showItem: ShowItem) {
 
 @BindingAdapter("app:remoteSrc")
 fun setImageUri(view: ImageView, showItem: SRShow) {
-    val url = if (showItem.poster.isEmpty()) {
+    val url = if (showItem.posterThumb.isEmpty()) {
         "tvdb://${showItem.tvdbId}"
     } else {
-        getThumbnailUrl(showItem.poster)
+        getThumbnailUrl(showItem.posterThumb)
     }
 
     Picasso.with(view.context)

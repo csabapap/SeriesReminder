@@ -7,6 +7,10 @@ import hu.csabapap.seriesreminder.data.ShowsRepository
 import hu.csabapap.seriesreminder.data.db.TrendingShowsResult
 import hu.csabapap.seriesreminder.data.db.entities.SRTrendingItem
 import hu.csabapap.seriesreminder.data.db.entities.TrendingGridItem
+import hu.csabapap.seriesreminder.data.network.entities.TrendingShow
+import hu.csabapap.seriesreminder.extensions.distinctUntilChanged
+import io.reactivex.Maybe
+import io.reactivex.Single
 import io.reactivex.SingleObserver
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
@@ -19,7 +23,10 @@ class TrendingShowsRepository @Inject constructor(private val localTrendingDataS
                               private val remoteTrendingDataSource: RemoteTrendingDataSource,
                               private val showsRepository: ShowsRepository) {
 
+    var updateTrendingShowsIsRunning = false
+
     fun getTrendingShows(limit: Int = DATABASE_PAGE_SIZE): TrendingShowsResult {
+        Timber.d("get trending shows")
         val dataSourceFactory = localTrendingDataSource.getShows(limit)
         val data: LiveData<PagedList<TrendingGridItem>> =
                 LivePagedListBuilder(dataSourceFactory, DATABASE_PAGE_SIZE)
@@ -27,29 +34,42 @@ class TrendingShowsRepository @Inject constructor(private val localTrendingDataS
                             var page  = 1
 
                             override fun onZeroItemsLoaded() {
-                                updateTrendingShows(1)
+                                Timber.d("on zero items loading")
+                                if (updateTrendingShowsIsRunning.not()) {
+                                    updateTrendingShows(1)
+                                }
                             }
 
                             override fun onItemAtEndLoaded(itemAtEnd: TrendingGridItem) {
-                                page += 1
-                                if (page < 4) {
-                                    updateTrendingShows(page)
-                                }
+//                                if (updateTrendingShowsIsRunning.not()) {
+//                                    page += 1
+//                                    if (page < 4) {
+//                                        updateTrendingShows(page)
+//                                    }
+//                                }
                             }
                         })
-                        .build()
+                        .build().distinctUntilChanged()
         return TrendingShowsResult(data)
     }
 
     fun updateTrendingShows(page: Int) {
-        remoteTrendingDataSource.getShows("full", page, NETWORK_PAGE_SIZE)
+        updateTrendingShowsIsRunning = true
+        val start = System.currentTimeMillis()
+        remoteTrendingDataSource.getPaginatedShows("full", page, NETWORK_PAGE_SIZE)
+                .doOnSuccess{ Timber.d("get trending shows took %d ms", (System.currentTimeMillis() - start))}
                 .toFlowable()
                 .flatMapIterable { it }
                 .flatMapMaybe { trendingShow ->
                     val ids = trendingShow.show.ids
                     showsRepository.getShowWithImages(ids.trakt, ids.tvdb)
-                            .map { showsRepository.insertOrUpdateShow(it) }
-                            .map { showsRepository.getShow(it.traktId)}
+                            .map {
+                                if (it.id != null) {
+                                    Maybe.just(it)
+                                } else {
+                                    showsRepository.getShow(it.traktId)
+                                }
+                            }
                             .map { srShow -> mapToSRTrendingShow(srShow.blockingGet().traktId,
                                     trendingShow.watchers, page) }
                 }
@@ -58,7 +78,7 @@ class TrendingShowsRepository @Inject constructor(private val localTrendingDataS
                 .subscribeOn(Schedulers.io())
                 .subscribe(object : SingleObserver<List<SRTrendingItem>> {
                     override fun onSuccess(t: List<SRTrendingItem>) {
-
+                        updateTrendingShowsIsRunning = false
                     }
 
                     override fun onSubscribe(d: Disposable) {
@@ -67,6 +87,7 @@ class TrendingShowsRepository @Inject constructor(private val localTrendingDataS
 
                     override fun onError(e: Throwable) {
                         Timber.e(e)
+                        updateTrendingShowsIsRunning = false
                     }
 
                 })

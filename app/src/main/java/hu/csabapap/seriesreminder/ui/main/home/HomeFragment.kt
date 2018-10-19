@@ -25,6 +25,7 @@ import hu.csabapap.seriesreminder.ui.search.SearchActivity
 import hu.csabapap.seriesreminder.ui.showdetails.ShowDetailsActivity
 import hu.csabapap.seriesreminder.utils.ShowDetails
 import kotlinx.android.synthetic.main.fragment_home.*
+import timber.log.Timber
 import javax.inject.Inject
 import javax.inject.Named
 

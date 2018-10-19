@@ -64,6 +64,12 @@ class DbModule {
         return db.episodesDao()
     }
 
+    @Singleton
+    @Provides
+    fun providesLastRequestDao(db: SRDatabase) : LastRequestDao {
+        return db.lastRequestDao()
+    }
+
     companion object {
         val MIGRATION_1_2 = object : Migration(1,2) {
             override fun migrate(database: SupportSQLiteDatabase) {

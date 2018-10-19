@@ -1,10 +1,8 @@
 package hu.csabapap.seriesreminder.data
 
+import hu.csabapap.seriesreminder.data.db.daos.LastRequestDao
 import hu.csabapap.seriesreminder.data.db.daos.SRShowDao
-import hu.csabapap.seriesreminder.data.db.entities.AiringTime
-import hu.csabapap.seriesreminder.data.db.entities.NextEpisodeEntry
-import hu.csabapap.seriesreminder.data.db.entities.SRSeason
-import hu.csabapap.seriesreminder.data.db.entities.SRShow
+import hu.csabapap.seriesreminder.data.db.entities.*
 import hu.csabapap.seriesreminder.data.network.TraktApi
 import hu.csabapap.seriesreminder.data.network.TvdbApi
 import hu.csabapap.seriesreminder.data.network.entities.Image
@@ -18,6 +16,8 @@ import io.reactivex.Flowable
 import io.reactivex.Maybe
 import io.reactivex.Single
 import io.reactivex.functions.BiFunction
+import org.threeten.bp.Duration
+import org.threeten.bp.Instant
 import org.threeten.bp.OffsetDateTime
 import timber.log.Timber
 import javax.inject.Inject
@@ -27,6 +27,7 @@ import javax.inject.Singleton
 class ShowsRepository @Inject constructor(private val traktApi: TraktApi,
                                           private val tvdbApi: TvdbApi,
                                           private val showDao: SRShowDao,
+                                          private val requestDao: LastRequestDao,
                                           private val seasonsRepository: SeasonsRepository,
                                           private val episodesRepository: EpisodesRepository,
                                           private val collectionRepository: CollectionRepository){
@@ -42,7 +43,20 @@ class ShowsRepository @Inject constructor(private val traktApi: TraktApi,
     fun getShowWithImages(traktId: Int, tvdbId: Int): Maybe<SRShow> {
         val showFromDb = showDao.getShowMaybe(traktId)
 
-        val fromWeb = getShowFromWebWithImages(traktId, tvdbId).toMaybe()
+        val fromWeb = Maybe.fromCallable {
+            val lastRequest = requestDao.getLastRequestById(traktId, Request.SHOW_DETAILS)
+            if (requestDao.isRequestBefore(lastRequest, Duration.ofHours(4)))
+                Maybe.just(true)
+            else
+                Maybe.empty()
+        }.flatMap {
+            requestDao.insert(LastRequest(0L, traktId,
+                    Request.SHOW_DETAILS, Instant.now()))
+            getShowFromWebWithImages(traktId, tvdbId).toMaybe()
+                    .doOnSuccess { show ->
+                        insertOrUpdateShow(show)
+                    }
+        }
 
         return Maybe.concat(showFromDb, fromWeb).firstElement()
     }
@@ -51,7 +65,10 @@ class ShowsRepository @Inject constructor(private val traktApi: TraktApi,
         showDao.insertOrUpdateShow(show)
     }
 
-    fun insertOrUpdateShow(show: SRShow) = showDao.insertOrUpdateShow(show)
+    private fun insertOrUpdateShow(show: SRShow): SRShow {
+        Timber.d("insert or update show: %d", show.traktId)
+        return showDao.insertOrUpdateShow(show)
+    }
 
     private fun getShowFromWeb(traktId: Int) : Flowable<SRShow>{
         return traktApi.show(traktId)
@@ -69,7 +86,6 @@ class ShowsRepository @Inject constructor(private val traktApi: TraktApi,
                         image.ratingsInfo.average
                     }
                 }
-
         return showSingle.zipWith(imagesSingle, BiFunction { show, image ->
             mapToSRShow(show, image)
         })

@@ -2,14 +2,15 @@ package hu.csabapap.seriesreminder.data.repositories.popularshows
 
 import hu.csabapap.seriesreminder.data.db.daos.PopularDao
 import hu.csabapap.seriesreminder.data.db.entities.SRPopularItem
+import timber.log.Timber
 import javax.inject.Inject
 
 class LocalPopularDataSource @Inject constructor(private val popularDao: PopularDao) {
 
     fun getShows(limit: Int) = popularDao.getPopularShowsLiveFactory(limit)
 
-    fun insertShows(page: Int, trendingShows: List<SRPopularItem>) {
+    fun insertShows(page: Int, popularShows: List<SRPopularItem>) {
         popularDao.delete(page)
-        popularDao.insert(trendingShows)
+        popularDao.insert(popularShows)
     }
 }

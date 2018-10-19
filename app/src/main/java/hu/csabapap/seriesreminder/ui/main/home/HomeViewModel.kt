@@ -10,14 +10,14 @@ import hu.csabapap.seriesreminder.data.ShowsRepository
 import hu.csabapap.seriesreminder.data.db.entities.NextEpisodeItem
 import hu.csabapap.seriesreminder.data.repositories.popularshows.PopularShowsRepository
 import hu.csabapap.seriesreminder.data.repositories.trendingshows.TrendingShowsRepository
+import hu.csabapap.seriesreminder.extensions.distinctUntilChanged
 import hu.csabapap.seriesreminder.ui.adapters.items.ShowItem
 import hu.csabapap.seriesreminder.utils.AppRxSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import timber.log.Timber
 import javax.inject.Inject
 
-class HomeViewModel @Inject constructor(private val showsRepository: ShowsRepository,
-                                        trendingShowsRepository: TrendingShowsRepository,
+class HomeViewModel @Inject constructor(val trendingShowsRepository: TrendingShowsRepository,
                                         popularShowsRepository: PopularShowsRepository,
                                         collectionRepository: CollectionRepository,
                                         private val episodesRepository: EpisodesRepository,
@@ -28,7 +28,7 @@ class HomeViewModel @Inject constructor(private val showsRepository: ShowsReposi
 
     val upcomingEpisodesLiveData = MutableLiveData<List<NextEpisodeItem>>()
 
-    val trendingShows: LiveData<List<ShowItem>> = Transformations.map(trendingShowsRepository.getTrendingShows().data) { result ->
+    val trendingShows: LiveData<List<ShowItem>> = Transformations.map(trendingShowsRepository.getTrendingShows().data.distinctUntilChanged()) { result ->
         result.map {
             ShowItem(it.show!!.traktId,
                     it.show!!.tvdbId,
@@ -38,7 +38,7 @@ class HomeViewModel @Inject constructor(private val showsRepository: ShowsReposi
         }
     }
 
-    val popularShows: LiveData<List<ShowItem>> = Transformations.map(popularShowsRepository.getPopularShows().data) { result ->
+    val popularShows: LiveData<List<ShowItem>> = Transformations.map(popularShowsRepository.getPopularShows().data.distinctUntilChanged()) { result ->
         result.map {
             ShowItem(it.show!!.traktId,
                     it.show!!.tvdbId,
