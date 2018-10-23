@@ -2,6 +2,7 @@ package hu.csabapap.seriesreminder.extensions
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import java.util.*
 

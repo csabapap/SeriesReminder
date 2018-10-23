@@ -21,7 +21,6 @@ class PopularShowsRepository @Inject constructor(private val localPopularDataSou
 
     fun getPopularShows(limit: Int = DATABASE_PAGE_SIZE): PopularShowsResult {
         Timber.d("get popular shows")
-        // todo filter null items
         val dataSourceFactory = localPopularDataSource.getShows(limit)
         val data: LiveData<PagedList<PopularGridItem>> =
                 LivePagedListBuilder(dataSourceFactory, DATABASE_PAGE_SIZE)

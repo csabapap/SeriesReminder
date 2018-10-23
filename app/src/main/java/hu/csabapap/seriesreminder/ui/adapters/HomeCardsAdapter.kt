@@ -102,7 +102,12 @@ class HomeCardsAdapter(private val listener: CardClickListener)
 
         fun bind(discoverCardItem: DiscoverCardItem) {
             itemView.card_title.text = discoverCardItem.title
-            previewAdapter.updateItems(discoverCardItem.showItems)
+            if (discoverCardItem.showItems.isEmpty()) {
+                itemView.progress.visibility = View.VISIBLE
+            } else {
+                previewAdapter.updateItems(discoverCardItem.showItems)
+                itemView.progress.visibility = View.GONE
+            }
             previewShowListener?.apply {
                 previewAdapter.listener = previewShowListener
             }

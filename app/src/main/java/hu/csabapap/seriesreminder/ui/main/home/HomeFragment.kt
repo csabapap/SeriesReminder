@@ -82,24 +82,28 @@ class HomeFragment : DaggerFragment(), DiscoverPreviewAdapter.PreviewShowListene
             }
         })
 
-        homeViewModel.trendingShows.observe(this, Observer {
-            it?.apply {
-                cardsAdapter.addCard(DiscoverCardItem(getString(R.string.trending_shows), it,
-                        CardItem.TRENDING_CARD_TYPE, CardItem.PRIORITY_TRENDING))
-            }
-        })
+//        homeViewModel.trendingShows.observe(this, Observer {
+//            it?.apply {
+//                cardsAdapter.addCard(DiscoverCardItem(getString(R.string.trending_shows), it,
+//                        CardItem.TRENDING_CARD_TYPE, CardItem.PRIORITY_TRENDING))
+//            }
+//        })
 
-        homeViewModel.popularShows.observe(this, Observer {
-            it?.apply {
-                cardsAdapter.addCard(DiscoverCardItem(getString(R.string.popular_shows), it,
-                        CardItem.POPULAR_CARD_TYPE, CardItem.PRIORITY_POPULAR))
-            }
-        })
+//        homeViewModel.popularShows.observe(this, Observer {
+//            it?.apply {
+//                cardsAdapter.addCard(DiscoverCardItem(getString(R.string.popular_shows), it,
+//                        CardItem.POPULAR_CARD_TYPE, CardItem.PRIORITY_POPULAR))
+//            }
+//        })
 
         homeViewModel.upcomingEpisodesLiveData.observe(this, Observer {
             it?.apply {
                 cardsAdapter.addCard(UpcomingEpisodeCardItem(it, CardItem.UPCOMING_EPISODE_TYPE))
             }
+        })
+
+        homeViewModel.viewStateLiveData.observe(this, Observer {
+            updateState(it)
         })
     }
 
@@ -182,5 +186,17 @@ class HomeFragment : DaggerFragment(), DiscoverPreviewAdapter.PreviewShowListene
 
     override fun onMoreButtonClick(type: Int) {
         listener?.onMoreButtonClick(type)
+    }
+
+    private fun updateState(state: HomeViewState) {
+        when (state) {
+            DisplayTrendingLoader -> cardsAdapter.addCard(DiscoverCardItem(getString(R.string.trending_shows), emptyList(),
+                    CardItem.TRENDING_CARD_TYPE, CardItem.PRIORITY_TRENDING))
+            DisplayPopularLoader -> Timber.d("display loader for popular shows")
+            is TrendingState -> cardsAdapter.addCard(DiscoverCardItem(getString(R.string.trending_shows),
+                    state.items, CardItem.TRENDING_CARD_TYPE, CardItem.PRIORITY_TRENDING))
+            is PopularState -> Timber.d("display shows for popular shows")
+            is MyShowsState -> Timber.d("display shows for popular shows")
+        }
     }
 }

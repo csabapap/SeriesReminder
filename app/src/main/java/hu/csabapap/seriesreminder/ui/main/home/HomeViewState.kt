@@ -1,7 +1,10 @@
 package hu.csabapap.seriesreminder.ui.main.home
 
-data class HomeViewState(
-        val displayProgressBar: Boolean = false,
-        val displayTrendingCard: Boolean = false,
-        val displayPopularCard: Boolean = false
-)
+import hu.csabapap.seriesreminder.ui.adapters.items.ShowItem
+
+sealed class HomeViewState
+object DisplayTrendingLoader: HomeViewState()
+object DisplayPopularLoader: HomeViewState()
+data class TrendingState(val items: List<ShowItem>): HomeViewState()
+data class PopularState(val items: List<ShowItem>): HomeViewState()
+data class MyShowsState(val items: List<ShowItem>): HomeViewState()

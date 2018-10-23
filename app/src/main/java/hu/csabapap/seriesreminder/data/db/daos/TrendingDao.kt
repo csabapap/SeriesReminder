@@ -30,6 +30,9 @@ interface TrendingDao {
     @Query("SELECT * FROM trending_shows ORDER BY watchers DESC LIMIT :limit")
     fun getLiveTrendingShows(limit: Int) : LiveData<List<TrendingGridItem>>
 
+    @Query("SELECT MAX(page) FROM trending_shows;")
+    fun getLastPage(): Int?
+
     @Query("DELETE FROM trending_shows")
     fun deleteAll()
 

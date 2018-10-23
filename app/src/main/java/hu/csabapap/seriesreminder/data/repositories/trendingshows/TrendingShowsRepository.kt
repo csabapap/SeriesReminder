@@ -5,9 +5,9 @@ import androidx.paging.LivePagedListBuilder
 import androidx.paging.PagedList
 import hu.csabapap.seriesreminder.data.ShowsRepository
 import hu.csabapap.seriesreminder.data.db.TrendingShowsResult
+import hu.csabapap.seriesreminder.data.db.entities.SRShow
 import hu.csabapap.seriesreminder.data.db.entities.SRTrendingItem
 import hu.csabapap.seriesreminder.data.db.entities.TrendingGridItem
-import hu.csabapap.seriesreminder.data.network.entities.TrendingShow
 import hu.csabapap.seriesreminder.extensions.distinctUntilChanged
 import io.reactivex.Maybe
 import io.reactivex.Single
@@ -23,41 +23,53 @@ class TrendingShowsRepository @Inject constructor(private val localTrendingDataS
                               private val remoteTrendingDataSource: RemoteTrendingDataSource,
                               private val showsRepository: ShowsRepository) {
 
-    var updateTrendingShowsIsRunning = false
+    fun getTrendingShowsFlowable() = localTrendingDataSource.getShowsFlowable(10)
 
     fun getTrendingShows(limit: Int = DATABASE_PAGE_SIZE): TrendingShowsResult {
         Timber.d("get trending shows")
         val dataSourceFactory = localTrendingDataSource.getShows(limit)
+        val config = PagedList.Config.Builder()
+                .setPageSize(DATABASE_PAGE_SIZE)
+                .setInitialLoadSizeHint(1 * DATABASE_PAGE_SIZE)
+                .build()
         val data: LiveData<PagedList<TrendingGridItem>> =
-                LivePagedListBuilder(dataSourceFactory, DATABASE_PAGE_SIZE)
+                LivePagedListBuilder(dataSourceFactory, config)
                         .setBoundaryCallback(object : PagedList.BoundaryCallback<TrendingGridItem>() {
-                            var page  = 1
-
-                            override fun onZeroItemsLoaded() {
-                                Timber.d("on zero items loading")
-                                if (updateTrendingShowsIsRunning.not()) {
-                                    updateTrendingShows(1)
-                                }
-                            }
-
                             override fun onItemAtEndLoaded(itemAtEnd: TrendingGridItem) {
-//                                if (updateTrendingShowsIsRunning.not()) {
-//                                    page += 1
-//                                    if (page < 4) {
-//                                        updateTrendingShows(page)
-//                                    }
-//                                }
+                                var lastPage = localTrendingDataSource.getLastPage()
+                                if (lastPage == null) {
+                                    lastPage = 0
+                                }
+                                updateTrendingShows(lastPage + 1)
                             }
                         })
                         .build().distinctUntilChanged()
         return TrendingShowsResult(data)
     }
 
+    fun refreshTrendingShows(): Single<List<SRTrendingItem>> {
+        return remoteTrendingDataSource.getShows("full")
+                .toFlowable()
+                .flatMapIterable { it }
+                .flatMapMaybe { trendingShow ->
+                    val ids = trendingShow.show.ids
+                    showsRepository.getShowWithImages(ids.trakt, ids.tvdb)
+                            .map {
+                                if (it.id != null) {
+                                    Maybe.just(it)
+                                } else {
+                                    showsRepository.getShow(it.traktId)
+                                }
+                            }
+                            .map { srShow -> mapToSRTrendingShow(srShow.blockingGet().traktId,
+                                    trendingShow.watchers, 0) }
+                }
+                .toList()
+                .doOnSuccess { trendingShows -> localTrendingDataSource.insertShows(0, trendingShows)}
+    }
+
     fun updateTrendingShows(page: Int) {
-        updateTrendingShowsIsRunning = true
-        val start = System.currentTimeMillis()
         remoteTrendingDataSource.getPaginatedShows("full", page, NETWORK_PAGE_SIZE)
-                .doOnSuccess{ Timber.d("get trending shows took %d ms", (System.currentTimeMillis() - start))}
                 .toFlowable()
                 .flatMapIterable { it }
                 .flatMapMaybe { trendingShow ->
@@ -78,7 +90,7 @@ class TrendingShowsRepository @Inject constructor(private val localTrendingDataS
                 .subscribeOn(Schedulers.io())
                 .subscribe(object : SingleObserver<List<SRTrendingItem>> {
                     override fun onSuccess(t: List<SRTrendingItem>) {
-                        updateTrendingShowsIsRunning = false
+
                     }
 
                     override fun onSubscribe(d: Disposable) {
@@ -87,7 +99,6 @@ class TrendingShowsRepository @Inject constructor(private val localTrendingDataS
 
                     override fun onError(e: Throwable) {
                         Timber.e(e)
-                        updateTrendingShowsIsRunning = false
                     }
 
                 })
