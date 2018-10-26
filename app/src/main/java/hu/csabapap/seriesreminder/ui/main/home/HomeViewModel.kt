@@ -17,7 +17,7 @@ import timber.log.Timber
 import javax.inject.Inject
 
 class HomeViewModel @Inject constructor(private val trendingShowsRepository: TrendingShowsRepository,
-                                        popularShowsRepository: PopularShowsRepository,
+                                        private val popularShowsRepository: PopularShowsRepository,
                                         collectionRepository: CollectionRepository,
                                         private val episodesRepository: EpisodesRepository,
                                         private val rxSchedulers: AppRxSchedulers)
@@ -26,25 +26,15 @@ class HomeViewModel @Inject constructor(private val trendingShowsRepository: Tre
     private val disposables = CompositeDisposable()
     private val _viewStateLiveData = MutableLiveData<HomeViewState>()
     val viewStateLiveData: LiveData<HomeViewState>
-        get() = _viewStateLiveData.distinctUntilChanged()
+        get() = _viewStateLiveData
 
     init {
         getTrendingShows()
+        getPopularShows()
         refresh()
     }
 
     val upcomingEpisodesLiveData = MutableLiveData<List<NextEpisodeItem>>()
-
-
-    val popularShows: LiveData<List<ShowItem>> = Transformations.map(popularShowsRepository.getPopularShows().data.distinctUntilChanged()) { result ->
-        result.map {
-            ShowItem(it.show!!.traktId,
-                    it.show!!.tvdbId,
-                    it.show!!.title,
-                    it.show!!.posterThumb,
-                    it.inCollection)
-        }
-    }
 
     val myShowsLiveData: LiveData<List<ShowItem>> = Transformations.map(collectionRepository.getCollectionGridItems()) {
         result -> result.map {
@@ -71,6 +61,7 @@ class HomeViewModel @Inject constructor(private val trendingShowsRepository: Tre
     private fun getTrendingShows() {
         _viewStateLiveData.value = DisplayTrendingLoader
         disposables.add(trendingShowsRepository.getTrendingShowsFlowable()
+                .distinctUntilChanged()
                 .map { gridItems ->
                     gridItems.map {
                         ShowItem(it.show!!.traktId,
@@ -83,9 +74,30 @@ class HomeViewModel @Inject constructor(private val trendingShowsRepository: Tre
                 .subscribeOn(rxSchedulers.io)
                 .observeOn(rxSchedulers.main)
                 .subscribe({ showItems ->
+                    Timber.d("nmb of show items: %d", showItems.size)
                     _viewStateLiveData.value = TrendingState(showItems)
                 }, Timber::e))
 
+    }
+
+    private fun getPopularShows() {
+        _viewStateLiveData.value = DisplayPopularLoader
+        disposables.add(popularShowsRepository.getPopularShowsFlowable()
+                .distinctUntilChanged()
+                .map { gridItems ->
+                    gridItems.map {
+                        ShowItem(it.show!!.traktId,
+                                it.show!!.tvdbId,
+                                it.show!!.title,
+                                it.show!!.posterThumb,
+                                it.inCollection)
+                    }
+                }
+                .subscribeOn(rxSchedulers.io)
+                .observeOn(rxSchedulers.main)
+                .subscribe({ showItems ->
+                    _viewStateLiveData.value = PopularState(showItems)
+                }, Timber::e))
     }
 
     private fun refresh() {
@@ -94,6 +106,12 @@ class HomeViewModel @Inject constructor(private val trendingShowsRepository: Tre
                 .observeOn(rxSchedulers.main)
                 .subscribe({ showItems ->
                     Timber.d("nmb of shows loaded: %d", showItems.size)
+                }, Timber::e))
+        disposables.add(popularShowsRepository.refreshPopularShows()
+                .subscribeOn(rxSchedulers.io)
+                .observeOn(rxSchedulers.main)
+                .subscribe({ showItems ->
+                    Timber.d("nmb of popular shows loaded: %d", showItems.size)
                 }, Timber::e))
     }
 

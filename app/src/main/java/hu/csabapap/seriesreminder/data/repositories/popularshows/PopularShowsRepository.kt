@@ -7,8 +7,10 @@ import hu.csabapap.seriesreminder.data.ShowsRepository
 import hu.csabapap.seriesreminder.data.db.PopularShowsResult
 import hu.csabapap.seriesreminder.data.db.entities.PopularGridItem
 import hu.csabapap.seriesreminder.data.db.entities.SRPopularItem
+import hu.csabapap.seriesreminder.data.db.entities.SRTrendingItem
 import hu.csabapap.seriesreminder.extensions.distinctUntilChanged
 import io.reactivex.Maybe
+import io.reactivex.Single
 import io.reactivex.schedulers.Schedulers
 import timber.log.Timber
 import javax.inject.Inject
@@ -18,6 +20,8 @@ import javax.inject.Singleton
 class PopularShowsRepository @Inject constructor(private val localPopularDataSource: LocalPopularDataSource,
                                                  private val remotePopularDataSource: RemotePopularDataSource,
                                                  private val showsRepository: ShowsRepository) {
+
+    fun getPopularShowsFlowable() = localPopularDataSource.getShowsFlowable(10)
 
     fun getPopularShows(limit: Int = DATABASE_PAGE_SIZE): PopularShowsResult {
         Timber.d("get popular shows")
@@ -40,6 +44,26 @@ class PopularShowsRepository @Inject constructor(private val localPopularDataSou
                         })
                         .build().distinctUntilChanged()
         return PopularShowsResult(data)
+    }
+
+    fun refreshPopularShows(): Single<List<SRPopularItem>> {
+        return remotePopularDataSource.getShows("full")
+                .toFlowable()
+                .flatMapIterable { it }
+                .flatMapMaybe { popularShow ->
+                    val ids = popularShow.ids
+                    showsRepository.getShowWithImages(ids.trakt, ids.tvdb)
+                            .map {
+                                if (it.id != null) {
+                                    Maybe.just(it)
+                                } else {
+                                    showsRepository.getShow(it.traktId)
+                                }
+                            }
+                            .map { srShow -> mapToSRPopularItem(srShow.blockingGet().traktId, 0) }
+                }
+                .toList()
+                .doOnSuccess { popularShows -> localPopularDataSource.insertShows(0, popularShows)}
     }
 
     fun updatePopularShows(page: Int) {

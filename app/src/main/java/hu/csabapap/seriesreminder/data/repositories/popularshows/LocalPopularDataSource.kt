@@ -9,6 +9,8 @@ class LocalPopularDataSource @Inject constructor(private val popularDao: Popular
 
     fun getShows(limit: Int) = popularDao.getPopularShowsLiveFactory(limit)
 
+    fun getShowsFlowable(limit: Int) = popularDao.getPopularShows(limit)
+
     fun insertShows(page: Int, popularShows: List<SRPopularItem>) {
         popularDao.delete(page)
         popularDao.insert(popularShows)

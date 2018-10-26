@@ -82,20 +82,6 @@ class HomeFragment : DaggerFragment(), DiscoverPreviewAdapter.PreviewShowListene
             }
         })
 
-//        homeViewModel.trendingShows.observe(this, Observer {
-//            it?.apply {
-//                cardsAdapter.addCard(DiscoverCardItem(getString(R.string.trending_shows), it,
-//                        CardItem.TRENDING_CARD_TYPE, CardItem.PRIORITY_TRENDING))
-//            }
-//        })
-
-//        homeViewModel.popularShows.observe(this, Observer {
-//            it?.apply {
-//                cardsAdapter.addCard(DiscoverCardItem(getString(R.string.popular_shows), it,
-//                        CardItem.POPULAR_CARD_TYPE, CardItem.PRIORITY_POPULAR))
-//            }
-//        })
-
         homeViewModel.upcomingEpisodesLiveData.observe(this, Observer {
             it?.apply {
                 cardsAdapter.addCard(UpcomingEpisodeCardItem(it, CardItem.UPCOMING_EPISODE_TYPE))
@@ -189,13 +175,16 @@ class HomeFragment : DaggerFragment(), DiscoverPreviewAdapter.PreviewShowListene
     }
 
     private fun updateState(state: HomeViewState) {
+        Timber.d("view state: $state")
         when (state) {
             DisplayTrendingLoader -> cardsAdapter.addCard(DiscoverCardItem(getString(R.string.trending_shows), emptyList(),
                     CardItem.TRENDING_CARD_TYPE, CardItem.PRIORITY_TRENDING))
-            DisplayPopularLoader -> Timber.d("display loader for popular shows")
+            DisplayPopularLoader -> cardsAdapter.addCard(DiscoverCardItem(getString(R.string.popular_shows), emptyList(),
+                    CardItem.POPULAR_CARD_TYPE, CardItem.PRIORITY_POPULAR))
             is TrendingState -> cardsAdapter.addCard(DiscoverCardItem(getString(R.string.trending_shows),
                     state.items, CardItem.TRENDING_CARD_TYPE, CardItem.PRIORITY_TRENDING))
-            is PopularState -> Timber.d("display shows for popular shows")
+            is PopularState -> cardsAdapter.addCard(DiscoverCardItem(getString(R.string.popular_shows),
+                    state.items, CardItem.POPULAR_CARD_TYPE, CardItem.PRIORITY_POPULAR))
             is MyShowsState -> Timber.d("display shows for popular shows")
         }
     }

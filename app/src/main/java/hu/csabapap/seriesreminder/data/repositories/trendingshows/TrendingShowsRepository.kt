@@ -5,7 +5,6 @@ import androidx.paging.LivePagedListBuilder
 import androidx.paging.PagedList
 import hu.csabapap.seriesreminder.data.ShowsRepository
 import hu.csabapap.seriesreminder.data.db.TrendingShowsResult
-import hu.csabapap.seriesreminder.data.db.entities.SRShow
 import hu.csabapap.seriesreminder.data.db.entities.SRTrendingItem
 import hu.csabapap.seriesreminder.data.db.entities.TrendingGridItem
 import hu.csabapap.seriesreminder.extensions.distinctUntilChanged
