@@ -2,6 +2,7 @@ package hu.csabapap.seriesreminder.ui.search
 
 import android.app.SearchManager
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.transition.TransitionInflater
 import android.transition.TransitionManager
@@ -16,8 +17,11 @@ import dagger.android.support.DaggerAppCompatActivity
 import hu.csabapap.seriesreminder.R
 import hu.csabapap.seriesreminder.data.models.SrSearchResult
 import hu.csabapap.seriesreminder.services.SyncService
+import hu.csabapap.seriesreminder.ui.showdetails.ShowDetailsActivity
+import hu.csabapap.seriesreminder.utils.ShowDetails
 import hu.csabapap.seriesreminder.utils.hideKeyboard
 import kotlinx.android.synthetic.main.activity_search.*
+import timber.log.Timber
 import javax.inject.Inject
 import javax.inject.Named
 
@@ -80,7 +84,9 @@ class SearchActivity : DaggerAppCompatActivity(), SearchResultAdapter.SearchItem
     }
 
     override fun onItemClick(showId: Int) {
-
+        val intent = Intent(this, ShowDetailsActivity::class.java)
+        intent.putExtra(ShowDetails.EXTRA_SHOW_ID, showId)
+        startActivity(intent)
     }
 
     override fun onAddClick(showId: Int) {

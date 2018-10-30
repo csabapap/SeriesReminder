@@ -153,9 +153,6 @@ class HomeFragment : DaggerFragment(), DiscoverPreviewAdapter.PreviewShowListene
     }
 
     override fun onItemClick(traktId: Int, inCollection: Boolean) {
-        if (inCollection) {
-
-        }
         val intent = if (inCollection) {
             Intent(activity, ShowDetailsActivity::class.java)
                     .apply {

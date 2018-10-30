@@ -42,7 +42,7 @@ class HomeViewModel @Inject constructor(private val trendingShowsRepository: Tre
                     it.show!!.tvdbId,
                     it.show!!.title,
                     it.show!!.posterThumb,
-                    it.show!!.inCollection)
+                    true)
         }
     }
 
