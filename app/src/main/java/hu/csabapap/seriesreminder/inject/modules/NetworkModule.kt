@@ -1,5 +1,6 @@
 package hu.csabapap.seriesreminder.inject.modules
 
+import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
 import com.squareup.moshi.Moshi
 import dagger.Module
 import dagger.Provides
@@ -55,6 +56,7 @@ class NetworkModule {
                 .client(client)
                 .baseUrl("https://api.trakt.tv")
                 .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
+                .addCallAdapterFactory(CoroutineCallAdapterFactory.invoke())
                 .addConverterFactory(MoshiConverterFactory.create(moshi))
                 .build()
     }

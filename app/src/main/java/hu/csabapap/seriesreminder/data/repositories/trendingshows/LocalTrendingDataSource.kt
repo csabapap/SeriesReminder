@@ -15,6 +15,8 @@ class LocalTrendingDataSource @Inject constructor(private val trendingDao: Trend
 
     fun getShowsFlowable(limit: Int) = trendingDao.getTrendingShows(limit)
 
-    fun getLastPage() = trendingDao.getLastPage()
+    fun getLastPage(): Int {
+        return trendingDao.getLastPage() ?: 0
+    }
 
 }

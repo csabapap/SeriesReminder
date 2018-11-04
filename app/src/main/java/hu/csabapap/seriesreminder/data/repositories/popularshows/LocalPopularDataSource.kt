@@ -15,4 +15,6 @@ class LocalPopularDataSource @Inject constructor(private val popularDao: Popular
         popularDao.delete(page)
         popularDao.insert(popularShows)
     }
+
+    fun getLastPage() = popularDao.getLastPage() ?: 0
 }

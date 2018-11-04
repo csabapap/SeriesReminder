@@ -6,6 +6,7 @@ import hu.csabapap.seriesreminder.data.network.services.SearchService
 import hu.csabapap.seriesreminder.data.network.services.SeasonsService
 import hu.csabapap.seriesreminder.data.network.services.ShowsService
 import io.reactivex.Single
+import kotlinx.coroutines.Deferred
 import retrofit2.Response
 import retrofit2.Retrofit
 
@@ -17,6 +18,10 @@ class TraktApi(private val retrofit: Retrofit) {
 
     fun paginatedTrendingShows(extended: String = "", page: Int = 1, limit: Int = 20): Single<List<TrendingShow>> {
         return retrofit.create(ShowsService::class.java).paginatedTrendingShows(extended, page, limit)
+    }
+
+    fun deferredPaginatedTrendingShows(extended: String = "", page: Int = 1, limit: Int = 20): Deferred<List<TrendingShow>> {
+        return retrofit.create(ShowsService::class.java).deferredPaginatedTrendingShows(extended, page, limit)
     }
 
     fun popularShows(extended: String = "", page: Int = 1, limit: Int = 20) =

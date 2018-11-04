@@ -25,6 +25,9 @@ interface PopularDao {
     @Query("SELECT * FROM popular_shows ORDER BY page ASC LIMIT :limit")
     fun getPopularShowsLiveFactory(limit: Int): DataSource.Factory<Int, PopularGridItem>
 
+    @Query("SELECT MAX(page) FROM popular_shows;")
+    fun getLastPage(): Int?
+
     @Query("DELETE FROM popular_shows WHERE page = :page")
     fun delete(page: Int)
 

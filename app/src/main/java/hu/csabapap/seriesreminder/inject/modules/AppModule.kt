@@ -11,9 +11,12 @@ import hu.csabapap.seriesreminder.data.ShowsRepository
 import hu.csabapap.seriesreminder.data.db.daos.*
 import hu.csabapap.seriesreminder.data.network.TraktApi
 import hu.csabapap.seriesreminder.data.network.TvdbApi
+import hu.csabapap.seriesreminder.utils.AppCoroutineDispatchers
 import hu.csabapap.seriesreminder.utils.AppRxSchedulers
 import hu.csabapap.seriesreminder.utils.RxSchedulers
 import hu.csabapap.seriesreminder.utils.SRRxSchedulers
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.rx2.asCoroutineDispatcher
 import javax.inject.Singleton
 
 
@@ -36,6 +39,16 @@ class AppModule{
     @Provides
     fun provideSrRxSchedulers() : RxSchedulers {
         return SRRxSchedulers()
+    }
+
+    @Singleton
+    @Provides
+    fun provideAppDispatchers(rxSchedulers: RxSchedulers) : AppCoroutineDispatchers {
+        return AppCoroutineDispatchers(
+                io = rxSchedulers.io().asCoroutineDispatcher(),
+                computation = rxSchedulers.compoutation().asCoroutineDispatcher(),
+                main = Dispatchers.Main
+        )
     }
 
     @Singleton
