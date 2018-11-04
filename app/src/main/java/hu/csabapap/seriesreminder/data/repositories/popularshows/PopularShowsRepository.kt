@@ -1,15 +1,19 @@
 package hu.csabapap.seriesreminder.data.repositories.popularshows
 
+import androidx.lifecycle.LiveData
+import androidx.paging.LivePagedListBuilder
 import androidx.paging.PagedList
 import hu.csabapap.seriesreminder.data.ShowsRepository
 import hu.csabapap.seriesreminder.data.db.PopularShowsResult
 import hu.csabapap.seriesreminder.data.db.entities.PopularGridItem
 import hu.csabapap.seriesreminder.data.db.entities.SRPopularItem
+import hu.csabapap.seriesreminder.extensions.distinctUntilChanged
 import io.reactivex.Maybe
 import io.reactivex.Single
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.rx2.await
+import timber.log.Timber
 import javax.inject.Inject
 import javax.inject.Singleton
 
