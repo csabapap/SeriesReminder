@@ -60,6 +60,11 @@ class SearchActivity : DaggerAppCompatActivity(), SearchResultAdapter.SearchItem
         searchback.setOnClickListener { finish() }
     }
 
+    override fun onResume() {
+        super.onResume()
+        searchViewModel.getSearchResult()
+    }
+
     private fun setupSearchView() {
         val searchManager = getSystemService(Context.SEARCH_SERVICE) as SearchManager
         search_view.apply {
