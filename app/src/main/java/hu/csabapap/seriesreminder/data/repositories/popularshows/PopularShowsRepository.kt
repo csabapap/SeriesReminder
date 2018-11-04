@@ -1,18 +1,15 @@
 package hu.csabapap.seriesreminder.data.repositories.popularshows
 
-import androidx.lifecycle.LiveData
-import androidx.paging.LivePagedListBuilder
 import androidx.paging.PagedList
 import hu.csabapap.seriesreminder.data.ShowsRepository
 import hu.csabapap.seriesreminder.data.db.PopularShowsResult
 import hu.csabapap.seriesreminder.data.db.entities.PopularGridItem
 import hu.csabapap.seriesreminder.data.db.entities.SRPopularItem
-import hu.csabapap.seriesreminder.data.db.entities.SRTrendingItem
-import hu.csabapap.seriesreminder.extensions.distinctUntilChanged
 import io.reactivex.Maybe
 import io.reactivex.Single
-import io.reactivex.schedulers.Schedulers
-import timber.log.Timber
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.rx2.await
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -29,17 +26,10 @@ class PopularShowsRepository @Inject constructor(private val localPopularDataSou
         val data: LiveData<PagedList<PopularGridItem>> =
                 LivePagedListBuilder(dataSourceFactory, DATABASE_PAGE_SIZE)
                         .setBoundaryCallback(object : PagedList.BoundaryCallback<PopularGridItem>() {
-                            var page  = 1
-
-                            override fun onZeroItemsLoaded() {
-                                updatePopularShows(1)
-                            }
-
                             override fun onItemAtEndLoaded(itemAtEnd: PopularGridItem) {
-//                                page += 1
-//                                if (page < 4) {
-//                                    updatePopularShows(page)
-//                                }
+                                GlobalScope.launch {
+                                    updatePopularShows()
+                                }
                             }
                         })
                         .build().distinctUntilChanged()
@@ -66,32 +56,17 @@ class PopularShowsRepository @Inject constructor(private val localPopularDataSou
                 .doOnSuccess { popularShows -> localPopularDataSource.insertShows(0, popularShows)}
     }
 
-    fun updatePopularShows(page: Int) {
+    suspend fun updatePopularShows() {
         val start = System.currentTimeMillis()
-        remotePopularDataSource.getShows("full", page, NETWORK_PAGE_SIZE)
-                .toFlowable()
-                .flatMapIterable { it }
-                .flatMapMaybe { popularShow ->
-                    val start = System.currentTimeMillis()
-                    val ids = popularShow.ids
-                    showsRepository.getShowWithImages(ids.trakt, ids.tvdb)
-                            .map {
-                                if (it.id != null) {
-                                    Maybe.just(it)
-                                } else {
-                                    showsRepository.getShow(it.traktId)
-                                }
-                            }
-                            .map { srShow ->
-                                Timber.d("get show (%d) in %d ms", srShow.blockingGet().traktId, System.currentTimeMillis() - start)
-                                mapToSRPopularItem(srShow.blockingGet().traktId, page)
-                            }
-                }
-                .toList()
-                .doOnSuccess { popularShows -> localPopularDataSource.insertShows(page, popularShows) }
-                .subscribeOn(Schedulers.io())
-                .subscribe({ Timber.d("populars shows loaded in %d ms", (System.currentTimeMillis() - start)) },
-                        { Timber.e(it) })
+        var page = localPopularDataSource.getLastPage()
+        page += 1
+        val popularShows = remotePopularDataSource.getShows("full", page, NETWORK_PAGE_SIZE).await()
+        val popularShowItems = popularShows.map {
+            showsRepository.getShowWithImages(it.ids.trakt, it.ids.tvdb).await()
+            mapToSRPopularItem(it.ids.trakt, page)
+        }
+        localPopularDataSource.insertShows(page, popularShowItems)
+        Timber.d("populars shows loaded in %d ms", (System.currentTimeMillis() - start))
     }
 
     private fun mapToSRPopularItem(showId: Int, page: Int) : SRPopularItem =

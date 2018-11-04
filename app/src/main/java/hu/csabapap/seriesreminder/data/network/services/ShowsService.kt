@@ -6,6 +6,7 @@ import hu.csabapap.seriesreminder.data.network.entities.TrendingShow
 import io.reactivex.Flowable
 import io.reactivex.Observable
 import io.reactivex.Single
+import kotlinx.coroutines.Deferred
 import retrofit2.Call
 import retrofit2.Response
 import retrofit2.adapter.rxjava2.Result
@@ -23,6 +24,12 @@ interface ShowsService{
                       @Query("page") page: Int,
                       @Query("limit") limit: Int)
             : Single<List<TrendingShow>>
+
+    @GET("shows/trending")
+    fun deferredPaginatedTrendingShows(@Query("extended") extended: String,
+                               @Query("page") page: Int,
+                               @Query("limit") limit: Int)
+            : Deferred<List<TrendingShow>>
 
     @GET("shows/popular?extended=full")
     fun popularShows(@Query("extended") extended: String,
