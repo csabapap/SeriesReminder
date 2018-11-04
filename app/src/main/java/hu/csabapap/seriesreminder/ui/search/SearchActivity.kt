@@ -17,11 +17,12 @@ import dagger.android.support.DaggerAppCompatActivity
 import hu.csabapap.seriesreminder.R
 import hu.csabapap.seriesreminder.data.models.SrSearchResult
 import hu.csabapap.seriesreminder.services.SyncService
+import hu.csabapap.seriesreminder.ui.addshow.AddShowActivity
 import hu.csabapap.seriesreminder.ui.showdetails.ShowDetailsActivity
+import hu.csabapap.seriesreminder.utils.AddShow
 import hu.csabapap.seriesreminder.utils.ShowDetails
 import hu.csabapap.seriesreminder.utils.hideKeyboard
 import kotlinx.android.synthetic.main.activity_search.*
-import timber.log.Timber
 import javax.inject.Inject
 import javax.inject.Named
 
@@ -83,10 +84,18 @@ class SearchActivity : DaggerAppCompatActivity(), SearchResultAdapter.SearchItem
         }
     }
 
-    override fun onItemClick(showId: Int) {
-        val intent = Intent(this, ShowDetailsActivity::class.java)
-        intent.putExtra(ShowDetails.EXTRA_SHOW_ID, showId)
+    override fun onItemClick(showId: Int, inCollection: Boolean) {
+        if (inCollection) {
+            val intent = Intent(this, ShowDetailsActivity::class.java)
+            intent.putExtra(ShowDetails.EXTRA_SHOW_ID, showId)
+            startActivity(intent)
+            return
+        }
+
+        val intent = Intent(this, AddShowActivity::class.java)
+        intent.putExtra(AddShow.EXTRA_SHOW_ID, showId)
         startActivity(intent)
+        return
     }
 
     override fun onAddClick(showId: Int) {

@@ -1,13 +1,16 @@
 package hu.csabapap.seriesreminder.ui.showdetails
 
+import android.graphics.Bitmap
+import android.graphics.drawable.BitmapDrawable
 import android.os.Bundle
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
+import androidx.palette.graphics.Palette
+import com.squareup.picasso.Callback
 import com.squareup.picasso.Picasso
 import dagger.android.support.DaggerAppCompatActivity
 import hu.csabapap.seriesreminder.R
 import hu.csabapap.seriesreminder.data.network.getThumbnailUrl
-import hu.csabapap.seriesreminder.extensions.loadFromTmdbUrl
 import hu.csabapap.seriesreminder.utils.ShowDetails
 import kotlinx.android.synthetic.main.activity_show_details.*
 import javax.inject.Inject
@@ -36,25 +39,68 @@ class ShowDetailsActivity : DaggerAppCompatActivity() {
         toolbar.setNavigationOnClickListener {
             finish()
         }
+        supportActionBar?.title = ""
 
         viewModel.getShow(showId)
 
-        viewModel.showLiveData.observe(this, Observer {
-            it?.let {
+        viewModel.showLiveData.observe(this, Observer { srShow ->
+            srShow?.let {
                 show_title.text = it.title
                 overview.text = it.overview
-//                ratings.text = String.format(getString(R.string.ratings_value), (it.rating * 10).toInt(), it.votes)
-//                genres.text = it.genres
-                poster.loadFromTmdbUrl(it.tvdbId)
+                val posterUrl = if (it.poster.isEmpty()) {
+                    "tvdb://${it.tvdbId}"
+                } else {
+                    getThumbnailUrl(it.poster)
+                }
+                Picasso.with(this)
+                        .load(posterUrl)
+                        .into(poster, object: Callback {
+                            override fun onSuccess() {
+                                val drawable = poster.drawable as BitmapDrawable
+                                val bitmap = drawable.bitmap
+                                generatePalette(bitmap)
+                            }
+
+                            override fun onError() {
+
+                            }
+
+                        })
+
                 val url = if (it.coverThumb.isEmpty()) {
                     "tvdb://fanart?tvdbid=${it.tvdbId}"
                 } else {
-                    getThumbnailUrl(it.coverThumb)
+                    getThumbnailUrl(it.cover)
                 }
                 Picasso.with(this)
                         .load(url)
                         .into(cover)
             }
         })
+    }
+
+    private fun generatePalette(bitmap: Bitmap) {
+        Palette.from(bitmap)
+                .clearFilters()
+                .generate {
+                    val vibrant = it?.vibrantSwatch
+                    if (vibrant != null) {
+                        updateUiColors(vibrant)
+                        return@generate
+                    }
+
+                    val darkVibrant = it?.darkVibrantSwatch
+                    if (darkVibrant != null) {
+                        updateUiColors(darkVibrant)
+                    }
+                }
+    }
+
+    private fun updateUiColors(swatch: Palette.Swatch) {
+        swatch.apply {
+            title_background.setBackgroundColor(rgb)
+            show_title.setTextColor(titleTextColor)
+            toolbar.navigationIcon?.setTint(titleTextColor)
+        }
     }
 }

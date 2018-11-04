@@ -7,6 +7,6 @@ fun getThumbnailUrl(thumbnail: String?) = thumbnail?.apply {
     return "$TVDB_BANNER_URL$thumbnail"
 } ?: ""
 
-fun getFullSizeUrl(fileName: String?) = fileName.apply {
+fun getFullSizeUrl(fileName: String?) = fileName?.apply {
     return "$TVDB_BANNER_URL$fileName"
 } ?: ""

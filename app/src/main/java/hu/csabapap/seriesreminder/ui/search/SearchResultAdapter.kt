@@ -14,7 +14,7 @@ import kotlinx.android.synthetic.main.item_search_result.view.*
 class SearchResultAdapter: RecyclerView.Adapter<SearchResultAdapter.ResultVH>() {
 
     interface SearchItemClickListener {
-        fun onItemClick(showId: Int)
+        fun onItemClick(showId: Int, inCollection: Boolean)
         fun onAddClick(showId: Int)
     }
 
@@ -61,9 +61,7 @@ class SearchResultAdapter: RecyclerView.Adapter<SearchResultAdapter.ResultVH>() 
                 }
             }
             itemView.setOnClickListener { v ->
-                if (searchResult.inCollection) {
-                    listener.onItemClick(searchResult.show.ids.trakt)
-                }
+                listener.onItemClick(searchResult.show.ids.trakt, searchResult.inCollection)
             }
         }
     }
