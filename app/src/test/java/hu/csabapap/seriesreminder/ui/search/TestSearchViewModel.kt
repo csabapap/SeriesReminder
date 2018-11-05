@@ -6,14 +6,13 @@ import com.nhaarman.mockito_kotlin.*
 import hu.csabapap.seriesreminder.data.CollectionRepository
 import hu.csabapap.seriesreminder.data.ShowsRepository
 import hu.csabapap.seriesreminder.data.models.SrSearchResult
-import hu.csabapap.seriesreminder.data.network.entities.SearchResult
 import hu.csabapap.seriesreminder.domain.GetSearchResultUseCase
-import hu.csabapap.seriesreminder.getSearchResult
 import hu.csabapap.seriesreminder.getShow
+import hu.csabapap.seriesreminder.utils.AppCoroutineDispatchers
 import hu.csabapap.seriesreminder.utils.RxSchedulers
 import hu.csabapap.seriesreminder.utils.TestAppRxSchedulers
 import io.reactivex.Single
-import org.junit.After
+import kotlinx.coroutines.rx2.asCoroutineDispatcher
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -31,12 +30,16 @@ class TestSearchViewModel {
     private val showsRepository = mock<ShowsRepository>()
     private val collectionRepository = mock<CollectionRepository>()
     private val schedulers: RxSchedulers = TestAppRxSchedulers()
+    private val dispatchers = AppCoroutineDispatchers(
+            schedulers.io().asCoroutineDispatcher(),
+            schedulers.compoutation().asCoroutineDispatcher(),
+            schedulers.ui().asCoroutineDispatcher())
 
 
     @Before
     fun setUp() {
         searchViewModel = SearchViewModel(getSearchResultUseCase, showsRepository, collectionRepository,
-                schedulers)
+                schedulers, dispatchers)
         searchViewModel.searchState.observeForever(stateObserver)
     }
 
