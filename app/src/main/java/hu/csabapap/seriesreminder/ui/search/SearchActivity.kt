@@ -22,7 +22,11 @@ import hu.csabapap.seriesreminder.ui.showdetails.ShowDetailsActivity
 import hu.csabapap.seriesreminder.utils.AddShow
 import hu.csabapap.seriesreminder.utils.ShowDetails
 import hu.csabapap.seriesreminder.utils.hideKeyboard
+import hu.csabapap.seriesreminder.utils.showKeyboard
 import kotlinx.android.synthetic.main.activity_search.*
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 import javax.inject.Named
 
@@ -65,13 +69,17 @@ class SearchActivity : DaggerAppCompatActivity(), SearchResultAdapter.SearchItem
         searchViewModel.getSearchResult()
     }
 
+    override fun onEnterAnimationComplete() {
+        search_view.requestFocus()
+        showKeyboard(search_view)
+    }
+
     private fun setupSearchView() {
         val searchManager = getSystemService(Context.SEARCH_SERVICE) as SearchManager
         search_view.apply {
             setSearchableInfo(searchManager.getSearchableInfo(componentName))
             queryHint = getString(R.string.search_hint)
             imeOptions = EditorInfo.IME_ACTION_SEARCH
-            requestFocus()
             setOnQueryTextListener(object: SearchView.OnQueryTextListener {
                 override fun onQueryTextSubmit(query: String?): Boolean {
                     query?.apply {
