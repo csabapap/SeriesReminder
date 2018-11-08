@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.transition.TransitionInflater
 import android.transition.TransitionManager
 import android.view.View
+import android.view.View.GONE
 import android.view.inputmethod.EditorInfo
 import android.widget.SearchView
 import androidx.lifecycle.Observer
@@ -80,6 +81,8 @@ class SearchActivity : DaggerAppCompatActivity(), SearchResultAdapter.SearchItem
             setOnQueryTextListener(object: SearchView.OnQueryTextListener {
                 override fun onQueryTextSubmit(query: String?): Boolean {
                     query?.apply {
+                        adapter.clear()
+                        search_result.visibility = GONE
                         searchViewModel.search(query)
                         hideKeyboard(search_view)
                     }

@@ -47,6 +47,11 @@ class SearchResultAdapter: RecyclerView.Adapter<SearchResultAdapter.ResultVH>() 
         }
     }
 
+    fun clear() {
+        searchResult = null
+        notifyDataSetChanged()
+    }
+
     inner class ResultVH(itemView: View): RecyclerView.ViewHolder(itemView) {
         fun bind(searchResult: SrSearchResult, position: Int) {
             Picasso.with(context)
