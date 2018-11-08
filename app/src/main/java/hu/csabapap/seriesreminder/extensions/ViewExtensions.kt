@@ -1,7 +1,6 @@
 package hu.csabapap.seriesreminder.extensions
 
 import android.content.Context
-import android.util.DisplayMetrics
 import android.util.TypedValue
 import android.view.View
 import android.widget.ImageView

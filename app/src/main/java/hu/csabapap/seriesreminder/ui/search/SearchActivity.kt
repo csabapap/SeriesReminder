@@ -24,9 +24,6 @@ import hu.csabapap.seriesreminder.utils.ShowDetails
 import hu.csabapap.seriesreminder.utils.hideKeyboard
 import hu.csabapap.seriesreminder.utils.showKeyboard
 import kotlinx.android.synthetic.main.activity_search.*
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 import javax.inject.Named
 

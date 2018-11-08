@@ -11,13 +11,13 @@
 
     <ImageView
         android:id="@+id/poster"
-        android:layout_width="83dp"
-        android:layout_height="125dp"
+        android:layout_width="68dp"
+        android:layout_height="99dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="0dp"
+        android:background="@drawable/placeholder_bg"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/poster" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/show_title"
@@ -26,9 +26,11 @@
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
+        android:lines="1"
         android:ellipsize="end"
         android:singleLine="true"
         android:textSize="18sp"
+        android:textStyle="bold"
         app:layout_constraintEnd_toStartOf="@+id/add_show_btn"
         app:layout_constraintStart_toEndOf="@+id/poster"
         app:layout_constraintTop_toTopOf="parent"
@@ -43,7 +45,7 @@
         android:layout_marginEnd="8dp"
         android:layout_marginBottom="8dp"
         android:ellipsize="end"
-        android:maxLines="4"
+        android:maxLines="3"
         android:text="@string/sample_text"
         app:layout_constrainedHeight="true"
         app:layout_constrainedWidth="true"

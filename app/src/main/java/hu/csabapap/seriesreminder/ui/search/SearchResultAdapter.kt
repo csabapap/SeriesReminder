@@ -1,14 +1,18 @@
 package hu.csabapap.seriesreminder.ui.search
 
 import android.content.Context
+import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
+import com.squareup.picasso.Picasso
 import hu.csabapap.seriesreminder.R
 import hu.csabapap.seriesreminder.data.models.SrSearchResult
 import hu.csabapap.seriesreminder.extensions.loadFromTmdbUrl
+import hu.csabapap.seriesreminder.extensions.toPixelFromDip
+import hu.csabapap.seriesreminder.utils.RoundedTransformation
 import kotlinx.android.synthetic.main.item_search_result.view.*
 
 class SearchResultAdapter: RecyclerView.Adapter<SearchResultAdapter.ResultVH>() {
@@ -45,7 +49,10 @@ class SearchResultAdapter: RecyclerView.Adapter<SearchResultAdapter.ResultVH>() 
 
     inner class ResultVH(itemView: View): RecyclerView.ViewHolder(itemView) {
         fun bind(searchResult: SrSearchResult, position: Int) {
-            itemView.poster.loadFromTmdbUrl(searchResult.show.ids.tvdb)
+            Picasso.with(context)
+                    .load("tvdb://${searchResult.show.ids.tvdb}")
+                    .transform(RoundedTransformation(itemView.toPixelFromDip(2f)))
+                    .into(itemView.poster)
             itemView.show_title.text = searchResult.show.title
             itemView.overview.text = searchResult.show.overview
             if (searchResult.inCollection) {

@@ -17,5 +17,6 @@
     <color name="item_background_dark">#A2A0A0</color>
     <color name="overlay">#66000000</color>
     <color name="scrim">#AFFFFFFF</color>
-    <color name="dark_grey">#606060</color>
+    <color name="dark_grey">#C2C2C2</color>
+    <color name="light_grey">#DEDEDE</color>
 </resources>
