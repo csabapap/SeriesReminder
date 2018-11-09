@@ -42,7 +42,7 @@ class CollectionRepository @Inject constructor(private val collectionsDao: Colle
         return collectionsDao.getIdsFromCollection(ids)
     }
 
-    fun getCollectionGridItems(): LiveData<List<MyShowGridItem>> {
-        return collectionsDao.getCollectionGridItems()
+    fun getCollectionGridItems(limit: Int = 10): LiveData<List<MyShowGridItem>> {
+        return collectionsDao.getCollectionGridItems(limit)
     }
 }

@@ -33,8 +33,8 @@ open class CardItem(val type: Int, private val priority: Int) : Comparable<CardI
     companion object {
         const val TRENDING_CARD_TYPE = 0
         const val POPULAR_CARD_TYPE = 1
-        const val UPCOMING_EPISODE_TYPE = 3
-        const val MY_SHOWS_TYPE = 4
+        const val UPCOMING_EPISODE_TYPE = 2
+        const val MY_SHOWS_TYPE = 3
 
         const val PRIORITY_POPULAR = 0
         const val PRIORITY_TRENDING = 1
@@ -55,3 +55,7 @@ class UpcomingEpisodeCardItem(
         type: Int,
         priority: Int = CardItem.PRIORITY_HIGH)
     : CardItem(type, priority)
+
+enum class CardType{
+    TRENDING, POPULAR, UPCOMING_EPISODES, MY_SHOWS
+}

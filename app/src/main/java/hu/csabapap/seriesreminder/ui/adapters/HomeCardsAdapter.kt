@@ -17,8 +17,6 @@ import hu.csabapap.seriesreminder.ui.main.discover.DiscoverFragment
 import kotlinx.android.synthetic.main.item_discover_card.view.*
 import kotlinx.android.synthetic.main.item_episodes.view.*
 
-
-
 class HomeCardsAdapter(private val listener: CardClickListener)
     : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
@@ -34,7 +32,7 @@ class HomeCardsAdapter(private val listener: CardClickListener)
         context = parent.context
         if (viewType == CardItem.POPULAR_CARD_TYPE || viewType == CardItem.TRENDING_CARD_TYPE || viewType == CardItem.MY_SHOWS_TYPE) {
             val itemView = LayoutInflater.from(context).inflate(R.layout.item_discover_card, parent, false)
-            val discoverCardVH = DiscoverCardVH(itemView)
+            val discoverCardVH = DiscoverCardVH(itemView, viewType)
             discoverCardVH.itemView.rv_shows.adapter = discoverCardVH.previewAdapter
             val layoutManager = discoverCardVH.itemView.rv_shows.layoutManager as LinearLayoutManager
             layoutManager.orientation = LinearLayoutManager.HORIZONTAL
@@ -96,9 +94,9 @@ class HomeCardsAdapter(private val listener: CardClickListener)
         notifyDataSetChanged()
     }
 
-    inner class DiscoverCardVH(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    inner class DiscoverCardVH(itemView: View, type: Int) : RecyclerView.ViewHolder(itemView) {
 
-        val previewAdapter = DiscoverPreviewAdapter()
+        val previewAdapter = DiscoverPreviewAdapter(type)
 
         fun bind(discoverCardItem: DiscoverCardItem) {
             itemView.card_title.text = discoverCardItem.title

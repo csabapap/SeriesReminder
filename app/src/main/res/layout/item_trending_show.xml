@@ -5,10 +5,15 @@
     <data>
 
         <import type="android.text.TextUtils"/>
+        <import type="hu.csabapap.seriesreminder.ui.adapters.items.CardType"/>
 
         <variable
             name="show"
             type="hu.csabapap.seriesreminder.ui.adapters.items.ShowItem" />
+
+        <variable
+            name="type"
+            type="hu.csabapap.seriesreminder.ui.adapters.items.CardType" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -55,7 +60,7 @@
             app:layout_constraintBottom_toBottomOf="@id/poster"
             app:layout_constraintEnd_toEndOf="@id/poster"
             app:srcCompat="@drawable/ic_check_box_24dp"
-            app:goneIf="@{!show.inCollection}"/>
+            app:goneIf="@{!show.inCollection || (type == CardType.MY_SHOWS)}"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

@@ -10,11 +10,12 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import hu.csabapap.seriesreminder.R
 import hu.csabapap.seriesreminder.databinding.ItemTrendingShowBinding
+import hu.csabapap.seriesreminder.ui.adapters.items.CardType
 import hu.csabapap.seriesreminder.ui.adapters.items.ShowItem
 import kotlinx.android.synthetic.main.item_trending_show.view.*
 
 
-class DiscoverPreviewAdapter : RecyclerView.Adapter<DiscoverPreviewAdapter.DiscoverShowVh>() {
+class DiscoverPreviewAdapter(val type: Int) : RecyclerView.Adapter<DiscoverPreviewAdapter.DiscoverShowVh>() {
 
     interface PreviewShowListener{
         fun onItemClick(traktId: Int, inCollection: Boolean)
@@ -52,7 +53,7 @@ class DiscoverPreviewAdapter : RecyclerView.Adapter<DiscoverPreviewAdapter.Disco
 
     override fun onBindViewHolder(holder: DiscoverShowVh, position: Int) {
         val item  = showItems[position]
-        holder.bind(item, position)
+        holder.bind(item, type)
     }
 
     inner class DiscoverShowVh(private val binding: ItemTrendingShowBinding)
@@ -60,8 +61,9 @@ class DiscoverPreviewAdapter : RecyclerView.Adapter<DiscoverPreviewAdapter.Disco
 
         val poster : ImageView? = itemView.poster
 
-        fun bind(show: ShowItem, position: Int){
+        fun bind(show: ShowItem, type: Int){
             binding.show = show
+            binding.type = CardType.values()[type]
         }
 
         fun setOnClickListener(listener : View.OnClickListener){

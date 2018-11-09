@@ -30,8 +30,8 @@ interface CollectionsDao {
     @Query("SELECT * FROM collection")
     fun getCollectionEntries() : LiveData<List<CollectionEntry>>
 
-    @Query("SELECT * FROM collection")
-    fun getCollectionGridItems() : LiveData<List<MyShowGridItem>>
+    @Query("SELECT * FROM collection LIMIT :limit")
+    fun getCollectionGridItems(limit: Int) : LiveData<List<MyShowGridItem>>
 
     @Query("SELECT show_id  FROM collection WHERE show_id IN (:showIds)")
     fun getIdsFromCollection(showIds: List<Int>) : Single<List<Int>>
