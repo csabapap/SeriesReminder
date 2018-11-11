@@ -6,7 +6,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
-import com.squareup.picasso.Picasso
 import hu.csabapap.seriesreminder.R
 import hu.csabapap.seriesreminder.data.db.entities.NextEpisodeItem
 import hu.csabapap.seriesreminder.extensions.diffInDays
@@ -46,6 +45,9 @@ class EpisodeCardsAdapter:  RecyclerView.Adapter<EpisodeCardsAdapter.CardVH>() {
         fun bind(nextEpisode: NextEpisodeItem) {
             val episode = nextEpisode.episode!!
             itemView.title.text = episode.title
+            if (episode.title.trim().isEmpty()) {
+                itemView.title.text = nextEpisode.show?.title ?: ""
+            }
             val episodeInfo = String.format(context.getString(R.string.episode_number),
                     episode.season,
                     episode.number)
