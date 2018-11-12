@@ -9,3 +9,8 @@ object ShowDetails {
 object AddShow {
     const val EXTRA_SHOW_ID = "show_id"
 }
+
+object Reminder {
+    const val SHOW_ID = "show_id"
+    const val SHOW_TITLE = "show_title"
+}

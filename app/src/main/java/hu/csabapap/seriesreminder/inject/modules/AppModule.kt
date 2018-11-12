@@ -1,5 +1,6 @@
 package hu.csabapap.seriesreminder.inject.modules
 
+import android.app.AlarmManager
 import android.content.Context
 import dagger.Module
 import dagger.Provides
@@ -27,6 +28,11 @@ class AppModule{
     @Provides
     fun provideContext(application: SRApplication): Context {
         return application.applicationContext
+    }
+
+    @Provides
+    fun provideAlarmManager(context: Context): AlarmManager {
+        return context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
     }
 
     @Singleton
