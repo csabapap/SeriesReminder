@@ -9,6 +9,7 @@ import hu.csabapap.seriesreminder.data.ShowsRepository
 import hu.csabapap.seriesreminder.data.db.entities.CollectionEntry
 import hu.csabapap.seriesreminder.utils.AppRxSchedulers
 import io.reactivex.Observable
+import org.threeten.bp.OffsetDateTime
 import timber.log.Timber
 
 class AddShowViewModel(
@@ -49,7 +50,7 @@ class AddShowViewModel(
 
 
     fun addShowToCollection(showId: Int) {
-        collectionRepository.addToCollection(CollectionEntry(showId = showId))
+        collectionRepository.addToCollection(CollectionEntry(showId = showId, added = OffsetDateTime.now()))
                 .subscribeOn(schedulers.io)
                 .observeOn(schedulers.main)
                 .subscribe({

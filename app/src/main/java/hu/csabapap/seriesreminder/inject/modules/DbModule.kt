@@ -17,7 +17,7 @@ class DbModule {
     @Provides
     fun providesDatabase(context: Context) : SRDatabase {
         return Room.databaseBuilder(context, SRDatabase::class.java, "series_reminder.db")
-                .addMigrations(MIGRATION_1_2)
+                .addMigrations(MIGRATION_1_2, MIGRATION_2_3)
                 .fallbackToDestructiveMigration()
                 .build()
     }
@@ -77,6 +77,13 @@ class DbModule {
                 database.execSQL("ALTER TABLE popular_shows ADD COLUMN page INTEGER DEFAULT 0")
             }
 
+        }
+
+        val MIGRATION_2_3 = object : Migration(2,3) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.execSQL("ALTER TABLE collection ADD COLUMN added TEXT")
+                database.execSQL("ALTER TABLE collection ADD COLUMN last_watched TEXT")
+            }
         }
     }
 }

@@ -13,6 +13,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import org.threeten.bp.OffsetDateTime
 import timber.log.Timber
 
 class SearchViewModel(private val getSearchResultUseCase: GetSearchResultUseCase,
@@ -60,7 +61,7 @@ class SearchViewModel(private val getSearchResultUseCase: GetSearchResultUseCase
         val disposable = showsRepository.getShow(showId)
                 .doOnSuccess{showsRepository.insertShow(it)}
                 .flatMap {
-                    collectionRepository.addToCollection(CollectionEntry(showId = showId))
+                    collectionRepository.addToCollection(CollectionEntry(showId = showId, added = OffsetDateTime.now()))
                             .toMaybe<Boolean>()
                 }
                 .subscribeOn(schedulers.io())

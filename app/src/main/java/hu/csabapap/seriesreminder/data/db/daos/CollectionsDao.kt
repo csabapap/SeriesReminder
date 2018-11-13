@@ -18,10 +18,10 @@ interface CollectionsDao {
     fun insert(collectionItem: CollectionEntry)
 
     @Language("RoomSql")
-    @Query("SELECT * FROM collection")
+    @Query("SELECT * FROM collection ORDER BY added DESC")
     fun getCollection() : DataSource.Factory<Int, CollectionItem>
 
-    @Query("SELECT * FROM collection")
+    @Query("SELECT * FROM collection ORDER BY added DESC")
     fun getCollectionSingle() : Single<List<CollectionItem>>
 
     @Query("SELECT * FROM collection WHERE show_id = :showId LIMIT 1")
@@ -30,7 +30,7 @@ interface CollectionsDao {
     @Query("SELECT * FROM collection")
     fun getCollectionEntries() : LiveData<List<CollectionEntry>>
 
-    @Query("SELECT * FROM collection LIMIT :limit")
+    @Query("SELECT * FROM collection ORDER BY added DESC LIMIT :limit")
     fun getCollectionGridItems(limit: Int) : LiveData<List<MyShowGridItem>>
 
     @Query("SELECT show_id  FROM collection WHERE show_id IN (:showIds)")
