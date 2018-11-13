@@ -57,21 +57,6 @@ class SearchViewModel(private val getSearchResultUseCase: GetSearchResultUseCase
         disposables.add(disposable)
     }
 
-    fun addShowToCollection(showId: Int) {
-        val disposable = showsRepository.getShow(showId)
-                .doOnSuccess{showsRepository.insertShow(it)}
-                .flatMap {
-                    collectionRepository.addToCollection(CollectionEntry(showId = showId, added = OffsetDateTime.now()))
-                            .toMaybe<Boolean>()
-                }
-                .subscribeOn(schedulers.io())
-                .observeOn(schedulers.ui())
-                .subscribe({
-                    Timber.d("show added to collection")
-                }, Timber::e)
-        disposables.add(disposable)
-    }
-
     override fun onCleared() {
         super.onCleared()
         getSearchResultUseCase.clearLastSearchResults()

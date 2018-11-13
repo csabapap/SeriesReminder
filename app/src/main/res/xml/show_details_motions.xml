@@ -24,6 +24,7 @@
         <Constraint
             android:id="@id/poster"
             android:layout_height="148dp"
+            android:layout_width="100dp"
             android:layout_marginStart="8dp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintBottom_toBottomOf="@+id/title_background"/>
@@ -40,6 +41,8 @@
         <Constraint
             android:id="@id/poster"
             android:layout_height="100dp"
+            android:layout_width="68dp"
+            android:layout_marginStart="33dp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintBottom_toBottomOf="@+id/title_background"/>
     </ConstraintSet>

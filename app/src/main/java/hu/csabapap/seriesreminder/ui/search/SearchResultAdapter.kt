@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.squareup.picasso.Picasso
 import hu.csabapap.seriesreminder.R
 import hu.csabapap.seriesreminder.data.models.SrSearchResult
+import hu.csabapap.seriesreminder.data.network.entities.SearchResult
 import hu.csabapap.seriesreminder.extensions.loadFromTmdbUrl
 import hu.csabapap.seriesreminder.extensions.toPixelFromDip
 import hu.csabapap.seriesreminder.utils.RoundedTransformation
@@ -74,6 +75,16 @@ class SearchResultAdapter: RecyclerView.Adapter<SearchResultAdapter.ResultVH>() 
             }
             itemView.setOnClickListener { v ->
                 listener.onItemClick(searchResult.show.ids.trakt, searchResult.inCollection)
+            }
+        }
+    }
+
+    fun itemAddedToCollection(showId: Int) {
+        searchResult?.forEachIndexed { i, result ->
+            if (result.show.ids.trakt == showId) {
+                result.inCollection = true
+                notifyItemChanged(i)
+                return
             }
         }
     }

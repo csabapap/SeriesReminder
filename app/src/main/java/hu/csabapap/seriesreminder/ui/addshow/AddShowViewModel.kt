@@ -7,6 +7,8 @@ import androidx.lifecycle.ViewModel
 import hu.csabapap.seriesreminder.data.CollectionRepository
 import hu.csabapap.seriesreminder.data.ShowsRepository
 import hu.csabapap.seriesreminder.data.db.entities.CollectionEntry
+import hu.csabapap.seriesreminder.tasks.Task
+import hu.csabapap.seriesreminder.tasks.TaskExecutor
 import hu.csabapap.seriesreminder.utils.AppRxSchedulers
 import io.reactivex.Observable
 import org.threeten.bp.OffsetDateTime
@@ -16,6 +18,7 @@ class AddShowViewModel(
         showId: Int,
         private val showsRepository: ShowsRepository,
         private val collectionRepository: CollectionRepository,
+        private val taskExecutor: TaskExecutor,
         private val schedulers: AppRxSchedulers
 ) : ViewModel() {
 
@@ -47,17 +50,8 @@ class AddShowViewModel(
                         { Timber.e(it)})
     }
 
-
-
-    fun addShowToCollection(showId: Int) {
-        collectionRepository.addToCollection(CollectionEntry(showId = showId, added = OffsetDateTime.now()))
-                .subscribeOn(schedulers.io)
-                .observeOn(schedulers.main)
-                .subscribe({
-                    addShowLiveData.value = true
-                }, {
-                    addShowLiveData.value = false
-                })
+    fun syncShow(task: Task) {
+        taskExecutor.queue.add(task)
     }
 
 }

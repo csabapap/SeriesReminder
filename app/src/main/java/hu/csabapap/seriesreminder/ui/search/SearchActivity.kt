@@ -1,5 +1,6 @@
 package hu.csabapap.seriesreminder.ui.search
 
+import android.app.Activity
 import android.app.SearchManager
 import android.content.Context
 import android.content.Intent
@@ -16,14 +17,14 @@ import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import dagger.android.support.DaggerAppCompatActivity
 import hu.csabapap.seriesreminder.R
+import hu.csabapap.seriesreminder.SRApplication
 import hu.csabapap.seriesreminder.data.models.SrSearchResult
 import hu.csabapap.seriesreminder.services.SyncService
+import hu.csabapap.seriesreminder.tasks.DownloadShowTask
+import hu.csabapap.seriesreminder.tasks.TaskExecutor
 import hu.csabapap.seriesreminder.ui.addshow.AddShowActivity
 import hu.csabapap.seriesreminder.ui.showdetails.ShowDetailsActivity
-import hu.csabapap.seriesreminder.utils.AddShow
-import hu.csabapap.seriesreminder.utils.ShowDetails
-import hu.csabapap.seriesreminder.utils.hideKeyboard
-import hu.csabapap.seriesreminder.utils.showKeyboard
+import hu.csabapap.seriesreminder.utils.*
 import kotlinx.android.synthetic.main.activity_search.*
 import javax.inject.Inject
 import javax.inject.Named
@@ -33,6 +34,9 @@ class SearchActivity : DaggerAppCompatActivity(), SearchResultAdapter.SearchItem
     @Inject
     @field:Named("SearchViewModelFactory")
     lateinit var viewModelProvider: ViewModelProvider.Factory
+
+    @Inject
+    lateinit var taskExecutor: TaskExecutor
 
     private lateinit var searchViewModel: SearchViewModel
 
@@ -64,12 +68,22 @@ class SearchActivity : DaggerAppCompatActivity(), SearchResultAdapter.SearchItem
 
     override fun onResume() {
         super.onResume()
-        searchViewModel.getSearchResult()
+//        searchViewModel.getSearchResult()
     }
 
     override fun onEnterAnimationComplete() {
         search_view.requestFocus()
         showKeyboard(search_view)
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        if (resultCode == Activity.RESULT_OK && requestCode == Search.RC_ADD) {
+            val showId = data?.extras?.getInt(AddShow.EXTRA_SHOW_ID, -1) ?: -1
+            if (showId != -1) {
+                adapter.itemAddedToCollection(showId)
+            }
+        }
+        super.onActivityResult(requestCode, resultCode, data)
     }
 
     private fun setupSearchView() {
@@ -107,13 +121,14 @@ class SearchActivity : DaggerAppCompatActivity(), SearchResultAdapter.SearchItem
 
         val intent = Intent(this, AddShowActivity::class.java)
         intent.putExtra(AddShow.EXTRA_SHOW_ID, showId)
-        startActivity(intent)
-        return
+        startActivityForResult(intent, Search.RC_ADD)
     }
 
     override fun onAddClick(showId: Int) {
-        searchViewModel.addShowToCollection(showId)
-        SyncService.syncShow(this, showId)
+        val task = DownloadShowTask(showId)
+        (application as SRApplication).appComponent.inject(task)
+        taskExecutor.queue.add(task)
+        SyncService.syncShow(this)
     }
 
     private fun displayLoader() {

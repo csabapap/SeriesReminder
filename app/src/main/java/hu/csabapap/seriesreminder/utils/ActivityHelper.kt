@@ -6,6 +6,10 @@ object ShowDetails {
     const val EXTRA_SHOW_ID = "show_id"
 }
 
+object Search {
+    const val RC_ADD = 101
+}
+
 object AddShow {
     const val EXTRA_SHOW_ID = "show_id"
 }

@@ -8,8 +8,8 @@ import hu.csabapap.seriesreminder.data.ShowsRepository
 import hu.csabapap.seriesreminder.data.network.TvdbApi
 import hu.csabapap.seriesreminder.data.states.EpisodeError
 import hu.csabapap.seriesreminder.data.states.NextEpisodeSuccess
+import hu.csabapap.seriesreminder.tasks.TaskExecutor
 import io.reactivex.Flowable
-import io.reactivex.Maybe
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -22,16 +22,16 @@ class SyncService : DaggerIntentService("SyncService") {
     lateinit var tvdbApi: TvdbApi
 
     @Inject
+    lateinit var taskExecutor: TaskExecutor
+
+    @Inject
     lateinit var episodesRepository: EpisodesRepository
 
     override fun onHandleIntent(intent: Intent?) {
         if (intent != null) {
             val action = intent.action
             if (ACTION_SYNC_SHOW == action) {
-                val showId = intent.getIntExtra(EXTRA_SHOW_ID, -1)
-                if (showId != -1) {
-                    syncShow(showId)
-                }
+                syncShow()
             } else if (ACTION_SYNC_MY_SHOWS == action) {
                 syncCollection()
             } else if (ACTION_SYNC_NEXT_EPISODES == action) {
@@ -40,60 +40,10 @@ class SyncService : DaggerIntentService("SyncService") {
         }
     }
 
-    private fun syncShow(showId: Int) {
-        showsRepository.getShow(showId)
-                .flatMap {show ->
-                    var poster = ""
-                    var posterThumb = ""
-                    var cover = ""
-                    var coverThumb = ""
-                    if (show.posterThumb.isEmpty()) {
-                        val response = tvdbApi.images(show.tvdbId, "poster").execute()
-                        if (response.isSuccessful) {
-                            response.body()?.let {
-                                val popularImage = it.data.maxBy { image ->
-                                    image.ratingsInfo.average
-                                }
-                                poster = popularImage?.fileName ?: ""
-                                posterThumb = popularImage?.thumbnail ?: ""
-                            }
-                        }
-                    }
-
-                    if (show.coverThumb.isEmpty()) {
-                        val response = tvdbApi.images(show.tvdbId, "fanart").execute()
-                        if (response.isSuccessful) {
-                            response.body()?.let {
-                                val popularImage = it.data.maxBy { image ->
-                                    image.ratingsInfo.average
-                                }
-                                cover = popularImage?.fileName ?: ""
-                                coverThumb = popularImage?.thumbnail ?: ""
-                            }
-                        }
-                    }
-
-                    val newShow = if(poster.isEmpty().not() || cover.isEmpty().not()){
-                        show.copy(poster = poster, posterThumb = posterThumb,
-                                cover = cover, coverThumb = coverThumb)
-                                .also {
-                                    showsRepository.updateShow(it)
-                                }
-                    } else {
-                        show
-                    }
-
-                    Maybe.just(newShow)
-                }
-                .toSingle()
-                .flatMap {
-                    showsRepository.getSeasons(it.traktId)
-                }
-                .toCompletable()
-                .andThen(showsRepository.fetchNextEpisode(showId))
-                .subscribe({
-                    Timber.d("next episode: %s", it)
-                }, {Timber.e(it)})
+    private fun syncShow() {
+        taskExecutor.executeTasks {
+            stopSelf()
+        }
     }
 
     private fun syncCollection() {
@@ -139,12 +89,9 @@ class SyncService : DaggerIntentService("SyncService") {
         private const val ACTION_SYNC_MY_SHOWS = "hu.csabapap.seriesreminder.services.action.SyncMyShows"
         private const val ACTION_SYNC_NEXT_EPISODES = "hu.csabapap.seriesreminder.services.action.SyncNextEpisodes"
 
-        private const val EXTRA_SHOW_ID = "hu.csabapap.seriesreminder.services.extra.show_id"
-
-        fun syncShow(context: Context, showId: Int) {
+        fun syncShow(context: Context) {
             val intent = Intent(context, SyncService::class.java)
             intent.action = ACTION_SYNC_SHOW
-            intent.putExtra(EXTRA_SHOW_ID, showId)
             context.startService(intent)
         }
 

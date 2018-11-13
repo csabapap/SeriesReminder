@@ -1,10 +1,8 @@
 package hu.csabapap.seriesreminder.ui.addshow
 
-import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.ViewModelProviders
+import android.app.Activity
+import android.content.Intent
 import android.content.res.ColorStateList
-import androidx.databinding.DataBindingUtil
 import android.graphics.Bitmap
 import android.graphics.drawable.Animatable2
 import android.graphics.drawable.AnimatedVectorDrawable
@@ -12,19 +10,26 @@ import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
 import android.os.Build
 import android.os.Bundle
+import androidx.core.graphics.ColorUtils
+import androidx.databinding.DataBindingUtil
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.ViewModelProviders
+import androidx.palette.graphics.Palette
 import androidx.vectordrawable.graphics.drawable.Animatable2Compat
 import androidx.vectordrawable.graphics.drawable.AnimatedVectorDrawableCompat
-import androidx.core.graphics.ColorUtils
-import androidx.palette.graphics.Palette
 import com.squareup.picasso.Callback
 import com.squareup.picasso.Picasso
 import dagger.android.support.DaggerAppCompatActivity
 import hu.csabapap.seriesreminder.R
+import hu.csabapap.seriesreminder.SRApplication
 import hu.csabapap.seriesreminder.data.db.entities.SRShow
 import hu.csabapap.seriesreminder.data.network.getThumbnailUrl
 import hu.csabapap.seriesreminder.databinding.ActivityAddShowBinding
 import hu.csabapap.seriesreminder.extensions.loadFromTmdbUrl
 import hu.csabapap.seriesreminder.services.SyncService
+import hu.csabapap.seriesreminder.tasks.DownloadShowTask
+import hu.csabapap.seriesreminder.utils.AddShow
 import kotlinx.android.synthetic.main.activity_add_show.*
 import javax.inject.Inject
 import javax.inject.Named
@@ -55,7 +60,7 @@ class AddShowActivity : DaggerAppCompatActivity() {
 
         toolbar.apply {
             setNavigationIcon(R.drawable.ic_arrow_back_24dp)
-            setNavigationOnClickListener({finish()})
+            setNavigationOnClickListener {finish()}
         }
 
         addShowViewModel.showLiveData.observe(this, Observer {
@@ -69,7 +74,7 @@ class AddShowActivity : DaggerAppCompatActivity() {
                 val drawable = btn_add_show.drawable as AnimatedVectorDrawable
                 drawable.registerAnimationCallback((object: Animatable2.AnimationCallback() {
                     override fun onAnimationEnd(drawable: Drawable?) {
-                        finish()
+                        finishWithResult()
                     }
                 }))
                 drawable.start()
@@ -77,14 +82,16 @@ class AddShowActivity : DaggerAppCompatActivity() {
                 val drawable = btn_add_show.drawable as AnimatedVectorDrawableCompat
                 drawable.registerAnimationCallback((object: Animatable2Compat.AnimationCallback() {
                     override fun onAnimationEnd(drawable: Drawable?) {
-                        finish()
+                        finishWithResult()
                     }
                 }))
                 drawable.start()
             }
 
-            addShowViewModel.addShowToCollection(showId)
-            SyncService.syncShow(this, showId)
+            val task = DownloadShowTask(showId)
+            (application as SRApplication).appComponent.inject(task)
+            addShowViewModel.syncShow(task)
+            SyncService.syncShow(this)
         }
     }
 
@@ -151,5 +158,12 @@ class AddShowActivity : DaggerAppCompatActivity() {
 
     fun getShowId(): Int {
         return intent.extras.getInt("show_id", -1)
+    }
+
+    private fun finishWithResult() {
+        val intent = Intent()
+        intent.putExtra(AddShow.EXTRA_SHOW_ID, showId)
+        setResult(Activity.RESULT_OK, intent)
+        finish()
     }
 }

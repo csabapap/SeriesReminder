@@ -1,6 +1,5 @@
 package hu.csabapap.seriesreminder
 
-import android.os.Build
 import com.gabrielittner.threetenbp.LazyThreeTen
 import com.jakewharton.picasso.OkHttp3Downloader
 import com.squareup.picasso.Picasso
@@ -16,7 +15,8 @@ open class SRApplication : DaggerApplication() {
 
     @Inject
     lateinit var tvdbApi: TvdbApi
-    private lateinit var appComponent : AppComponent
+    lateinit var appComponent : AppComponent
+        private set
 
     override fun onCreate() {
         super.onCreate()
@@ -44,5 +44,4 @@ open class SRApplication : DaggerApplication() {
                 .build()
         Picasso.setSingletonInstance(picasso)
     }
-
 }
