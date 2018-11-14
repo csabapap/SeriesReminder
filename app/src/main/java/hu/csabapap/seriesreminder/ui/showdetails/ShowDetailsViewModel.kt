@@ -3,6 +3,7 @@ package hu.csabapap.seriesreminder.ui.showdetails
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import hu.csabapap.seriesreminder.data.CollectionRepository
 import hu.csabapap.seriesreminder.data.ShowsRepository
 import hu.csabapap.seriesreminder.utils.AppCoroutineDispatchers
 import hu.csabapap.seriesreminder.utils.getDateTimeForNextAir
@@ -18,6 +19,7 @@ import org.threeten.bp.ZoneOffset
 import timber.log.Timber
 
 class ShowDetailsViewModel(private val showsRepository: ShowsRepository,
+                           private val collectionRepository: CollectionRepository,
                            private val dispatchers: AppCoroutineDispatchers): ViewModel() {
 
     private val job = Job()
@@ -55,5 +57,11 @@ class ShowDetailsViewModel(private val showsRepository: ShowsRepository,
     override fun onCleared() {
         super.onCleared()
         job.cancel()
+    }
+
+    fun removeFromCollection(showId: Int) {
+        scope.launch(dispatchers.io) {
+            collectionRepository.remove(showId)
+        }
     }
 }

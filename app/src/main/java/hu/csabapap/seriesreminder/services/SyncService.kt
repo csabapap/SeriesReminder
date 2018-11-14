@@ -57,30 +57,30 @@ class SyncService : DaggerIntentService("SyncService") {
     }
 
     private fun syncUpcomingEpisodes() {
-        episodesRepository.getNextEpisodes()
-                .flattenAsFlowable { it }
-                .flatMap {
-                    it.episode?.let {episode ->
-                        showsRepository.fetchNextEpisode(episode.showId)
-                                .toFlowable()
-                                .flatMap {
-                                    if (it is NextEpisodeSuccess) {
-                                        Timber.d("update episode, episode id: %d", episode.traktId)
-                                        episodesRepository.getEpisode(it.nextEpisode.showId,
-                                                it.nextEpisode.season, it.nextEpisode.number)
-                                                .toFlowable()
-                                    } else {
-                                        Flowable.just(EpisodeError)
-                                    }
-                                }
-                    }
-                }
-                .toList()
-                .subscribe({
-                    Timber.d("nmb of episodes updated: %d", it.size)
-                }, {
-                    Timber.e(it)
-                })
+//        episodesRepository.getNextEpisodes()
+//                .flattenAsFlowable { it }
+//                .flatMap {
+//                    it.episode?.let {episode ->
+//                        showsRepository.fetchNextEpisode(episode.showId)
+//                                .toFlowable()
+//                                .flatMap {
+//                                    if (it is NextEpisodeSuccess) {
+//                                        Timber.d("update episode, episode id: %d", episode.traktId)
+//                                        episodesRepository.getEpisode(it.nextEpisode.showId,
+//                                                it.nextEpisode.season, it.nextEpisode.number)
+//                                                .toFlowable()
+//                                    } else {
+//                                        Flowable.just(EpisodeError)
+//                                    }
+//                                }
+//                    }
+//                }
+//                .toList()
+//                .subscribe({
+//                    Timber.d("nmb of episodes updated: %d", it.size)
+//                }, {
+//                    Timber.e(it)
+//                })
 
     }
 

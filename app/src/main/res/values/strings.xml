@@ -25,4 +25,5 @@
     <string name="search_hint">Search Shows</string>
     <string name="title_my_shows">My shows</string>
     <string name="add_reminder">Add reminder</string>
+    <string name="remove">Remove</string>
 </resources>

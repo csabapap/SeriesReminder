@@ -125,33 +125,27 @@ class ShowsRepository @Inject constructor(private val traktApi: TraktApi,
         showDao.updateShow(show)
     }
 
-    fun fetchNextEpisode(showId: Int): Single<NextEpisodeState> {
-        return traktApi.nextEpisode(showId)
-                .flatMap {
-                    when (it.code()) {
-                        200 -> Single.just(NextEpisodeSuccess(mapToNextEpisodeEntry(it.body()!!, showId)))
-                        204 -> Single.just(NoNextEpisode)
-                        else -> Single.just(NextEpisodeError("error during next episode fetching"))
-                    }
-                }
-                .doAfterSuccess {
-                    if (it is NextEpisodeSuccess) {
-                        saveNextEpisode(it.nextEpisode)
-                    }
-                }
+    suspend fun fetchNextEpisode(showId: Int): NextEpisodeState {
+        val response = traktApi.nextEpisode(showId).await()
+        return when (response.code()) {
+            200 -> NextEpisodeSuccess(response.body()!!)
+            204 -> NoNextEpisode
+            else -> NextEpisodeError("error during next episode fetching")
+        }
     }
 
-    private fun mapToNextEpisodeEntry(nextEpisode: NextEpisode, showId: Int): NextEpisodeEntry {
+    fun mapToNextEpisodeEntry(nextEpisode: NextEpisode, showId: Int, collectionId: Int): NextEpisodeEntry {
         return NextEpisodeEntry(null,
                 nextEpisode.season,
                 nextEpisode.number,
                 nextEpisode.title,
                 nextEpisode.ids.trakt,
                 nextEpisode.ids.tvdb,
-                showId)
+                showId,
+                collectionId)
     }
 
-    private fun saveNextEpisode(nextEpisodeEntry: NextEpisodeEntry) {
+    fun saveNextEpisode(nextEpisodeEntry: NextEpisodeEntry) {
         episodesRepository.insertNextEpisode(nextEpisodeEntry)
     }
 

@@ -4,4 +4,8 @@
     <item android:id="@+id/add_reminder"
         android:title="@string/add_reminder"
         app:showAsAction="never" />
+
+    <item android:id="@+id/remove_from_collection"
+        android:title="@string/remove"
+        app:showAsAction="never" />
 </menu>

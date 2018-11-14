@@ -7,6 +7,7 @@ import hu.csabapap.seriesreminder.data.network.services.SeasonsService
 import hu.csabapap.seriesreminder.data.network.services.ShowsService
 import io.reactivex.Single
 import kotlinx.coroutines.Deferred
+import kotlinx.coroutines.rx2.await
 import retrofit2.Response
 import retrofit2.Retrofit
 
@@ -36,7 +37,7 @@ class TraktApi(private val retrofit: Retrofit) {
         return retrofit.create(SeasonsService::class.java).seasons(showId)
     }
 
-    fun nextEpisode(traktId: Int) : Single<Response<NextEpisode>> {
+    fun nextEpisode(traktId: Int): Deferred<Response<NextEpisode>> {
         return retrofit.create(ShowsService::class.java).nextEpisode(traktId)
     }
 

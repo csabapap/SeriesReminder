@@ -2,10 +2,7 @@ package hu.csabapap.seriesreminder.data.db.daos
 
 import androidx.lifecycle.LiveData
 import androidx.paging.DataSource
-import androidx.room.Dao
-import androidx.room.Insert
-import androidx.room.OnConflictStrategy
-import androidx.room.Query
+import androidx.room.*
 import hu.csabapap.seriesreminder.data.db.entities.CollectionEntry
 import hu.csabapap.seriesreminder.data.db.entities.CollectionItem
 import hu.csabapap.seriesreminder.data.db.entities.MyShowGridItem
@@ -15,9 +12,8 @@ import org.intellij.lang.annotations.Language
 @Dao
 interface CollectionsDao {
     @Insert(onConflict = OnConflictStrategy.IGNORE)
-    fun insert(collectionItem: CollectionEntry)
+    fun insert(collectionItem: CollectionEntry): Long
 
-    @Language("RoomSql")
     @Query("SELECT * FROM collection ORDER BY added DESC")
     fun getCollection() : DataSource.Factory<Int, CollectionItem>
 
@@ -38,4 +34,7 @@ interface CollectionsDao {
 
     @Query("DELETE FROM collection")
     fun deleteAll()
+
+    @Query("DELETE FROM collection WHERE show_id = :showId")
+    fun delete(showId: Int)
 }

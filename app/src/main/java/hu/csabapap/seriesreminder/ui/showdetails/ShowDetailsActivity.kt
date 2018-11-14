@@ -75,6 +75,10 @@ class ShowDetailsActivity : DaggerAppCompatActivity() {
         val itemId = item?.itemId ?: -1
         when(itemId) {
             R.id.add_reminder -> viewModel.createReminder(showId)
+            R.id.remove_from_collection -> {
+                viewModel.removeFromCollection(showId)
+                finish()
+            }
         }
 
         return super.onOptionsItemSelected(item)

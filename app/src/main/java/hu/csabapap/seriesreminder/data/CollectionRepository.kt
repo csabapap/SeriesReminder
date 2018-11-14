@@ -22,6 +22,10 @@ class CollectionRepository @Inject constructor(private val collectionsDao: Colle
         }
     }
 
+    fun save(item: CollectionEntry): Long {
+        return collectionsDao.insert(item)
+    }
+
     fun getCollections() : DataSource.Factory<Int, CollectionItem> {
         return collectionsDao.getCollection()
     }
@@ -44,5 +48,9 @@ class CollectionRepository @Inject constructor(private val collectionsDao: Colle
 
     fun getCollectionGridItems(limit: Int = 10): LiveData<List<MyShowGridItem>> {
         return collectionsDao.getCollectionGridItems(limit)
+    }
+
+    fun remove(showId: Int) {
+        collectionsDao.delete(showId)
     }
 }

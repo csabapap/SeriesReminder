@@ -4,6 +4,7 @@ import hu.csabapap.seriesreminder.data.CollectionRepository
 import hu.csabapap.seriesreminder.data.ShowsRepository
 import hu.csabapap.seriesreminder.data.db.entities.CollectionEntry
 import hu.csabapap.seriesreminder.data.network.TvdbApi
+import hu.csabapap.seriesreminder.data.states.NextEpisodeSuccess
 import kotlinx.coroutines.rx2.await
 import org.threeten.bp.OffsetDateTime
 import timber.log.Timber
@@ -41,13 +42,18 @@ class DownloadShowTask(private val showId: Int): Task {
 
             showsRepository.insertShow(newShow)
             val collectionEntry = CollectionEntry(showId = newShow.traktId, added = OffsetDateTime.now())
-            collectionRepository.addToCollection(collectionEntry).await()
+            val collectionId = collectionRepository.save(collectionEntry)
 
 
             val seasons = showsRepository.getSeasons(newShow.traktId).await()
             Timber.d("seasons: $seasons")
-            val nextEpisode = showsRepository.fetchNextEpisode(newShow.traktId).await()
-            Timber.d("next episode: $nextEpisode")
+            val nextEpisodeState = showsRepository.fetchNextEpisode(newShow.traktId)
+            if (nextEpisodeState is NextEpisodeSuccess) {
+                val nextEpisode =nextEpisodeState.nextEpisode
+                val entry = showsRepository.mapToNextEpisodeEntry(nextEpisode, showId, collectionId.toInt())
+                showsRepository.saveNextEpisode(entry)
+                Timber.d("next episode: $entry")
+            }
         }
     }
 }
