@@ -113,10 +113,12 @@ class ShowDetailsActivity : DaggerAppCompatActivity() {
         show.let {
             show_title.text = it.title
             overview.text = it.overview
-            val posterUrl = if (it.poster.isEmpty()) {
+            status.text = it.status
+            air_daytime.text = "${show.airingTime.day} ${show.airingTime.time}"
+            val posterUrl = if (it.posterThumb.isEmpty()) {
                 "tvdb://${it.tvdbId}"
             } else {
-                getThumbnailUrl(it.poster)
+                getThumbnailUrl(it.posterThumb)
             }
             Picasso.with(this)
                     .load(posterUrl)
