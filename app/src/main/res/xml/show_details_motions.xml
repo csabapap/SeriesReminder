@@ -12,28 +12,32 @@
             app:touchAnchorId="@id/nestedScrollView"
             app:touchAnchorSide="top"/>
         <KeyFrameSet>
+
+            <KeyAttribute
+                app:framePosition="40"
+                app:target="@id/poster">
+                <CustomAttribute
+                    app:attributeName="alpha"
+                    app:customIntegerValue="255" />
+            </KeyAttribute>
+            <KeyAttribute
+                app:framePosition="68"
+                app:target="@id/poster">
+                <CustomAttribute
+                    app:attributeName="alpha"
+                    app:customIntegerValue="0" />
+            </KeyAttribute>
+
             <KeyAttribute
                 android:alpha="0"
                 app:framePosition="75"
                 app:target="@id/status" />
 
-            <!--<KeyPosition-->
-                <!--app:target="@id/show_title"-->
-                <!--app:keyPositionType="pathRelative"-->
-                <!--app:percentY="0.1"-->
-                <!--app:framePosition="60" />-->
+            <KeyAttribute
+                android:alpha="0"
+                app:framePosition="75"
+                app:target="@id/air_daytime" />
 
-            <!--<KeyPosition-->
-                <!--app:target="@id/status"-->
-                <!--app:keyPositionType="pathRelative"-->
-                <!--app:percentY="0.1"-->
-                <!--app:framePosition="60" />-->
-
-            <!--<KeyPosition-->
-                <!--app:target="@id/air_daytime"-->
-                <!--app:keyPositionType="pathRelative"-->
-                <!--app:percentY="0.1"-->
-                <!--app:framePosition="60" />-->
         </KeyFrameSet>
 
     </Transition>
@@ -55,12 +59,6 @@
             app:layout_constraintBottom_toBottomOf="@+id/title_background"/>
 
         <Constraint
-            android:id="@id/toolbar"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:elevation="0dp" />
-
-        <Constraint
             android:id="@id/show_title"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -70,7 +68,7 @@
             app:layout_constraintEnd_toEndOf="@+id/title_background"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toEndOf="@+id/poster_guideline"
-            app:layout_constraintTop_toBottomOf="@+id/cover" />
+            app:layout_constraintTop_toTopOf="@+id/title_background" />
 
         <Constraint
             android:id="@id/status"
@@ -111,16 +109,9 @@
 
         <Constraint
             android:id="@id/poster"
-            android:layout_height="100dp"
-            android:layout_width="68dp"
-            app:layout_constraintBottom_toBottomOf="@+id/title_background"
-            app:layout_constraintEnd_toStartOf="parent"/>
-
-        <Constraint
-            android:id="@id/toolbar"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:elevation="4dp"/>
+            android:layout_height="58dp"
+            android:layout_width="40dp"
+            app:layout_constraintBottom_toBottomOf="@id/toolbar" />
 
         <Constraint
             android:id="@id/show_title"
@@ -133,8 +124,8 @@
             app:layout_constraintEnd_toEndOf="@+id/title_background"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@id/toolbar"
-            app:layout_constraintBottom_toBottomOf="@id/toolbar" />
+            app:layout_constraintTop_toTopOf="@id/title_background"
+            app:layout_constraintBottom_toBottomOf="@id/title_background"/>
 
         <Constraint
             android:id="@id/status"
@@ -161,7 +152,7 @@
         <Constraint
             android:id="@id/title_background"
             android:layout_width="match_parent"
-            android:layout_height="100dp"
+            android:layout_height="?attr/actionBarSize"
             app:layout_constraintBottom_toBottomOf="@id/toolbar"/>
     </ConstraintSet>
 

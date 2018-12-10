@@ -1,13 +1,18 @@
 package hu.csabapap.seriesreminder.ui.showdetails
 
+import android.annotation.SuppressLint
 import android.app.AlarmManager
 import android.app.PendingIntent
 import android.content.Intent
+import android.content.res.ColorStateList
 import android.graphics.Bitmap
+import android.graphics.Color
 import android.graphics.drawable.BitmapDrawable
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
+import androidx.constraintlayout.motion.widget.MotionLayout
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.palette.graphics.Palette
@@ -38,6 +43,7 @@ class ShowDetailsActivity : DaggerAppCompatActivity() {
     private lateinit var viewModel: ShowDetailsViewModel
 
     var showId: Int = -1
+    var isReminderCreatable = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -58,6 +64,44 @@ class ShowDetailsActivity : DaggerAppCompatActivity() {
             finish()
         }
         supportActionBar?.title = ""
+
+        motion_layout.setTransitionListener(object : MotionLayout.TransitionListener {
+
+            @SuppressLint("RestrictedApi")
+            override fun onTransitionChange(p0: MotionLayout?, p1: Int, p2: Int, p3: Float) {
+                Timber.d("p3: $p3")
+                if (poster.y <= toolbar.height + toolbar.y) {
+                    poster.visibility = View.GONE
+                    fab_reminder.hide()
+                 } else {
+                    poster.visibility = View.VISIBLE
+                    if (isReminderCreatable) {
+                        fab_reminder.show()
+                    } else {
+                        fab_reminder.visibility = View.GONE
+                    }
+                }
+            }
+
+            @SuppressLint("RestrictedApi")
+            override fun onTransitionCompleted(p0: MotionLayout?, id: Int) {
+                when (id) {
+                    R.id.collapsed -> {
+                        poster.visibility = View.GONE
+                        fab_reminder.visibility = View.GONE
+                    }
+                    R.id.expanded -> {
+                        poster.visibility = View.VISIBLE
+                        if (isReminderCreatable) {
+                            fab_reminder.visibility = View.VISIBLE
+                        } else {
+                            fab_reminder.visibility = View.GONE
+                        }
+                    }
+                }
+            }
+
+        })
 
         viewModel.getShow(showId)
 
@@ -97,6 +141,12 @@ class ShowDetailsActivity : DaggerAppCompatActivity() {
                     val darkVibrant = it?.darkVibrantSwatch
                     if (darkVibrant != null) {
                         updateUiColors(darkVibrant)
+                        return@generate
+                    }
+
+                    val mute = it?.mutedSwatch
+                    if (mute != null) {
+                        updateUiColors(mute)
                     }
                 }
     }
@@ -105,10 +155,16 @@ class ShowDetailsActivity : DaggerAppCompatActivity() {
         swatch.apply {
             title_background.setBackgroundColor(rgb)
             show_title.setTextColor(titleTextColor)
+            toolbar.setBackgroundColor(rgb)
+            toolbar.backgroundColorAlpha = 0
             toolbar.navigationIcon?.setTint(titleTextColor)
+            cover.setBackgroundColor(rgb)
+            fab_reminder.backgroundTintList = ColorStateList.valueOf(Color.WHITE)
+            fab_reminder.imageTintList = ColorStateList.valueOf(rgb)
         }
     }
 
+    @SuppressLint("RestrictedApi")
     private fun displayShow(show: SRShow) {
         show.let {
             show_title.text = it.title
@@ -120,6 +176,15 @@ class ShowDetailsActivity : DaggerAppCompatActivity() {
             } else {
                 getThumbnailUrl(it.posterThumb)
             }
+
+            if (it.status == "returning series") {
+                isReminderCreatable = true
+                fab_reminder.visibility = View.VISIBLE
+            } else {
+                isReminderCreatable = false
+                fab_reminder.visibility = View.GONE
+            }
+
             Picasso.with(this)
                     .load(posterUrl)
                     .into(poster, object: Callback {
