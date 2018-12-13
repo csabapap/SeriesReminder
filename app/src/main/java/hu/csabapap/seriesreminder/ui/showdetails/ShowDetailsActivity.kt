@@ -16,6 +16,9 @@ import androidx.constraintlayout.motion.widget.MotionLayout
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.palette.graphics.Palette
+import androidx.work.Data
+import androidx.work.OneTimeWorkRequest
+import androidx.work.WorkManager
 import com.squareup.picasso.Callback
 import com.squareup.picasso.Picasso
 import dagger.android.support.DaggerAppCompatActivity
@@ -23,12 +26,14 @@ import hu.csabapap.seriesreminder.R
 import hu.csabapap.seriesreminder.data.db.entities.SRShow
 import hu.csabapap.seriesreminder.data.network.getThumbnailUrl
 import hu.csabapap.seriesreminder.receivers.NotificationReceiver
+import hu.csabapap.seriesreminder.services.workers.ShowReminderWorker
 import hu.csabapap.seriesreminder.utils.Reminder
 import hu.csabapap.seriesreminder.utils.ShowDetails
 import kotlinx.android.synthetic.main.activity_show_details.*
 import org.threeten.bp.OffsetDateTime
 import timber.log.Timber
 import java.util.*
+import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 import javax.inject.Named
 
@@ -41,6 +46,7 @@ class ShowDetailsActivity : DaggerAppCompatActivity() {
     lateinit var alarmManager: AlarmManager
 
     private lateinit var viewModel: ShowDetailsViewModel
+    private lateinit var workManager: WorkManager
 
     var showId: Int = -1
     var isReminderCreatable = false
@@ -48,6 +54,8 @@ class ShowDetailsActivity : DaggerAppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_show_details)
+
+        workManager = WorkManager.getInstance()
 
         showId = intent.getIntExtra(ShowDetails.EXTRA_SHOW_ID, -1)
 
@@ -218,6 +226,7 @@ class ShowDetailsActivity : DaggerAppCompatActivity() {
         }
     }
 
+    @SuppressLint("RestrictedApi")
     private fun setAlarm(show: SRShow, airDateTime: OffsetDateTime) {
         Timber.d("airing datetime: $airDateTime")
         val calendar = Calendar.getInstance()
@@ -225,12 +234,14 @@ class ShowDetailsActivity : DaggerAppCompatActivity() {
         calendar.set(Calendar.HOUR_OF_DAY, airDateTime.hour)
         calendar.set(Calendar.MINUTE, airDateTime.minute)
         calendar.set(Calendar.SECOND, 0)
-        val alarmIntent = Intent(this, NotificationReceiver::class.java)
-        alarmIntent.putExtra(Reminder.SHOW_ID, show.traktId)
-        alarmIntent.putExtra(Reminder.SHOW_TITLE, show.title)
-        val pendingIntent = PendingIntent.getBroadcast(this, show.traktId, alarmIntent, PendingIntent.FLAG_UPDATE_CURRENT)
-        alarmManager.set(AlarmManager.RTC_WAKEUP,
-                calendar.timeInMillis,
-                pendingIntent)
+        val request = OneTimeWorkRequest.Builder(ShowReminderWorker::class.java)
+                .setInitialDelay(calendar.timeInMillis - System.currentTimeMillis(), TimeUnit.MILLISECONDS)
+                .setInputData(
+                        Data.Builder()
+                                .put(Reminder.SHOW_ID, show.traktId)
+                                .put(Reminder.SHOW_TITLE, show.title)
+                                .build())
+                .build()
+        workManager.enqueue(request)
     }
 }
