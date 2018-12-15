@@ -64,6 +64,7 @@ class PopularShowsRepository @Inject constructor(private val localPopularDataSou
         val start = System.currentTimeMillis()
         var page = localPopularDataSource.getLastPage()
         page += 1
+        if (page > 3) return
         val popularShows = remotePopularDataSource.getShows("full", page, NETWORK_PAGE_SIZE).await()
         val popularShowItems = popularShows.map {
             showsRepository.getShowWithImages(it.ids.trakt, it.ids.tvdb).await()

@@ -68,6 +68,7 @@ class TrendingShowsRepository @Inject constructor(private val localTrendingDataS
     suspend fun updateTrendingShows() {
         var lastPage = localTrendingDataSource.getLastPage()
         lastPage += 1
+        if (lastPage > 3) return
         val trendingShows = remoteTrendingDataSource.getDeferredPaginatedShows("full", lastPage, NETWORK_PAGE_SIZE).await()
         val srTrendingItems = trendingShows
                 .map {
