@@ -6,10 +6,7 @@ import dagger.android.DaggerIntentService
 import hu.csabapap.seriesreminder.data.EpisodesRepository
 import hu.csabapap.seriesreminder.data.ShowsRepository
 import hu.csabapap.seriesreminder.data.network.TvdbApi
-import hu.csabapap.seriesreminder.data.states.EpisodeError
-import hu.csabapap.seriesreminder.data.states.NextEpisodeSuccess
 import hu.csabapap.seriesreminder.tasks.TaskExecutor
-import io.reactivex.Flowable
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -30,12 +27,10 @@ class SyncService : DaggerIntentService("SyncService") {
     override fun onHandleIntent(intent: Intent?) {
         if (intent != null) {
             val action = intent.action
-            if (ACTION_SYNC_SHOW == action) {
-                syncShow()
-            } else if (ACTION_SYNC_MY_SHOWS == action) {
-                syncCollection()
-            } else if (ACTION_SYNC_NEXT_EPISODES == action) {
-                syncUpcomingEpisodes()
+            when {
+                ACTION_SYNC_SHOW == action -> syncShow()
+                ACTION_SYNC_MY_SHOWS == action -> syncCollection()
+                ACTION_SYNC_NEXT_EPISODES == action -> syncUpcomingEpisodes()
             }
         }
     }

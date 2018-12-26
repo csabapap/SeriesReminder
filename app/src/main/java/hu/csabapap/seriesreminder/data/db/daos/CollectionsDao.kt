@@ -23,6 +23,9 @@ interface CollectionsDao {
     @Query("SELECT * FROM collection WHERE show_id = :showId LIMIT 1")
     fun getCollectionItem(showId: Int): LiveData<CollectionEntry>
 
+    @Query("SELECT * FROM collection WHERE show_id = :showId LIMIT 1")
+    fun getCollectionItemSingle(showId: Int): Single<CollectionEntry>
+
     @Query("SELECT * FROM collection")
     fun getCollectionEntries() : LiveData<List<CollectionEntry>>
 

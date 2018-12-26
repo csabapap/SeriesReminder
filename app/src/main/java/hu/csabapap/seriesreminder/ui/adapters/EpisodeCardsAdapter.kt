@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.RecyclerView
 import hu.csabapap.seriesreminder.R
 import hu.csabapap.seriesreminder.data.db.entities.NextEpisodeItem
 import hu.csabapap.seriesreminder.extensions.diffInDays
+import hu.csabapap.seriesreminder.extensions.diffInHours
 import hu.csabapap.seriesreminder.extensions.loadFromTmdbUrl
 import hu.csabapap.seriesreminder.utils.getDateTimeForNextAir
 import kotlinx.android.synthetic.main.item_episode_card.view.*
@@ -57,7 +58,18 @@ class EpisodeCardsAdapter:  RecyclerView.Adapter<EpisodeCardsAdapter.CardVH>() {
                 val day = airingTime.day
                 val hours = airingTime.time
                 if (day.isEmpty().not() && hours.isEmpty().not()) {
-                    itemView.airs_in_text.text = "in ${getDateTimeForNextAir(OffsetDateTime.now(ZoneOffset.UTC), day, hours).diffInDays()} days"
+                    val nextAirDateTime = getDateTimeForNextAir(OffsetDateTime.now(ZoneOffset.UTC), day, hours)
+                    val diffInDays = nextAirDateTime.diffInDays()
+                    if (diffInDays > 0) {
+                        itemView.airs_in_text.text = "in $diffInDays days"
+                    } else {
+                        val diffInHours = nextAirDateTime.diffInHours()
+                        if (diffInHours > 0) {
+                            itemView.airs_in_text.text = "in $diffInHours hours"
+                        } else {
+                            itemView.airs_in_text.text = "in less then an hour"
+                        }
+                    }
                 }
                 itemView.show_poster.loadFromTmdbUrl(tvdbId)
             }

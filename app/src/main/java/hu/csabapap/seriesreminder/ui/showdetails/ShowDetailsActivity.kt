@@ -1,9 +1,6 @@
 package hu.csabapap.seriesreminder.ui.showdetails
 
 import android.annotation.SuppressLint
-import android.app.AlarmManager
-import android.app.PendingIntent
-import android.content.Intent
 import android.content.res.ColorStateList
 import android.graphics.Bitmap
 import android.graphics.Color
@@ -25,7 +22,6 @@ import dagger.android.support.DaggerAppCompatActivity
 import hu.csabapap.seriesreminder.R
 import hu.csabapap.seriesreminder.data.db.entities.SRShow
 import hu.csabapap.seriesreminder.data.network.getThumbnailUrl
-import hu.csabapap.seriesreminder.receivers.NotificationReceiver
 import hu.csabapap.seriesreminder.services.workers.ShowReminderWorker
 import hu.csabapap.seriesreminder.utils.Reminder
 import hu.csabapap.seriesreminder.utils.ShowDetails
@@ -41,9 +37,6 @@ import javax.inject.Named
 class ShowDetailsActivity : DaggerAppCompatActivity() {
     @Inject @Named("ShowDetailsViewModelFactory")
     lateinit var viewModelProvider: ShowDetailsViewModelProvider
-
-    @Inject
-    lateinit var alarmManager: AlarmManager
 
     private lateinit var viewModel: ShowDetailsViewModel
     private lateinit var workManager: WorkManager
@@ -235,7 +228,8 @@ class ShowDetailsActivity : DaggerAppCompatActivity() {
         calendar.set(Calendar.MINUTE, airDateTime.minute)
         calendar.set(Calendar.SECOND, 0)
         val request = OneTimeWorkRequest.Builder(ShowReminderWorker::class.java)
-                .setInitialDelay(calendar.timeInMillis - System.currentTimeMillis(), TimeUnit.MILLISECONDS)
+//                .setInitialDelay(calendar.timeInMillis - System.currentTimeMillis(), TimeUnit.MILLISECONDS)
+                .setInitialDelay(60_000L, TimeUnit.MILLISECONDS)
                 .setInputData(
                         Data.Builder()
                                 .put(Reminder.SHOW_ID, show.traktId)

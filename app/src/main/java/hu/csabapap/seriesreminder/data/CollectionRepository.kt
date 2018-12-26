@@ -38,6 +38,10 @@ class CollectionRepository @Inject constructor(private val collectionsDao: Colle
         return collectionsDao.getCollectionItem(showId)
     }
 
+    fun getCollectionItem(showId: Int): Single<CollectionEntry> {
+        return collectionsDao.getCollectionItemSingle(showId)
+    }
+
     fun getCollection(): LiveData<List<CollectionEntry>> {
         return collectionsDao.getCollectionEntries()
     }
