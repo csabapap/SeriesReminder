@@ -38,6 +38,11 @@
                 app:framePosition="75"
                 app:target="@id/air_daytime" />
 
+            <KeyAttribute
+                android:alpha="0"
+                app:framePosition="40"
+                app:target="@id/cover_overflow" />
+
         </KeyFrameSet>
 
     </Transition>
@@ -49,6 +54,14 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"/>
+
+        <Constraint
+            android:id="@id/cover_overflow"
+            android:layout_height="200dp"
+            app:layout_constraintEnd_toEndOf="@id/cover"
+            app:layout_constraintStart_toStartOf="@id/cover"
+            app:layout_constraintTop_toTopOf="@id/cover"
+            android:alpha="0"/>
 
         <Constraint
             android:id="@id/poster"
@@ -106,6 +119,14 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"/>
+
+        <Constraint
+            android:id="@id/cover_overflow"
+            android:layout_height="0dp"
+            app:layout_constraintEnd_toEndOf="@id/cover"
+            app:layout_constraintStart_toStartOf="@id/cover"
+            app:layout_constraintTop_toTopOf="@id/cover"
+            android:alpha="1"/>
 
         <Constraint
             android:id="@id/poster"

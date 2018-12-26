@@ -129,26 +129,11 @@ class ShowDetailsActivity : DaggerAppCompatActivity() {
         return super.onOptionsItemSelected(item)
     }
 
-    private fun generatePalette(bitmap: Bitmap) {
+    private fun generatePalette(bitmap: Bitmap, callback: (palette: Palette?) -> Unit) {
         Palette.from(bitmap)
                 .clearFilters()
                 .generate {
-                    val vibrant = it?.vibrantSwatch
-                    if (vibrant != null) {
-                        updateUiColors(vibrant)
-                        return@generate
-                    }
-
-                    val darkVibrant = it?.darkVibrantSwatch
-                    if (darkVibrant != null) {
-                        updateUiColors(darkVibrant)
-                        return@generate
-                    }
-
-                    val mute = it?.mutedSwatch
-                    if (mute != null) {
-                        updateUiColors(mute)
-                    }
+                    callback(it)
                 }
     }
 
@@ -156,12 +141,15 @@ class ShowDetailsActivity : DaggerAppCompatActivity() {
         swatch.apply {
             title_background.setBackgroundColor(rgb)
             show_title.setTextColor(titleTextColor)
+            status.setTextColor(titleTextColor)
+            air_daytime.setTextColor(titleTextColor)
             toolbar.setBackgroundColor(rgb)
             toolbar.backgroundColorAlpha = 0
             toolbar.navigationIcon?.setTint(titleTextColor)
             cover.setBackgroundColor(rgb)
             fab_reminder.backgroundTintList = ColorStateList.valueOf(Color.WHITE)
             fab_reminder.imageTintList = ColorStateList.valueOf(rgb)
+            cover_overflow.setBackgroundColor(rgb)
         }
     }
 
@@ -192,7 +180,24 @@ class ShowDetailsActivity : DaggerAppCompatActivity() {
                         override fun onSuccess() {
                             val drawable = poster.drawable as BitmapDrawable
                             val bitmap = drawable.bitmap
-                            generatePalette(bitmap)
+                            generatePalette(bitmap) { palette ->
+                                val vibrant = palette?.vibrantSwatch
+                                if (vibrant != null) {
+                                    updateUiColors(vibrant)
+                                    return@generatePalette
+                                }
+
+                                val darkVibrant = palette?.darkVibrantSwatch
+                                if (darkVibrant != null) {
+                                    updateUiColors(darkVibrant)
+                                    return@generatePalette
+                                }
+
+                                val mute = palette?.mutedSwatch
+                                if (mute != null) {
+                                    updateUiColors(mute)
+                                }
+                            }
                         }
 
                         override fun onError() {
