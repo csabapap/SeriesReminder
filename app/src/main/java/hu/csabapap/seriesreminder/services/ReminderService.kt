@@ -15,7 +15,6 @@ import hu.csabapap.seriesreminder.ui.showdetails.ShowDetailsActivity
 import hu.csabapap.seriesreminder.utils.Reminder
 import hu.csabapap.seriesreminder.utils.ShowDetails
 import hu.csabapap.seriesreminder.utils.createChannel
-import timber.log.Timber
 import javax.inject.Inject
 
 
@@ -29,8 +28,6 @@ class ReminderService : DaggerService() {
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        Timber.d("on start command")
-//        startForeground(1, Notification())
         intent?.apply {
             val id = getIntExtra(Reminder.SHOW_ID, -1)
             val title = getStringExtra(Reminder.SHOW_TITLE)
@@ -56,7 +53,6 @@ class ReminderService : DaggerService() {
         val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         notificationManager.notify(id, builder.build())
         startForeground(1, builder.build())
-//        stopSelf()
     }
 
     private fun getNextEpisode(showId: Int) {

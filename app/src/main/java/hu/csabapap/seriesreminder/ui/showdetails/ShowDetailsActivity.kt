@@ -109,6 +109,10 @@ class ShowDetailsActivity : DaggerAppCompatActivity() {
         viewModel.detailsUiState.observe(this, Observer { state ->
             updateUi(state)
         })
+
+        fab_reminder.setOnClickListener {
+            viewModel.createReminder(showId)
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -119,7 +123,6 @@ class ShowDetailsActivity : DaggerAppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         val itemId = item?.itemId ?: -1
         when(itemId) {
-            R.id.add_reminder -> viewModel.createReminder(showId)
             R.id.remove_from_collection -> {
                 viewModel.removeFromCollection(showId)
                 finish()
@@ -233,8 +236,7 @@ class ShowDetailsActivity : DaggerAppCompatActivity() {
         calendar.set(Calendar.MINUTE, airDateTime.minute)
         calendar.set(Calendar.SECOND, 0)
         val request = OneTimeWorkRequest.Builder(ShowReminderWorker::class.java)
-//                .setInitialDelay(calendar.timeInMillis - System.currentTimeMillis(), TimeUnit.MILLISECONDS)
-                .setInitialDelay(60_000L, TimeUnit.MILLISECONDS)
+                .setInitialDelay(calendar.timeInMillis - System.currentTimeMillis(), TimeUnit.MILLISECONDS)
                 .setInputData(
                         Data.Builder()
                                 .put(Reminder.SHOW_ID, show.traktId)
