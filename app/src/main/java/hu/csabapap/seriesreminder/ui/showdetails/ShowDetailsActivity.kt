@@ -159,7 +159,7 @@ class ShowDetailsActivity : DaggerAppCompatActivity() {
             show_title.text = it.title
             overview.text = it.overview
             status.text = it.status
-            air_daytime.text = "${show.airingTime.day} ${show.airingTime.time}"
+            air_daytime.text = String.format(getString(R.string.air_time), it.airingTime.day, it.airingTime.time)
             val posterUrl = if (it.posterThumb.isEmpty()) {
                 "tvdb://${it.tvdbId}"
             } else {

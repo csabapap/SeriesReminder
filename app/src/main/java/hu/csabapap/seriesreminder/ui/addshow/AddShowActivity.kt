@@ -1,5 +1,6 @@
 package hu.csabapap.seriesreminder.ui.addshow
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
 import android.content.res.ColorStateList
@@ -10,6 +11,8 @@ import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
 import android.os.Build
 import android.os.Bundle
+import android.view.View
+import androidx.constraintlayout.motion.widget.MotionLayout
 import androidx.core.graphics.ColorUtils
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
@@ -31,6 +34,7 @@ import hu.csabapap.seriesreminder.services.SyncService
 import hu.csabapap.seriesreminder.tasks.DownloadShowTask
 import hu.csabapap.seriesreminder.utils.AddShow
 import kotlinx.android.synthetic.main.activity_add_show.*
+import timber.log.Timber
 import javax.inject.Inject
 import javax.inject.Named
 
@@ -69,9 +73,9 @@ class AddShowActivity : DaggerAppCompatActivity() {
             }
         })
 
-        btn_add_show.setOnClickListener {
+        fab_add_show.setOnClickListener {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                val drawable = btn_add_show.drawable as AnimatedVectorDrawable
+                val drawable = fab_add_show.drawable as AnimatedVectorDrawable
                 drawable.registerAnimationCallback((object: Animatable2.AnimationCallback() {
                     override fun onAnimationEnd(drawable: Drawable?) {
                         finishWithResult()
@@ -79,7 +83,7 @@ class AddShowActivity : DaggerAppCompatActivity() {
                 }))
                 drawable.start()
             } else {
-                val drawable = btn_add_show.drawable as AnimatedVectorDrawableCompat
+                val drawable = fab_add_show.drawable as AnimatedVectorDrawableCompat
                 drawable.registerAnimationCallback((object: Animatable2Compat.AnimationCallback() {
                     override fun onAnimationEnd(drawable: Drawable?) {
                         finishWithResult()
@@ -93,6 +97,36 @@ class AddShowActivity : DaggerAppCompatActivity() {
             addShowViewModel.syncShow(task)
             SyncService.syncShow(this)
         }
+
+        motion_layout.setTransitionListener(object : MotionLayout.TransitionListener {
+
+            @SuppressLint("RestrictedApi")
+            override fun onTransitionChange(p0: MotionLayout?, p1: Int, p2: Int, p3: Float) {
+                Timber.d("p3: $p3")
+                if (poster.y <= toolbar.height + toolbar.y) {
+                    poster.visibility = View.GONE
+                    fab_add_show.hide()
+                } else {
+                    poster.visibility = View.VISIBLE
+                    fab_add_show.show()
+                }
+            }
+
+            @SuppressLint("RestrictedApi")
+            override fun onTransitionCompleted(p0: MotionLayout?, id: Int) {
+                when (id) {
+                    R.id.collapsed -> {
+                        poster.visibility = View.GONE
+                        fab_add_show.visibility = View.GONE
+                    }
+                    R.id.expanded -> {
+                        poster.visibility = View.VISIBLE
+                        fab_add_show.visibility = View.VISIBLE
+                    }
+                }
+            }
+
+        })
     }
 
     override fun onStart() {
@@ -111,7 +145,9 @@ class AddShowActivity : DaggerAppCompatActivity() {
     }
 
     private fun displayShow(srShow: SRShow) {
-        tv_title.text = srShow.title
+        show_title.text = srShow.title
+        status.text = srShow.status
+        air_daytime.text = String.format(getString(R.string.air_time), srShow.airingTime.day, srShow.airingTime.time)
         tv_overview.text = srShow.overview
         ratings.text = String.format(getString(R.string.ratings_value), (srShow.rating * 10).toInt(), srShow.votes)
         genres.text = srShow.genres
@@ -143,15 +179,15 @@ class AddShowActivity : DaggerAppCompatActivity() {
                 .generate {
                     val vibrant = it?.vibrantSwatch
                     vibrant?.apply {
-                        title_container.setBackgroundColor(rgb)
+                        title_background.setBackgroundColor(rgb)
                         cover_overflow.setBackgroundColor(
                                 ColorUtils.setAlphaComponent(rgb, /* 30% */ 0x40))
-                        tv_title.setTextColor(titleTextColor)
+                        show_title.setTextColor(titleTextColor)
                     }
                     val darkVibrant = it?.darkVibrantSwatch
                     darkVibrant?.apply {
-                        btn_add_show.backgroundTintList = ColorStateList.valueOf(rgb)
-                        btn_add_show.imageTintList = ColorStateList.valueOf(titleTextColor)
+                        fab_add_show.backgroundTintList = ColorStateList.valueOf(rgb)
+                        fab_add_show.imageTintList = ColorStateList.valueOf(titleTextColor)
                     }
                 }
     }
