@@ -85,5 +85,12 @@ class DbModule {
                 database.execSQL("ALTER TABLE collection ADD COLUMN last_watched TEXT")
             }
         }
+
+        val MIGRATION_3_4 = object : Migration(3,4) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.execSQL("CREATE TABLE IF NOT EXISTS `reminders` (`_id` INTEGER PRIMARY KEY AUTOINCREMENT, `show_id` INTEGER NOT NULL, `delay` INTEGER NOT NULL, FOREIGN KEY(`show_id`) REFERENCES `collection`(`show_id`) ON UPDATE CASCADE ON DELETE CASCADE )")
+            }
+
+        }
     }
 }

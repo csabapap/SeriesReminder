@@ -33,7 +33,20 @@ android {
 
         buildConfigField "String", "TRAKT_CLIENT_ID", "\"" + propOrDef("SR_TRAKT_CLIENT_ID", "") + "\""
         buildConfigField "String", "TVDB_CLIENT_ID", "\"" + propOrDef("SR_TVDB_CLIENT_ID", "") + "\""
+
+        javaCompileOptions {
+            annotationProcessorOptions {
+                arguments = ["room.schemaLocation":
+                                     "$projectDir/schemas".toString()]
+            }
+        }
     }
+
+    sourceSets {
+        androidTest.assets.srcDirs +=
+                files("$projectDir/schemas".toString())
+    }
+
     buildTypes {
         release {
             minifyEnabled false
@@ -80,9 +93,10 @@ dependencies {
     implementation 'androidx.lifecycle:lifecycle-reactivestreams:2.0.0'
     kapt 'androidx.lifecycle:lifecycle-compiler:2.0.0'
 
-    implementation 'androidx.room:room-runtime:2.0.0'
-    implementation 'androidx.room:room-rxjava2:2.0.0'
-    kapt 'androidx.room:room-compiler:2.0.0'
+    implementation "androidx.room:room-runtime:${versions.room}"
+    implementation "androidx.room:room-rxjava2:${versions.room}"
+    kapt "androidx.room:room-compiler:${versions.room}"
+    androidTestImplementation "androidx.room:room-testing:${versions.room}"
 
     implementation "androidx.paging:paging-runtime:2.0.0"
 
