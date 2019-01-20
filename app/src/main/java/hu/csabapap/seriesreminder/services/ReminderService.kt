@@ -6,6 +6,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.IBinder
 import androidx.core.app.NotificationCompat
+import androidx.work.WorkManager
 import dagger.android.DaggerService
 import hu.csabapap.seriesreminder.R
 import hu.csabapap.seriesreminder.SRApplication

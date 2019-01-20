@@ -19,6 +19,7 @@ import androidx.work.WorkManager
 import com.squareup.picasso.Callback
 import com.squareup.picasso.Picasso
 import dagger.android.support.DaggerAppCompatActivity
+import hu.csabapap.seriesreminder.BuildConfig
 import hu.csabapap.seriesreminder.R
 import hu.csabapap.seriesreminder.data.db.entities.SRShow
 import hu.csabapap.seriesreminder.data.network.getThumbnailUrl
@@ -229,14 +230,17 @@ class ShowDetailsActivity : DaggerAppCompatActivity() {
 
     @SuppressLint("RestrictedApi")
     private fun setAlarm(show: SRShow, airDateTime: OffsetDateTime) {
-        Timber.d("airing datetime: $airDateTime")
         val calendar = Calendar.getInstance()
         calendar.set(Calendar.DAY_OF_MONTH, airDateTime.dayOfMonth)
         calendar.set(Calendar.HOUR_OF_DAY, airDateTime.hour)
         calendar.set(Calendar.MINUTE, airDateTime.minute)
         calendar.set(Calendar.SECOND, 0)
+        val duration = when(BuildConfig.DEBUG) {
+            true -> 5000
+            false -> calendar.timeInMillis - System.currentTimeMillis()
+        }
         val request = OneTimeWorkRequest.Builder(ShowReminderWorker::class.java)
-                .setInitialDelay(calendar.timeInMillis - System.currentTimeMillis(), TimeUnit.MILLISECONDS)
+                .setInitialDelay(duration, TimeUnit.MILLISECONDS)
                 .setInputData(
                         Data.Builder()
                                 .put(Reminder.SHOW_ID, show.traktId)
