@@ -13,4 +13,8 @@
     <item android:id="@+id/sync_next_episodes"
         android:title="@string/sync_next_episodes"
         app:showAsAction="never" />
+
+    <item android:id="@+id/settings"
+        android:title="@string/settings"
+        app:showAsAction="never" />
 </menu>

@@ -1,0 +1,21 @@
+<androidx.preference.PreferenceScreen
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <PreferenceCategory
+        app:key="notifications_category"
+        app:title="@string/category_notifications">
+
+        <SwitchPreferenceCompat
+            app:key="notifications"
+            app:title="Enable notifications"/>
+
+        <ListPreference
+            app:key="notification_before"
+            app:title="Notify before show starts"
+            app:summary="%s"
+            app:entries="@array/pref_before_show_starts_titles"
+            app:entryValues="@array/pref_before_show_starts_values"
+            app:dependency="notifications"/>
+    </PreferenceCategory>
+
+</androidx.preference.PreferenceScreen>

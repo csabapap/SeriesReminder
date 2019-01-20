@@ -22,6 +22,7 @@ import hu.csabapap.seriesreminder.ui.adapters.items.DiscoverCardItem
 import hu.csabapap.seriesreminder.ui.adapters.items.UpcomingEpisodeCardItem
 import hu.csabapap.seriesreminder.ui.addshow.AddShowActivity
 import hu.csabapap.seriesreminder.ui.search.SearchActivity
+import hu.csabapap.seriesreminder.ui.settings.SettingsActivity
 import hu.csabapap.seriesreminder.ui.showdetails.ShowDetailsActivity
 import hu.csabapap.seriesreminder.utils.ShowDetails
 import kotlinx.android.synthetic.main.fragment_home.*
@@ -127,6 +128,9 @@ class HomeFragment : DaggerFragment(), DiscoverPreviewAdapter.PreviewShowListene
             R.id.sync_next_episodes -> {
                 syncNextEpisodes()
                 return true
+            }
+            R.id.settings -> {
+                startActivity(Intent(this.activity, SettingsActivity::class.java))
             }
         }
         return super.onOptionsItemSelected(item)
