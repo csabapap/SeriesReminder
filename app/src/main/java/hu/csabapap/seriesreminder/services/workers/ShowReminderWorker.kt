@@ -5,7 +5,7 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import androidx.core.app.NotificationCompat
-import androidx.work.Result
+import androidx.work.ListenableWorker
 import androidx.work.Worker
 import androidx.work.WorkerParameters
 import hu.csabapap.seriesreminder.R
@@ -13,6 +13,7 @@ import hu.csabapap.seriesreminder.ui.showdetails.ShowDetailsActivity
 import hu.csabapap.seriesreminder.utils.Reminder
 import hu.csabapap.seriesreminder.utils.ShowDetails
 import hu.csabapap.seriesreminder.utils.createChannel
+import javax.inject.Inject
 
 class ShowReminderWorker(context: Context, workerParameters: WorkerParameters)
     : Worker(context, workerParameters) {
@@ -44,5 +45,12 @@ class ShowReminderWorker(context: Context, workerParameters: WorkerParameters)
         val notificationManager = applicationContext.getSystemService(Context.NOTIFICATION_SERVICE)
                 as NotificationManager
         notificationManager.notify(id, builder.build())
+    }
+
+    class Factory @Inject constructor(): ChildWorkerFactory {
+        override fun create(appContext: Context, params: WorkerParameters): ListenableWorker {
+            return ShowReminderWorker(appContext, params)
+        }
+
     }
 }

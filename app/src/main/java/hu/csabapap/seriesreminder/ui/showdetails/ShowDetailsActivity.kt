@@ -24,6 +24,7 @@ import hu.csabapap.seriesreminder.R
 import hu.csabapap.seriesreminder.data.db.entities.SRShow
 import hu.csabapap.seriesreminder.data.network.getThumbnailUrl
 import hu.csabapap.seriesreminder.services.workers.ShowReminderWorker
+import hu.csabapap.seriesreminder.services.workers.SyncNextEpisodeWorker
 import hu.csabapap.seriesreminder.utils.Reminder
 import hu.csabapap.seriesreminder.utils.ShowDetails
 import kotlinx.android.synthetic.main.activity_show_details.*
@@ -247,6 +248,10 @@ class ShowDetailsActivity : DaggerAppCompatActivity() {
                                 .put(Reminder.SHOW_TITLE, show.title)
                                 .build())
                 .build()
-        workManager.enqueue(request)
+        val getNextEpisodeRequest = OneTimeWorkRequest.Builder(SyncNextEpisodeWorker::class.java)
+                .build()
+        workManager.beginWith(request)
+                .then(getNextEpisodeRequest)
+                .enqueue()
     }
 }
