@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 4,
-    "identityHash": "4dff59bd7c5e9e2d7fdc327a9a54775c",
+    "identityHash": "d0e8bd2e82dc8cd8b50673e444f186de",
     "entities": [
       {
         "tableName": "shows",
@@ -328,7 +328,7 @@
       },
       {
         "tableName": "next_episodes",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`_id` INTEGER PRIMARY KEY AUTOINCREMENT, `season` INTEGER NOT NULL, `number` INTEGER NOT NULL, `title` TEXT NOT NULL, `trakt_id` INTEGER NOT NULL, `tvdb_id` INTEGER NOT NULL, `show_id` INTEGER NOT NULL, `collection_id` INTEGER NOT NULL, FOREIGN KEY(`show_id`) REFERENCES `shows`(`trakt_id`) ON UPDATE CASCADE ON DELETE CASCADE , FOREIGN KEY(`trakt_id`) REFERENCES `episodes`(`trakt_id`) ON UPDATE CASCADE ON DELETE CASCADE , FOREIGN KEY(`collection_id`) REFERENCES `collection`(`id`) ON UPDATE CASCADE ON DELETE CASCADE )",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`_id` INTEGER PRIMARY KEY AUTOINCREMENT, `season` INTEGER NOT NULL, `number` INTEGER NOT NULL, `title` TEXT NOT NULL, `trakt_id` INTEGER NOT NULL, `tvdb_id` INTEGER NOT NULL, `show_id` INTEGER NOT NULL, FOREIGN KEY(`show_id`) REFERENCES `shows`(`trakt_id`) ON UPDATE CASCADE ON DELETE CASCADE , FOREIGN KEY(`trakt_id`) REFERENCES `episodes`(`trakt_id`) ON UPDATE CASCADE ON DELETE CASCADE )",
         "fields": [
           {
             "fieldPath": "_id",
@@ -371,12 +371,6 @@
             "columnName": "show_id",
             "affinity": "INTEGER",
             "notNull": true
-          },
-          {
-            "fieldPath": "collectionId",
-            "columnName": "collection_id",
-            "affinity": "INTEGER",
-            "notNull": true
           }
         ],
         "primaryKey": {
@@ -416,17 +410,6 @@
             ],
             "referencedColumns": [
               "trakt_id"
-            ]
-          },
-          {
-            "table": "collection",
-            "onDelete": "CASCADE",
-            "onUpdate": "CASCADE",
-            "columns": [
-              "collection_id"
-            ],
-            "referencedColumns": [
-              "id"
             ]
           }
         ]
@@ -716,7 +699,7 @@
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"4dff59bd7c5e9e2d7fdc327a9a54775c\")"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"d0e8bd2e82dc8cd8b50673e444f186de\")"
     ]
   }
 }

@@ -6,12 +6,7 @@ import hu.csabapap.seriesreminder.data.db.entities.*
 import hu.csabapap.seriesreminder.data.network.TraktApi
 import hu.csabapap.seriesreminder.data.network.TvdbApi
 import hu.csabapap.seriesreminder.data.network.entities.Image
-import hu.csabapap.seriesreminder.data.network.entities.NextEpisode
 import hu.csabapap.seriesreminder.data.network.entities.Show
-import hu.csabapap.seriesreminder.data.states.NextEpisodeError
-import hu.csabapap.seriesreminder.data.states.NextEpisodeState
-import hu.csabapap.seriesreminder.data.states.NextEpisodeSuccess
-import hu.csabapap.seriesreminder.data.states.NoNextEpisode
 import io.reactivex.Flowable
 import io.reactivex.Maybe
 import io.reactivex.Single
@@ -29,7 +24,6 @@ class ShowsRepository @Inject constructor(private val traktApi: TraktApi,
                                           private val showDao: SRShowDao,
                                           private val requestDao: LastRequestDao,
                                           private val seasonsRepository: SeasonsRepository,
-                                          private val episodesRepository: EpisodesRepository,
                                           private val collectionRepository: CollectionRepository){
 
     fun getShow(traktId: Int) : Maybe<SRShow> {
@@ -123,30 +117,6 @@ class ShowsRepository @Inject constructor(private val traktApi: TraktApi,
 
     fun updateShow(show: SRShow) {
         showDao.updateShow(show)
-    }
-
-    suspend fun fetchNextEpisode(showId: Int): NextEpisodeState {
-        val response = traktApi.nextEpisode(showId).await()
-        return when (response.code()) {
-            200 -> NextEpisodeSuccess(response.body()!!)
-            204 -> NoNextEpisode
-            else -> NextEpisodeError("error during next episode fetching")
-        }
-    }
-
-    fun mapToNextEpisodeEntry(nextEpisode: NextEpisode, showId: Int, collectionId: Int): NextEpisodeEntry {
-        return NextEpisodeEntry(null,
-                nextEpisode.season,
-                nextEpisode.number,
-                nextEpisode.title,
-                nextEpisode.ids.trakt,
-                nextEpisode.ids.tvdb,
-                showId,
-                collectionId)
-    }
-
-    fun saveNextEpisode(nextEpisodeEntry: NextEpisodeEntry) {
-        episodesRepository.insertNextEpisode(nextEpisodeEntry)
     }
 
     fun getSeasons(showId: Int): Single<List<SRSeason>> {

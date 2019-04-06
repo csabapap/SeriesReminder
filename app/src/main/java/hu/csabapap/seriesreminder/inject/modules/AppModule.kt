@@ -2,6 +2,7 @@ package hu.csabapap.seriesreminder.inject.modules
 
 import android.app.AlarmManager
 import android.content.Context
+import androidx.work.WorkManager
 import dagger.Module
 import dagger.Provides
 import hu.csabapap.seriesreminder.data.EpisodesRepository
@@ -55,6 +56,11 @@ class AppModule{
                 computation = rxSchedulers.compoutation().asCoroutineDispatcher(),
                 main = Dispatchers.Main
         )
+    }
+
+    @Provides
+    fun provideWorkManager(): WorkManager {
+        return WorkManager.getInstance()
     }
 
     @Singleton

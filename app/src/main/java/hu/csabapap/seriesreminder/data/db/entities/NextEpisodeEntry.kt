@@ -14,24 +14,16 @@ import androidx.room.*
                     parentColumns = [("trakt_id")],
                     childColumns = [("trakt_id")],
                     onUpdate = ForeignKey.CASCADE,
-                    onDelete = ForeignKey.CASCADE)),
-            (ForeignKey(
-                    entity = CollectionEntry::class,
-                    parentColumns = ["id"],
-                    childColumns = ["collection_id"],
-                    onUpdate = ForeignKey.CASCADE,
-                    onDelete = ForeignKey.CASCADE
-            ))],
+                    onDelete = ForeignKey.CASCADE))],
         indices = [(Index(value = ["show_id"], unique = true))])
 class NextEpisodeEntry(
         @PrimaryKey(autoGenerate = true) val _id: Long?,
-        @ColumnInfo() val season: Int,
-        @ColumnInfo() val number: Int,
-        @ColumnInfo() val title: String,
+        @ColumnInfo val season: Int,
+        @ColumnInfo val number: Int,
+        @ColumnInfo val title: String,
         @ColumnInfo(name = "trakt_id") val traktId: Int,
         @ColumnInfo(name = "tvdb_id") val tvdbId: Int,
-        @ColumnInfo(name = "show_id") val showId: Int,
-        @ColumnInfo(name = "collection_id") val collectionId: Int
+        @ColumnInfo(name = "show_id") val showId: Int
 )
 
 data class NextEpisodeItem(

@@ -4,6 +4,7 @@ import hu.csabapap.seriesreminder.data.CollectionRepository
 import hu.csabapap.seriesreminder.data.ShowsRepository
 import hu.csabapap.seriesreminder.data.db.entities.CollectionEntry
 import hu.csabapap.seriesreminder.data.network.TvdbApi
+import hu.csabapap.seriesreminder.data.repositories.nextepisodes.NextEpisodesRepository
 import hu.csabapap.seriesreminder.data.states.NextEpisodeSuccess
 import kotlinx.coroutines.rx2.await
 import org.threeten.bp.OffsetDateTime
@@ -16,6 +17,9 @@ class DownloadShowTask(private val showId: Int): Task {
     lateinit var showsRepository: ShowsRepository
 
     @Inject
+    lateinit var nextEpisodesRepository: NextEpisodesRepository
+
+    @Inject
     lateinit var collectionRepository: CollectionRepository
 
     @Inject
@@ -23,7 +27,7 @@ class DownloadShowTask(private val showId: Int): Task {
 
     override suspend fun execute() {
         val show = showsRepository.getShow(showId).await()
-        show?.let { it ->
+        show?.let {
             val posters = tvdbApi.imagesSingle(it.tvdbId, "poster").await()
             val covers = tvdbApi.imagesSingle(it.tvdbId, "fanart").await()
 
@@ -47,13 +51,7 @@ class DownloadShowTask(private val showId: Int): Task {
 
             val seasons = showsRepository.getSeasons(newShow.traktId).await()
             Timber.d("seasons: $seasons")
-            val nextEpisodeState = showsRepository.fetchNextEpisode(newShow.traktId)
-            if (nextEpisodeState is NextEpisodeSuccess) {
-                val nextEpisode =nextEpisodeState.nextEpisode
-                val entry = showsRepository.mapToNextEpisodeEntry(nextEpisode, showId, collectionId.toInt())
-                showsRepository.saveNextEpisode(entry)
-                Timber.d("next episode: $entry")
-            }
+            nextEpisodesRepository.fetchNextEpisode(newShow.traktId)
         }
     }
 }
