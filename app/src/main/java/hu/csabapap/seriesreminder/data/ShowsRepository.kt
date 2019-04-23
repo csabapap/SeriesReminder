@@ -115,10 +115,6 @@ class ShowsRepository @Inject constructor(private val traktApi: TraktApi,
         return srShow
     }
 
-    fun updateShow(show: SRShow) {
-        showDao.updateShow(show)
-    }
-
     fun getSeasons(showId: Int): Single<List<SRSeason>> {
         return seasonsRepository.getSeasons(showId)
     }

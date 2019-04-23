@@ -17,7 +17,7 @@ class DbModule {
     @Provides
     fun providesDatabase(context: Context) : SRDatabase {
         return Room.databaseBuilder(context, SRDatabase::class.java, "series_reminder.db")
-                .addMigrations(MIGRATION_1_2, MIGRATION_2_3)
+                .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_4_5)
                 .fallbackToDestructiveMigration()
                 .build()
     }
@@ -70,6 +70,11 @@ class DbModule {
         return db.lastRequestDao()
     }
 
+    @Provides
+    fun providesNotificationsDao(db: SRDatabase): NotificationsDao {
+        return db.notificationsDao()
+    }
+
     companion object {
         val MIGRATION_1_2 = object : Migration(1,2) {
             override fun migrate(database: SupportSQLiteDatabase) {
@@ -91,6 +96,13 @@ class DbModule {
                 database.execSQL("CREATE TABLE IF NOT EXISTS `reminders` (`_id` INTEGER PRIMARY KEY AUTOINCREMENT, `show_id` INTEGER NOT NULL, `delay` INTEGER NOT NULL, FOREIGN KEY(`show_id`) REFERENCES `collection`(`show_id`) ON UPDATE CASCADE ON DELETE CASCADE )")
             }
 
+        }
+
+        val MIGRATION_4_5 = object : Migration(3,4) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.execSQL("CREATE TABLE IF NOT EXISTS `notifications` (`_id` INTEGER PRIMARY KEY AUTOINCREMENT, `show_id` INTEGER NOT NULL, `delay` INTEGER NOT NULL, FOREIGN KEY(`show_id`) REFERENCES `shows`(`trakt_id`) ON UPDATE CASCADE ON DELETE CASCADE )")
+                database.execSQL("DROP TABLE IF EXISTS `reminders`")
+            }
         }
     }
 }

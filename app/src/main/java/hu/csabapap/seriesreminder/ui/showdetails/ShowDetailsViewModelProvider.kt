@@ -4,16 +4,19 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import hu.csabapap.seriesreminder.data.CollectionRepository
 import hu.csabapap.seriesreminder.data.ShowsRepository
+import hu.csabapap.seriesreminder.data.repositories.notifications.NotificationsRepository
 import hu.csabapap.seriesreminder.utils.AppCoroutineDispatchers
 import javax.inject.Inject
 
 class ShowDetailsViewModelProvider @Inject constructor(
         private val showsRepository: ShowsRepository,
         private val collectionRepository: CollectionRepository,
+        private val notificationsRepository: NotificationsRepository,
         private val dispatchers: AppCoroutineDispatchers)
     : ViewModelProvider.NewInstanceFactory() {
 
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {
-        return ShowDetailsViewModel(showsRepository, collectionRepository, dispatchers) as T
+        return ShowDetailsViewModel(showsRepository, collectionRepository, notificationsRepository,
+                dispatchers) as T
     }
 }

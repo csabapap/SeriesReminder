@@ -1,14 +1,13 @@
 package hu.csabapap.seriesreminder.ui.showdetails
 
 import android.annotation.SuppressLint
-import android.content.res.ColorStateList
 import android.graphics.Bitmap
-import android.graphics.Color
 import android.graphics.drawable.BitmapDrawable
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import androidx.appcompat.app.AlertDialog
 import androidx.constraintlayout.motion.widget.MotionLayout
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
@@ -22,11 +21,13 @@ import dagger.android.support.DaggerAppCompatActivity
 import hu.csabapap.seriesreminder.BuildConfig
 import hu.csabapap.seriesreminder.R
 import hu.csabapap.seriesreminder.data.db.entities.SRShow
+import hu.csabapap.seriesreminder.data.db.entities.SrNotification
 import hu.csabapap.seriesreminder.data.network.getThumbnailUrl
 import hu.csabapap.seriesreminder.services.workers.ShowReminderWorker
 import hu.csabapap.seriesreminder.services.workers.SyncNextEpisodeWorker
 import hu.csabapap.seriesreminder.utils.Reminder
 import hu.csabapap.seriesreminder.utils.ShowDetails
+import hu.csabapap.seriesreminder.utils.readableDate
 import kotlinx.android.synthetic.main.activity_show_details.*
 import org.threeten.bp.OffsetDateTime
 import timber.log.Timber
@@ -44,7 +45,7 @@ class ShowDetailsActivity : DaggerAppCompatActivity() {
     private lateinit var workManager: WorkManager
 
     var showId: Int = -1
-    var isReminderCreatable = false
+    private var isReminderCreatable = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -73,17 +74,6 @@ class ShowDetailsActivity : DaggerAppCompatActivity() {
             @SuppressLint("RestrictedApi")
             override fun onTransitionChange(p0: MotionLayout?, p1: Int, p2: Int, p3: Float) {
                 Timber.d("p3: $p3")
-                if (poster.y <= toolbar.height + toolbar.y) {
-                    poster.visibility = View.GONE
-                    fab_reminder.hide()
-                 } else {
-                    poster.visibility = View.VISIBLE
-                    if (isReminderCreatable) {
-                        fab_reminder.show()
-                    } else {
-                        fab_reminder.visibility = View.GONE
-                    }
-                }
             }
 
             @SuppressLint("RestrictedApi")
@@ -91,15 +81,9 @@ class ShowDetailsActivity : DaggerAppCompatActivity() {
                 when (id) {
                     R.id.collapsed -> {
                         poster.visibility = View.GONE
-                        fab_reminder.visibility = View.GONE
                     }
                     R.id.expanded -> {
                         poster.visibility = View.VISIBLE
-                        if (isReminderCreatable) {
-                            fab_reminder.visibility = View.VISIBLE
-                        } else {
-                            fab_reminder.visibility = View.GONE
-                        }
                     }
                 }
             }
@@ -107,13 +91,29 @@ class ShowDetailsActivity : DaggerAppCompatActivity() {
         })
 
         viewModel.getShow(showId)
+        viewModel.getNotifications(showId)
 
         viewModel.detailsUiState.observe(this, Observer { state ->
             updateUi(state)
         })
 
-        fab_reminder.setOnClickListener {
-            viewModel.createReminder(showId)
+        add_notification_button.setOnClickListener {
+//            viewModel.createReminder(showId)
+            val builder = AlertDialog.Builder(this)
+            //alt_bld.setIcon(R.drawable.icon);
+            builder.setTitle("Select a Group Name");
+            var notificationTime = 0
+            builder.setSingleChoiceItems(arrayOf("30 minutes", "1 hour"), -1) { _, which ->
+                Timber.d("positions: $which")
+                notificationTime = when (which) {
+                    0 -> 30 * 60 * 1000
+                    1 -> 60 * 60 * 1000
+                    else -> 0
+                }
+            }
+            builder.setPositiveButton("Create Reminder") { _, _ -> viewModel.createReminder(showId, notificationTime) }
+            builder.setNegativeButton("Cancel", null)
+            builder.create().show()
         }
     }
 
@@ -152,8 +152,8 @@ class ShowDetailsActivity : DaggerAppCompatActivity() {
             toolbar.backgroundColorAlpha = 0
             toolbar.navigationIcon?.setTint(titleTextColor)
             cover.setBackgroundColor(rgb)
-            fab_reminder.backgroundTintList = ColorStateList.valueOf(Color.WHITE)
-            fab_reminder.imageTintList = ColorStateList.valueOf(rgb)
+//            fab_reminder.backgroundTintList = ColorStateList.valueOf(Color.WHITE)
+//            fab_reminder.imageTintList = ColorStateList.valueOf(rgb)
             cover_overflow.setBackgroundColor(rgb)
         }
     }
@@ -171,13 +171,7 @@ class ShowDetailsActivity : DaggerAppCompatActivity() {
                 getThumbnailUrl(it.posterThumb)
             }
 
-            if (it.status == "returning series") {
-                isReminderCreatable = true
-                fab_reminder.visibility = View.VISIBLE
-            } else {
-                isReminderCreatable = false
-                fab_reminder.visibility = View.GONE
-            }
+            isReminderCreatable = it.status == "returning series"
 
             Picasso.with(this)
                     .load(posterUrl)
@@ -226,7 +220,20 @@ class ShowDetailsActivity : DaggerAppCompatActivity() {
         when(state) {
             is ShowDetailsState.Show -> displayShow(state.show)
             is ShowDetailsState.Reminder -> setAlarm(state.show, state.airDate)
+            is ShowDetailsState.AddNotificationButton -> displayAddNotificationButton()
+            is ShowDetailsState.Notification -> displayNotification(state.notification)
         }
+    }
+
+    private fun displayNotification(notification: SrNotification) {
+        add_notification_button.visibility = View.GONE
+        active_notification_group.visibility = View.VISIBLE
+        notification_text.text = "${readableDate(notification.delay)} before"
+    }
+
+    private fun displayAddNotificationButton() {
+        add_notification_button.visibility = View.VISIBLE
+        active_notification_group.visibility = View.GONE
     }
 
     @SuppressLint("RestrictedApi")

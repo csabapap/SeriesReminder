@@ -5,6 +5,8 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import hu.csabapap.seriesreminder.data.CollectionRepository
 import hu.csabapap.seriesreminder.data.ShowsRepository
+import hu.csabapap.seriesreminder.data.db.entities.SrNotification
+import hu.csabapap.seriesreminder.data.repositories.notifications.NotificationsRepository
 import hu.csabapap.seriesreminder.utils.AppCoroutineDispatchers
 import hu.csabapap.seriesreminder.utils.getDateTimeForNextAir
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -20,6 +22,7 @@ import timber.log.Timber
 
 class ShowDetailsViewModel(private val showsRepository: ShowsRepository,
                            private val collectionRepository: CollectionRepository,
+                           private val notificationsRepository: NotificationsRepository,
                            private val dispatchers: AppCoroutineDispatchers): ViewModel() {
 
     private val job = Job()
@@ -40,11 +43,11 @@ class ShowDetailsViewModel(private val showsRepository: ShowsRepository,
                 }, Timber::e)
     }
 
-    fun createReminder(showId: Int) {
+    fun createReminder(showId: Int, aheadOfTime: Int) {
         scope.launch(dispatchers.io) {
             val show = showsRepository.getShow(showId).await()
-            // TODO add reminder to db
-
+            val notification = SrNotification(null, showId, aheadOfTime)
+            notificationsRepository.createNotification(notification)
             val day = show!!.airingTime.day
             val hours = show.airingTime.time
             val airDate = getDateTimeForNextAir(OffsetDateTime.now(ZoneOffset.UTC), day, hours)
@@ -62,6 +65,19 @@ class ShowDetailsViewModel(private val showsRepository: ShowsRepository,
     fun removeFromCollection(showId: Int) {
         scope.launch(dispatchers.io) {
             collectionRepository.remove(showId)
+        }
+    }
+
+    fun getNotifications(showId: Int) {
+        scope.launch(dispatchers.io) {
+            val notification = notificationsRepository.getNotification(showId)
+
+            withContext(dispatchers.main) {
+                _detailsUiState.value = when (notification != null) {
+                    true ->  ShowDetailsState.Notification(notification)
+                    else -> ShowDetailsState.AddNotificationButton
+                }
+            }
         }
     }
 }

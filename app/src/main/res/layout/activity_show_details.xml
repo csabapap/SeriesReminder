@@ -24,9 +24,55 @@
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:orientation="vertical"
             android:padding="16dp">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/add_notification_button"
+                style="@style/Widget.MaterialComponents.Button.TextButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:gravity="start|center_vertical"
+                android:text="Add notification"
+                app:icon="@drawable/ic_notifications_black_24dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <ImageView
+                android:id="@+id/notification_icon"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="12dp"
+                android:layout_marginBottom="8dp"
+                android:src="@drawable/ic_notifications_black_24dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/notification_text"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="8dp"
+                app:layout_constraintBottom_toBottomOf="@+id/notification_icon"
+                app:layout_constraintEnd_toStartOf="@+id/delete_notification"
+                app:layout_constraintStart_toEndOf="@id/notification_icon"
+                app:layout_constraintTop_toTopOf="@id/notification_icon"
+                tools:text="x hours before " />
+
+            <ImageView
+                android:id="@+id/delete_notification"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:src="@drawable/ic_close_black_24dp"
+                app:layout_constraintBottom_toBottomOf="@+id/notification_icon"
+                app:layout_constraintEnd_toEndOf="@+id/add_notification_button"
+                app:layout_constraintTop_toTopOf="@id/notification_icon" />
 
             <TextView
                 android:id="@+id/overview_label"
@@ -37,32 +83,39 @@
                 android:textSize="16sp"
                 android:textStyle="bold"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toBottomOf="@id/notifications_barrier" />
 
             <TextView
                 android:id="@+id/overview"
                 android:layout_width="match_parent"
-                android:layout_height="0dp"
+                android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
-                android:ellipsize="end"
-                android:maxLines="4"
+                android:layout_marginBottom="8dp"
                 android:textSize="16sp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/overview_label"
                 tools:text="@string/sample_text" />
 
-            <Button
-                android:id="@+id/show_more"
-                style="@style/Base.Widget.AppCompat.Button.Borderless.Colored"
+            <androidx.constraintlayout.widget.Barrier
+                android:id="@+id/notifications_barrier"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:text="read more"
-                android:visibility="gone"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/overview" />
+                app:barrierDirection="bottom"
+                app:constraint_referenced_ids="delete_notification,notification_icon,
+                notification_text,add_notification_button"/>
+
+            <!--<Button-->
+            <!--android:id="@+id/show_more"-->
+            <!--style="@style/Base.Widget.AppCompat.Button.Borderless.Colored"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_gravity="center_horizontal"-->
+            <!--android:text="read more"-->
+            <!--android:visibility="gone"-->
+            <!--app:layout_constraintEnd_toEndOf="parent"-->
+            <!--app:layout_constraintStart_toStartOf="parent"-->
+            <!--app:layout_constraintTop_toBottomOf="@id/overview" />-->
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -154,16 +207,10 @@
         android:layout_height="wrap_content"
         app:constraint_referenced_ids="status,air_daytime" />
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/fab_reminder"
+    <androidx.constraintlayout.widget.Group
+        android:id="@+id/active_notification_group"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="16dp"
-        android:layout_marginBottom="8dp"
-        android:clickable="true"
-        app:layout_constraintBottom_toTopOf="@+id/nestedScrollView"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/nestedScrollView"
-        app:srcCompat="@drawable/ic_notifications_black_24dp" />
+        app:constraint_referenced_ids="notification_icon,notification_text,delete_notification"/>
 
 </androidx.constraintlayout.motion.widget.MotionLayout>
