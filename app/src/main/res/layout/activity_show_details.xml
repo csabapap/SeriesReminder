@@ -23,6 +23,7 @@
         app:layout_constraintTop_toBottomOf="@+id/title_background">
 
         <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/show_content"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical"
@@ -78,12 +79,12 @@
                 android:id="@+id/overview_label"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="15dp"
-                android:text="Overview"
+                android:layout_marginTop="16dp"
+                android:text="@string/overview_label"
                 android:textSize="16sp"
                 android:textStyle="bold"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/notifications_barrier" />
+                app:layout_constraintTop_toBottomOf="@+id/separator" />
 
             <TextView
                 android:id="@+id/overview"
@@ -104,6 +105,18 @@
                 app:barrierDirection="bottom"
                 app:constraint_referenced_ids="delete_notification,notification_icon,
                 notification_text,add_notification_button"/>
+
+            <View
+                android:id="@+id/separator"
+                android:layout_width="wrap_content"
+                android:layout_height="1px"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="16dp"
+                android:background="#d0d0d0"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@id/notifications_barrier" />
 
             <!--<Button-->
             <!--android:id="@+id/show_more"-->
@@ -211,6 +224,7 @@
         android:id="@+id/active_notification_group"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:constraint_referenced_ids="notification_icon,notification_text,delete_notification"/>
+        app:constraint_referenced_ids="notification_icon,notification_text,delete_notification"
+        tools:visibility="gone" />
 
 </androidx.constraintlayout.motion.widget.MotionLayout>

@@ -228,12 +228,14 @@ class ShowDetailsActivity : DaggerAppCompatActivity() {
     private fun displayNotification(notification: SrNotification) {
         add_notification_button.visibility = View.GONE
         active_notification_group.visibility = View.VISIBLE
+        active_notification_group.updatePreLayout(show_content)
         notification_text.text = "${readableDate(notification.delay)} before"
     }
 
     private fun displayAddNotificationButton() {
         add_notification_button.visibility = View.VISIBLE
         active_notification_group.visibility = View.GONE
+        active_notification_group.updatePreLayout(show_content)
     }
 
     @SuppressLint("RestrictedApi")
