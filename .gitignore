@@ -1,4 +1,8 @@
 /build
+
+# apks
+/app/release
+
 /captures
 /projectFilesBackup
 
@@ -35,3 +39,5 @@
 # Log Files
 *.log
 .externalNativeBuild
+
+google-services.json
