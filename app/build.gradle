@@ -10,12 +10,16 @@ apply plugin: 'com.diffplug.gradle.spotless'
 
 apply plugin: 'com.getkeepsafe.dexcount'
 
+apply plugin: 'io.fabric'
+
 spotless {
     kotlin {
         target "**/*.kt"
         ktlint("0.10.0")
     }
 }
+
+def appVersionCode = propOrDef('series_reminder.version_code', "1") as Integer
 
 android {
     compileSdkVersion 28
@@ -27,8 +31,8 @@ android {
         applicationId "hu.csabapap.seriesreminder"
         minSdkVersion 21
         targetSdkVersion 28
-        versionCode 1
-        versionName "0.1"
+        versionCode appVersionCode
+        versionName "0.1." + appVersionCode
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
         buildConfigField "String", "TRAKT_CLIENT_ID", "\"" + propOrDef("SR_TRAKT_CLIENT_ID", "") + "\""
@@ -48,6 +52,10 @@ android {
     }
 
     buildTypes {
+        debug {
+            applicationIdSuffix ".debug"
+        }
+
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
@@ -139,4 +147,10 @@ dependencies {
 
     debugImplementation "com.facebook.stetho:stetho:1.5.0"
     implementation 'com.jakewharton.timber:timber:4.7.1'
+
+    implementation 'com.google.firebase:firebase-core:16.0.8'
+    implementation 'com.crashlytics.sdk.android:crashlytics:2.9.9'
 }
+
+apply plugin: 'com.google.gms.google-services'
+

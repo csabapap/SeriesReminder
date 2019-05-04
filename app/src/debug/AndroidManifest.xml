@@ -4,7 +4,10 @@
 
     <application
         android:name="hu.csabapap.seriesreminder.DebugSRApplication"
-        tools:replace="android:name"
-        />
+        tools:replace="android:name">
+        <meta-data
+            android:name="firebase_crashlytics_collection_enabled"
+            android:value="false" />
+    </application>
 
 </manifest>
