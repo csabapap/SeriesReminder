@@ -54,4 +54,6 @@
     </string-array>
 
     <string name="settings">Settings</string>
+    <string name="notification_created">Notification created</string>
+    <string name="notification_deleted">Notification deleted</string>
 </resources>

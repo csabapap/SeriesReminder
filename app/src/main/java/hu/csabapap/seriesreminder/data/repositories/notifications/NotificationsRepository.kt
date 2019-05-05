@@ -10,5 +10,11 @@ class NotificationsRepository @Inject constructor(private val notificationsDao: 
         notificationsDao.insert(notification)
     }
 
-    suspend fun getNotification(showId: Int) = notificationsDao.getNotification(showId)
+    fun getNotification(showId: Int) = notificationsDao.getNotification(showId)
+
+    fun deleteNotification(notification: SrNotification) = notificationsDao.delete(notification)
+
+    fun update(notification: SrNotification) {
+        notificationsDao.update(notification)
+    }
 }

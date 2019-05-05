@@ -12,27 +12,19 @@ import androidx.constraintlayout.motion.widget.MotionLayout
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.palette.graphics.Palette
-import androidx.work.Data
-import androidx.work.OneTimeWorkRequest
 import androidx.work.WorkManager
+import com.google.android.material.snackbar.Snackbar
 import com.squareup.picasso.Callback
 import com.squareup.picasso.Picasso
 import dagger.android.support.DaggerAppCompatActivity
-import hu.csabapap.seriesreminder.BuildConfig
 import hu.csabapap.seriesreminder.R
 import hu.csabapap.seriesreminder.data.db.entities.SRShow
 import hu.csabapap.seriesreminder.data.db.entities.SrNotification
 import hu.csabapap.seriesreminder.data.network.getThumbnailUrl
-import hu.csabapap.seriesreminder.services.workers.ShowReminderWorker
-import hu.csabapap.seriesreminder.services.workers.SyncNextEpisodeWorker
-import hu.csabapap.seriesreminder.utils.Reminder
 import hu.csabapap.seriesreminder.utils.ShowDetails
 import hu.csabapap.seriesreminder.utils.readableDate
 import kotlinx.android.synthetic.main.activity_show_details.*
-import org.threeten.bp.OffsetDateTime
 import timber.log.Timber
-import java.util.*
-import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 import javax.inject.Named
 
@@ -111,9 +103,13 @@ class ShowDetailsActivity : DaggerAppCompatActivity() {
                     else -> 0
                 }
             }
-            builder.setPositiveButton("Create Reminder") { _, _ -> viewModel.createReminder(showId, notificationTime) }
+            builder.setPositiveButton("Create Reminder") { _, _ -> viewModel.createNotification(showId, notificationTime) }
             builder.setNegativeButton("Cancel", null)
             builder.create().show()
+        }
+
+        delete_notification.setOnClickListener {
+            viewModel.removeNotification(showId)
         }
     }
 
@@ -219,7 +215,8 @@ class ShowDetailsActivity : DaggerAppCompatActivity() {
     private fun updateUi(state: ShowDetailsState) {
         when(state) {
             is ShowDetailsState.Show -> displayShow(state.show)
-            is ShowDetailsState.Reminder -> setAlarm(state.show, state.airDate)
+            is ShowDetailsState.NotificationCreated -> notificationCreated()
+            is ShowDetailsState.NotificationDeleted -> notificationDeleted()
             is ShowDetailsState.AddNotificationButton -> displayAddNotificationButton()
             is ShowDetailsState.Notification -> displayNotification(state.notification)
         }
@@ -238,32 +235,17 @@ class ShowDetailsActivity : DaggerAppCompatActivity() {
         active_notification_group.updatePreLayout(show_content)
     }
 
-    @SuppressLint("RestrictedApi")
-    private fun setAlarm(show: SRShow, airDateTime: OffsetDateTime) {
-        val calendar = Calendar.getInstance()
-        calendar.set(Calendar.DAY_OF_MONTH, airDateTime.dayOfMonth)
-        calendar.set(Calendar.HOUR_OF_DAY, airDateTime.hour)
-        calendar.set(Calendar.MINUTE, airDateTime.minute)
-        calendar.set(Calendar.SECOND, 0)
-        val duration = when(BuildConfig.DEBUG) {
-            true -> 5000
-            false -> calendar.timeInMillis - System.currentTimeMillis()
-        }
-        val request = OneTimeWorkRequest.Builder(ShowReminderWorker::class.java)
-                .setInitialDelay(duration, TimeUnit.MILLISECONDS)
-                .setInputData(
-                        Data.Builder()
-                                .put(Reminder.SHOW_ID, show.traktId)
-                                .put(Reminder.SHOW_TITLE, show.title)
-                                .build())
-                .build()
-        val getNextEpisodeRequest = OneTimeWorkRequest.Builder(SyncNextEpisodeWorker::class.java)
-                .setInputData(Data.Builder()
-                        .put(Reminder.SHOW_ID, show.traktId)
-                        .build())
-                .build()
-        workManager.beginWith(request)
-                .then(getNextEpisodeRequest)
-                .enqueue()
+    private fun notificationCreated() {
+        viewModel.getNotifications(showId)
+        displaySnack(getString(R.string.notification_created))
+    }
+
+    private fun notificationDeleted() {
+        displayAddNotificationButton()
+        displaySnack(getString(R.string.notification_deleted))
+    }
+
+    private fun displaySnack(message: String) {
+        Snackbar.make(motion_layout, message, Snackbar.LENGTH_SHORT).show()
     }
 }
