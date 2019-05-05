@@ -21,6 +21,9 @@ spotless {
 
 def appVersionCode = propOrDef('series_reminder.version_code', "1") as Integer
 
+def traktClientId = propOrDef('series_reminder.trakt_client_id', "")
+def tvdbClientId = propOrDef('series_reminder.tvdb_client_id', "")
+
 android {
     compileSdkVersion 28
     dataBinding {
@@ -35,8 +38,8 @@ android {
         versionName "0.1." + appVersionCode
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
-        buildConfigField "String", "TRAKT_CLIENT_ID", "\"" + propOrDef("SR_TRAKT_CLIENT_ID", "") + "\""
-        buildConfigField "String", "TVDB_CLIENT_ID", "\"" + propOrDef("SR_TVDB_CLIENT_ID", "") + "\""
+        buildConfigField "String", "TRAKT_CLIENT_ID", "\"" + traktClientId + "\""
+        buildConfigField "String", "TVDB_CLIENT_ID", "\"" + tvdbClientId + "\""
 
         javaCompileOptions {
             annotationProcessorOptions {
