@@ -14,7 +14,8 @@ import hu.csabapap.seriesreminder.data.db.entities.*
     (SRSeason::class),
     (SREpisode::class),
     (LastRequest::class),
-    SrNotification::class], version = 6, exportSchema = true)
+    SrNotification::class,
+    RelatedShow::class], version = 7, exportSchema = true)
 @TypeConverters(AiringTime::class, SRTypeConverters::class)
 abstract class SRDatabase : RoomDatabase(){
     abstract fun showDao() : SRShowDao
@@ -26,4 +27,5 @@ abstract class SRDatabase : RoomDatabase(){
     abstract fun episodesDao(): EpisodeDao
     abstract fun lastRequestDao(): LastRequestDao
     abstract fun notificationsDao(): NotificationsDao
+    abstract fun relatedShowsDao(): RelatedShowsDao
 }

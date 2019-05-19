@@ -11,6 +11,7 @@ import hu.csabapap.seriesreminder.data.states.EpisodeError
 import hu.csabapap.seriesreminder.data.states.EpisodeState
 import hu.csabapap.seriesreminder.data.states.EpisodeSuccess
 import io.reactivex.Single
+import kotlinx.coroutines.rx2.await
 import org.threeten.bp.OffsetDateTime
 import timber.log.Timber
 import javax.inject.Inject
@@ -91,7 +92,7 @@ class EpisodesRepository @Inject constructor(
 
     fun getNextEpisodes(limit: Int) = nextEpisodeDao.getNextEpisodes(limit)
 
-    fun getNextEpisodes() = nextEpisodeDao.getNextEpisodes()
+    suspend fun getNextEpisodes() = nextEpisodeDao.getNextEpisodes().await()
 
 
     fun getEpisodeInfoFromTvdb(tvdbId: Int) = tvdbApi.episode(tvdbId)

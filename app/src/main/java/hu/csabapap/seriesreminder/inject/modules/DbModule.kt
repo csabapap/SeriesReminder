@@ -17,7 +17,8 @@ class DbModule {
     @Provides
     fun providesDatabase(context: Context) : SRDatabase {
         return Room.databaseBuilder(context, SRDatabase::class.java, "series_reminder.db")
-                .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_4_5, MIGRATION_5_6)
+                .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_4_5, MIGRATION_5_6,
+                        MIGRATION_6_7)
                 .fallbackToDestructiveMigration()
                 .build()
     }
@@ -108,6 +109,12 @@ class DbModule {
         val MIGRATION_5_6 = object: Migration(5, 6) {
             override fun migrate(database: SupportSQLiteDatabase) {
                 database.execSQL("ALTER TABLE `notifications` ADD COLUMN worker_id TEXT")
+            }
+        }
+
+        val MIGRATION_6_7 = object: Migration(6, 7) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.execSQL("CREATE TABLE IF NOT EXISTS `related_shows` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `related_id` INTEGER NOT NULL, `relates_to` INTEGER NOT NULL, FOREIGN KEY(`relates_to`) REFERENCES `shows`(`trakt_id`) ON UPDATE NO ACTION ON DELETE NO ACTION , FOREIGN KEY(`related_id`) REFERENCES `shows`(`trakt_id`) ON UPDATE NO ACTION ON DELETE NO ACTION )")
             }
         }
     }
