@@ -9,5 +9,8 @@ import hu.csabapap.seriesreminder.data.db.entities.RelatedShow
 interface RelatedShowsDao {
 
     @Insert
-    fun insert(vararg relatedShows: RelatedShow)
+    fun insert(relatedShows: RelatedShow)
+
+    @Insert
+    fun insert(relatedShows: List<RelatedShow>)
 }

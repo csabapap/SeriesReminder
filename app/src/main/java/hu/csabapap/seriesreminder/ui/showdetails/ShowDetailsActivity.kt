@@ -84,6 +84,7 @@ class ShowDetailsActivity : DaggerAppCompatActivity() {
 
         viewModel.getShow(showId)
         viewModel.getNotifications(showId)
+        viewModel.refreshRelatedShows(showId)
 
         viewModel.detailsUiState.observe(this, Observer { state ->
             updateUi(state)

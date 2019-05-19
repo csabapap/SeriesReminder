@@ -76,6 +76,11 @@ class DbModule {
         return db.notificationsDao()
     }
 
+    @Provides
+    fun providesRelatedShowsDao(db: SRDatabase): RelatedShowsDao {
+        return db.relatedShowsDao()
+    }
+
     companion object {
         val MIGRATION_1_2 = object : Migration(1,2) {
             override fun migrate(database: SupportSQLiteDatabase) {

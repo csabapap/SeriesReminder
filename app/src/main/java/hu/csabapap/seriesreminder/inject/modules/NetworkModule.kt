@@ -6,6 +6,7 @@ import dagger.Module
 import dagger.Provides
 import hu.csabapap.seriesreminder.BuildConfig
 import hu.csabapap.seriesreminder.data.ApplicationJsonAdapterFactory
+import hu.csabapap.seriesreminder.data.network.services.RelatedShowsService
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -61,4 +62,8 @@ class NetworkModule {
                 .build()
     }
 
+    @Provides
+    fun relatedShowsService(@Named("trakt") retrofit: Retrofit): RelatedShowsService {
+        return retrofit.create(RelatedShowsService::class.java)
+    }
 }

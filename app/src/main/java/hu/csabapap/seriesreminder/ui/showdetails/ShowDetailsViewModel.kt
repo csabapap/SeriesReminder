@@ -11,6 +11,7 @@ import hu.csabapap.seriesreminder.data.CollectionRepository
 import hu.csabapap.seriesreminder.data.ShowsRepository
 import hu.csabapap.seriesreminder.data.db.entities.SrNotification
 import hu.csabapap.seriesreminder.data.repositories.notifications.NotificationsRepository
+import hu.csabapap.seriesreminder.data.repositories.relatedshows.RelatedShowsRepository
 import hu.csabapap.seriesreminder.services.workers.ShowReminderWorker
 import hu.csabapap.seriesreminder.services.workers.SyncNextEpisodeWorker
 import hu.csabapap.seriesreminder.utils.AppCoroutineDispatchers
@@ -32,6 +33,7 @@ import java.util.concurrent.TimeUnit
 class ShowDetailsViewModel(private val showsRepository: ShowsRepository,
                            private val collectionRepository: CollectionRepository,
                            private val notificationsRepository: NotificationsRepository,
+                           private val relatedShowsRepository: RelatedShowsRepository,
                            private val workManager: WorkManager,
                            private val dispatchers: AppCoroutineDispatchers): ViewModel() {
 
@@ -130,6 +132,12 @@ class ShowDetailsViewModel(private val showsRepository: ShowsRepository,
             withContext(dispatchers.main) {
                 _detailsUiState.value = ShowDetailsState.NotificationDeleted
             }
+        }
+    }
+
+    fun refreshRelatedShows(id: Int) {
+        scope.launch(dispatchers.io) {
+            relatedShowsRepository.refreshRelatedShows(id)
         }
     }
 }
