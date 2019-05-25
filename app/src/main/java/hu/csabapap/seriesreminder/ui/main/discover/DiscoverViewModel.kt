@@ -19,14 +19,11 @@ import javax.inject.Inject
 
 class DiscoverViewModel @Inject constructor(
         private val trendingShowsRepository: TrendingShowsRepository,
-        private val popularShowsRepository: PopularShowsRepository,
-        private val collectionRepository: CollectionRepository)
+        private val popularShowsRepository: PopularShowsRepository)
     : ViewModel() {
     private val disposables = CompositeDisposable()
-    val itemsLiveData = MutableLiveData<List<GridItem<Item>>>()
     private val loadTrendingShows = MutableLiveData<Boolean>()
     private val loadPopularShows = MutableLiveData<Boolean>()
-    val collectionLiveData = collectionRepository.getCollection()
 
     private val trendingShowsResult: LiveData<TrendingShowsResult> = Transformations.map(loadTrendingShows) {
         trendingShowsRepository.getTrendingShows(60)
@@ -37,11 +34,11 @@ class DiscoverViewModel @Inject constructor(
     }
 
     val trendingShows: LiveData<PagedList<TrendingGridItem>> = Transformations.switchMap(trendingShowsResult) {
-        it -> it.data
+        it.data
     }
 
     val popularShows: LiveData<PagedList<PopularGridItem>> = Transformations.switchMap(popularShowsResult) {
-        it -> it.data
+        it.data
     }
 
     fun getItems(type: Int) {
@@ -51,11 +48,11 @@ class DiscoverViewModel @Inject constructor(
         }
     }
 
-    fun loadTrendingShows() {
+    private fun loadTrendingShows() {
         loadTrendingShows.value = true
     }
 
-    fun loadPopularShows() {
+    private fun loadPopularShows() {
         loadPopularShows.value = true
     }
 

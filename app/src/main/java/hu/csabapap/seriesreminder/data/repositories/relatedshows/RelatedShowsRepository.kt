@@ -1,7 +1,9 @@
 package hu.csabapap.seriesreminder.data.repositories.relatedshows
 
+import androidx.lifecycle.LiveData
 import hu.csabapap.seriesreminder.data.ShowsRepository
 import hu.csabapap.seriesreminder.data.db.entities.RelatedShow
+import hu.csabapap.seriesreminder.data.db.relations.RelatedShowWithShow
 import kotlinx.coroutines.rx2.await
 import javax.inject.Inject
 
@@ -24,6 +26,14 @@ class RelatedShowsRepository @Inject constructor(
             RelatedShow(relatedId = it.ids.trakt, relatesTo = id)
         }
 
+        saveRelatedShows(relatedShows)
+    }
+
+    private fun saveRelatedShows(relatedShows: List<RelatedShow>) {
         localDataSource.save(relatedShows)
+    }
+
+    fun liveRelatedShows(showId: Int): LiveData<List<RelatedShowWithShow>> {
+        return localDataSource.liveEntries(showId)
     }
 }

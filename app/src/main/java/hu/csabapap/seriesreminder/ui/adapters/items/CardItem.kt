@@ -57,5 +57,5 @@ class UpcomingEpisodeCardItem(
     : CardItem(type, priority)
 
 enum class CardType{
-    TRENDING, POPULAR, UPCOMING_EPISODES, MY_SHOWS
+    TRENDING, POPULAR, UPCOMING_EPISODES, MY_SHOWS, RELATED_SHOWS
 }

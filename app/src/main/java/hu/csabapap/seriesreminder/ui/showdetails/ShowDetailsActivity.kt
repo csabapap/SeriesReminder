@@ -12,6 +12,9 @@ import androidx.constraintlayout.motion.widget.MotionLayout
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.palette.graphics.Palette
+import androidx.recyclerview.widget.DividerItemDecoration
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import androidx.work.WorkManager
 import com.google.android.material.snackbar.Snackbar
 import com.squareup.picasso.Callback
@@ -21,6 +24,9 @@ import hu.csabapap.seriesreminder.R
 import hu.csabapap.seriesreminder.data.db.entities.SRShow
 import hu.csabapap.seriesreminder.data.db.entities.SrNotification
 import hu.csabapap.seriesreminder.data.network.getThumbnailUrl
+import hu.csabapap.seriesreminder.ui.adapters.DiscoverPreviewAdapter
+import hu.csabapap.seriesreminder.ui.adapters.items.CardItem
+import hu.csabapap.seriesreminder.ui.adapters.items.ShowItem
 import hu.csabapap.seriesreminder.utils.ShowDetails
 import hu.csabapap.seriesreminder.utils.readableDate
 import kotlinx.android.synthetic.main.activity_show_details.*
@@ -35,6 +41,8 @@ class ShowDetailsActivity : DaggerAppCompatActivity() {
 
     private lateinit var viewModel: ShowDetailsViewModel
     private lateinit var workManager: WorkManager
+
+    lateinit var adapter: DiscoverPreviewAdapter
 
     var showId: Int = -1
     private var isReminderCreatable = false
@@ -61,11 +69,19 @@ class ShowDetailsActivity : DaggerAppCompatActivity() {
         }
         supportActionBar?.title = ""
 
+        adapter = DiscoverPreviewAdapter(CardItem.TRENDING_CARD_TYPE)
+        related_shows.adapter = adapter
+        val layoutManager = related_shows.layoutManager as LinearLayoutManager
+        layoutManager.orientation = RecyclerView.HORIZONTAL
+        val dividerItemDecoration = DividerItemDecoration(this, layoutManager.orientation)
+        dividerItemDecoration.setDrawable(this.getDrawable(R.drawable.vertical_separator))
+        related_shows.addItemDecoration(dividerItemDecoration)
+
         motion_layout.setTransitionListener(object : MotionLayout.TransitionListener {
 
             @SuppressLint("RestrictedApi")
             override fun onTransitionChange(p0: MotionLayout?, p1: Int, p2: Int, p3: Float) {
-                Timber.d("p3: $p3")
+
             }
 
             @SuppressLint("RestrictedApi")
@@ -85,6 +101,11 @@ class ShowDetailsActivity : DaggerAppCompatActivity() {
         viewModel.getShow(showId)
         viewModel.getNotifications(showId)
         viewModel.refreshRelatedShows(showId)
+        viewModel.observeRelatedShows(showId).observe(this, Observer {
+            if (it.isNotEmpty()) {
+                displayRelatedShows(it)
+            }
+        })
 
         viewModel.detailsUiState.observe(this, Observer { state ->
             updateUi(state)
@@ -220,6 +241,7 @@ class ShowDetailsActivity : DaggerAppCompatActivity() {
             is ShowDetailsState.NotificationDeleted -> notificationDeleted()
             is ShowDetailsState.AddNotificationButton -> displayAddNotificationButton()
             is ShowDetailsState.Notification -> displayNotification(state.notification)
+            is ShowDetailsState.RelatedShows -> displayRelatedShows(state.relatedShowItems)
         }
     }
 
@@ -248,5 +270,12 @@ class ShowDetailsActivity : DaggerAppCompatActivity() {
 
     private fun displaySnack(message: String) {
         Snackbar.make(motion_layout, message, Snackbar.LENGTH_SHORT).show()
+    }
+
+    private fun displayRelatedShows(relatedShows: List<ShowItem>) {
+        Timber.d("display related shows, nmb of related shows: ${relatedShows.size}")
+        adapter.updateItems(relatedShows)
+        related_shows_label.visibility = View.VISIBLE
+        related_shows.visibility = View.VISIBLE
     }
 }

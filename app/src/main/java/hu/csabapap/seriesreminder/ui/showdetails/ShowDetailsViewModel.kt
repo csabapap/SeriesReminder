@@ -2,6 +2,7 @@ package hu.csabapap.seriesreminder.ui.showdetails
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.Transformations
 import androidx.lifecycle.ViewModel
 import androidx.work.Data
 import androidx.work.OneTimeWorkRequest
@@ -12,8 +13,10 @@ import hu.csabapap.seriesreminder.data.ShowsRepository
 import hu.csabapap.seriesreminder.data.db.entities.SrNotification
 import hu.csabapap.seriesreminder.data.repositories.notifications.NotificationsRepository
 import hu.csabapap.seriesreminder.data.repositories.relatedshows.RelatedShowsRepository
+import hu.csabapap.seriesreminder.extensions.distinctUntilChanged
 import hu.csabapap.seriesreminder.services.workers.ShowReminderWorker
 import hu.csabapap.seriesreminder.services.workers.SyncNextEpisodeWorker
+import hu.csabapap.seriesreminder.ui.adapters.items.ShowItem
 import hu.csabapap.seriesreminder.utils.AppCoroutineDispatchers
 import hu.csabapap.seriesreminder.utils.Reminder
 import hu.csabapap.seriesreminder.utils.getDateTimeForNextAir
@@ -35,7 +38,7 @@ class ShowDetailsViewModel(private val showsRepository: ShowsRepository,
                            private val notificationsRepository: NotificationsRepository,
                            private val relatedShowsRepository: RelatedShowsRepository,
                            private val workManager: WorkManager,
-                           private val dispatchers: AppCoroutineDispatchers): ViewModel() {
+                           private val dispatchers: AppCoroutineDispatchers) : ViewModel() {
 
     private val job = Job()
     private val scope = CoroutineScope(dispatchers.main + job)
@@ -69,7 +72,7 @@ class ShowDetailsViewModel(private val showsRepository: ShowsRepository,
             calendar.set(Calendar.HOUR_OF_DAY, airDateTime.hour)
             calendar.set(Calendar.MINUTE, airDateTime.minute)
             calendar.set(Calendar.SECOND, 0)
-            val duration = when(BuildConfig.DEBUG) {
+            val duration = when (BuildConfig.DEBUG) {
                 true -> 5000
                 false -> calendar.timeInMillis - System.currentTimeMillis()
             }
@@ -115,7 +118,7 @@ class ShowDetailsViewModel(private val showsRepository: ShowsRepository,
 
             withContext(dispatchers.main) {
                 _detailsUiState.value = when (notification != null) {
-                    true ->  ShowDetailsState.Notification(notification)
+                    true -> ShowDetailsState.Notification(notification)
                     else -> ShowDetailsState.AddNotificationButton
                 }
             }
@@ -139,5 +142,19 @@ class ShowDetailsViewModel(private val showsRepository: ShowsRepository,
         scope.launch(dispatchers.io) {
             relatedShowsRepository.refreshRelatedShows(id)
         }
+    }
+
+    fun observeRelatedShows(showId: Int): LiveData<List<ShowItem>> {
+        return Transformations.map(relatedShowsRepository.liveRelatedShows(showId)) {
+            it.map itemMapper@ { relatedShow ->
+                val srShow = relatedShow.show!!
+                return@itemMapper ShowItem(srShow.traktId,
+                        srShow.tvdbId,
+                        srShow.title,
+                        srShow.posterThumb,
+                        false)
+            }
+        }
+                .distinctUntilChanged()
     }
 }
