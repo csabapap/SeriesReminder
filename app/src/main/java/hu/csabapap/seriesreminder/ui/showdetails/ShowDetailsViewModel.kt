@@ -148,11 +148,12 @@ class ShowDetailsViewModel(private val showsRepository: ShowsRepository,
         return Transformations.map(relatedShowsRepository.liveRelatedShows(showId)) {
             it.map itemMapper@ { relatedShow ->
                 val srShow = relatedShow.show!!
+                val inCollection = relatedShow.inCollection
                 return@itemMapper ShowItem(srShow.traktId,
                         srShow.tvdbId,
                         srShow.title,
                         srShow.posterThumb,
-                        false)
+                        inCollection)
             }
         }
                 .distinctUntilChanged()

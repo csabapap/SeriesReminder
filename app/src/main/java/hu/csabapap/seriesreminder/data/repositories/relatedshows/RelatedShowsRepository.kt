@@ -5,6 +5,7 @@ import hu.csabapap.seriesreminder.data.ShowsRepository
 import hu.csabapap.seriesreminder.data.db.entities.RelatedShow
 import hu.csabapap.seriesreminder.data.db.relations.RelatedShowWithShow
 import kotlinx.coroutines.rx2.await
+import timber.log.Timber
 import javax.inject.Inject
 
 class RelatedShowsRepository @Inject constructor(
@@ -15,15 +16,17 @@ class RelatedShowsRepository @Inject constructor(
     suspend fun refreshRelatedShows(id: Int) {
         val remoteRelatedShows = remoteDataSource.relatedShows(id).await()
 
+        val relatedShows = mutableListOf<RelatedShow>()
         for (remoteRelatedShow in remoteRelatedShows) {
-            val show = showsRepository.getShowWithImages(remoteRelatedShow.ids.trakt, remoteRelatedShow.ids.tvdb).await()
-            show?.let {
-                showsRepository.insertShow(it)
+            try {
+                val show = showsRepository.getShowWithImages(remoteRelatedShow.ids.trakt, remoteRelatedShow.ids.tvdb).await()
+                show?.let {
+                    showsRepository.insertShow(it)
+                }
+                relatedShows.add(RelatedShow(relatedId = remoteRelatedShow.ids.trakt, relatesTo = id))
+            } catch (e: Throwable) {
+                Timber.e(e)
             }
-        }
-
-        val relatedShows = remoteRelatedShows.map {
-            RelatedShow(relatedId = it.ids.trakt, relatesTo = id)
         }
 
         saveRelatedShows(relatedShows)
