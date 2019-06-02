@@ -6,7 +6,6 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.*
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.os.bundleOf
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProviders
@@ -20,11 +19,9 @@ import hu.csabapap.seriesreminder.ui.adapters.HomeCardsAdapter
 import hu.csabapap.seriesreminder.ui.adapters.items.CardItem
 import hu.csabapap.seriesreminder.ui.adapters.items.DiscoverCardItem
 import hu.csabapap.seriesreminder.ui.adapters.items.UpcomingEpisodeCardItem
-import hu.csabapap.seriesreminder.ui.addshow.AddShowActivity
 import hu.csabapap.seriesreminder.ui.search.SearchActivity
 import hu.csabapap.seriesreminder.ui.settings.SettingsActivity
-import hu.csabapap.seriesreminder.ui.showdetails.ShowDetailsActivity
-import hu.csabapap.seriesreminder.utils.ShowDetails
+import hu.csabapap.seriesreminder.utils.Collectible
 import kotlinx.android.synthetic.main.fragment_home.*
 import timber.log.Timber
 import javax.inject.Inject
@@ -157,18 +154,9 @@ class HomeFragment : DaggerFragment(), DiscoverPreviewAdapter.PreviewShowListene
     }
 
     override fun onItemClick(traktId: Int, inCollection: Boolean) {
-        val intent = if (inCollection) {
-            Intent(activity, ShowDetailsActivity::class.java)
-                    .apply {
-                        putExtras(bundleOf(ShowDetails.EXTRA_SHOW_ID to traktId))
-                    }
-        } else {
-            Intent(activity, AddShowActivity::class.java)
-                    .apply {
-                        putExtras(bundleOf("show_id" to traktId))
-                    }
+        activity?.let {
+            Collectible.start(it, traktId, inCollection)
         }
-        activity?.startActivity(intent)
     }
 
     override fun onMoreButtonClick(type: Int) {

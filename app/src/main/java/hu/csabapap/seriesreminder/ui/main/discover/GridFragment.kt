@@ -1,16 +1,15 @@
 package hu.csabapap.seriesreminder.ui.main.discover
 
 
-import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.ViewModelProviders
-import androidx.paging.PagedList
-import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.os.bundleOf
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.ViewModelProviders
+import androidx.paging.PagedList
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import dagger.android.support.DaggerFragment
@@ -18,10 +17,7 @@ import hu.csabapap.seriesreminder.R
 import hu.csabapap.seriesreminder.data.db.entities.GridItem
 import hu.csabapap.seriesreminder.data.db.entities.Item
 import hu.csabapap.seriesreminder.ui.adapters.GridAdapter
-import hu.csabapap.seriesreminder.ui.adapters.items.ShowItem
-import hu.csabapap.seriesreminder.ui.addshow.AddShowActivity
-import hu.csabapap.seriesreminder.ui.showdetails.ShowDetailsActivity
-import hu.csabapap.seriesreminder.utils.ShowDetails
+import hu.csabapap.seriesreminder.utils.Collectible
 import hu.csabapap.seriesreminder.utils.SpacingItemDecorator
 import kotlinx.android.synthetic.main.fragment_grid.*
 import javax.inject.Inject
@@ -82,14 +78,8 @@ class GridFragment : DaggerFragment(), GridAdapter.GridItemClickListener {
     }
 
     override fun onItemClick(traktId: Int, inCollection: Boolean) {
-        if (inCollection) {
-            val intent = Intent(activity, ShowDetailsActivity::class.java)
-            intent.putExtra(ShowDetails.EXTRA_SHOW_ID, traktId)
-            activity?.startActivity(intent)
-        } else {
-            val intent = Intent(activity, AddShowActivity::class.java)
-            intent.putExtra("show_id", traktId)
-            activity?.startActivity(intent)
+        activity?.let {
+            Collectible.start(it, traktId, inCollection)
         }
     }
 

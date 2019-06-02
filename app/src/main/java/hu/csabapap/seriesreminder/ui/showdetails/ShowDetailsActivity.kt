@@ -27,6 +27,7 @@ import hu.csabapap.seriesreminder.data.network.getThumbnailUrl
 import hu.csabapap.seriesreminder.ui.adapters.DiscoverPreviewAdapter
 import hu.csabapap.seriesreminder.ui.adapters.items.CardItem
 import hu.csabapap.seriesreminder.ui.adapters.items.ShowItem
+import hu.csabapap.seriesreminder.utils.Collectible
 import hu.csabapap.seriesreminder.utils.ShowDetails
 import hu.csabapap.seriesreminder.utils.readableDate
 import kotlinx.android.synthetic.main.activity_show_details.*
@@ -36,6 +37,7 @@ import javax.inject.Named
 
 
 class ShowDetailsActivity : DaggerAppCompatActivity() {
+
     @Inject @Named("ShowDetailsViewModelFactory")
     lateinit var viewModelProvider: ShowDetailsViewModelProvider
 
@@ -70,6 +72,11 @@ class ShowDetailsActivity : DaggerAppCompatActivity() {
         supportActionBar?.title = ""
 
         adapter = DiscoverPreviewAdapter(CardItem.TRENDING_CARD_TYPE)
+        adapter.listener = object:DiscoverPreviewAdapter.PreviewShowListener{
+            override fun onItemClick(traktId: Int, inCollection: Boolean) {
+                Collectible.start(this@ShowDetailsActivity, traktId, inCollection)
+            }
+        }
         related_shows.adapter = adapter
         val layoutManager = related_shows.layoutManager as LinearLayoutManager
         layoutManager.orientation = RecyclerView.HORIZONTAL

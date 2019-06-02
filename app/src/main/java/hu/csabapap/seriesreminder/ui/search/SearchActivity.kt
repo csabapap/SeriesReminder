@@ -22,8 +22,6 @@ import hu.csabapap.seriesreminder.data.models.SrSearchResult
 import hu.csabapap.seriesreminder.services.SyncService
 import hu.csabapap.seriesreminder.tasks.DownloadShowTask
 import hu.csabapap.seriesreminder.tasks.TaskExecutor
-import hu.csabapap.seriesreminder.ui.addshow.AddShowActivity
-import hu.csabapap.seriesreminder.ui.showdetails.ShowDetailsActivity
 import hu.csabapap.seriesreminder.utils.*
 import kotlinx.android.synthetic.main.activity_search.*
 import javax.inject.Inject
@@ -113,15 +111,10 @@ class SearchActivity : DaggerAppCompatActivity(), SearchResultAdapter.SearchItem
 
     override fun onItemClick(showId: Int, inCollection: Boolean) {
         if (inCollection) {
-            val intent = Intent(this, ShowDetailsActivity::class.java)
-            intent.putExtra(ShowDetails.EXTRA_SHOW_ID, showId)
-            startActivity(intent)
+            ShowDetails.start(this, showId)
             return
         }
-
-        val intent = Intent(this, AddShowActivity::class.java)
-        intent.putExtra(AddShow.EXTRA_SHOW_ID, showId)
-        startActivityForResult(intent, Search.RC_ADD)
+        AddShow.startForResult(this, showId, Search.RC_ADD)
     }
 
     override fun onAddClick(showId: Int) {
