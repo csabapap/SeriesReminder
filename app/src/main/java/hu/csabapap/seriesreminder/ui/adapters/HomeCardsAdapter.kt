@@ -26,6 +26,7 @@ class HomeCardsAdapter(private val listener: CardClickListener)
 
     lateinit var context: Context
     var previewShowListener: DiscoverPreviewAdapter.PreviewShowListener? = null
+    var episodesClickListener: EpisodeCardsAdapter.EpisodeClickListener? = null
     private var cardItems: MutableList<CardItem> = mutableListOf()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
@@ -106,8 +107,8 @@ class HomeCardsAdapter(private val listener: CardClickListener)
                 previewAdapter.updateItems(discoverCardItem.showItems)
                 itemView.progress.visibility = View.GONE
             }
-            previewShowListener?.apply {
-                previewAdapter.listener = previewShowListener
+            previewShowListener?.let {
+                previewAdapter.listener = it
             }
 
             if (discoverCardItem.type == CardItem.MY_SHOWS_TYPE) {
@@ -123,6 +124,11 @@ class HomeCardsAdapter(private val listener: CardClickListener)
 
         fun bind(cardItem: UpcomingEpisodeCardItem) {
             episodesAdapter.updateItems(cardItem.episodes)
+
+            val clickListener = episodesClickListener
+            if (clickListener != null) {
+                episodesAdapter.listener = clickListener
+            }
         }
     }
 }

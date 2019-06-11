@@ -3,7 +3,7 @@ package hu.csabapap.seriesreminder.services
 import android.content.Context
 import android.content.Intent
 import dagger.android.DaggerIntentService
-import hu.csabapap.seriesreminder.data.EpisodesRepository
+import hu.csabapap.seriesreminder.data.repositories.episodes.EpisodesRepository
 import hu.csabapap.seriesreminder.data.ShowsRepository
 import hu.csabapap.seriesreminder.data.network.TvdbApi
 import hu.csabapap.seriesreminder.tasks.TaskExecutor
@@ -55,12 +55,12 @@ class SyncService : DaggerIntentService("SyncService") {
 //        episodesRepository.getNextEpisodes()
 //                .flattenAsFlowable { it }
 //                .flatMap {
-//                    it.episode?.let {episode ->
-//                        showsRepository.fetchNextEpisode(episode.showId)
+//                    it.episodeSingle?.let {episodeSingle ->
+//                        showsRepository.fetchNextEpisode(episodeSingle.showId)
 //                                .toFlowable()
 //                                .flatMap {
 //                                    if (it is NextEpisodeSuccess) {
-//                                        Timber.d("update episode, episode id: %d", episode.traktId)
+//                                        Timber.d("update episodeSingle, episodeSingle id: %d", episodeSingle.traktId)
 //                                        episodesRepository.getEpisode(it.nextEpisode.showId,
 //                                                it.nextEpisode.season, it.nextEpisode.number)
 //                                                .toFlowable()

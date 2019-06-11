@@ -13,8 +13,10 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import dagger.android.support.DaggerFragment
 import hu.csabapap.seriesreminder.R
+import hu.csabapap.seriesreminder.data.db.entities.NextEpisodeItem
 import hu.csabapap.seriesreminder.services.SyncService
 import hu.csabapap.seriesreminder.ui.adapters.DiscoverPreviewAdapter
+import hu.csabapap.seriesreminder.ui.adapters.EpisodeCardsAdapter
 import hu.csabapap.seriesreminder.ui.adapters.HomeCardsAdapter
 import hu.csabapap.seriesreminder.ui.adapters.items.CardItem
 import hu.csabapap.seriesreminder.ui.adapters.items.DiscoverCardItem
@@ -22,14 +24,17 @@ import hu.csabapap.seriesreminder.ui.adapters.items.UpcomingEpisodeCardItem
 import hu.csabapap.seriesreminder.ui.search.SearchActivity
 import hu.csabapap.seriesreminder.ui.settings.SettingsActivity
 import hu.csabapap.seriesreminder.utils.Collectible
+import hu.csabapap.seriesreminder.utils.Episode
 import kotlinx.android.synthetic.main.fragment_home.*
 import timber.log.Timber
 import javax.inject.Inject
 import javax.inject.Named
 
 
-class HomeFragment : DaggerFragment(), DiscoverPreviewAdapter.PreviewShowListener,
-        HomeCardsAdapter.CardClickListener {
+class HomeFragment : DaggerFragment(),
+        DiscoverPreviewAdapter.PreviewShowListener,
+        HomeCardsAdapter.CardClickListener,
+        EpisodeCardsAdapter.EpisodeClickListener {
 
     @field:[Inject Named("Main")]
     lateinit var mainViewModelProvider: ViewModelProvider.Factory
@@ -70,6 +75,7 @@ class HomeFragment : DaggerFragment(), DiscoverPreviewAdapter.PreviewShowListene
         super.onActivityCreated(savedInstanceState)
 
         cardsAdapter.previewShowListener = this
+        cardsAdapter.episodesClickListener = this
 
         homeViewModel.myShowsLiveData.observe(this, Observer {
             it.apply {
@@ -161,6 +167,14 @@ class HomeFragment : DaggerFragment(), DiscoverPreviewAdapter.PreviewShowListene
 
     override fun onMoreButtonClick(type: Int) {
         listener?.onMoreButtonClick(type)
+    }
+
+    override fun onItemClick(nextEpisode: NextEpisodeItem) {
+        val entry = nextEpisode.entry
+        val activity = activity
+        if (entry != null && activity != null) {
+            Episode.start(activity, entry.showId, entry.season, entry.number)
+        }
     }
 
     private fun updateState(state: HomeViewState) {

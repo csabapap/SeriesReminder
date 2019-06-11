@@ -16,12 +16,12 @@
         <item name="android:windowIsFloating">false</item>
         <item name="android:backgroundDimEnabled">false</item>
     </style>
-    
+
     <style name="SearchViewTheme" parent="ThemeOverlay.AppCompat.Light">
         <item name="android:searchViewStyle">@style/Widget.SeriesReminder.SearchView</item>
     </style>
 
-    <style name="Widget.SeriesReminder" parent="android:Widget"/>
+    <style name="Widget.SeriesReminder" parent="android:Widget" />
 
     <style name="Widget.SeriesReminder.SearchView" parent="Widget.AppCompat.SearchView">
         <item name="android:searchIcon">@color/transparent</item>
@@ -29,5 +29,14 @@
         <item name="android:queryBackground">@color/transparent</item>
         <item name="android:submitBackground">@color/transparent</item>
     </style>
+
+    <style name="AppTheme.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+
+    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+
+    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 
 </resources>

@@ -41,10 +41,6 @@ class TraktApi(private val retrofit: Retrofit) {
         return retrofit.create(ShowsService::class.java).nextEpisode(traktId)
     }
 
-    fun episode(showId: Int, seasonNumber: Int, number: Int) : Single<Response<Episode>> {
-        return retrofit.create(EpisodesService::class.java).episode(showId, seasonNumber, number)
-    }
-
     fun search(query: String, type: String): Single<List<SearchResult>> {
         return retrofit.create(SearchService::class.java).search(type, query)
     }

@@ -5,14 +5,9 @@ import android.content.Context
 import androidx.work.WorkManager
 import dagger.Module
 import dagger.Provides
-import hu.csabapap.seriesreminder.data.EpisodesRepository
 import hu.csabapap.seriesreminder.SRApplication
 import hu.csabapap.seriesreminder.data.CollectionRepository
-import hu.csabapap.seriesreminder.data.SeasonsRepository
-import hu.csabapap.seriesreminder.data.ShowsRepository
 import hu.csabapap.seriesreminder.data.db.daos.*
-import hu.csabapap.seriesreminder.data.network.TraktApi
-import hu.csabapap.seriesreminder.data.network.TvdbApi
 import hu.csabapap.seriesreminder.utils.AppCoroutineDispatchers
 import hu.csabapap.seriesreminder.utils.AppRxSchedulers
 import hu.csabapap.seriesreminder.utils.RxSchedulers

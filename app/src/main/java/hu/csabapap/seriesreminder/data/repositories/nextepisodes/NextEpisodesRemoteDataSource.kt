@@ -14,7 +14,7 @@ class NextEpisodesRemoteDataSource @Inject constructor(private val traktApi: Tra
         return when (response.code()) {
             200 -> NextEpisodeSuccess(response.body()!!)
             204 -> NoNextEpisode
-            else -> NextEpisodeError("error during next episode fetching")
+            else -> NextEpisodeError("error during next episodeSingle fetching")
         }
     }
 

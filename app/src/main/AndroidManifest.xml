@@ -15,6 +15,10 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
+            android:name=".ui.episode.EpisodeActivity"
+            android:label="@string/title_activity_episode"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
+        <activity
             android:name=".ui.settings.SettingsActivity"
             android:label="@string/title_activity_settings" />
         <activity
@@ -67,7 +71,7 @@
             android:name="androidx.work.impl.WorkManagerInitializer"
             android:authorities="${applicationId}.workmanager-init"
             android:exported="false"
-            tools:node="remove"/>
+            tools:node="remove" />
     </application>
 
 </manifest>

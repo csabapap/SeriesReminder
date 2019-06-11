@@ -5,6 +5,7 @@ import hu.csabapap.seriesreminder.data.db.entities.SREpisode
 import hu.csabapap.seriesreminder.data.db.entities.SRSeason
 import hu.csabapap.seriesreminder.data.network.TraktApi
 import hu.csabapap.seriesreminder.data.network.entities.Season
+import hu.csabapap.seriesreminder.data.repositories.episodes.EpisodesRepository
 import io.reactivex.Single
 import javax.inject.Inject
 
@@ -20,7 +21,7 @@ class SeasonsRepository @Inject constructor(private val seasonsDao: SeasonsDao,
                 .doAfterNext {
                     seasonsDao.insert(it)
                     it.episodes.forEach { episode ->
-                        episodesRepository.saveEpisde(episode)
+                        episodesRepository.saveEpisode(episode)
                     }
                 }
                 .toList()

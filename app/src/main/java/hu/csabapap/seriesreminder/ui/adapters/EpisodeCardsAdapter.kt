@@ -18,7 +18,12 @@ import org.threeten.bp.ZoneOffset
 
 class EpisodeCardsAdapter:  RecyclerView.Adapter<EpisodeCardsAdapter.CardVH>() {
 
+    interface EpisodeClickListener {
+        fun onItemClick(nextEpisode: NextEpisodeItem)
+    }
+
     lateinit var context: Context
+    lateinit var listener: EpisodeClickListener
     var episodes: List<NextEpisodeItem> = emptyList()
 
     fun updateItems(newItems: List<NextEpisodeItem>) {
@@ -31,7 +36,15 @@ class EpisodeCardsAdapter:  RecyclerView.Adapter<EpisodeCardsAdapter.CardVH>() {
         context = parent.context
         val itemView = LayoutInflater.from(parent.context).inflate(R.layout.item_episode_card,
                 parent, false)
-        return CardVH(itemView)
+        val cardVH = CardVH(itemView)
+        cardVH.itemView.setOnClickListener {
+            val position = cardVH.adapterPosition
+            val nextEpisode = episodes.getOrNull(position)
+            if (nextEpisode != null) {
+                listener.onItemClick(nextEpisode)
+            }
+        }
+        return cardVH
     }
 
     override fun getItemCount() = episodes.size
