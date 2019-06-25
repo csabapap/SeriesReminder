@@ -26,7 +26,8 @@ data class SRShow(
         @ColumnInfo(name="trailer") var trailer: String = "",
         @ColumnInfo(name="homepage") var homepage: String = "",
         @ColumnInfo(name="updated_at") var updatedAt: OffsetDateTime? = null,
-        @ColumnInfo(name="airs") var airingTime: AiringTime = AiringTime()) {
+        @ColumnInfo(name="airs") var airingTime: AiringTime = AiringTime(),
+        @ColumnInfo(name = "next_episode") var nextEpisode: Int = -1) {
 
     @Ignore
     var inCollection: Boolean = false

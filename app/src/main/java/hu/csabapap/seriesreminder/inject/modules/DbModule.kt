@@ -18,7 +18,7 @@ class DbModule {
     fun providesDatabase(context: Context) : SRDatabase {
         return Room.databaseBuilder(context, SRDatabase::class.java, "series_reminder.db")
                 .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_4_5, MIGRATION_5_6,
-                        MIGRATION_6_7)
+                        MIGRATION_6_7, MIGRATION_7_8)
                 .fallbackToDestructiveMigration()
                 .build()
     }
@@ -120,6 +120,21 @@ class DbModule {
         val MIGRATION_6_7 = object: Migration(6, 7) {
             override fun migrate(database: SupportSQLiteDatabase) {
                 database.execSQL("CREATE TABLE IF NOT EXISTS `related_shows` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `related_id` INTEGER NOT NULL, `relates_to` INTEGER NOT NULL, FOREIGN KEY(`relates_to`) REFERENCES `shows`(`trakt_id`) ON UPDATE NO ACTION ON DELETE NO ACTION , FOREIGN KEY(`related_id`) REFERENCES `shows`(`trakt_id`) ON UPDATE NO ACTION ON DELETE NO ACTION )")
+            }
+        }
+
+        val MIGRATION_7_8 = object: Migration(7, 8) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.execSQL("CREATE TABLE IF NOT EXISTS `shows_new` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `trakt_id` INTEGER UNIQUE NOT NULL, `tvdb_id` INTEGER UNIQUE NOT NULL, `title` TEXT NOT NULL, `overview` TEXT NOT NULL, `poster` TEXT NOT NULL, `poster_thumb` TEXT NOT NULL, `cover` TEXT NOT NULL, `cover_thumb` TEXT NOT NULL, `rating` REAL NOT NULL, `votes` INTEGER NOT NULL, `genres` TEXT NOT NULL, `runtime` INTEGER NOT NULL, `aired_episodes` INTEGER NOT NULL, `status` TEXT NOT NULL, `network` TEXT NOT NULL, `trailer` TEXT NOT NULL, `homepage` TEXT NOT NULL, `updated_at` TEXT, `airs` TEXT NOT NULL, `next_episode` INTEGER NOT NULL DEFAULT -1)")
+
+                database.execSQL("INSERT INTO shows_new(id, trakt_id, tvdb_id, title,overview,poster,poster_thumb,cover,cover_thumb,rating,votes,genres,runtime,aired_episodes,status,network,trailer,homepage,updated_at,airs) SELECT id, trakt_id, tvdb_id, title,overview,poster,poster_thumb,cover,cover_thumb,rating,votes,genres,runtime,aired_episodes,status,network,trailer,homepage,updated_at,airs FROM shows")
+
+                database.execSQL("DROP TABLE shows")
+
+                database.execSQL("ALTER TABLE shows_new RENAME TO shows")
+
+                database.execSQL("CREATE UNIQUE INDEX index_shows_trakt_id ON shows(trakt_id)")
+                database.execSQL("CREATE UNIQUE INDEX index_shows_tvdb_id ON shows(tvdb_id)")
             }
         }
     }
