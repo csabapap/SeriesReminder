@@ -1,7 +1,6 @@
 package hu.csabapap.seriesreminder.ui.search
 
 import android.content.Context
-import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,8 +9,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.squareup.picasso.Picasso
 import hu.csabapap.seriesreminder.R
 import hu.csabapap.seriesreminder.data.models.SrSearchResult
-import hu.csabapap.seriesreminder.data.network.entities.SearchResult
-import hu.csabapap.seriesreminder.extensions.loadFromTmdbUrl
+import hu.csabapap.seriesreminder.data.network.getPosterUrl
 import hu.csabapap.seriesreminder.extensions.toPixelFromDip
 import hu.csabapap.seriesreminder.utils.RoundedTransformation
 import kotlinx.android.synthetic.main.item_search_result.view.*
@@ -56,7 +54,7 @@ class SearchResultAdapter: RecyclerView.Adapter<SearchResultAdapter.ResultVH>() 
     inner class ResultVH(itemView: View): RecyclerView.ViewHolder(itemView) {
         fun bind(searchResult: SrSearchResult, position: Int) {
             Picasso.with(context)
-                    .load("tvdb://${searchResult.show.ids.tvdb}")
+                    .load(getPosterUrl(searchResult.show.ids.tvdb))
                     .transform(RoundedTransformation(itemView.toPixelFromDip(2f)))
                     .into(itemView.poster)
             itemView.show_title.text = searchResult.show.title

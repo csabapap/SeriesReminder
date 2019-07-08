@@ -1,14 +1,12 @@
 package hu.csabapap.seriesreminder.ui.main
 
 import android.os.Bundle
-import com.google.android.material.bottomnavigation.BottomNavigationView
 import dagger.android.support.DaggerAppCompatActivity
 import hu.csabapap.seriesreminder.R
 import hu.csabapap.seriesreminder.data.db.entities.SRShow
 import hu.csabapap.seriesreminder.ui.main.collection.CollectionFragment
 import hu.csabapap.seriesreminder.ui.main.discover.DiscoverFragment
 import hu.csabapap.seriesreminder.ui.main.home.HomeFragment
-import kotlinx.android.synthetic.main.activity_home.*
 import timber.log.Timber
 
 class HomeActivity : DaggerAppCompatActivity(), HomeFragment.HomeFragmentListener,

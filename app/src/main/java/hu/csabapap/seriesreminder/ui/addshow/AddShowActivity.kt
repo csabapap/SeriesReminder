@@ -27,6 +27,7 @@ import dagger.android.support.DaggerAppCompatActivity
 import hu.csabapap.seriesreminder.R
 import hu.csabapap.seriesreminder.SRApplication
 import hu.csabapap.seriesreminder.data.db.entities.SRShow
+import hu.csabapap.seriesreminder.data.network.getCoverUrl
 import hu.csabapap.seriesreminder.data.network.getThumbnailUrl
 import hu.csabapap.seriesreminder.databinding.ActivityAddShowBinding
 import hu.csabapap.seriesreminder.extensions.loadFromTmdbUrl
@@ -164,7 +165,7 @@ class AddShowActivity : DaggerAppCompatActivity() {
 
         }))
         val url = if (srShow.coverThumb.isEmpty()) {
-            "tvdb://fanart?tvdbid=${srShow.tvdbId}"
+            getCoverUrl(srShow.tvdbId)
         } else {
             getThumbnailUrl(srShow.coverThumb)
         }

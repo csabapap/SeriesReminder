@@ -31,6 +31,10 @@
 
     <!-- show details -->
     <string name="overview_label">Overview</string>
+    <string name="overview_next_episode">Next episode</string>
+
+    <!--episodes-->
+    <string name="episode_title_with_numbers">%s - S%02dE%02d</string>
 
     <!-- Strings related to Settings -->
 

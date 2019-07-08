@@ -22,6 +22,10 @@ class EpisodesRepository @Inject constructor(
         return remoteDataSource.getEpisode(showId, season, episode)
     }
 
+    suspend fun getNextEpisode(showId: Int, absNumber: Int ): SREpisode? {
+        return localDataSource.get(showId, absNumber)
+    }
+
     fun insertNextEpisode(nextEpisodeEntry: NextEpisodeEntry) {
         nextEpisodeDao.insert(nextEpisodeEntry)
     }

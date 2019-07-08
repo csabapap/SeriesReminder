@@ -5,6 +5,7 @@ import android.widget.ImageView
 import androidx.databinding.BindingAdapter
 import com.squareup.picasso.Picasso
 import hu.csabapap.seriesreminder.data.db.entities.SRShow
+import hu.csabapap.seriesreminder.data.network.getPosterUrl
 import hu.csabapap.seriesreminder.data.network.getThumbnailUrl
 import hu.csabapap.seriesreminder.ui.adapters.items.ShowItem
 
@@ -16,7 +17,7 @@ fun goneIf(view: View, isGone: Boolean) {
 @BindingAdapter("app:remoteSrc")
 fun setImageUri(view: ImageView, showItem: ShowItem) {
     val url = if (showItem.poster.isEmpty()) {
-        "tvdb://${showItem.tvdbId}"
+        getPosterUrl(showItem.tvdbId)
     } else {
         getThumbnailUrl(showItem.poster)
     }
@@ -29,7 +30,7 @@ fun setImageUri(view: ImageView, showItem: ShowItem) {
 @BindingAdapter("app:remoteSrc")
 fun setImageUri(view: ImageView, showItem: SRShow) {
     val url = if (showItem.posterThumb.isEmpty()) {
-        "tvdb://${showItem.tvdbId}"
+        getPosterUrl(showItem.tvdbId)
     } else {
         getThumbnailUrl(showItem.posterThumb)
     }

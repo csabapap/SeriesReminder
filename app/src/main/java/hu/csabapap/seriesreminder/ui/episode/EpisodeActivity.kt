@@ -16,6 +16,10 @@ class EpisodeActivity : DaggerAppCompatActivity() {
         supportFragmentManager.beginTransaction()
                 .add(R.id.fragment, Episode.createFragment(intent.extras))
                 .commit()
+
+        toolbar.setNavigationOnClickListener {
+            finish()
+        }
     }
 
 }

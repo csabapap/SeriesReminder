@@ -10,4 +10,8 @@ class LocalEpisodesDataSource @Inject constructor(private val episodesDao: Episo
         episodesDao.insert(episode)
     }
 
+    suspend fun get(showId: Int, absNumber: Int): SREpisode? {
+        return episodesDao.get(showId, absNumber)
+    }
+
 }

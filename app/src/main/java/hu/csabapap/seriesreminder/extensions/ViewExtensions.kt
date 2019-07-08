@@ -6,11 +6,12 @@ import android.view.View
 import android.widget.ImageView
 import com.squareup.picasso.Callback
 import com.squareup.picasso.Picasso
+import hu.csabapap.seriesreminder.data.network.getPosterUrl
 
 
 fun ImageView.loadFromTmdbUrl(tvdbId: Int, placeholder: Int? = null, callback: Callback? = null) {
     Picasso.with(context)
-            .load("tvdb://$tvdbId")
+            .load(getPosterUrl(tvdbId))
             .let { requestCreator ->
                 placeholder?.let {
                     requestCreator.placeholder(it)

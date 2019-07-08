@@ -91,4 +91,8 @@ class TvdbApi {
     suspend fun episode(tvdbId: Int): EpisodeData{
         return retrofit.create(TvdbEpisodeService::class.java).episode(tvdbId)
     }
+
+    fun episodeCall(tvdbId: Int): Call<EpisodeData>{
+        return retrofit.create(TvdbEpisodeService::class.java).episodeCall(tvdbId)
+    }
 }

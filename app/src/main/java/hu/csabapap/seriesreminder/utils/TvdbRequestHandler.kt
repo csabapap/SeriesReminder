@@ -8,6 +8,10 @@ import com.squareup.picasso.RequestHandler
 import hu.csabapap.seriesreminder.data.network.TvdbApi
 import hu.csabapap.seriesreminder.data.network.getFullSizeUrl
 import hu.csabapap.seriesreminder.data.network.getThumbnailUrl
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 
@@ -21,13 +25,10 @@ class TvdbRequestHandler @Inject constructor(private val tvdbApi: TvdbApi,
 
     override fun load(request: Request?, networkPolicy: Int): Result? {
         val uri = request?.uri ?: return null
-        var type = "poster"
-        val tvdbId = if (uri.host == "fanart") {
-            type = "fanart"
-            uri.getQueryParameter("tvdbid").toInt()
-        } else {
-            uri.host?.toInt()
-                    ?: throw IllegalArgumentException("invalid tvdb id")
+        val type = uri.host
+        val tvdbId = uri.getQueryParameter("id").toInt()
+        if (type == "screen") {
+            return downloadScreen(tvdbId, networkPolicy)
         }
         val response = tvdbApi.images(tvdbId, type).execute().body()
         response?.let {
@@ -49,6 +50,20 @@ class TvdbRequestHandler @Inject constructor(private val tvdbApi: TvdbApi,
         }
 
         return null
+    }
+
+    private fun downloadScreen(tvdbId: Int, networkPolicy: Int): Result? {
+        val response = tvdbApi.episodeCall(tvdbId).execute().body()
+        response.let {
+            val imageUrl = getFullSizeUrl(it?.data?.filename)
+
+            if (imageUrl.isEmpty()) {
+                return null
+            }
+            return downloadImage(
+                    Uri.parse(imageUrl),
+                    networkPolicy)
+        }
     }
 
     private fun downloadImage(uri: Uri, networkPolicy: Int): Result? {

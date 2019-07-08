@@ -11,6 +11,7 @@ import hu.csabapap.seriesreminder.BuildConfig
 import hu.csabapap.seriesreminder.data.CollectionRepository
 import hu.csabapap.seriesreminder.data.ShowsRepository
 import hu.csabapap.seriesreminder.data.db.entities.SrNotification
+import hu.csabapap.seriesreminder.data.repositories.episodes.EpisodesRepository
 import hu.csabapap.seriesreminder.data.repositories.notifications.NotificationsRepository
 import hu.csabapap.seriesreminder.data.repositories.relatedshows.RelatedShowsRepository
 import hu.csabapap.seriesreminder.extensions.distinctUntilChanged
@@ -20,8 +21,6 @@ import hu.csabapap.seriesreminder.ui.adapters.items.ShowItem
 import hu.csabapap.seriesreminder.utils.AppCoroutineDispatchers
 import hu.csabapap.seriesreminder.utils.Reminder
 import hu.csabapap.seriesreminder.utils.getDateTimeForNextAir
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
@@ -30,10 +29,12 @@ import kotlinx.coroutines.withContext
 import org.threeten.bp.OffsetDateTime
 import org.threeten.bp.ZoneOffset
 import timber.log.Timber
+import java.lang.Exception
 import java.util.*
 import java.util.concurrent.TimeUnit
 
 class ShowDetailsViewModel(private val showsRepository: ShowsRepository,
+                           private val episodesRepository: EpisodesRepository,
                            private val collectionRepository: CollectionRepository,
                            private val notificationsRepository: NotificationsRepository,
                            private val relatedShowsRepository: RelatedShowsRepository,
@@ -47,15 +48,34 @@ class ShowDetailsViewModel(private val showsRepository: ShowsRepository,
     val detailsUiState: LiveData<ShowDetailsState>
         get() = _detailsUiState
 
-    fun getShow(showId: Int) {
-        showsRepository.getShow(showId)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe({
-                    it?.apply {
-                        _detailsUiState.value = ShowDetailsState.Show(this)
-                    }
-                }, Timber::e)
+    fun getShowWithEpisode(showId: Int) {
+        scope.launch(dispatchers.io) {
+            val show = showsRepository.getShow(showId).await() ?: return@launch
+
+            withContext(dispatchers.main) {
+                _detailsUiState.value = ShowDetailsState.Show(show)
+            }
+
+            val nextEpisodeAbsNumber =  if (show.nextEpisode == -1) {
+                1
+            } else {
+                show.nextEpisode
+            }
+            val episode = episodesRepository.getNextEpisode(showId, nextEpisodeAbsNumber)
+            withContext(dispatchers.main) {
+                if (episode != null) {
+                    _detailsUiState.value = ShowDetailsState.NextEpisode(episode)
+                } else {
+                    _detailsUiState.value = ShowDetailsState.NextEpisodeNotFound
+                }
+            }
+        }
+
+
+    }
+
+    fun getNextEpisode() {
+
     }
 
     fun createNotification(showId: Int, aheadOfTime: Int) {
@@ -140,7 +160,11 @@ class ShowDetailsViewModel(private val showsRepository: ShowsRepository,
 
     fun refreshRelatedShows(id: Int) {
         scope.launch(dispatchers.io) {
-            relatedShowsRepository.refreshRelatedShows(id)
+            try {
+                relatedShowsRepository.refreshRelatedShows(id)
+            } catch (e: Exception) {
+                Timber.e(e)
+            }
         }
     }
 

@@ -21,16 +21,22 @@ import com.squareup.picasso.Callback
 import com.squareup.picasso.Picasso
 import dagger.android.support.DaggerAppCompatActivity
 import hu.csabapap.seriesreminder.R
+import hu.csabapap.seriesreminder.data.db.entities.SREpisode
 import hu.csabapap.seriesreminder.data.db.entities.SRShow
 import hu.csabapap.seriesreminder.data.db.entities.SrNotification
+import hu.csabapap.seriesreminder.data.network.getCoverUrl
+import hu.csabapap.seriesreminder.data.network.getEpisodeUrl
+import hu.csabapap.seriesreminder.data.network.getPosterUrl
 import hu.csabapap.seriesreminder.data.network.getThumbnailUrl
 import hu.csabapap.seriesreminder.ui.adapters.DiscoverPreviewAdapter
 import hu.csabapap.seriesreminder.ui.adapters.items.CardItem
 import hu.csabapap.seriesreminder.ui.adapters.items.ShowItem
 import hu.csabapap.seriesreminder.utils.Collectible
+import hu.csabapap.seriesreminder.utils.Episode
 import hu.csabapap.seriesreminder.utils.ShowDetails
 import hu.csabapap.seriesreminder.utils.readableDate
 import kotlinx.android.synthetic.main.activity_show_details.*
+import kotlinx.android.synthetic.main.content_next_episode.*
 import timber.log.Timber
 import javax.inject.Inject
 import javax.inject.Named
@@ -105,7 +111,7 @@ class ShowDetailsActivity : DaggerAppCompatActivity() {
 
         })
 
-        viewModel.getShow(showId)
+        viewModel.getShowWithEpisode(showId)
         viewModel.getNotifications(showId)
         viewModel.refreshRelatedShows(showId)
         viewModel.observeRelatedShows(showId).observe(this, Observer {
@@ -183,6 +189,19 @@ class ShowDetailsActivity : DaggerAppCompatActivity() {
         }
     }
 
+    private fun updateUi(state: ShowDetailsState) {
+        when(state) {
+            is ShowDetailsState.Show -> displayShow(state.show)
+            is ShowDetailsState.NextEpisode -> displayNextEpisode(state.episode)
+            is ShowDetailsState.NextEpisodeNotFound -> hideNextEpisode()
+            is ShowDetailsState.NotificationCreated -> notificationCreated()
+            is ShowDetailsState.NotificationDeleted -> notificationDeleted()
+            is ShowDetailsState.AddNotificationButton -> displayAddNotificationButton()
+            is ShowDetailsState.Notification -> displayNotification(state.notification)
+            is ShowDetailsState.RelatedShows -> displayRelatedShows(state.relatedShowItems)
+        }
+    }
+
     @SuppressLint("RestrictedApi")
     private fun displayShow(show: SRShow) {
         show.let {
@@ -191,7 +210,7 @@ class ShowDetailsActivity : DaggerAppCompatActivity() {
             status.text = it.status
             air_daytime.text = String.format(getString(R.string.air_time), it.airingTime.day, it.airingTime.time)
             val posterUrl = if (it.posterThumb.isEmpty()) {
-                "tvdb://${it.tvdbId}"
+                getPosterUrl(it.tvdbId)
             } else {
                 getThumbnailUrl(it.posterThumb)
             }
@@ -231,7 +250,7 @@ class ShowDetailsActivity : DaggerAppCompatActivity() {
                     })
 
             val url = if (it.coverThumb.isEmpty()) {
-                "tvdb://fanart?tvdbid=${it.tvdbId}"
+                getCoverUrl(it.tvdbId)
             } else {
                 getThumbnailUrl(it.cover)
             }
@@ -241,15 +260,25 @@ class ShowDetailsActivity : DaggerAppCompatActivity() {
         }
     }
 
-    private fun updateUi(state: ShowDetailsState) {
-        when(state) {
-            is ShowDetailsState.Show -> displayShow(state.show)
-            is ShowDetailsState.NotificationCreated -> notificationCreated()
-            is ShowDetailsState.NotificationDeleted -> notificationDeleted()
-            is ShowDetailsState.AddNotificationButton -> displayAddNotificationButton()
-            is ShowDetailsState.Notification -> displayNotification(state.notification)
-            is ShowDetailsState.RelatedShows -> displayRelatedShows(state.relatedShowItems)
+    private fun displayNextEpisode(episode: SREpisode) {
+        next_episode_content.visibility = View.VISIBLE
+        next_episode_title.text = getString(R.string.episode_title_with_numbers)
+                .format(episode.title, episode.season, episode.number)
+        Picasso.with(this)
+                .load(getEpisodeUrl(episode.tvdbId))
+                .into(episode_art)
+
+        next_episode_content.setOnClickListener {
+            Episode.start(this, episode.showId, episode.season, episode.number)
         }
+
+        set_watched.setOnClickListener {
+            Timber.d("set as watched")
+        }
+    }
+
+    private fun hideNextEpisode() {
+        next_episode_content.visibility = View.GONE
     }
 
     private fun displayNotification(notification: SrNotification) {
