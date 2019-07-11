@@ -8,14 +8,12 @@ import com.squareup.picasso.RequestHandler
 import hu.csabapap.seriesreminder.data.network.TvdbApi
 import hu.csabapap.seriesreminder.data.network.getFullSizeUrl
 import hu.csabapap.seriesreminder.data.network.getThumbnailUrl
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.launch
+import hu.csabapap.seriesreminder.data.repositories.episodes.EpisodesRepository
 import javax.inject.Inject
 
 
 class TvdbRequestHandler @Inject constructor(private val tvdbApi: TvdbApi,
+                                             private val episodesRepository: EpisodesRepository,
                                              private val downloader: OkHttp3Downloader)
     : RequestHandler() {
 
@@ -60,6 +58,7 @@ class TvdbRequestHandler @Inject constructor(private val tvdbApi: TvdbApi,
             if (imageUrl.isEmpty()) {
                 return null
             }
+            episodesRepository.saveImage(tvdbId, imageUrl)
             return downloadImage(
                     Uri.parse(imageUrl),
                     networkPolicy)

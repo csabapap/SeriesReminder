@@ -43,6 +43,7 @@
         android:layout_marginTop="16dp"
         android:scaleType="centerCrop"
         android:background="@color/light_grey"
+        android:transitionName="episodeArt"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintDimensionRatio="W,9:16"
         app:layout_constraintStart_toStartOf="parent"

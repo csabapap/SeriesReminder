@@ -9,6 +9,7 @@ import android.view.MenuItem
 import android.view.View
 import androidx.appcompat.app.AlertDialog
 import androidx.constraintlayout.motion.widget.MotionLayout
+import androidx.core.app.ActivityOptionsCompat
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.palette.graphics.Palette
@@ -269,7 +270,9 @@ class ShowDetailsActivity : DaggerAppCompatActivity() {
                 .into(episode_art)
 
         next_episode_content.setOnClickListener {
-            Episode.start(this, episode.showId, episode.season, episode.number)
+            val options = ActivityOptionsCompat
+                    .makeSceneTransitionAnimation(this, episode_art, "episodeArt")
+            Episode.startWithOptions(this, episode.showId, episode.season, episode.number, options)
         }
 
         set_watched.setOnClickListener {

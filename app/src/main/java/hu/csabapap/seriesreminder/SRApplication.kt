@@ -8,6 +8,7 @@ import com.squareup.picasso.Picasso
 import dagger.android.AndroidInjector
 import dagger.android.support.DaggerApplication
 import hu.csabapap.seriesreminder.data.network.TvdbApi
+import hu.csabapap.seriesreminder.data.repositories.episodes.EpisodesRepository
 import hu.csabapap.seriesreminder.inject.AppComponent
 import hu.csabapap.seriesreminder.inject.DaggerAppComponent
 import hu.csabapap.seriesreminder.services.workers.SRWorkerFactory
@@ -17,6 +18,7 @@ import javax.inject.Inject
 open class SRApplication : DaggerApplication() {
 
     @Inject lateinit var tvdbApi: TvdbApi
+    @Inject lateinit var episodesRepository: EpisodesRepository
     lateinit var appComponent : AppComponent
         private set
 
@@ -43,7 +45,7 @@ open class SRApplication : DaggerApplication() {
 
     private fun initPicasso() {
         val downloader = OkHttp3Downloader(this)
-        val requestHandler = TvdbRequestHandler(tvdbApi, downloader)
+        val requestHandler = TvdbRequestHandler(tvdbApi, episodesRepository, downloader)
         val picasso = Picasso.Builder(this)
                 .downloader(downloader)
                 .addRequestHandler(requestHandler)

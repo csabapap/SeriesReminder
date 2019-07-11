@@ -7,9 +7,11 @@ import android.view.ViewGroup
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProviders
+import com.squareup.picasso.Picasso
 import dagger.android.support.DaggerFragment
 import hu.csabapap.seriesreminder.R
 import hu.csabapap.seriesreminder.data.db.entities.SREpisode
+import hu.csabapap.seriesreminder.data.network.getEpisodeUrl
 import hu.csabapap.seriesreminder.utils.Episode
 import kotlinx.android.synthetic.main.fragment_episode.*
 import javax.inject.Inject
@@ -66,6 +68,9 @@ class EpisodeActivityFragment : DaggerFragment() {
     }
 
     private fun displayEpisode(episode: SREpisode) {
+        Picasso.with(activity)
+                .load(getEpisodeUrl(episode.tvdbId))
+                .into(episode_art)
         episode_overview.text = episode.overview
     }
 }

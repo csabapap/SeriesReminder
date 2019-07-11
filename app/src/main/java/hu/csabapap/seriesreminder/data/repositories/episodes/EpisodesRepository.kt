@@ -18,8 +18,9 @@ class EpisodesRepository @Inject constructor(
         private val nextEpisodeDao: NextEpisodeDao,
         private val episodesDao: EpisodeDao) {
 
-    suspend fun getEpisode(showId: Int, season: Int, episode: Int ): SREpisode {
-        return remoteDataSource.getEpisode(showId, season, episode)
+    suspend fun getEpisode(showId: Int, season: Int, number: Int ): SREpisode {
+        val episode = localDataSource.getBySeasonAndEpisodeNumber(showId, season, number)
+        return episode ?: remoteDataSource.getEpisode(showId, season, number)
     }
 
     suspend fun getNextEpisode(showId: Int, absNumber: Int ): SREpisode? {
@@ -61,6 +62,10 @@ class EpisodesRepository @Inject constructor(
 
     fun saveEpisode(episode: SREpisode) {
         localDataSource.save(episode)
+    }
+
+    fun saveImage(tvdbId: Int, url: String) {
+        localDataSource.saveImage(tvdbId, url)
     }
 
     fun mapToSREpisode(episode: Episode, showId: Int) : SREpisode {
