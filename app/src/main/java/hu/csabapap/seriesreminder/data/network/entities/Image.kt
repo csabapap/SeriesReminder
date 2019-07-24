@@ -7,6 +7,7 @@ import se.ansman.kotshi.JsonSerializable
 @JsonSerializable
 data class Image(val id: Int,
                  val keyType: String,
+                 val subKey: String,
                  val fileName: String,
                  @JsonDefaultValue
                  var ratingsInfo: Rating,

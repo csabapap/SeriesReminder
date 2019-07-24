@@ -1,6 +1,7 @@
 package hu.csabapap.seriesreminder.ui.episode
 
 import android.os.Bundle
+import android.view.MenuItem
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProviders
@@ -28,16 +29,12 @@ class EpisodeActivity : DaggerAppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_episode)
-
-        toolbar.apply {
-            setNavigationOnClickListener {
-                supportFinishAfterTransition()
-            }
-            title = ""
-        }
-
         setSupportActionBar(toolbar)
 
+        supportActionBar?.apply {
+            title = ""
+            setDisplayHomeAsUpEnabled(true)
+        }
 
         viewModel = ViewModelProviders.of(this, viewModelProvider)
                 .get(EpisodeViewModel::class.java)
@@ -55,6 +52,18 @@ class EpisodeActivity : DaggerAppCompatActivity() {
     override fun onResume() {
         super.onResume()
         viewModel.getEpisode(showId, seasonNumber, episodeNumber)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
+        val id = item?.itemId ?: return super.onOptionsItemSelected(item)
+        when (id) {
+            android.R.id.home -> {
+                finish()
+                return true
+            }
+        }
+
+        return super.onOptionsItemSelected(item)
     }
 
     private fun initParams(extras: Bundle) {

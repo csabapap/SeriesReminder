@@ -1,8 +1,8 @@
 {
   "formatVersion": 1,
   "database": {
-    "version": 8,
-    "identityHash": "8f3997d9c1b1cbc09e754036262895fe",
+    "version": 9,
+    "identityHash": "751e7a7a7abb1c6d4d3b295f802fc2ed",
     "entities": [
       {
         "tableName": "shows",
@@ -422,7 +422,7 @@
       },
       {
         "tableName": "seasons",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`_id` INTEGER, `number` INTEGER NOT NULL, `trakt_id` INTEGER NOT NULL, `episode_count` INTEGER NOT NULL, `aired_episode_count` INTEGER NOT NULL, `show_id` INTEGER NOT NULL, `fileName` TEXT NOT NULL, `thumbnail` TEXT NOT NULL, PRIMARY KEY(`_id`), FOREIGN KEY(`show_id`) REFERENCES `shows`(`trakt_id`) ON UPDATE CASCADE ON DELETE CASCADE )",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`_id` INTEGER, `number` INTEGER NOT NULL, `trakt_id` INTEGER NOT NULL, `episode_count` INTEGER NOT NULL, `aired_episode_count` INTEGER NOT NULL, `show_id` INTEGER NOT NULL, `fileName` TEXT, `thumbnail` TEXT, PRIMARY KEY(`_id`), FOREIGN KEY(`show_id`) REFERENCES `shows`(`trakt_id`) ON UPDATE CASCADE ON DELETE CASCADE )",
         "fields": [
           {
             "fieldPath": "_id",
@@ -464,13 +464,13 @@
             "fieldPath": "fileName",
             "columnName": "fileName",
             "affinity": "TEXT",
-            "notNull": true
+            "notNull": false
           },
           {
             "fieldPath": "thumbnail",
             "columnName": "thumbnail",
             "affinity": "TEXT",
-            "notNull": true
+            "notNull": false
           }
         ],
         "primaryKey": {
@@ -779,7 +779,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '8f3997d9c1b1cbc09e754036262895fe')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '751e7a7a7abb1c6d4d3b295f802fc2ed')"
     ]
   }
 }

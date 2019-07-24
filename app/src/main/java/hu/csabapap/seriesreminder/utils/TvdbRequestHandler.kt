@@ -28,7 +28,7 @@ class TvdbRequestHandler @Inject constructor(private val tvdbApi: TvdbApi,
         if (type == "screen") {
             return downloadScreen(tvdbId, networkPolicy)
         }
-        val response = tvdbApi.images(tvdbId, type).execute().body()
+        val response = tvdbApi.imagesCall(tvdbId, type).execute().body()
         response?.let {
             val popularImage = it.data.maxBy { image ->
                 image.ratingsInfo.average

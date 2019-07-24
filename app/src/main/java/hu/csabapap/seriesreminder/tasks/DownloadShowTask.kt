@@ -1,6 +1,7 @@
 package hu.csabapap.seriesreminder.tasks
 
 import hu.csabapap.seriesreminder.data.CollectionRepository
+import hu.csabapap.seriesreminder.data.SeasonsRepository
 import hu.csabapap.seriesreminder.data.ShowsRepository
 import hu.csabapap.seriesreminder.data.db.entities.CollectionEntry
 import hu.csabapap.seriesreminder.data.network.TvdbApi
@@ -15,6 +16,9 @@ class DownloadShowTask(private val showId: Int): Task {
 
     @Inject
     lateinit var showsRepository: ShowsRepository
+
+    @Inject
+    lateinit var seasonsRepository: SeasonsRepository
 
     @Inject
     lateinit var nextEpisodesRepository: NextEpisodesRepository
@@ -49,7 +53,16 @@ class DownloadShowTask(private val showId: Int): Task {
             val collectionId = collectionRepository.save(collectionEntry)
 
 
-            val seasons = showsRepository.getSeasons(newShow.traktId).await()
+            val seasons = seasonsRepository.getSeasons(newShow.traktId).await()
+            val images = seasonsRepository.getSeasonImages(newShow.tvdbId)
+
+            val seasonsWithImages = seasons.map { season ->
+                val image = images[season.number.toString()]
+                season.copy(fileName = image?.fileName ?: "", thumbnail = image?.thumbnail ?: "")
+            }
+
+            seasonsRepository.insertSeasons(seasonsWithImages)
+
             Timber.d("seasons: $seasons")
             nextEpisodesRepository.fetchNextEpisode(newShow.traktId)
         }

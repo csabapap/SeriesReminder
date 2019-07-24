@@ -45,7 +45,7 @@ class GetSearchResultUseCase @Inject constructor(private val searchRepository: S
 
         val srSearchResult = mutableListOf<SrSearchResult>()
         lastSearchResult.forEach { item ->
-            System.out.println("adding item")
+            System.out.println("adding item_season")
             srSearchResult.add(SrSearchResult(item.show, collectionIds.contains(item.show.ids.trakt)))
         }
 

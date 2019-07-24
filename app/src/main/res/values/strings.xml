@@ -63,4 +63,5 @@
     <string name="related_shows_label">Related Shows</string>
     <string name="title_activity_episode">EpisodeActivity</string>
     <string name="action_settings">Settings</string>
+    <string name="overview_seasons">Seasons</string>
 </resources>

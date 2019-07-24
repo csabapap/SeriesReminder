@@ -76,7 +76,11 @@ class TvdbApi {
         return retrofit.create(TvdbAuthService::class.java).login(loginRequest)
     }
 
-    fun images(tvdbId : Int, type : String = "poster"): Call<Images>{
+    fun imagesCall(tvdbId : Int, type : String = "poster"): Call<Images>{
+        return retrofit.create(TvdbImagesService::class.java).imagesCall(tvdbId, type)
+    }
+
+    suspend fun images(tvdbId : Int, type : String = "poster"): Images? {
         return retrofit.create(TvdbImagesService::class.java).images(tvdbId, type)
     }
 

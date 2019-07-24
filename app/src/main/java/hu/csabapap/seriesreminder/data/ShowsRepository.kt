@@ -23,7 +23,6 @@ class ShowsRepository @Inject constructor(private val traktApi: TraktApi,
                                           private val tvdbApi: TvdbApi,
                                           private val showDao: SRShowDao,
                                           private val requestDao: LastRequestDao,
-                                          private val seasonsRepository: SeasonsRepository,
                                           private val collectionRepository: CollectionRepository){
 
     fun getShow(traktId: Int) : Maybe<SRShow> {
@@ -113,10 +112,6 @@ class ShowsRepository @Inject constructor(private val traktApi: TraktApi,
             }
         }
         return srShow
-    }
-
-    fun getSeasons(showId: Int): Single<List<SRSeason>> {
-        return seasonsRepository.getSeasons(showId)
     }
 
     fun syncShows(): Single<MutableList<SRShow>> {

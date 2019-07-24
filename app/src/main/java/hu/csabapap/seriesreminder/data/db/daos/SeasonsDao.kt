@@ -1,13 +1,13 @@
 package hu.csabapap.seriesreminder.data.db.daos
 
-import androidx.room.Dao
-import androidx.room.Ignore
-import androidx.room.Insert
-import androidx.room.OnConflictStrategy
+import androidx.room.*
 import hu.csabapap.seriesreminder.data.db.entities.SRSeason
 
 @Dao
 interface SeasonsDao {
-    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insert(season: SRSeason)
+
+    @Query("SELECT * FROM seasons WHERE show_id = :showId ORDER BY number")
+    suspend fun getSeasons(showId: Int): List<SRSeason>?
 }

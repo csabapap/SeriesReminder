@@ -9,7 +9,9 @@ import androidx.work.OneTimeWorkRequest
 import androidx.work.WorkManager
 import hu.csabapap.seriesreminder.BuildConfig
 import hu.csabapap.seriesreminder.data.CollectionRepository
+import hu.csabapap.seriesreminder.data.SeasonsRepository
 import hu.csabapap.seriesreminder.data.ShowsRepository
+import hu.csabapap.seriesreminder.data.db.entities.SRSeason
 import hu.csabapap.seriesreminder.data.db.entities.SrNotification
 import hu.csabapap.seriesreminder.data.repositories.episodes.EpisodesRepository
 import hu.csabapap.seriesreminder.data.repositories.notifications.NotificationsRepository
@@ -34,6 +36,7 @@ import java.util.*
 import java.util.concurrent.TimeUnit
 
 class ShowDetailsViewModel(private val showsRepository: ShowsRepository,
+                           private val seasonsRepository: SeasonsRepository,
                            private val episodesRepository: EpisodesRepository,
                            private val collectionRepository: CollectionRepository,
                            private val notificationsRepository: NotificationsRepository,
@@ -69,8 +72,28 @@ class ShowDetailsViewModel(private val showsRepository: ShowsRepository,
                     _detailsUiState.value = ShowDetailsState.NextEpisodeNotFound
                 }
             }
-        }
 
+            val seasons = getSeasons(showId, show.tvdbId)
+                    .map { season ->
+                        if (season.thumbnail == null || season.thumbnail.isEmpty()) {
+                            return@map season.copy(thumbnail = show.posterThumb)
+                        }
+                        season
+                    }
+
+            withContext(dispatchers.main) {
+                _detailsUiState.value = ShowDetailsState.Seasons(seasons)
+            }
+        }
+    }
+
+    suspend fun getSeasons(showId: Int, showTvdbId: Int): List<SRSeason> {
+
+        val seasons = seasonsRepository.getSeasonsFromDb(showId, showTvdbId) ?: emptyList()
+
+        return seasons.filter {
+            it.number > 0
+        }
 
     }
 

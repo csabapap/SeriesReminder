@@ -23,6 +23,7 @@ import com.squareup.picasso.Picasso
 import dagger.android.support.DaggerAppCompatActivity
 import hu.csabapap.seriesreminder.R
 import hu.csabapap.seriesreminder.data.db.entities.SREpisode
+import hu.csabapap.seriesreminder.data.db.entities.SRSeason
 import hu.csabapap.seriesreminder.data.db.entities.SRShow
 import hu.csabapap.seriesreminder.data.db.entities.SrNotification
 import hu.csabapap.seriesreminder.data.network.getCoverUrl
@@ -30,6 +31,7 @@ import hu.csabapap.seriesreminder.data.network.getEpisodeUrl
 import hu.csabapap.seriesreminder.data.network.getPosterUrl
 import hu.csabapap.seriesreminder.data.network.getThumbnailUrl
 import hu.csabapap.seriesreminder.ui.adapters.DiscoverPreviewAdapter
+import hu.csabapap.seriesreminder.ui.adapters.SeasonsAdapter
 import hu.csabapap.seriesreminder.ui.adapters.items.CardItem
 import hu.csabapap.seriesreminder.ui.adapters.items.ShowItem
 import hu.csabapap.seriesreminder.utils.Collectible
@@ -38,6 +40,7 @@ import hu.csabapap.seriesreminder.utils.ShowDetails
 import hu.csabapap.seriesreminder.utils.readableDate
 import kotlinx.android.synthetic.main.activity_show_details.*
 import kotlinx.android.synthetic.main.content_next_episode.*
+import kotlinx.android.synthetic.main.content_seasons.*
 import timber.log.Timber
 import javax.inject.Inject
 import javax.inject.Named
@@ -113,6 +116,7 @@ class ShowDetailsActivity : DaggerAppCompatActivity() {
         })
 
         viewModel.getShowWithEpisode(showId)
+//        viewModel.getSeasons(showId)
         viewModel.getNotifications(showId)
         viewModel.refreshRelatedShows(showId)
         viewModel.observeRelatedShows(showId).observe(this, Observer {
@@ -200,6 +204,7 @@ class ShowDetailsActivity : DaggerAppCompatActivity() {
             is ShowDetailsState.AddNotificationButton -> displayAddNotificationButton()
             is ShowDetailsState.Notification -> displayNotification(state.notification)
             is ShowDetailsState.RelatedShows -> displayRelatedShows(state.relatedShowItems)
+            is ShowDetailsState.Seasons -> displaySeasons(state.seasons)
         }
     }
 
@@ -278,6 +283,13 @@ class ShowDetailsActivity : DaggerAppCompatActivity() {
         set_watched.setOnClickListener {
             Timber.d("set as watched")
         }
+    }
+
+    private fun displaySeasons(seasons: List<SRSeason>) {
+        val seasonsAdapter = SeasonsAdapter(seasons)
+        seasons_list.isNestedScrollingEnabled = false
+        seasons_list.layoutManager = LinearLayoutManager(this)
+        seasons_list.adapter = seasonsAdapter
     }
 
     private fun hideNextEpisode() {
