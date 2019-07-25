@@ -18,7 +18,7 @@ class DbModule {
     fun providesDatabase(context: Context) : SRDatabase {
         return Room.databaseBuilder(context, SRDatabase::class.java, "series_reminder.db")
                 .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_4_5, MIGRATION_5_6,
-                        MIGRATION_6_7, MIGRATION_7_8, MIGRATION_8_9)
+                        MIGRATION_6_7, MIGRATION_7_8, MIGRATION_8_9, MIGRATION_9_10)
                 .fallbackToDestructiveMigration()
                 .build()
     }
@@ -143,7 +143,16 @@ class DbModule {
                 database.execSQL("ALTER TABLE `seasons` ADD COLUMN fileName TEXT")
                 database.execSQL("ALTER TABLE `seasons` ADD COLUMN thumbnail TEXT")
             }
+        }
 
+        val MIGRATION_9_10 = object: Migration(9,10) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.execSQL("CREATE TABLE IF NOT EXISTS `seasons_new` (`_id` INTEGER, `number` INTEGER NOT NULL, `trakt_id` INTEGER NOT NULL, `episode_count` INTEGER NOT NULL, `aired_episode_count` INTEGER NOT NULL, `show_id` INTEGER NOT NULL, `file_name` TEXT, `thumbnail` TEXT, `watched_episodes` INTEGER NOT NULL DEFAULT 0, PRIMARY KEY(`_id`), FOREIGN KEY(`show_id`) REFERENCES `shows`(`trakt_id`) ON UPDATE CASCADE ON DELETE CASCADE )")
+                database.execSQL("INSERT INTO seasons_new(_id, number, trakt_id, episode_count, aired_episode_count, show_id, file_name, thumbnail) SELECT _id, number, trakt_id, episode_count, aired_episode_count, show_id, fileName, thumbnail FROM seasons")
+                database.execSQL("DROP TABLE seasons")
+                database.execSQL("ALTER TABLE seasons_new RENAME TO seasons")
+                database.execSQL("CREATE UNIQUE INDEX index_seasons_trakt_id ON seasons(trakt_id)")
+            }
         }
     }
 }

@@ -1,8 +1,8 @@
 {
   "formatVersion": 1,
   "database": {
-    "version": 9,
-    "identityHash": "f5adef71ec9da211b020af1476673d45",
+    "version": 10,
+    "identityHash": "bca61377a9c386744d1e1d900c79a3fd",
     "entities": [
       {
         "tableName": "shows",
@@ -422,7 +422,7 @@
       },
       {
         "tableName": "seasons",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`_id` INTEGER, `number` INTEGER NOT NULL, `trakt_id` INTEGER NOT NULL, `episode_count` INTEGER NOT NULL, `aired_episode_count` INTEGER NOT NULL, `show_id` INTEGER NOT NULL, `file_name` TEXT, `thumbnail` TEXT, `watched_episodes` INTEGER, PRIMARY KEY(`_id`), FOREIGN KEY(`show_id`) REFERENCES `shows`(`trakt_id`) ON UPDATE CASCADE ON DELETE CASCADE )",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`_id` INTEGER, `number` INTEGER NOT NULL, `trakt_id` INTEGER NOT NULL, `episode_count` INTEGER NOT NULL, `aired_episode_count` INTEGER NOT NULL, `show_id` INTEGER NOT NULL, `file_name` TEXT, `thumbnail` TEXT, `watched_episodes` INTEGER NOT NULL, PRIMARY KEY(`_id`), FOREIGN KEY(`show_id`) REFERENCES `shows`(`trakt_id`) ON UPDATE CASCADE ON DELETE CASCADE )",
         "fields": [
           {
             "fieldPath": "_id",
@@ -476,7 +476,7 @@
             "fieldPath": "nmbOfWatchedEpisodes",
             "columnName": "watched_episodes",
             "affinity": "INTEGER",
-            "notNull": false
+            "notNull": true
           }
         ],
         "primaryKey": {
@@ -785,7 +785,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'f5adef71ec9da211b020af1476673d45')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'bca61377a9c386744d1e1d900c79a3fd')"
     ]
   }
 }

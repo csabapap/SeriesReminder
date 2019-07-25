@@ -16,8 +16,9 @@ data class SRSeason constructor(
         @ColumnInfo(name = "episode_count") val episodeCount: Int,
         @ColumnInfo(name = "aired_episode_count") val airedEpisodeCount: Int,
         @ColumnInfo(name = "show_id") val showId: Int,
-        val fileName: String? = "",
-        val thumbnail: String? = "") {
+        @ColumnInfo(name = "file_name")val fileName: String? = "",
+        val thumbnail: String? = "",
+        @ColumnInfo(name = "watched_episodes") val nmbOfWatchedEpisodes: Int = 0) {
 
     @Ignore
     var episodes: List<SREpisode> = arrayListOf()
@@ -32,8 +33,10 @@ data class SRSeason constructor(
             showId: Int,
             fileName: String? = "",
             thumbnail: String? = "",
+            nmbOfWatchedEpisodes: Int = 0,
             episodes: List<SREpisode> = arrayListOf()):
-            this(_id, number, traktId, episodeCount, airedEpisodeCount, showId, fileName, thumbnail) {
+            this(_id, number, traktId, episodeCount, airedEpisodeCount, showId, fileName, thumbnail,
+                    nmbOfWatchedEpisodes) {
         this.episodes = episodes;
     }
 
