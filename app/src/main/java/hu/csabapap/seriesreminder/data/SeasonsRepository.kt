@@ -43,11 +43,17 @@ class SeasonsRepository @Inject constructor(private val seasonsDao: SeasonsDao,
 
     suspend fun getSeasonsFromDb(showId: Int, showTvdbId: Int): List<SRSeason>? {
         val seasons = seasonsDao.getSeasons(showId)
-        val images = getSeasonImages(showTvdbId)
+        val images: Map<String, Image?> = try{
+            getSeasonImages(showTvdbId)
+        } catch (e: Exception) {
+            emptyMap()
+        }
 
-        seasons?.map {
-            val filename = images[it.number.toString()]
-            Timber.d("filename: $filename")
+        if (images.isNotEmpty()) {
+            seasons?.map {
+                val filename = images[it.number.toString()]
+                Timber.d("filename: $filename")
+            }
         }
         return seasons
 
