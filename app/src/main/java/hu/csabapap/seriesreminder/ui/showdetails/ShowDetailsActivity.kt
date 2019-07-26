@@ -116,7 +116,6 @@ class ShowDetailsActivity : DaggerAppCompatActivity() {
         })
 
         viewModel.getShowWithEpisode(showId)
-//        viewModel.getSeasons(showId)
         viewModel.getNotifications(showId)
         viewModel.refreshRelatedShows(showId)
         viewModel.observeRelatedShows(showId).observe(this, Observer {
@@ -130,10 +129,8 @@ class ShowDetailsActivity : DaggerAppCompatActivity() {
         })
 
         add_notification_button.setOnClickListener {
-//            viewModel.createReminder(showId)
             val builder = AlertDialog.Builder(this)
-            //alt_bld.setIcon(R.drawable.icon);
-            builder.setTitle("Select a Group Name");
+            builder.setTitle("Select a Group Name")
             var notificationTime = 0
             builder.setSingleChoiceItems(arrayOf("30 minutes", "1 hour"), -1) { _, which ->
                 Timber.d("positions: $which")
@@ -159,8 +156,7 @@ class ShowDetailsActivity : DaggerAppCompatActivity() {
     }
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
-        val itemId = item?.itemId ?: -1
-        when(itemId) {
+        when(item?.itemId ?: -1) {
             R.id.remove_from_collection -> {
                 viewModel.removeFromCollection(showId)
                 finish()
@@ -188,8 +184,6 @@ class ShowDetailsActivity : DaggerAppCompatActivity() {
             toolbar.backgroundColorAlpha = 0
             toolbar.navigationIcon?.setTint(titleTextColor)
             cover.setBackgroundColor(rgb)
-//            fab_reminder.backgroundTintList = ColorStateList.valueOf(Color.WHITE)
-//            fab_reminder.imageTintList = ColorStateList.valueOf(rgb)
             cover_overflow.setBackgroundColor(rgb)
         }
     }

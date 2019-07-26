@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.squareup.picasso.Picasso
@@ -12,6 +13,7 @@ import hu.csabapap.seriesreminder.R
 import hu.csabapap.seriesreminder.data.db.entities.SRSeason
 import hu.csabapap.seriesreminder.data.network.getThumbnailUrl
 import hu.csabapap.seriesreminder.extensions.bindView
+import java.util.*
 
 class SeasonsAdapter(val seasons: List<SRSeason>): RecyclerView.Adapter<SeasonsAdapter.SeasonsVH>() {
 
@@ -30,7 +32,16 @@ class SeasonsAdapter(val seasons: List<SRSeason>): RecyclerView.Adapter<SeasonsA
     override fun onBindViewHolder(holder: SeasonsVH, position: Int) {
         val season = seasons[position]
 
-        holder.seasonTitle.text = "Season ${season.number}"
+        holder.seasonTitle.text = String.format(Locale.ENGLISH,
+                context.getString(R.string.seasons_title), season.number)
+        val seasonProgressText = String.format(Locale.ENGLISH,
+                context.getString(R.string.seasons_progress),
+                season.nmbOfWatchedEpisodes, season.airedEpisodeCount)
+        holder.readableProgress.text = seasonProgressText
+        holder.progress.apply {
+            max = season.airedEpisodeCount
+            progress = season.nmbOfWatchedEpisodes
+        }
 
         val posterUrl = getThumbnailUrl(season.thumbnail)
 
@@ -42,6 +53,8 @@ class SeasonsAdapter(val seasons: List<SRSeason>): RecyclerView.Adapter<SeasonsA
 
     inner class SeasonsVH(itemView: View): RecyclerView.ViewHolder(itemView) {
         val seasonTitle: TextView by bindView(R.id.season_title)
+        val readableProgress: TextView by bindView(R.id.readable_progress)
+        val progress: ProgressBar by bindView(R.id.season_progress)
         val poster: ImageView by bindView(R.id.poster)
     }
 }
