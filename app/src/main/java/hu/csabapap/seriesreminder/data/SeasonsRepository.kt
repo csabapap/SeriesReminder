@@ -43,6 +43,8 @@ class SeasonsRepository @Inject constructor(private val seasonsDao: SeasonsDao,
 
     suspend fun getSeasonsFromDb(showId: Int, showTvdbId: Int): List<SRSeason>? {
         val seasons = seasonsDao.getSeasons(showId)
+
+        // TODO getting images not belongs here
         val images: Map<String, Image?> = try{
             getSeasonImages(showTvdbId)
         } catch (e: Exception) {
