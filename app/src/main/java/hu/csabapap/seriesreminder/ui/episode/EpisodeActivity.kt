@@ -11,6 +11,7 @@ import hu.csabapap.seriesreminder.R
 import hu.csabapap.seriesreminder.data.db.entities.SREpisode
 import hu.csabapap.seriesreminder.utils.Episode
 import kotlinx.android.synthetic.main.activity_episode.*
+import java.util.*
 import javax.inject.Inject
 import javax.inject.Named
 
@@ -82,6 +83,9 @@ class EpisodeActivity : DaggerAppCompatActivity() {
         Picasso.with(this)
                 .load(episode.image)
                 .into(episode_art)
+        val unformattedEpisodeTitle = getString(R.string.episode_title_with_numbers)
+        episode_title.text = String.format(Locale.ENGLISH, unformattedEpisodeTitle,
+                episode.season, episode.number, episode.title)
         episode_overview.text = episode.overview
     }
 }

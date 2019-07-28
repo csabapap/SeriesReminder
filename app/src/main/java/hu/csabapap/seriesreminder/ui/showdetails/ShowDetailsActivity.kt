@@ -263,7 +263,7 @@ class ShowDetailsActivity : DaggerAppCompatActivity() {
     private fun displayNextEpisode(episode: SREpisode) {
         next_episode_content.visibility = View.VISIBLE
         next_episode_title.text = getString(R.string.episode_title_with_numbers)
-                .format(episode.title, episode.season, episode.number)
+                .format(episode.season, episode.number, episode.title)
         Picasso.with(this)
                 .load(getEpisodeUrl(episode.tvdbId))
                 .into(episode_art)
