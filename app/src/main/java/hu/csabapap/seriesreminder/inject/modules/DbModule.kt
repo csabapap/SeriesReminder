@@ -18,7 +18,7 @@ class DbModule {
     fun providesDatabase(context: Context) : SRDatabase {
         return Room.databaseBuilder(context, SRDatabase::class.java, "series_reminder.db")
                 .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_4_5, MIGRATION_5_6,
-                        MIGRATION_6_7, MIGRATION_7_8, MIGRATION_8_9, MIGRATION_9_10)
+                        MIGRATION_6_7, MIGRATION_7_8, MIGRATION_8_9, MIGRATION_9_10, MIGRATION_10_11)
                 .fallbackToDestructiveMigration()
                 .build()
     }
@@ -153,6 +153,13 @@ class DbModule {
                 database.execSQL("ALTER TABLE seasons_new RENAME TO seasons")
                 database.execSQL("CREATE UNIQUE INDEX index_seasons_trakt_id ON seasons(trakt_id)")
             }
+        }
+
+        val MIGRATION_10_11 = object: Migration(10,11) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.execSQL("CREATE TABLE IF NOT EXISTS `watched_episodes` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `show_id` INTEGER NOT NULL, `season` INTEGER NOT NULL, `number` INTEGER NOT NULL, FOREIGN KEY(`show_id`) REFERENCES `shows`(`trakt_id`) ON UPDATE CASCADE ON DELETE CASCADE)")
+            }
+
         }
     }
 }
