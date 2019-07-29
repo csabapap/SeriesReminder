@@ -6,6 +6,7 @@ import androidx.work.WorkManager
 import hu.csabapap.seriesreminder.data.CollectionRepository
 import hu.csabapap.seriesreminder.data.SeasonsRepository
 import hu.csabapap.seriesreminder.data.ShowsRepository
+import hu.csabapap.seriesreminder.data.repositories.WatchedEpisodesRepository
 import hu.csabapap.seriesreminder.data.repositories.episodes.EpisodesRepository
 import hu.csabapap.seriesreminder.data.repositories.notifications.NotificationsRepository
 import hu.csabapap.seriesreminder.data.repositories.relatedshows.RelatedShowsRepository
@@ -19,6 +20,7 @@ class ShowDetailsViewModelProvider @Inject constructor(
         private val collectionRepository: CollectionRepository,
         private val notificationsRepository: NotificationsRepository,
         private val relatedShowsRepository: RelatedShowsRepository,
+        private val watchedEpisodesRepository: WatchedEpisodesRepository,
         private val workManager: WorkManager,
         private val dispatchers: AppCoroutineDispatchers)
     : ViewModelProvider.NewInstanceFactory() {
@@ -26,6 +28,6 @@ class ShowDetailsViewModelProvider @Inject constructor(
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {
         return ShowDetailsViewModel(showsRepository, seasonsRepository, episodesRepository,
                 collectionRepository, notificationsRepository, relatedShowsRepository,
-                workManager, dispatchers) as T
+                watchedEpisodesRepository, workManager, dispatchers) as T
     }
 }

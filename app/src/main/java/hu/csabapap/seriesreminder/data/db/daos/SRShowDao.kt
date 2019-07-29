@@ -26,6 +26,9 @@ abstract class SRShowDao {
     @Update
     abstract fun updateShow(show: SRShow)
 
+    @Query("UPDATE shows SET next_episode = :nextEpisodeNumber WHERE trakt_id = :showId")
+    abstract suspend fun updateNextEpisode(showId: Int, nextEpisodeNumber: Int)
+
     fun insertOrUpdateShow(show: SRShow) : SRShow = when {
         show.id == null -> {
             show.copy(id = insert(show))

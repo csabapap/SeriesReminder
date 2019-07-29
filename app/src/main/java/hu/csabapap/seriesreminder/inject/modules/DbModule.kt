@@ -81,6 +81,11 @@ class DbModule {
         return db.relatedShowsDao()
     }
 
+    @Provides
+    fun providesWatchedEpisodesDao(db: SRDatabase): WatchedEpisodesDao {
+        return db.watchedEpisodesDao()
+    }
+
     companion object {
         val MIGRATION_1_2 = object : Migration(1,2) {
             override fun migrate(database: SupportSQLiteDatabase) {

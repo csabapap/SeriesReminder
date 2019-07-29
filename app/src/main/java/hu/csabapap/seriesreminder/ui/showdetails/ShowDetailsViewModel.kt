@@ -11,8 +11,11 @@ import hu.csabapap.seriesreminder.BuildConfig
 import hu.csabapap.seriesreminder.data.CollectionRepository
 import hu.csabapap.seriesreminder.data.SeasonsRepository
 import hu.csabapap.seriesreminder.data.ShowsRepository
+import hu.csabapap.seriesreminder.data.db.entities.SREpisode
 import hu.csabapap.seriesreminder.data.db.entities.SRSeason
 import hu.csabapap.seriesreminder.data.db.entities.SrNotification
+import hu.csabapap.seriesreminder.data.db.entities.WatchedEpisode
+import hu.csabapap.seriesreminder.data.repositories.WatchedEpisodesRepository
 import hu.csabapap.seriesreminder.data.repositories.episodes.EpisodesRepository
 import hu.csabapap.seriesreminder.data.repositories.notifications.NotificationsRepository
 import hu.csabapap.seriesreminder.data.repositories.relatedshows.RelatedShowsRepository
@@ -41,6 +44,7 @@ class ShowDetailsViewModel(private val showsRepository: ShowsRepository,
                            private val collectionRepository: CollectionRepository,
                            private val notificationsRepository: NotificationsRepository,
                            private val relatedShowsRepository: RelatedShowsRepository,
+                           private val watchedEpisodesRepository: WatchedEpisodesRepository,
                            private val workManager: WorkManager,
                            private val dispatchers: AppCoroutineDispatchers) : ViewModel() {
 
@@ -187,6 +191,21 @@ class ShowDetailsViewModel(private val showsRepository: ShowsRepository,
                 relatedShowsRepository.refreshRelatedShows(id)
             } catch (e: Exception) {
                 Timber.e(e)
+            }
+        }
+    }
+
+    fun setEpisodeWatched(episode: SREpisode) {
+        scope.launch {
+            val watchedEpisode = WatchedEpisode(null, episode.showId, episode.season, episode.number)
+            watchedEpisodesRepository.setEpisodeWatched(watchedEpisode)
+            val nextEpisodeAbsNumber = episode.absNumber + 1
+            showsRepository.updateNextEpisode(episode.showId, nextEpisodeAbsNumber)
+
+            val season = seasonsRepository.getSeason(episode.showId, episode.season)
+            val nmbOfWatchedEpisodes = season.nmbOfWatchedEpisodes + 1
+            if (nmbOfWatchedEpisodes < season.airedEpisodeCount) {
+                seasonsRepository.updateSeason(season.copy(nmbOfWatchedEpisodes = nmbOfWatchedEpisodes))
             }
         }
     }

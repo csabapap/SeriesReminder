@@ -275,7 +275,7 @@ class ShowDetailsActivity : DaggerAppCompatActivity() {
         }
 
         set_watched.setOnClickListener {
-            Timber.d("set as watched")
+             viewModel.setEpisodeWatched(episode)
         }
     }
 

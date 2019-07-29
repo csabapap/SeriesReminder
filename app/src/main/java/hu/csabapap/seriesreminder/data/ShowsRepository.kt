@@ -131,4 +131,8 @@ class ShowsRepository @Inject constructor(private val traktApi: TraktApi,
                 }
                 .toList()
     }
+
+    suspend fun updateNextEpisode(showId: Int, nextEpisodeNumber: Int) {
+        showDao.updateNextEpisode(showId, nextEpisodeNumber)
+    }
 }

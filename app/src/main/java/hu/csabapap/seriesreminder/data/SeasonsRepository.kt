@@ -3,6 +3,7 @@ package hu.csabapap.seriesreminder.data
 import hu.csabapap.seriesreminder.data.db.daos.SeasonsDao
 import hu.csabapap.seriesreminder.data.db.entities.SREpisode
 import hu.csabapap.seriesreminder.data.db.entities.SRSeason
+import hu.csabapap.seriesreminder.data.exceptions.ItemNotFoundException
 import hu.csabapap.seriesreminder.data.network.TraktApi
 import hu.csabapap.seriesreminder.data.network.TvdbApi
 import hu.csabapap.seriesreminder.data.network.entities.Image
@@ -82,6 +83,14 @@ class SeasonsRepository @Inject constructor(private val seasonsDao: SeasonsDao,
                 showId)
         srSeason.episodes = episodes
         return srSeason
+    }
+
+    suspend fun getSeason(showId: Int, season: Int): SRSeason {
+        return seasonsDao.getSeason(showId, season) ?: throw ItemNotFoundException("season not found in db")
+    }
+
+    suspend fun updateSeason(season: SRSeason) {
+        seasonsDao.update(season)
     }
 
 }

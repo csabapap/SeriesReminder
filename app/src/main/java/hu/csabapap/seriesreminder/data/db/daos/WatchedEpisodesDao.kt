@@ -8,6 +8,6 @@ import hu.csabapap.seriesreminder.data.db.entities.WatchedEpisode
 interface WatchedEpisodesDao {
 
     @Insert
-    fun insert(watchedEpisode: WatchedEpisode)
+    suspend fun insert(watchedEpisode: WatchedEpisode)
 
 }

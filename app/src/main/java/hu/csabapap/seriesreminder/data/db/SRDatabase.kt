@@ -29,4 +29,5 @@ abstract class SRDatabase : RoomDatabase(){
     abstract fun lastRequestDao(): LastRequestDao
     abstract fun notificationsDao(): NotificationsDao
     abstract fun relatedShowsDao(): RelatedShowsDao
+    abstract fun watchedEpisodesDao(): WatchedEpisodesDao
 }

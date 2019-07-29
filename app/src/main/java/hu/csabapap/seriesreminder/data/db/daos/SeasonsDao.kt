@@ -10,4 +10,10 @@ interface SeasonsDao {
 
     @Query("SELECT * FROM seasons WHERE show_id = :showId ORDER BY number")
     suspend fun getSeasons(showId: Int): List<SRSeason>?
+
+    @Query("SELECT * FROM seasons WHERE show_id = :showId AND number = :season LIMIT 1")
+    suspend fun getSeason(showId: Int, season: Int): SRSeason?
+
+    @Update
+    suspend fun update(season: SRSeason)
 }
