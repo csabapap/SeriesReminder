@@ -14,7 +14,7 @@ class LocalEpisodesDataSource @Inject constructor(private val episodesDao: Episo
         episodesDao.updateEpisodeWithImage(tvdbId, url)
     }
 
-    fun get(showId: Int, absNumber: Int): SREpisode? {
+    suspend fun get(showId: Int, absNumber: Int): SREpisode? {
         return episodesDao.getByAbsNumber(showId, absNumber)
     }
 

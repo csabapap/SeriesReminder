@@ -68,7 +68,7 @@ class ShowDetailsViewModel(private val showsRepository: ShowsRepository,
             } else {
                 show.nextEpisode
             }
-            val episode = episodesRepository.getNextEpisode(showId, nextEpisodeAbsNumber)
+            val episode = getNextEpisode(showId, nextEpisodeAbsNumber)
             withContext(dispatchers.main) {
                 if (episode != null) {
                     _detailsUiState.value = ShowDetailsState.NextEpisode(episode)
@@ -101,8 +101,8 @@ class ShowDetailsViewModel(private val showsRepository: ShowsRepository,
 
     }
 
-    fun getNextEpisode() {
-
+    suspend fun getNextEpisode(showId: Int, nextEpisodeAbsNumber: Int): SREpisode? {
+        return episodesRepository.getNextEpisode(showId, nextEpisodeAbsNumber)
     }
 
     fun createNotification(showId: Int, aheadOfTime: Int) {
@@ -206,6 +206,15 @@ class ShowDetailsViewModel(private val showsRepository: ShowsRepository,
             val nmbOfWatchedEpisodes = season.nmbOfWatchedEpisodes + 1
             if (nmbOfWatchedEpisodes < season.airedEpisodeCount) {
                 seasonsRepository.updateSeason(season.copy(nmbOfWatchedEpisodes = nmbOfWatchedEpisodes))
+            }
+
+            val nextEpisode = getNextEpisode(episode.showId, nextEpisodeAbsNumber)
+            withContext(dispatchers.main) {
+                if (nextEpisode != null) {
+                    _detailsUiState.value = ShowDetailsState.NextEpisode(nextEpisode)
+                } else {
+                    _detailsUiState.value = ShowDetailsState.NextEpisodeNotFound
+                }
             }
         }
     }
