@@ -9,8 +9,8 @@ import androidx.lifecycle.ViewModelProviders
 import com.squareup.picasso.Picasso
 import dagger.android.support.DaggerAppCompatActivity
 import hu.csabapap.seriesreminder.R
-import hu.csabapap.seriesreminder.data.db.entities.SREpisode
 import hu.csabapap.seriesreminder.data.db.relations.EpisodeWithShow
+import hu.csabapap.seriesreminder.extensions.exhaustive
 import hu.csabapap.seriesreminder.utils.Episode
 import kotlinx.android.synthetic.main.activity_episode.*
 import java.util.*
@@ -78,7 +78,7 @@ class EpisodeActivity : DaggerAppCompatActivity() {
     private fun updateUi(state: EpisodeUiState) {
         when (state) {
             is EpisodeUiState.DisplayEpisode -> displayEpisode(state.episodeWithShow)
-        }
+        }.exhaustive
     }
 
     private fun displayEpisode(episodeWithShow: EpisodeWithShow) {
