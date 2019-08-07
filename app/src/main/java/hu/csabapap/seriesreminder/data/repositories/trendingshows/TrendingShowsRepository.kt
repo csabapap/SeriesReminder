@@ -8,10 +8,7 @@ import hu.csabapap.seriesreminder.data.db.TrendingShowsResult
 import hu.csabapap.seriesreminder.data.db.entities.SRTrendingItem
 import hu.csabapap.seriesreminder.data.db.entities.TrendingGridItem
 import hu.csabapap.seriesreminder.extensions.distinctUntilChanged
-import io.reactivex.Maybe
-import io.reactivex.Single
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import kotlinx.coroutines.rx2.await
 import timber.log.Timber
 import javax.inject.Inject
@@ -44,25 +41,17 @@ class TrendingShowsRepository @Inject constructor(private val localTrendingDataS
         return TrendingShowsResult(data)
     }
 
-    fun refreshTrendingShows(): Single<List<SRTrendingItem>> {
-        return remoteTrendingDataSource.getShows("full")
-                .toFlowable()
-                .flatMapIterable { it }
-                .flatMapMaybe { trendingShow ->
-                    val ids = trendingShow.show.ids
-                    showsRepository.getShowWithImages(ids.trakt, ids.tvdb)
-                            .map {
-                                if (it.id != null) {
-                                    Maybe.just(it)
-                                } else {
-                                    showsRepository.getShow(it.traktId)
-                                }
-                            }
-                            .map { srShow -> mapToSRTrendingShow(srShow.blockingGet().traktId,
-                                    trendingShow.watchers, 0) }
-                }
-                .toList()
-                .doOnSuccess { trendingShows -> localTrendingDataSource.insertShows(0, trendingShows)}
+    suspend fun refreshTrendingShow(): List<SRTrendingItem> = coroutineScope {
+        val trendingShows = remoteTrendingDataSource.getShows("full").await()
+
+        val trendingItems = trendingShows.map {
+            async {
+                showsRepository.getShowWithImages(it.show.ids.trakt, it.show.ids.tvdb).await()
+                mapToSRTrendingShow(it.show.ids.trakt, it.watchers, 0)
+            }
+        }.awaitAll()
+        localTrendingDataSource.insertShows(0, trendingItems)
+        return@coroutineScope trendingItems
     }
 
     suspend fun updateTrendingShows() {

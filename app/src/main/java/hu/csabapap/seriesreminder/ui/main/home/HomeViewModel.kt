@@ -10,8 +10,13 @@ import hu.csabapap.seriesreminder.data.db.entities.NextEpisodeItem
 import hu.csabapap.seriesreminder.data.repositories.popularshows.PopularShowsRepository
 import hu.csabapap.seriesreminder.data.repositories.trendingshows.TrendingShowsRepository
 import hu.csabapap.seriesreminder.ui.adapters.items.ShowItem
+import hu.csabapap.seriesreminder.utils.AppCoroutineDispatchers
 import hu.csabapap.seriesreminder.utils.AppRxSchedulers
 import io.reactivex.disposables.CompositeDisposable
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -19,10 +24,13 @@ class HomeViewModel @Inject constructor(private val trendingShowsRepository: Tre
                                         private val popularShowsRepository: PopularShowsRepository,
                                         collectionRepository: CollectionRepository,
                                         private val episodesRepository: EpisodesRepository,
-                                        private val rxSchedulers: AppRxSchedulers)
+                                        private val rxSchedulers: AppRxSchedulers,
+                                        private val dispatchers: AppCoroutineDispatchers)
     : ViewModel() {
 
     private val disposables = CompositeDisposable()
+    private val job = Job()
+    private val scope = CoroutineScope(dispatchers.main + job)
     private val _viewStateLiveData = MutableLiveData<HomeViewState>()
     val viewStateLiveData: LiveData<HomeViewState>
         get() = _viewStateLiveData
@@ -100,18 +108,19 @@ class HomeViewModel @Inject constructor(private val trendingShowsRepository: Tre
     }
 
     private fun refresh() {
-        disposables.add(trendingShowsRepository.refreshTrendingShows()
-                .subscribeOn(rxSchedulers.io)
-                .observeOn(rxSchedulers.main)
-                .subscribe({ showItems ->
-                    Timber.d("nmb of shows loaded: %d", showItems.size)
-                }, Timber::e))
-        disposables.add(popularShowsRepository.refreshPopularShows()
-                .subscribeOn(rxSchedulers.io)
-                .observeOn(rxSchedulers.main)
-                .subscribe({ showItems ->
-                    Timber.d("nmb of popular shows loaded: %d", showItems.size)
-                }, Timber::e))
+        scope.launch(dispatchers.io) {
+            val trendingShows = trendingShowsRepository.refreshTrendingShow()
+            withContext(dispatchers.main) {
+                Timber.d("nmb of shows loaded: %d", trendingShows.size)
+            }
+        }
+
+        scope.launch(dispatchers.io) {
+            val popularShows = popularShowsRepository.refreshShows()
+            withContext(dispatchers.main) {
+                Timber.d("nmb of popular shows loaded: %d", popularShows.size)
+            }
+        }
     }
 
     override fun onCleared() {

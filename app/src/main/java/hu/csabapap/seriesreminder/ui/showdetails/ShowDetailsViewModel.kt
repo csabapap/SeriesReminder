@@ -76,29 +76,11 @@ class ShowDetailsViewModel(private val showsRepository: ShowsRepository,
                     _detailsUiState.value = ShowDetailsState.NextEpisodeNotFound
                 }
             }
-
-            val seasons = getSeasons(showId, show.tvdbId)
-                    .map { season ->
-                        if (season.thumbnail == null || season.thumbnail.isEmpty()) {
-                            return@map season.copy(thumbnail = show.posterThumb)
-                        }
-                        season
-                    }
-
-            withContext(dispatchers.main) {
-                _detailsUiState.value = ShowDetailsState.Seasons(seasons)
-            }
         }
     }
 
-    suspend fun getSeasons(showId: Int, showTvdbId: Int): List<SRSeason> {
-
-        val seasons = seasonsRepository.getSeasonsFromDb(showId, showTvdbId) ?: emptyList()
-
-        return seasons.filter {
-            it.number > 0
-        }
-
+    fun getSeasonsLiveData(showId: Int): LiveData<List<SRSeason>> {
+        return seasonsRepository.getSeasonsLiveData(showId)
     }
 
     suspend fun getNextEpisode(showId: Int, nextEpisodeAbsNumber: Int): SREpisode? {
@@ -204,7 +186,7 @@ class ShowDetailsViewModel(private val showsRepository: ShowsRepository,
 
             val season = seasonsRepository.getSeason(episode.showId, episode.season)
             val nmbOfWatchedEpisodes = season.nmbOfWatchedEpisodes + 1
-            if (nmbOfWatchedEpisodes < season.airedEpisodeCount) {
+            if (nmbOfWatchedEpisodes <= season.airedEpisodeCount) {
                 seasonsRepository.updateSeason(season.copy(nmbOfWatchedEpisodes = nmbOfWatchedEpisodes))
             }
 
@@ -217,6 +199,10 @@ class ShowDetailsViewModel(private val showsRepository: ShowsRepository,
                 }
             }
         }
+    }
+
+    fun observeSeasons(showId: Int): LiveData<List<SRSeason>> {
+        return getSeasonsLiveData(showId)
     }
 
     fun observeRelatedShows(showId: Int): LiveData<List<ShowItem>> {

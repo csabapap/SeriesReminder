@@ -5,13 +5,10 @@ package hu.csabapap.seriesreminder.utils
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
-import android.os.Bundle
 import androidx.core.app.ActivityOptionsCompat
 import androidx.core.os.bundleOf
-import androidx.fragment.app.Fragment
 import hu.csabapap.seriesreminder.ui.addshow.AddShowActivity
 import hu.csabapap.seriesreminder.ui.episode.EpisodeActivity
-import hu.csabapap.seriesreminder.ui.episode.EpisodeActivityFragment
 import hu.csabapap.seriesreminder.ui.showdetails.ShowDetailsActivity
 
 object ShowDetails {
@@ -72,12 +69,6 @@ object Episode {
         intent.putExtras(bundleOf(SHOW_ID to showId, SEASON_NMB to season,
                 EPISODE_NMB to episode))
         context.startActivity(intent, options.toBundle())
-    }
-
-    fun createFragment(args: Bundle): Fragment {
-        val fragment = EpisodeActivityFragment()
-        fragment.arguments = args
-        return fragment
     }
 
     const val SHOW_ID = "show_id"

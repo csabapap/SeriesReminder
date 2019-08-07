@@ -117,8 +117,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 app:barrierDirection="bottom"
-                app:constraint_referenced_ids="delete_notification,notification_icon,
-                notification_text,add_notification_button"/>
+                app:constraint_referenced_ids="delete_notification,notification_icon,notification_text,add_notification_button"/>
 
             <View
                 android:id="@+id/separator"

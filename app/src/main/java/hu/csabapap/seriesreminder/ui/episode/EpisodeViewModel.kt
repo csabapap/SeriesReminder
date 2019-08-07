@@ -28,7 +28,9 @@ class EpisodeViewModel @Inject constructor(
             val episode = episodesRepository.getEpisode(showId, seasonNumber, episodeNumber)
 
             withContext(dispatchers.main) {
-                _uiState.value = EpisodeUiState.DisplayEpisode(episode)
+                if (episode != null) {
+                    _uiState.value = EpisodeUiState.DisplayEpisode(episode)
+                }
             }
         }
     }

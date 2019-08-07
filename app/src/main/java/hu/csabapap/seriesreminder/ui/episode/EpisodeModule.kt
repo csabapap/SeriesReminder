@@ -9,11 +9,8 @@ import javax.inject.Named
 @Module
 abstract class EpisodeModule {
 
-    @ContributesAndroidInjector()
-    internal abstract fun showDetailsActivity() : EpisodeActivity
-
     @ContributesAndroidInjector
-    abstract fun provideFragment() : EpisodeActivityFragment
+    internal abstract fun showDetailsActivity() : EpisodeActivity
 
     @Binds
     @Named("EpisodeViewModelFactory")

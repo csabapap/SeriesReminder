@@ -2,6 +2,7 @@ package hu.csabapap.seriesreminder.data.db.daos
 
 import androidx.room.*
 import hu.csabapap.seriesreminder.data.db.entities.SREpisode
+import hu.csabapap.seriesreminder.data.db.relations.EpisodeWithShow
 
 @Dao
 abstract class EpisodeDao {
@@ -19,5 +20,5 @@ abstract class EpisodeDao {
     abstract suspend fun getByAbsNumber(showId: Int, absNumber: Int): SREpisode?
 
     @Query("SELECT * FROM episodes WHERE show_id = :showId AND season = :season AND number = :episode LIMIT 1")
-    abstract suspend fun getBySeasonAndEpisodeNumber(showId: Int, season: Int, episode: Int): SREpisode?
+    abstract suspend fun getBySeasonAndEpisodeNumber(showId: Int, season: Int, episode: Int): EpisodeWithShow?
 }

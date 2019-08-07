@@ -1,5 +1,6 @@
 package hu.csabapap.seriesreminder.data
 
+import androidx.lifecycle.LiveData
 import hu.csabapap.seriesreminder.data.db.daos.SeasonsDao
 import hu.csabapap.seriesreminder.data.db.entities.SREpisode
 import hu.csabapap.seriesreminder.data.db.entities.SRSeason
@@ -10,7 +11,6 @@ import hu.csabapap.seriesreminder.data.network.entities.Image
 import hu.csabapap.seriesreminder.data.network.entities.Season
 import hu.csabapap.seriesreminder.data.repositories.episodes.EpisodesRepository
 import io.reactivex.Single
-import timber.log.Timber
 import javax.inject.Inject
 
 class SeasonsRepository @Inject constructor(private val seasonsDao: SeasonsDao,
@@ -42,24 +42,12 @@ class SeasonsRepository @Inject constructor(private val seasonsDao: SeasonsDao,
         return emptyMap()
     }
 
-    suspend fun getSeasonsFromDb(showId: Int, showTvdbId: Int): List<SRSeason>? {
-        val seasons = seasonsDao.getSeasons(showId)
+    suspend fun getSeasonsFromDb(showId: Int): List<SRSeason>? {
+        return seasonsDao.getSeasons(showId)
+    }
 
-        // TODO getting images not belongs here
-        val images: Map<String, Image?> = try{
-            getSeasonImages(showTvdbId)
-        } catch (e: Exception) {
-            emptyMap()
-        }
-
-        if (images.isNotEmpty()) {
-            seasons?.map {
-                val filename = images[it.number.toString()]
-                Timber.d("filename: $filename")
-            }
-        }
-        return seasons
-
+    fun getSeasonsLiveData(showId: Int): LiveData<List<SRSeason>> {
+        return seasonsDao.getSeasonsLiveData(showId)
     }
 
     suspend fun insertSeasons(season: List<SRSeason>) {

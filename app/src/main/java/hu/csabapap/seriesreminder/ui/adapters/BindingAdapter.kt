@@ -4,6 +4,7 @@ import android.view.View
 import android.widget.ImageView
 import androidx.databinding.BindingAdapter
 import com.squareup.picasso.Picasso
+import hu.csabapap.seriesreminder.R
 import hu.csabapap.seriesreminder.data.db.entities.SRShow
 import hu.csabapap.seriesreminder.data.network.getPosterUrl
 import hu.csabapap.seriesreminder.data.network.getThumbnailUrl
@@ -24,6 +25,7 @@ fun setImageUri(view: ImageView, showItem: ShowItem) {
 
     Picasso.with(view.context)
             .load(url)
+            .placeholder(R.color.light_grey)
             .into(view)
 }
 
@@ -37,5 +39,6 @@ fun setImageUri(view: ImageView, showItem: SRShow) {
 
     Picasso.with(view.context)
             .load(url)
+            .placeholder(R.color.light_grey)
             .into(view)
 }

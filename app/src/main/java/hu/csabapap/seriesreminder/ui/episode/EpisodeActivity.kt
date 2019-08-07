@@ -2,6 +2,7 @@ package hu.csabapap.seriesreminder.ui.episode
 
 import android.os.Bundle
 import android.view.MenuItem
+import android.view.View
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProviders
@@ -9,6 +10,7 @@ import com.squareup.picasso.Picasso
 import dagger.android.support.DaggerAppCompatActivity
 import hu.csabapap.seriesreminder.R
 import hu.csabapap.seriesreminder.data.db.entities.SREpisode
+import hu.csabapap.seriesreminder.data.db.relations.EpisodeWithShow
 import hu.csabapap.seriesreminder.utils.Episode
 import kotlinx.android.synthetic.main.activity_episode.*
 import java.util.*
@@ -75,14 +77,26 @@ class EpisodeActivity : DaggerAppCompatActivity() {
 
     private fun updateUi(state: EpisodeUiState) {
         when (state) {
-            is EpisodeUiState.DisplayEpisode -> displayEpisode(state.srEpisode)
+            is EpisodeUiState.DisplayEpisode -> displayEpisode(state.episodeWithShow)
         }
     }
 
-    private fun displayEpisode(episode: SREpisode) {
+    private fun displayEpisode(episodeWithShow: EpisodeWithShow) {
+        val show = episodeWithShow.show
+        val episode = episodeWithShow.episode
+        val image = if (episode.image.isNotEmpty()) {
+            episode.image
+        } else {
+            null
+        }
         Picasso.with(this)
-                .load(episode.image)
+                .load(image)
+                .placeholder(R.color.dark_grey)
                 .into(episode_art)
+        if (show != null) {
+            show_details.text = show.title
+            show_details.visibility = View.VISIBLE
+        }
         val unformattedEpisodeTitle = getString(R.string.episode_title_with_numbers)
         episode_title.text = String.format(Locale.ENGLISH, unformattedEpisodeTitle,
                 episode.season, episode.number, episode.title)

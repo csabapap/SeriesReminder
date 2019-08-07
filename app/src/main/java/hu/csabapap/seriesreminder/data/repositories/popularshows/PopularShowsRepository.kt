@@ -8,10 +8,7 @@ import hu.csabapap.seriesreminder.data.db.PopularShowsResult
 import hu.csabapap.seriesreminder.data.db.entities.PopularGridItem
 import hu.csabapap.seriesreminder.data.db.entities.SRPopularItem
 import hu.csabapap.seriesreminder.extensions.distinctUntilChanged
-import io.reactivex.Maybe
-import io.reactivex.Single
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import kotlinx.coroutines.rx2.await
 import timber.log.Timber
 import javax.inject.Inject
@@ -40,24 +37,24 @@ class PopularShowsRepository @Inject constructor(private val localPopularDataSou
         return PopularShowsResult(data)
     }
 
-    fun refreshPopularShows(): Single<List<SRPopularItem>> {
-        return remotePopularDataSource.getShows("full")
-                .toFlowable()
-                .flatMapIterable { it }
-                .flatMapMaybe { popularShow ->
-                    val ids = popularShow.ids
-                    showsRepository.getShowWithImages(ids.trakt, ids.tvdb)
-                            .map {
-                                if (it.id != null) {
-                                    Maybe.just(it)
-                                } else {
-                                    showsRepository.getShow(it.traktId)
-                                }
-                            }
-                            .map { srShow -> mapToSRPopularItem(srShow.blockingGet().traktId, 0) }
+    suspend fun refreshShows(): List<SRPopularItem> = coroutineScope {
+        val popularShows = remotePopularDataSource.getShows("full").await()
+
+        val popularItems = popularShows.map {
+            async {
+                val show = showsRepository.getShowWithImages(it.ids.trakt, it.ids.tvdb).await()
+                if (show != null) {
+                    return@async mapToSRPopularItem(show.traktId, 0)
+                } else {
+                    return@async null
                 }
-                .toList()
-                .doOnSuccess { popularShows -> localPopularDataSource.insertShows(0, popularShows)}
+
+            }
+        }
+                .awaitAll()
+                .filterNotNull()
+        localPopularDataSource.insertShows(0, popularItems)
+        return@coroutineScope popularItems
     }
 
     suspend fun updatePopularShows() {

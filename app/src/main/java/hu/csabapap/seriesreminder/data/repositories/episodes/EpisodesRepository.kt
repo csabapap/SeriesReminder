@@ -4,6 +4,7 @@ import hu.csabapap.seriesreminder.data.db.daos.EpisodeDao
 import hu.csabapap.seriesreminder.data.db.daos.NextEpisodeDao
 import hu.csabapap.seriesreminder.data.db.entities.NextEpisodeEntry
 import hu.csabapap.seriesreminder.data.db.entities.SREpisode
+import hu.csabapap.seriesreminder.data.db.relations.EpisodeWithShow
 import hu.csabapap.seriesreminder.data.network.TvdbApi
 import hu.csabapap.seriesreminder.data.network.entities.Episode
 import io.reactivex.Single
@@ -18,9 +19,8 @@ class EpisodesRepository @Inject constructor(
         private val nextEpisodeDao: NextEpisodeDao,
         private val episodesDao: EpisodeDao) {
 
-    suspend fun getEpisode(showId: Int, season: Int, number: Int ): SREpisode {
-        val episode = localDataSource.getBySeasonAndEpisodeNumber(showId, season, number)
-        return episode ?: remoteDataSource.getEpisode(showId, season, number)
+    suspend fun getEpisode(showId: Int, season: Int, number: Int ): EpisodeWithShow? {
+        return localDataSource.getBySeasonAndEpisodeNumber(showId, season, number)
     }
 
     suspend fun getNextEpisode(showId: Int, absNumber: Int ): SREpisode? {

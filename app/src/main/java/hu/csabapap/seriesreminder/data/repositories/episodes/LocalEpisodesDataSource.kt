@@ -2,6 +2,7 @@ package hu.csabapap.seriesreminder.data.repositories.episodes
 
 import hu.csabapap.seriesreminder.data.db.daos.EpisodeDao
 import hu.csabapap.seriesreminder.data.db.entities.SREpisode
+import hu.csabapap.seriesreminder.data.db.relations.EpisodeWithShow
 import javax.inject.Inject
 
 class LocalEpisodesDataSource @Inject constructor(private val episodesDao: EpisodeDao) {
@@ -18,7 +19,7 @@ class LocalEpisodesDataSource @Inject constructor(private val episodesDao: Episo
         return episodesDao.getByAbsNumber(showId, absNumber)
     }
 
-    suspend fun getBySeasonAndEpisodeNumber(showId: Int, season: Int, episode: Int): SREpisode? {
+    suspend fun getBySeasonAndEpisodeNumber(showId: Int, season: Int, episode: Int): EpisodeWithShow? {
         return episodesDao.getBySeasonAndEpisodeNumber(showId, season, episode)
     }
 }

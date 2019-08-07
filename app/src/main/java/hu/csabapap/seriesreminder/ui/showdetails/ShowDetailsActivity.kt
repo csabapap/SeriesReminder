@@ -123,6 +123,11 @@ class ShowDetailsActivity : DaggerAppCompatActivity() {
                 displayRelatedShows(it)
             }
         })
+        viewModel.observeSeasons(showId).observe(this, Observer {
+            if (it.isNotEmpty()) {
+                displaySeasons(it)
+            }
+        })
 
         viewModel.detailsUiState.observe(this, Observer { state ->
             updateUi(state)
