@@ -114,23 +114,23 @@ class ShowsRepository @Inject constructor(private val traktApi: TraktApi,
         return srShow
     }
 
-    fun syncShows(): Single<MutableList<SRShow>> {
-        return collectionRepository.getCollectionsSingle()
-                .flattenAsFlowable { it }
-                .filter { it.show != null }
-                .flatMap { Flowable.just(it.show) }
-                .flatMap {
-                    traktApi.show(it.traktId)
-                            .map { show -> mapToSRShow(show) }
-                            .toFlowable()
-                }
-                .flatMap {
-                    Timber.d("update show: %s", it.title)
-                    showDao.updateShow(it)
-                    Flowable.just(it)
-                }
-                .toList()
-    }
+//    fun syncShows(): Single<MutableList<SRShow>> {
+//        return collectionRepository.getCollectionsSuspendable()
+//                .flattenAsFlowable { it }
+//                .filter { it.show != null }
+//                .flatMap { Flowable.just(it.show) }
+//                .flatMap {
+//                    traktApi.show(it.traktId)
+//                            .map { show -> mapToSRShow(show) }
+//                            .toFlowable()
+//                }
+//                .flatMap {
+//                    Timber.d("update show: %s", it.title)
+//                    showDao.updateShow(it)
+//                    Flowable.just(it)
+//                }
+//                .toList()
+//    }
 
     suspend fun updateNextEpisode(showId: Int, nextEpisodeNumber: Int) {
         showDao.updateNextEpisode(showId, nextEpisodeNumber)

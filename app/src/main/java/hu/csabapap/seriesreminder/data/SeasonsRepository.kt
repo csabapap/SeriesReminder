@@ -11,6 +11,7 @@ import hu.csabapap.seriesreminder.data.network.entities.Image
 import hu.csabapap.seriesreminder.data.network.entities.Season
 import hu.csabapap.seriesreminder.data.repositories.episodes.EpisodesRepository
 import io.reactivex.Single
+import kotlinx.coroutines.rx2.await
 import javax.inject.Inject
 
 class SeasonsRepository @Inject constructor(private val seasonsDao: SeasonsDao,
@@ -46,6 +47,13 @@ class SeasonsRepository @Inject constructor(private val seasonsDao: SeasonsDao,
         return seasonsDao.getSeasons(showId)
     }
 
+    suspend fun getSeasonsFromWeb(showId: Int): List<SRSeason>? {
+        val seasons = traktApi.seasons(showId).await() ?: emptyList()
+        return seasons.map {
+            mapToSRSeasons(it, showId)
+        }
+    }
+
     fun getSeasonsLiveData(showId: Int): LiveData<List<SRSeason>> {
         return seasonsDao.getSeasonsLiveData(showId)
     }
@@ -79,6 +87,28 @@ class SeasonsRepository @Inject constructor(private val seasonsDao: SeasonsDao,
 
     suspend fun updateSeason(season: SRSeason) {
         seasonsDao.update(season)
+    }
+
+    suspend fun syncSeasons(showId: Int) {
+        val seasons = getSeasonsFromDb(showId)
+        val seasonsFromWeb = getSeasonsFromWeb(showId)
+
+        if (seasons != null && seasonsFromWeb != null) {
+            updateSeasons(seasons, seasonsFromWeb)
+        }
+    }
+
+    private fun updateSeasons(localSeasons: List<SRSeason>, remoteSeasons: List<SRSeason>) {
+        val localSeasonsMap = localSeasons.associateBy { it.traktId }
+
+        val seasonsToSave = remoteSeasons.map {
+            val localSeason = localSeasonsMap[it.traktId]
+            if (localSeason != null) {
+                return@map it.copy(nmbOfWatchedEpisodes = localSeason.nmbOfWatchedEpisodes)
+            }
+            it
+        }
+        seasonsDao.insert(seasonsToSave)
     }
 
 }

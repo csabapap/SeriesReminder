@@ -18,7 +18,7 @@ interface CollectionsDao {
     fun getCollection() : DataSource.Factory<Int, CollectionItem>
 
     @Query("SELECT * FROM collection ORDER BY added DESC")
-    fun getCollectionSingle() : Single<List<CollectionItem>>
+    suspend fun getCollectionSuspendable() : List<CollectionItem>
 
     @Query("SELECT * FROM collection WHERE show_id = :showId LIMIT 1")
     fun getCollectionItem(showId: Int): LiveData<CollectionEntry>

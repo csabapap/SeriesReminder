@@ -9,6 +9,9 @@ interface SeasonsDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insert(season: SRSeason)
 
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    fun insert(season: List<SRSeason>)
+
     @Query("SELECT * FROM seasons WHERE show_id = :showId ORDER BY number")
     suspend fun getSeasons(showId: Int): List<SRSeason>?
 

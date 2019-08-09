@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.*
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -144,9 +145,8 @@ class HomeFragment : DaggerFragment(),
     }
 
     private fun syncShows() {
-        activity?.let {
-            SyncService.syncMyShows(it.applicationContext)
-        }
+        Toast.makeText(activity, "syncing shows...", Toast.LENGTH_SHORT).show()
+        homeViewModel.syncShows()
     }
 
     private fun syncNextEpisodes() {

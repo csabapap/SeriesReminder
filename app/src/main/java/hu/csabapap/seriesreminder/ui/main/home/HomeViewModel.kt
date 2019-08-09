@@ -9,6 +9,7 @@ import hu.csabapap.seriesreminder.data.repositories.episodes.EpisodesRepository
 import hu.csabapap.seriesreminder.data.db.entities.NextEpisodeItem
 import hu.csabapap.seriesreminder.data.repositories.popularshows.PopularShowsRepository
 import hu.csabapap.seriesreminder.data.repositories.trendingshows.TrendingShowsRepository
+import hu.csabapap.seriesreminder.domain.SyncShowsUseCase
 import hu.csabapap.seriesreminder.ui.adapters.items.ShowItem
 import hu.csabapap.seriesreminder.utils.AppCoroutineDispatchers
 import hu.csabapap.seriesreminder.utils.AppRxSchedulers
@@ -24,6 +25,7 @@ class HomeViewModel @Inject constructor(private val trendingShowsRepository: Tre
                                         private val popularShowsRepository: PopularShowsRepository,
                                         collectionRepository: CollectionRepository,
                                         private val episodesRepository: EpisodesRepository,
+                                        private val synchShowsUseCase: SyncShowsUseCase,
                                         private val rxSchedulers: AppRxSchedulers,
                                         private val dispatchers: AppCoroutineDispatchers)
     : ViewModel() {
@@ -126,5 +128,11 @@ class HomeViewModel @Inject constructor(private val trendingShowsRepository: Tre
     override fun onCleared() {
         super.onCleared()
         disposables.clear()
+    }
+
+    fun syncShows() {
+        scope.launch(dispatchers.io) {
+            synchShowsUseCase.syncShows()
+        }
     }
 }

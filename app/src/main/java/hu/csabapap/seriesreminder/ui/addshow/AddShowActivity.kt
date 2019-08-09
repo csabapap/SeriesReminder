@@ -21,6 +21,9 @@ import androidx.lifecycle.ViewModelProviders
 import androidx.palette.graphics.Palette
 import androidx.vectordrawable.graphics.drawable.Animatable2Compat
 import androidx.vectordrawable.graphics.drawable.AnimatedVectorDrawableCompat
+import androidx.work.ExistingPeriodicWorkPolicy
+import androidx.work.PeriodicWorkRequest
+import androidx.work.WorkManager
 import com.squareup.picasso.Callback
 import com.squareup.picasso.Picasso
 import dagger.android.support.DaggerAppCompatActivity
@@ -32,10 +35,12 @@ import hu.csabapap.seriesreminder.data.network.getThumbnailUrl
 import hu.csabapap.seriesreminder.databinding.ActivityAddShowBinding
 import hu.csabapap.seriesreminder.extensions.loadFromTmdbUrl
 import hu.csabapap.seriesreminder.services.SyncService
+import hu.csabapap.seriesreminder.services.workers.SyncShowsWorker
 import hu.csabapap.seriesreminder.tasks.DownloadShowTask
 import hu.csabapap.seriesreminder.utils.AddShow
 import kotlinx.android.synthetic.main.activity_add_show.*
 import timber.log.Timber
+import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 import javax.inject.Named
 
@@ -97,6 +102,8 @@ class AddShowActivity : DaggerAppCompatActivity() {
             (application as SRApplication).appComponent.inject(task)
             addShowViewModel.syncShow(task)
             SyncService.syncShow(this)
+
+            startSyncWorkManager()
         }
 
         motion_layout.setTransitionListener(object : MotionLayout.TransitionListener {
@@ -128,6 +135,17 @@ class AddShowActivity : DaggerAppCompatActivity() {
             }
 
         })
+    }
+
+    private fun startSyncWorkManager() {
+        val workRequest = PeriodicWorkRequest.Builder(SyncShowsWorker::class.java,
+                1, TimeUnit.DAYS,
+                30, TimeUnit.MINUTES)
+                .build()
+
+        WorkManager.getInstance(this)
+                .enqueueUniquePeriodicWork("SyncShowsWorker",
+                        ExistingPeriodicWorkPolicy.KEEP, workRequest)
     }
 
     override fun onStart() {

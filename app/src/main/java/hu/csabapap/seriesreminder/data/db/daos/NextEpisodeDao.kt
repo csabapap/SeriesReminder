@@ -19,8 +19,7 @@ interface NextEpisodeDao {
     @Query("SELECT * FROM next_episodes WHERE show_id = :showId LIMIT 1")
     fun getNextEpisode(showId: Int) : Maybe<NextEpisodeItem>
 
-    @Query("SELECT * FROM next_episodes LEFT JOIN episodes ON next_episodes.trakt_id = episodes.trakt_id " +
-            "WHERE datetime(episodes.first_aired) > datetime('now') ORDER BY datetime(episodes.first_aired) LIMIT :limit")
+    @Query("SELECT * FROM next_episodes LEFT JOIN episodes ON next_episodes.trakt_id = episodes.trakt_id WHERE datetime(episodes.first_aired) > datetime('now') AND datetime(episodes.first_aired) < datetime('now', '+7 day') ORDER BY datetime(episodes.first_aired) LIMIT :limit")
     fun getNextEpisodes(limit: Int) : Flowable<List<NextEpisodeItem>>
 
     @Query("SELECT * FROM next_episodes")
