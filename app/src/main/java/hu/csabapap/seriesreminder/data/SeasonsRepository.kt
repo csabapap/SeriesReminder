@@ -58,7 +58,7 @@ class SeasonsRepository @Inject constructor(private val seasonsDao: SeasonsDao,
         return seasonsDao.getSeasonsLiveData(showId)
     }
 
-    suspend fun insertSeasons(season: List<SRSeason>) {
+    fun insertSeasons(season: List<SRSeason>) {
         season.forEach {
             seasonsDao.insert(it)
         }
@@ -89,16 +89,22 @@ class SeasonsRepository @Inject constructor(private val seasonsDao: SeasonsDao,
         seasonsDao.update(season)
     }
 
-    suspend fun syncSeasons(showId: Int) {
+    suspend fun syncSeasons(showId: Int, tvdbId: Int) {
         val seasons = getSeasonsFromDb(showId)
         val seasonsFromWeb = getSeasonsFromWeb(showId)
+        val images =getSeasonImages(tvdbId)
 
-        if (seasons != null && seasonsFromWeb != null) {
-            updateSeasons(seasons, seasonsFromWeb)
+        val seasonsWithImages = seasonsFromWeb?.map { season ->
+            val image = images[season.number.toString()]
+            season.copy(fileName = image?.fileName ?: "", thumbnail = image?.thumbnail ?: "")
+        }
+
+        if (seasons != null && seasonsWithImages != null) {
+            updateSeasons(seasons, seasonsWithImages)
         }
     }
 
-    private fun updateSeasons(localSeasons: List<SRSeason>, remoteSeasons: List<SRSeason>) {
+    fun updateSeasons(localSeasons: List<SRSeason>, remoteSeasons: List<SRSeason>) {
         val localSeasonsMap = localSeasons.associateBy { it.traktId }
 
         val seasonsToSave = remoteSeasons.map {

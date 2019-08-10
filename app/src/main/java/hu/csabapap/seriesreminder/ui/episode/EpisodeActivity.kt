@@ -10,6 +10,7 @@ import com.squareup.picasso.Picasso
 import dagger.android.support.DaggerAppCompatActivity
 import hu.csabapap.seriesreminder.R
 import hu.csabapap.seriesreminder.data.db.relations.EpisodeWithShow
+import hu.csabapap.seriesreminder.data.network.getFullSizeUrl
 import hu.csabapap.seriesreminder.extensions.exhaustive
 import hu.csabapap.seriesreminder.utils.Episode
 import kotlinx.android.synthetic.main.activity_episode.*
@@ -87,7 +88,7 @@ class EpisodeActivity : DaggerAppCompatActivity() {
         val image = if (episode.image.isNotEmpty()) {
             episode.image
         } else {
-            null
+            getFullSizeUrl(show?.cover)
         }
         Picasso.with(this)
                 .load(image)

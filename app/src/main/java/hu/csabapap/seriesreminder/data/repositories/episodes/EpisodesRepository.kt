@@ -1,5 +1,6 @@
 package hu.csabapap.seriesreminder.data.repositories.episodes
 
+import hu.csabapap.seriesreminder.data.Result
 import hu.csabapap.seriesreminder.data.db.daos.EpisodeDao
 import hu.csabapap.seriesreminder.data.db.daos.NextEpisodeDao
 import hu.csabapap.seriesreminder.data.db.entities.NextEpisodeEntry
@@ -7,6 +8,8 @@ import hu.csabapap.seriesreminder.data.db.entities.SREpisode
 import hu.csabapap.seriesreminder.data.db.relations.EpisodeWithShow
 import hu.csabapap.seriesreminder.data.network.TvdbApi
 import hu.csabapap.seriesreminder.data.network.entities.Episode
+import hu.csabapap.seriesreminder.data.network.entities.EpisodeData
+import hu.csabapap.seriesreminder.utils.safeApiCall
 import io.reactivex.Single
 import kotlinx.coroutines.rx2.await
 import org.threeten.bp.OffsetDateTime
@@ -47,6 +50,13 @@ class EpisodesRepository @Inject constructor(
                 }
     }
 
+    suspend fun fetchEpisodeImage(tvdbId: Int): Result<String> {
+        return safeApiCall({
+            val episode = tvdbApi.episode(tvdbId)
+            return@safeApiCall Result.Success(episode.data.filename)
+        }, "fetch EpisodeData error from TheTvdb")
+    }
+
     private fun updateEpisode(episode: SREpisode) {
         episodesDao.update(episode)
     }
@@ -62,6 +72,10 @@ class EpisodesRepository @Inject constructor(
 
     fun saveEpisode(episode: SREpisode) {
         localDataSource.save(episode)
+    }
+
+    fun saveEpisodes(episodes: List<SREpisode>) {
+        localDataSource.save(episodes)
     }
 
     fun saveImage(tvdbId: Int, url: String) {

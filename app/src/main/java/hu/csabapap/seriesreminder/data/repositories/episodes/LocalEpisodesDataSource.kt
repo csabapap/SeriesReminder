@@ -8,7 +8,11 @@ import javax.inject.Inject
 class LocalEpisodesDataSource @Inject constructor(private val episodesDao: EpisodeDao) {
 
     fun save(episode: SREpisode) {
-        episodesDao.insert(episode)
+        episodesDao.upsert(episode)
+    }
+
+    fun save(episodes: List<SREpisode>) {
+        episodesDao.upsert(episodes)
     }
 
     fun saveImage(tvdbId: Int, url: String) {

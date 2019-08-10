@@ -1,5 +1,6 @@
 package hu.csabapap.seriesreminder.data.db.daos
 
+import android.database.sqlite.SQLiteConstraintException
 import androidx.room.*
 import hu.csabapap.seriesreminder.data.db.entities.SREpisode
 import hu.csabapap.seriesreminder.data.db.relations.EpisodeWithShow
@@ -7,8 +8,11 @@ import hu.csabapap.seriesreminder.data.db.relations.EpisodeWithShow
 @Dao
 abstract class EpisodeDao {
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Insert(onConflict = OnConflictStrategy.ABORT)
     abstract fun insert(episode: SREpisode)
+
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    abstract fun insert(episodes: List<SREpisode>)
 
     @Query("UPDATE episodes SET image = :url WHERE tvdb_id = :tvdbId")
     abstract fun updateEpisodeWithImage(tvdbId: Int, url: String)
@@ -21,4 +25,25 @@ abstract class EpisodeDao {
 
     @Query("SELECT * FROM episodes WHERE show_id = :showId AND season = :season AND number = :episode LIMIT 1")
     abstract suspend fun getBySeasonAndEpisodeNumber(showId: Int, season: Int, episode: Int): EpisodeWithShow?
+
+    @Transaction
+    open fun upsert(episode: SREpisode) {
+        try {
+            insert(episode)
+        } catch (e: SQLiteConstraintException) {
+            update(episode)
+        }
+
+    }
+
+    @Transaction
+    open fun upsert(episodes: List<SREpisode>) {
+        episodes.onEach {
+            try {
+                insert(it)
+            } catch (e: SQLiteConstraintException) {
+                update(it)
+            }
+        }
+    }
 }
