@@ -17,14 +17,27 @@ import java.util.*
 
 class SeasonsAdapter(val seasons: List<SRSeason>): RecyclerView.Adapter<SeasonsAdapter.SeasonsVH>() {
 
+    interface SeasonClickListener {
+        fun onItemClick(season: SRSeason)
+    }
+
     lateinit var context: Context
+    var listener: SeasonClickListener? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SeasonsVH {
         context = parent.context
         val itemView = LayoutInflater.from(parent.context).inflate(R.layout.item_season,
                 parent, false)
 
-        return SeasonsVH(itemView)
+        val seasonsVH = SeasonsVH(itemView)
+        seasonsVH.itemView.setOnClickListener {
+            val position = seasonsVH.adapterPosition
+            if (position != -1) {
+                val season = seasons[position]
+                listener?.onItemClick(season)
+            }
+        }
+        return seasonsVH
     }
 
     override fun getItemCount() = seasons.size

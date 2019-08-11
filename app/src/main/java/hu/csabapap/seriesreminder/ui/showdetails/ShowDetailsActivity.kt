@@ -34,10 +34,7 @@ import hu.csabapap.seriesreminder.ui.adapters.DiscoverPreviewAdapter
 import hu.csabapap.seriesreminder.ui.adapters.SeasonsAdapter
 import hu.csabapap.seriesreminder.ui.adapters.items.CardItem
 import hu.csabapap.seriesreminder.ui.adapters.items.ShowItem
-import hu.csabapap.seriesreminder.utils.Collectible
-import hu.csabapap.seriesreminder.utils.Episode
-import hu.csabapap.seriesreminder.utils.ShowDetails
-import hu.csabapap.seriesreminder.utils.readableDate
+import hu.csabapap.seriesreminder.utils.*
 import kotlinx.android.synthetic.main.activity_show_details.*
 import kotlinx.android.synthetic.main.content_next_episode.*
 import kotlinx.android.synthetic.main.content_seasons.*
@@ -286,6 +283,12 @@ class ShowDetailsActivity : DaggerAppCompatActivity() {
 
     private fun displaySeasons(seasons: List<SRSeason>) {
         val seasonsAdapter = SeasonsAdapter(seasons)
+        seasonsAdapter.listener = object : SeasonsAdapter.SeasonClickListener {
+            override fun onItemClick(season: SRSeason) {
+                Activities.Season.start(this@ShowDetailsActivity, season.showId, season.number)
+            }
+
+        }
         seasons_list.isNestedScrollingEnabled = false
         seasons_list.layoutManager = LinearLayoutManager(this)
         seasons_list.adapter = seasonsAdapter

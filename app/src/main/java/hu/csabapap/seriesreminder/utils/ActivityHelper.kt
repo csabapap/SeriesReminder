@@ -56,6 +56,20 @@ object Collectible {
     }
 }
 
+object Activities {
+    object Season {
+
+        const val SHOW_ID = "show_id"
+        const val SEASON_NUMBER = "season_number"
+
+        fun start(context: Context, showId: Int, number: Int) {
+            val intent = Intent(context, EpisodeActivity::class.java)
+            intent.putExtras(bundleOf(SHOW_ID to showId, SEASON_NUMBER to number))
+            context.startActivity(intent)
+        }
+    }
+}
+
 object Episode {
     fun start(context: Context, showId: Int, season: Int, episode: Int) {
         val intent = Intent(context, EpisodeActivity::class.java)
