@@ -5,6 +5,7 @@ import hu.csabapap.seriesreminder.data.Result
 import hu.csabapap.seriesreminder.data.SeasonsRepository
 import hu.csabapap.seriesreminder.data.ShowsRepository
 import hu.csabapap.seriesreminder.data.repositories.episodes.EpisodesRepository
+import hu.csabapap.seriesreminder.data.repositories.nextepisodes.NextEpisodesRepository
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
@@ -15,7 +16,8 @@ import javax.inject.Inject
 class SyncShowsUseCase @Inject constructor(val showsRepository: ShowsRepository,
                                            private val seasonsRepository: SeasonsRepository,
                                            private val episodesRepository: EpisodesRepository,
-                                           val collectionRepository: CollectionRepository) {
+                                           val collectionRepository: CollectionRepository,
+                                           val nextEpisodesRepository: NextEpisodesRepository) {
 
 
     suspend fun syncShows() {
@@ -64,6 +66,7 @@ class SyncShowsUseCase @Inject constructor(val showsRepository: ShowsRepository,
                         episodesRepository.saveEpisodes(episodesWithImages)
                     }
 
+                    nextEpisodesRepository.fetchAndSaveNextEpisode(show.traktId)
                 }
             }
                     .filterNotNull()

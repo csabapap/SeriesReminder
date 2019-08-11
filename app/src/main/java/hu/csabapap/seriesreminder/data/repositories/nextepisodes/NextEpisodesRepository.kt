@@ -12,7 +12,7 @@ class NextEpisodesRepository @Inject constructor(
         private val localDataSource: NextEpisodesLocalDataSource,
         private val remoteDataSource: NextEpisodesRemoteDataSource) {
 
-    suspend fun fetchNextEpisode(showId: Int): NextEpisodeState {
+    suspend fun fetchAndSaveNextEpisode(showId: Int): NextEpisodeState {
         val state = remoteDataSource.fetchNextEpisode(showId)
 
         if (state is NextEpisodeSuccess) {

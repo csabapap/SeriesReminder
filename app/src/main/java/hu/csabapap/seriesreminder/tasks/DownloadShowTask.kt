@@ -6,7 +6,6 @@ import hu.csabapap.seriesreminder.data.ShowsRepository
 import hu.csabapap.seriesreminder.data.db.entities.CollectionEntry
 import hu.csabapap.seriesreminder.data.network.TvdbApi
 import hu.csabapap.seriesreminder.data.repositories.nextepisodes.NextEpisodesRepository
-import hu.csabapap.seriesreminder.data.states.NextEpisodeSuccess
 import kotlinx.coroutines.rx2.await
 import org.threeten.bp.OffsetDateTime
 import timber.log.Timber
@@ -64,7 +63,7 @@ class DownloadShowTask(private val showId: Int): Task {
             seasonsRepository.insertSeasons(seasonsWithImages)
 
             Timber.d("seasons: $seasons")
-            nextEpisodesRepository.fetchNextEpisode(newShow.traktId)
+            nextEpisodesRepository.fetchAndSaveNextEpisode(newShow.traktId)
         }
     }
 }

@@ -50,7 +50,7 @@ class SyncService : DaggerIntentService("SyncService") {
 //                .flattenAsFlowable { it }
 //                .flatMap {
 //                    it.episodeSingle?.let {episodeSingle ->
-//                        showsRepository.fetchNextEpisode(episodeSingle.showId)
+//                        showsRepository.fetchAndSaveNextEpisode(episodeSingle.showId)
 //                                .toFlowable()
 //                                .flatMap {
 //                                    if (it is NextEpisodeSuccess) {

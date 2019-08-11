@@ -16,7 +16,6 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.rx2.await
 import org.threeten.bp.OffsetDateTime
 import org.threeten.bp.ZoneOffset
-import timber.log.Timber
 import java.util.*
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
@@ -36,7 +35,7 @@ class SyncNextEpisodeWorker(context: Context,
         }
 
         GlobalScope.launch {
-            val state = nextEpisodesRepository.fetchNextEpisode(showId)
+            val state = nextEpisodesRepository.fetchAndSaveNextEpisode(showId)
             if (state is NextEpisodeSuccess) {
                 val show = showsRepository.getShow(showId).await()
                 show?.let {
