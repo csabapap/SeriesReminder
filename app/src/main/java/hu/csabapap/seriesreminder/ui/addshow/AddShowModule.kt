@@ -9,7 +9,7 @@ import javax.inject.Named
 @Module
 abstract class AddShowModule {
 
-    @ContributesAndroidInjector(modules = [AddShowParamsModule::class])
+    @ContributesAndroidInjector
     internal abstract fun addShowActivity() : AddShowActivity
 
     @Binds @Named("AddShowViewModelFactory")

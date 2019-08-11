@@ -63,7 +63,7 @@ class AddShowActivity : DaggerAppCompatActivity() {
         DataBindingUtil.setContentView<ActivityAddShowBinding>(this, R.layout.activity_add_show)
                 .apply {
                     viewModel = addShowViewModel
-                    setLifecycleOwner(this@AddShowActivity)
+                    lifecycleOwner = this@AddShowActivity
                 }
 
         initParams(intent.extras)
@@ -209,10 +209,6 @@ class AddShowActivity : DaggerAppCompatActivity() {
                         fab_add_show.imageTintList = ColorStateList.valueOf(titleTextColor)
                     }
                 }
-    }
-
-    fun getShowId(): Int {
-        return intent.extras.getInt("show_id", -1)
     }
 
     private fun finishWithResult() {
