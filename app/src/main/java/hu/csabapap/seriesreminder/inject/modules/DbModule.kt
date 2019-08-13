@@ -163,8 +163,8 @@ class DbModule {
         val MIGRATION_10_11 = object: Migration(10,11) {
             override fun migrate(database: SupportSQLiteDatabase) {
                 database.execSQL("CREATE TABLE IF NOT EXISTS `watched_episodes` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `show_id` INTEGER NOT NULL, `season` INTEGER NOT NULL, `number` INTEGER NOT NULL, FOREIGN KEY(`show_id`) REFERENCES `shows`(`trakt_id`) ON UPDATE CASCADE ON DELETE CASCADE)")
+                database.execSQL("CREATE UNIQUE INDEX `index_watched_episodes_show_id_season_number` ON `watched_episodes` (`show_id`, `season`, `number`)")
             }
-
         }
     }
 }
