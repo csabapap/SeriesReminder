@@ -37,7 +37,7 @@ data class SRSeason constructor(
             episodes: List<SREpisode> = arrayListOf()):
             this(_id, number, traktId, episodeCount, airedEpisodeCount, showId, fileName, thumbnail,
                     nmbOfWatchedEpisodes) {
-        this.episodes = episodes;
+        this.episodes = episodes
     }
 
 }

@@ -7,6 +7,7 @@ import android.content.Context
 import android.content.Intent
 import androidx.core.app.ActivityOptionsCompat
 import androidx.core.os.bundleOf
+import hu.csabapap.seriesreminder.ui.seasons.SeasonsActivity
 import hu.csabapap.seriesreminder.ui.addshow.AddShowActivity
 import hu.csabapap.seriesreminder.ui.episode.EpisodeActivity
 import hu.csabapap.seriesreminder.ui.showdetails.ShowDetailsActivity
@@ -63,7 +64,7 @@ object Activities {
         const val SEASON_NUMBER = "season_number"
 
         fun start(context: Context, showId: Int, number: Int) {
-            val intent = Intent(context, EpisodeActivity::class.java)
+            val intent = Intent(context, SeasonsActivity::class.java)
             intent.putExtras(bundleOf(SHOW_ID to showId, SEASON_NUMBER to number))
             context.startActivity(intent)
         }

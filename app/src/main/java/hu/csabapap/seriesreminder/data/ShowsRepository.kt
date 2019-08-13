@@ -22,8 +22,7 @@ import javax.inject.Singleton
 class ShowsRepository @Inject constructor(private val traktApi: TraktApi,
                                           private val tvdbApi: TvdbApi,
                                           private val showDao: SRShowDao,
-                                          private val requestDao: LastRequestDao,
-                                          private val collectionRepository: CollectionRepository){
+                                          private val requestDao: LastRequestDao){
 
     fun getShow(traktId: Int) : Maybe<SRShow> {
         val showFromDb = showDao.getShowMaybe(traktId)
@@ -113,24 +112,6 @@ class ShowsRepository @Inject constructor(private val traktApi: TraktApi,
         }
         return srShow
     }
-
-//    fun syncShows(): Single<MutableList<SRShow>> {
-//        return collectionRepository.getCollectionsSuspendable()
-//                .flattenAsFlowable { it }
-//                .filter { it.show != null }
-//                .flatMap { Flowable.just(it.show) }
-//                .flatMap {
-//                    traktApi.show(it.traktId)
-//                            .map { show -> mapToSRShow(show) }
-//                            .toFlowable()
-//                }
-//                .flatMap {
-//                    Timber.d("update show: %s", it.title)
-//                    showDao.updateShow(it)
-//                    Flowable.just(it)
-//                }
-//                .toList()
-//    }
 
     suspend fun updateNextEpisode(showId: Int, nextEpisodeNumber: Int) {
         showDao.updateNextEpisode(showId, nextEpisodeNumber)

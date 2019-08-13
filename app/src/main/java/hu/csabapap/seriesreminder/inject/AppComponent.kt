@@ -4,15 +4,13 @@ import dagger.BindsInstance
 import dagger.Component
 import dagger.android.AndroidInjector
 import dagger.android.support.AndroidSupportInjectionModule
-import dagger.android.support.DaggerApplication
 import hu.csabapap.seriesreminder.SRApplication
 import hu.csabapap.seriesreminder.inject.modules.*
-import hu.csabapap.seriesreminder.services.SyncService
 import hu.csabapap.seriesreminder.services.workers.SRWorkerFactory
-import hu.csabapap.seriesreminder.tasks.DownloadShowTask
 import hu.csabapap.seriesreminder.ui.addshow.AddShowModule
 import hu.csabapap.seriesreminder.ui.episode.EpisodeModule
 import hu.csabapap.seriesreminder.ui.search.SearchModule
+import hu.csabapap.seriesreminder.ui.seasons.SeasonsModule
 import hu.csabapap.seriesreminder.ui.showdetails.ShowDetailsModule
 import javax.inject.Singleton
 
@@ -31,6 +29,7 @@ import javax.inject.Singleton
             ServiceModule::class,
             ShowDetailsModule::class,
             WorkerBindingModule::class,
+            SeasonsModule::class,
             EpisodeModule::class
         ])
 interface AppComponent : TasksComponent, AndroidInjector<SRApplication>{
