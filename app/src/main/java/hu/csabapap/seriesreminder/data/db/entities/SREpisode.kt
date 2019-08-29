@@ -8,6 +8,11 @@ import org.threeten.bp.OffsetDateTime
                 parentColumns = ["trakt_id"],
                 childColumns = ["show_id"],
                 onDelete = ForeignKey.CASCADE,
+                onUpdate = ForeignKey.CASCADE),
+        ForeignKey(entity = SRSeason::class,
+                parentColumns = ["id"],
+                childColumns = ["season_id"],
+                onDelete = ForeignKey.CASCADE,
                 onUpdate = ForeignKey.CASCADE)],
         indices = [(Index(value = ["trakt_id"], unique = true))])
 data class SREpisode(@PrimaryKey val _id: Long?,
@@ -23,4 +28,5 @@ data class SREpisode(@PrimaryKey val _id: Long?,
                      val rating: Float,
                      val votes: Int,
                      val image: String,
-                     @ColumnInfo(name = "show_id") val showId: Int)
+                     @ColumnInfo(name = "show_id") val showId: Int,
+                     @ColumnInfo(name = "season_id") val seasonId: Long = -1)

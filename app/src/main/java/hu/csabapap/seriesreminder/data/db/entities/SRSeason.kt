@@ -10,7 +10,7 @@ import androidx.room.*
                 onUpdate = ForeignKey.CASCADE))],
         indices = [(Index(value = ["trakt_id"], unique = true))])
 data class SRSeason constructor(
-        @PrimaryKey val _id: Long?,
+        @PrimaryKey(autoGenerate = true) @ColumnInfo(name = "id") val id: Long?,
         val number: Int,
         @ColumnInfo(name = "trakt_id") val traktId: Int,
         @ColumnInfo(name = "episode_count") val episodeCount: Int,
@@ -25,7 +25,7 @@ data class SRSeason constructor(
 
     @Ignore
     constructor(
-            _id: Long?,
+            id: Long?,
             number: Int,
             traktId: Int,
             episodeCount: Int,
@@ -35,9 +35,8 @@ data class SRSeason constructor(
             thumbnail: String? = "",
             nmbOfWatchedEpisodes: Int = 0,
             episodes: List<SREpisode> = arrayListOf()):
-            this(_id, number, traktId, episodeCount, airedEpisodeCount, showId, fileName, thumbnail,
+            this(id, number, traktId, episodeCount, airedEpisodeCount, showId, fileName, thumbnail,
                     nmbOfWatchedEpisodes) {
         this.episodes = episodes
     }
-
 }

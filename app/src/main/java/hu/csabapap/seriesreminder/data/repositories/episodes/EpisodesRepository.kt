@@ -96,6 +96,7 @@ class EpisodesRepository @Inject constructor(
                 episode.rating,
                 episode.votes,
                 "",
-                showId)
+                showId,
+                -1)
     }
 }

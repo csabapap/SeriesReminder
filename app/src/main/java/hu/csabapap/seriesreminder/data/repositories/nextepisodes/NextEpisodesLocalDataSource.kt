@@ -10,5 +10,4 @@ class NextEpisodesLocalDataSource @Inject constructor(
     fun saveNextEpisode(nextEpisodeEntry: NextEpisodeEntry) {
         nextEpisodeDao.insert(nextEpisodeEntry)
     }
-
 }

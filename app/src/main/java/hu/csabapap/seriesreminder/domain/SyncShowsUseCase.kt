@@ -41,7 +41,7 @@ class SyncShowsUseCase @Inject constructor(val showsRepository: ShowsRepository,
                     }
 
                     if (seasons != null && seasonsWithImages != null) {
-                        seasonsRepository.updateSeasons(seasons, seasonsWithImages)
+                        seasonsRepository.insertOrUpdateSeasons(seasons, seasonsWithImages)
                     }
 
                     if (seasonsFromWeb == null) return@async
@@ -66,7 +66,7 @@ class SyncShowsUseCase @Inject constructor(val showsRepository: ShowsRepository,
                         episodesRepository.saveEpisodes(episodesWithImages)
                     }
 
-                    nextEpisodesRepository.fetchAndSaveNextEpisode(show.traktId)
+//                    nextEpisodesRepository.fetchAndSaveNextEpisode(show.traktId)
                 }
             }
                     .filterNotNull()

@@ -5,6 +5,7 @@ import hu.csabapap.seriesreminder.data.SeasonsRepository
 import hu.csabapap.seriesreminder.data.ShowsRepository
 import hu.csabapap.seriesreminder.data.db.entities.CollectionEntry
 import hu.csabapap.seriesreminder.data.network.TvdbApi
+import hu.csabapap.seriesreminder.data.repositories.episodes.EpisodesRepository
 import hu.csabapap.seriesreminder.data.repositories.nextepisodes.NextEpisodesRepository
 import kotlinx.coroutines.rx2.await
 import org.threeten.bp.OffsetDateTime
@@ -18,6 +19,9 @@ class DownloadShowTask(private val showId: Int): Task {
 
     @Inject
     lateinit var seasonsRepository: SeasonsRepository
+
+    @Inject
+    lateinit var episodesRepository: EpisodesRepository
 
     @Inject
     lateinit var nextEpisodesRepository: NextEpisodesRepository
@@ -52,15 +56,33 @@ class DownloadShowTask(private val showId: Int): Task {
             val collectionId = collectionRepository.save(collectionEntry)
 
 
-            val seasons = seasonsRepository.getSeasons(newShow.traktId).await()
+            val seasons = seasonsRepository.getSeasonsFromDb(show.traktId)
+            val seasonsFromWeb = seasonsRepository.getSeasonsFromWeb(show.traktId)
             val images = seasonsRepository.getSeasonImages(newShow.tvdbId)
 
-            val seasonsWithImages = seasons.map { season ->
+            val seasonsWithImages = seasonsFromWeb?.map { season ->
                 val image = images[season.number.toString()]
                 season.copy(fileName = image?.fileName ?: "", thumbnail = image?.thumbnail ?: "")
             }
 
-            seasonsRepository.insertSeasons(seasonsWithImages)
+            if (seasons != null && seasonsWithImages != null) {
+                seasonsRepository.insertOrUpdateSeasons(seasons, seasonsWithImages)
+            }
+
+            if (seasonsFromWeb == null) return
+            val episodes = seasonsFromWeb.map { season ->
+                season.episodes
+            }
+                    .flatten()
+
+            val localSeasons = seasonsRepository.getSeasonsFromDb(show.traktId)?.associateBy { season -> season.number }
+                    ?: return
+            episodes.forEach { episode ->
+                localSeasons[episode.season]?.apply {
+                    episodesRepository.saveEpisode(episode.copy(seasonId = id!!))
+                }
+            }
+
 
             Timber.d("seasons: $seasons")
             nextEpisodesRepository.fetchAndSaveNextEpisode(newShow.traktId)
