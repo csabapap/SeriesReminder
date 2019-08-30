@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations
 import androidx.lifecycle.ViewModel
 import hu.csabapap.seriesreminder.data.CollectionRepository
+import hu.csabapap.seriesreminder.data.Result
 import hu.csabapap.seriesreminder.data.repositories.episodes.EpisodesRepository
 import hu.csabapap.seriesreminder.data.db.entities.NextEpisodeItem
 import hu.csabapap.seriesreminder.data.repositories.popularshows.PopularShowsRepository
@@ -111,9 +112,10 @@ class HomeViewModel @Inject constructor(private val trendingShowsRepository: Tre
 
     private fun refresh() {
         scope.launch(dispatchers.io) {
-            val trendingShows = trendingShowsRepository.refreshTrendingShow()
+            val trendingShowsResult = trendingShowsRepository.refreshTrendingShow()
+            if (trendingShowsResult is Result.Success)
             withContext(dispatchers.main) {
-                Timber.d("nmb of shows loaded: %d", trendingShows.size)
+                Timber.d("nmb of shows loaded: %d", trendingShowsResult.data.size)
             }
         }
 

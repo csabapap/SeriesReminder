@@ -71,7 +71,7 @@ class SearchResultAdapter: RecyclerView.Adapter<SearchResultAdapter.ResultVH>() 
                     notifyItemChanged(position)
                 }
             }
-            itemView.setOnClickListener { v ->
+            itemView.setOnClickListener {
                 listener.onItemClick(searchResult.show.ids.trakt, searchResult.inCollection)
             }
         }

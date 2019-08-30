@@ -8,6 +8,8 @@ import hu.csabapap.seriesreminder.BuildConfig
 import hu.csabapap.seriesreminder.data.ApplicationJsonAdapterFactory
 import hu.csabapap.seriesreminder.data.network.services.EpisodesService
 import hu.csabapap.seriesreminder.data.network.services.RelatedShowsService
+import hu.csabapap.seriesreminder.data.network.services.ShowsService
+import hu.csabapap.seriesreminder.data.network.services.TrendingShowsService
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -61,6 +63,11 @@ class NetworkModule {
                 .addCallAdapterFactory(CoroutineCallAdapterFactory.invoke())
                 .addConverterFactory(MoshiConverterFactory.create(moshi))
                 .build()
+    }
+
+    @Provides
+    fun trendingShowsService(@Named("trakt") retrofit: Retrofit): TrendingShowsService {
+        return retrofit.create(TrendingShowsService::class.java)
     }
 
     @Provides

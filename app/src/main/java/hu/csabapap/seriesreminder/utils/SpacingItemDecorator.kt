@@ -10,7 +10,7 @@ class SpacingItemDecorator(private val sizeGridSpacingPx: Int, private val gridS
     private var needLeftSpacing = false
 
     override fun getItemOffsets(outRect: Rect, view: View, parent: RecyclerView, state: RecyclerView.State) {
-        val width = parent.width ?: 0
+        val width = parent.width
         val frameWidth = ((width - sizeGridSpacingPx * (gridSize - 1)) / gridSize)
         val padding = width / gridSize - frameWidth
         val itemPosition = (view.layoutParams as RecyclerView.LayoutParams).viewAdapterPosition

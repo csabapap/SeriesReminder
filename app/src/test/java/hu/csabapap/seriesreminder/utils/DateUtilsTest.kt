@@ -1,6 +1,6 @@
 package hu.csabapap.seriesreminder.utils
 
-import junit.framework.Assert.assertEquals
+import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
 import org.threeten.bp.OffsetDateTime
@@ -22,5 +22,4 @@ class DateUtilsTest {
         val expectedDateTime = of(2018, 9, 28, 21,0,0,0, ZoneOffset.UTC)
         assertEquals(expectedDateTime, calculatedDateTime)
     }
-
 }
