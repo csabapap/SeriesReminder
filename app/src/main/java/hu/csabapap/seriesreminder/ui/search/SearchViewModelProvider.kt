@@ -11,7 +11,6 @@ import hu.csabapap.seriesreminder.utils.AppRxSchedulers
 import hu.csabapap.seriesreminder.utils.RxSchedulers
 import javax.inject.Inject
 
-@Suppress( "UNCHECKED_CAST")
 class SearchViewModelProvider @Inject constructor(
         private val getSearchResultUseCase: GetSearchResultUseCase,
         private val showsRepository: ShowsRepository,
@@ -19,6 +18,8 @@ class SearchViewModelProvider @Inject constructor(
         private val schedulers: RxSchedulers,
         private val dispatchers: AppCoroutineDispatchers)
     : ViewModelProvider.NewInstanceFactory() {
+
+    @Suppress( "UNCHECKED_CAST")
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {
         if (modelClass != SearchViewModel::class.java) {
             throw IllegalArgumentException("Unknown ViewModel class")

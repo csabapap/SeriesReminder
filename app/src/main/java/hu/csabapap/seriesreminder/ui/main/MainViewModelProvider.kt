@@ -9,6 +9,7 @@ class MainViewModelProvider @Inject constructor(
         private val viewModels: @JvmSuppressWildcards Map<Class<out ViewModel>, Provider<ViewModel>>
 ) : ViewModelProvider.Factory {
 
+    @Suppress("UNCHECKED_CAST")
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {
 
         var viewModel: Provider<out ViewModel>? = viewModels[modelClass]
@@ -21,10 +22,9 @@ class MainViewModelProvider @Inject constructor(
             }
         }
         if (viewModel == null) {
-            throw IllegalArgumentException("unknown model class " + modelClass)
+            throw IllegalArgumentException("unknown model class $modelClass")
         }
         try {
-            @Suppress("UNCHECKED_CAST")
             return viewModel.get() as T
         } catch (e: Exception) {
             throw RuntimeException(e)

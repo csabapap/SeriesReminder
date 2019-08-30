@@ -16,6 +16,7 @@ class AddShowViewModelProvider @Inject constructor(
 
 ): ViewModelProvider.NewInstanceFactory() {
 
+    @Suppress("UNCHECKED_CAST")
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {
         return AddShowViewModel(showsRepository, taskExecutor, rxSchedulers) as T
     }

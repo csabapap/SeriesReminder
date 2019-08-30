@@ -3,6 +3,7 @@ package hu.csabapap.seriesreminder.data.repositories.trendingshows
 import androidx.lifecycle.LiveData
 import androidx.paging.LivePagedListBuilder
 import androidx.paging.PagedList
+import hu.csabapap.seriesreminder.data.Result
 import hu.csabapap.seriesreminder.data.ShowsRepository
 import hu.csabapap.seriesreminder.data.db.TrendingShowsResult
 import hu.csabapap.seriesreminder.data.db.entities.SRTrendingItem
@@ -41,8 +42,18 @@ class TrendingShowsRepository @Inject constructor(private val localTrendingDataS
         return TrendingShowsResult(data)
     }
 
-    suspend fun refreshTrendingShow(): List<SRTrendingItem> = coroutineScope {
-        val trendingShows = remoteTrendingDataSource.getShows("full").await()
+    suspend fun refreshTrendingShow(): Result<List<SRTrendingItem>> = coroutineScope {
+        val trendingShowsResult = remoteTrendingDataSource.getShows("full")
+
+        if (trendingShowsResult is Result.Error) {
+            return@coroutineScope Result.Error(trendingShowsResult.exception)
+        }
+
+        val trendingShows = if (trendingShowsResult is Result.Success) {
+            trendingShowsResult.data
+        } else {
+            emptyList()
+        }
 
         val trendingItems = trendingShows.map {
             async {
@@ -51,14 +62,20 @@ class TrendingShowsRepository @Inject constructor(private val localTrendingDataS
             }
         }.awaitAll()
         localTrendingDataSource.insertShows(0, trendingItems)
-        return@coroutineScope trendingItems
+        return@coroutineScope Result.Success(trendingItems)
     }
 
     suspend fun updateTrendingShows() {
         var lastPage = localTrendingDataSource.getLastPage()
         lastPage += 1
         if (lastPage > 3) return
-        val trendingShows = remoteTrendingDataSource.getDeferredPaginatedShows("full", lastPage, NETWORK_PAGE_SIZE).await()
+        val trendingShowsResult = remoteTrendingDataSource.getDeferredPaginatedShows("full", lastPage, NETWORK_PAGE_SIZE)
+        val trendingShows = if (trendingShowsResult is Result.Success) {
+            trendingShowsResult.data
+        } else {
+            emptyList()
+        }
+
         val srTrendingItems = trendingShows
                 .map {
                     showsRepository.getShowWithImages(it.show.ids.trakt, it.show.ids.tvdb).await()
