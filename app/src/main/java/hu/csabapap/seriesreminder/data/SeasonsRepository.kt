@@ -1,6 +1,7 @@
 package hu.csabapap.seriesreminder.data
 
 import androidx.lifecycle.LiveData
+import hu.csabapap.seriesreminder.BuildConfig
 import hu.csabapap.seriesreminder.data.db.daos.SeasonsDao
 import hu.csabapap.seriesreminder.data.db.entities.SREpisode
 import hu.csabapap.seriesreminder.data.db.entities.SRSeason

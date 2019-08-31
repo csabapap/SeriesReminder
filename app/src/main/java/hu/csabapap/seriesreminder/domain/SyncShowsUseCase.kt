@@ -66,7 +66,7 @@ class SyncShowsUseCase @Inject constructor(val showsRepository: ShowsRepository,
                         episodesRepository.saveEpisodes(episodesWithImages)
                     }
 
-//                    nextEpisodesRepository.fetchAndSaveNextEpisode(show.traktId)
+                        nextEpisodesRepository.fetchAndSaveNextEpisode(show.traktId)
                 }
             }
                     .filterNotNull()

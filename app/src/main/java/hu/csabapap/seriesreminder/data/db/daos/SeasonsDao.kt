@@ -1,18 +1,17 @@
 package hu.csabapap.seriesreminder.data.db.daos
 
-import android.database.sqlite.SQLiteConstraintException
 import androidx.lifecycle.LiveData
 import androidx.room.*
 import hu.csabapap.seriesreminder.data.db.entities.SRSeason
 import hu.csabapap.seriesreminder.data.db.relations.SeasonWithEpisodes
-import timber.log.Timber
+import kotlinx.coroutines.coroutineScope
 
 @Dao
 abstract class SeasonsDao {
     @Insert(onConflict = OnConflictStrategy.ABORT)
     abstract fun insert(season: SRSeason): Long
 
-    @Insert(onConflict = OnConflictStrategy.ABORT)
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
     abstract suspend fun insertCoroutine(season: SRSeason): Long
 
     @Query("SELECT * FROM seasons WHERE show_id = :showId ORDER BY number")
@@ -31,23 +30,16 @@ abstract class SeasonsDao {
     abstract suspend fun update(season: SRSeason)
 
     @Update
+    abstract suspend fun update(season: List<SRSeason>)
+
+    @Update
     abstract fun updateSync(season: SRSeason)
 
     @Transaction
-    open fun upsert(season: SRSeason) {
-        try {
-            insert(season)
-        } catch (e: SQLiteConstraintException) {
-            updateSync(season)
-        }
-    }
-
-    @Transaction
-    open suspend fun upsert(seasons: List<SRSeason>) {
-        seasons.onEach {
-            try {
-                insertCoroutine(it)
-            } catch (e: SQLiteConstraintException) {
+    open suspend fun upsert(seasons: List<SRSeason>) = coroutineScope {
+        seasons.map {
+            val result = insertCoroutine(it)
+            if (result == -1L) {
                 update(it)
             }
         }
