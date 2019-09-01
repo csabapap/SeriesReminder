@@ -10,6 +10,7 @@ import hu.csabapap.seriesreminder.R
 import hu.csabapap.seriesreminder.data.db.entities.SREpisode
 import hu.csabapap.seriesreminder.extensions.exhaustive
 import hu.csabapap.seriesreminder.utils.Activities
+import hu.csabapap.seriesreminder.utils.Episode
 import kotlinx.android.synthetic.main.activity_episode.*
 import kotlinx.android.synthetic.main.activity_episode.toolbar
 import kotlinx.android.synthetic.main.activity_seasons.*
@@ -58,6 +59,12 @@ class SeasonsActivity : DaggerAppCompatActivity() {
 
     private fun displayEpisodes(episodes: List<SREpisode>) {
         val adapter = EpisodesAdapter(episodes)
+        adapter.listener = object : EpisodesAdapter.EpisodeItemClickListener {
+            override fun onItemClick(episode: SREpisode) {
+                Episode.start(this@SeasonsActivity, episode.showId, episode.season, episode.number)
+            }
+
+        }
         val layoutManager = episodes_list.layoutManager as LinearLayoutManager
         layoutManager.orientation = LinearLayoutManager.VERTICAL
         val dividerItemDecoration = DividerItemDecoration(this, layoutManager.orientation)

@@ -16,12 +16,23 @@ import kotlinx.android.synthetic.main.content_next_episode.*
 
 class EpisodesAdapter(val episodes: List<SREpisode>): RecyclerView.Adapter<EpisodesAdapter.EpisodeVH>() {
 
+    interface EpisodeItemClickListener {
+        fun onItemClick(episode: SREpisode)
+    }
+
     lateinit var context: Context
+    lateinit var listener: EpisodeItemClickListener
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): EpisodeVH {
         context = parent.context
         val itemView = LayoutInflater.from(context).inflate(R.layout.item_episode, parent, false)
-        return EpisodeVH(itemView)
+        val episodeVH = EpisodeVH(itemView)
+        episodeVH.itemView.setOnClickListener {
+            val position = episodeVH.adapterPosition
+            val episode = episodes[position]
+            listener.onItemClick(episode)
+        }
+        return episodeVH
     }
 
     override fun onBindViewHolder(holder: EpisodeVH, position: Int) {
