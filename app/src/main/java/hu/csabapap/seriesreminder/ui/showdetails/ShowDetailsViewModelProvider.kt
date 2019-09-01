@@ -10,6 +10,7 @@ import hu.csabapap.seriesreminder.data.repositories.WatchedEpisodesRepository
 import hu.csabapap.seriesreminder.data.repositories.episodes.EpisodesRepository
 import hu.csabapap.seriesreminder.data.repositories.notifications.NotificationsRepository
 import hu.csabapap.seriesreminder.data.repositories.relatedshows.RelatedShowsRepository
+import hu.csabapap.seriesreminder.domain.SetEpisodeWatchedUseCase
 import hu.csabapap.seriesreminder.utils.AppCoroutineDispatchers
 import javax.inject.Inject
 
@@ -20,7 +21,7 @@ class ShowDetailsViewModelProvider @Inject constructor(
         private val collectionRepository: CollectionRepository,
         private val notificationsRepository: NotificationsRepository,
         private val relatedShowsRepository: RelatedShowsRepository,
-        private val watchedEpisodesRepository: WatchedEpisodesRepository,
+        private val setEpisodeWatchedUseCase: SetEpisodeWatchedUseCase,
         private val workManager: WorkManager,
         private val dispatchers: AppCoroutineDispatchers)
     : ViewModelProvider.NewInstanceFactory() {
@@ -29,6 +30,6 @@ class ShowDetailsViewModelProvider @Inject constructor(
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {
         return ShowDetailsViewModel(showsRepository, seasonsRepository, episodesRepository,
                 collectionRepository, notificationsRepository, relatedShowsRepository,
-                watchedEpisodesRepository, workManager, dispatchers) as T
+                setEpisodeWatchedUseCase, workManager, dispatchers) as T
     }
 }

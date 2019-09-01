@@ -64,6 +64,9 @@ class SeasonsActivity : DaggerAppCompatActivity() {
                 Episode.start(this@SeasonsActivity, episode.showId, episode.season, episode.number)
             }
 
+            override fun setEpisodeAsWatched(episode: SREpisode) {
+                viewModel.setEpisodeAsWatched(episode)
+            }
         }
         val layoutManager = episodes_list.layoutManager as LinearLayoutManager
         layoutManager.orientation = LinearLayoutManager.VERTICAL

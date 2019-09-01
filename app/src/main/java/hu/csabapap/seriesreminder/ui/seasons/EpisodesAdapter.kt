@@ -12,12 +12,12 @@ import hu.csabapap.seriesreminder.R
 import hu.csabapap.seriesreminder.data.db.entities.SREpisode
 import hu.csabapap.seriesreminder.data.network.getEpisodeUrl
 import hu.csabapap.seriesreminder.extensions.bindView
-import kotlinx.android.synthetic.main.content_next_episode.*
 
 class EpisodesAdapter(val episodes: List<SREpisode>): RecyclerView.Adapter<EpisodesAdapter.EpisodeVH>() {
 
     interface EpisodeItemClickListener {
         fun onItemClick(episode: SREpisode)
+        fun setEpisodeAsWatched(episode: SREpisode)
     }
 
     lateinit var context: Context
@@ -32,6 +32,12 @@ class EpisodesAdapter(val episodes: List<SREpisode>): RecyclerView.Adapter<Episo
             val episode = episodes[position]
             listener.onItemClick(episode)
         }
+        episodeVH.setAsWatchedIcon.setOnClickListener {
+            val position = episodeVH.adapterPosition
+            val episode = episodes[position]
+            listener.setEpisodeAsWatched(episode)
+        }
+
         return episodeVH
     }
 
@@ -52,6 +58,6 @@ class EpisodesAdapter(val episodes: List<SREpisode>): RecyclerView.Adapter<Episo
 
         val title: TextView by bindView(R.id.episode_title)
         val episodeArt: ImageView by bindView(R.id.episode_art)
-
+        val setAsWatchedIcon: ImageView by bindView(R.id.set_watched)
     }
 }

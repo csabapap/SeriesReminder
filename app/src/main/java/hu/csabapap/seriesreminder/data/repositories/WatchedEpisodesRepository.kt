@@ -6,8 +6,7 @@ import javax.inject.Inject
 
 class WatchedEpisodesRepository @Inject constructor(private val watchedEpisodesDao: WatchedEpisodesDao) {
 
-    suspend fun setEpisodeWatched(watchedEpisode: WatchedEpisode) {
-        watchedEpisodesDao.insert(watchedEpisode)
-    }
+    suspend fun setEpisodeWatched(watchedEpisode: WatchedEpisode) =
+            watchedEpisodesDao.insert(watchedEpisode)
 
 }

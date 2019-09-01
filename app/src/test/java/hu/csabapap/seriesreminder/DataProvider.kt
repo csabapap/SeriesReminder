@@ -1,9 +1,12 @@
 package hu.csabapap.seriesreminder
 
+import hu.csabapap.seriesreminder.data.db.entities.SREpisode
+import hu.csabapap.seriesreminder.data.db.entities.SRSeason
 import hu.csabapap.seriesreminder.data.network.entities.BaseShow
 import hu.csabapap.seriesreminder.data.network.entities.Ids
 import hu.csabapap.seriesreminder.data.network.entities.SearchResult
 import hu.csabapap.seriesreminder.data.network.entities.TrendingShow
+import org.threeten.bp.OffsetDateTime
 
 
 fun getSearchResult() = SearchResult(getShow())
@@ -29,6 +32,36 @@ val bigBangTheory = BaseShow(
         overview = "A woman who moves into an apartment across the hall from two brilliant but socially awkward physicists shows them how little they know about life outside of the laboratory.",
         rating = 8.21645f,
         votes = 53481)
+
+val mindhunterEpisode = SREpisode(
+        1,
+        1,
+        1,
+        "Episode 1",
+        2509584,
+        6124070,
+        1,
+        "In 1977, frustrated FBI hostage negotiator Holden Ford finds an unlikely ally in veteran agent Bill Tench and begins studying a new class of murderer.",
+        OffsetDateTime.parse("2017-10-13T07:00:00Z"),
+        OffsetDateTime.now().toString(),
+        7.385469913482666f,
+        4130,
+        "https://www.thetvdb.com/banners/episodes/328708/6124070.jpg",
+        116965,
+        3
+)
+
+val mindhunterSeason = SRSeason(
+        id = 3,
+        number = 1,
+        traktId = 1234,
+        episodeCount = 10,
+        airedEpisodeCount = 10,
+        showId = 116965,
+        fileName = "",
+        thumbnail = "",
+        nmbOfWatchedEpisodes = 0
+)
 
 val trendingShow1 = TrendingShow(123, theBoys)
 val trendingShow2 = TrendingShow(2, bigBangTheory)

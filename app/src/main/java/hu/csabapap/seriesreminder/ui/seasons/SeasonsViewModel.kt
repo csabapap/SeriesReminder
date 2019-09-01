@@ -5,6 +5,8 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import hu.csabapap.seriesreminder.data.SeasonsRepository
 import hu.csabapap.seriesreminder.data.ShowsRepository
+import hu.csabapap.seriesreminder.data.db.entities.SREpisode
+import hu.csabapap.seriesreminder.domain.SetEpisodeWatchedUseCase
 import hu.csabapap.seriesreminder.utils.AppCoroutineDispatchers
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
@@ -15,6 +17,7 @@ import timber.log.Timber
 
 class SeasonsViewModel(private val showsRepository: ShowsRepository,
                        private val seasonsRepository: SeasonsRepository,
+                       private val setEpisodeWatchedUseCase: SetEpisodeWatchedUseCase,
                        private val dispatchers: AppCoroutineDispatchers) : ViewModel() {
 
     private val job = Job()
@@ -45,6 +48,12 @@ class SeasonsViewModel(private val showsRepository: ShowsRepository,
                     _detailsUiState.value = SeasonsUiState.DisplayEpisodes(episodes ?: emptyList())
                 }
             }
+        }
+    }
+
+    fun setEpisodeAsWatched(episode: SREpisode) {
+        scope.launch(dispatchers.io) {
+            setEpisodeWatchedUseCase(episode)
         }
     }
 }
