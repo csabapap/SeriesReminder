@@ -2,6 +2,9 @@ package hu.csabapap.seriesreminder.ui.seasons
 
 import android.os.Bundle
 import androidx.lifecycle.Observer
+import androidx.recyclerview.widget.DividerItemDecoration
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import dagger.android.support.DaggerAppCompatActivity
 import hu.csabapap.seriesreminder.R
 import hu.csabapap.seriesreminder.data.db.entities.SREpisode
@@ -55,6 +58,14 @@ class SeasonsActivity : DaggerAppCompatActivity() {
 
     private fun displayEpisodes(episodes: List<SREpisode>) {
         val adapter = EpisodesAdapter(episodes)
+        val layoutManager = episodes_list.layoutManager as LinearLayoutManager
+        layoutManager.orientation = LinearLayoutManager.VERTICAL
+        val dividerItemDecoration = DividerItemDecoration(this, layoutManager.orientation)
+        val drawable = getDrawable(R.drawable.separator_vertical)
+        if (drawable != null) {
+            dividerItemDecoration.setDrawable(drawable)
+        }
+        episodes_list.addItemDecoration(dividerItemDecoration)
         episodes_list.adapter = adapter
     }
 }
