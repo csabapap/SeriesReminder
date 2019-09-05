@@ -26,4 +26,7 @@ class LocalEpisodesDataSource @Inject constructor(private val episodesDao: Episo
     suspend fun getBySeasonAndEpisodeNumber(showId: Int, season: Int, episode: Int): EpisodeWithShow? {
         return episodesDao.getBySeasonAndEpisodeNumber(showId, season, episode)
     }
+
+    suspend fun getEpisodesForSeason(showId: Int, seasonNumber: Int) =
+            episodesDao.getEpisodesBySeason(showId, seasonNumber)
 }

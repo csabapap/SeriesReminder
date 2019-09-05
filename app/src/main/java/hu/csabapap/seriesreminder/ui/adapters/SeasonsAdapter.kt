@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import android.widget.PopupMenu
 import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
@@ -21,8 +22,13 @@ class SeasonsAdapter(val seasons: List<SRSeason>): RecyclerView.Adapter<SeasonsA
         fun onItemClick(season: SRSeason)
     }
 
+    interface SeasonMenuListener {
+        fun setAllEpisodeWatched(season: SRSeason)
+    }
+
     lateinit var context: Context
-    var listener: SeasonClickListener? = null
+    lateinit var listener: SeasonClickListener
+    lateinit var menuListener: SeasonMenuListener
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SeasonsVH {
         context = parent.context
@@ -34,8 +40,22 @@ class SeasonsAdapter(val seasons: List<SRSeason>): RecyclerView.Adapter<SeasonsA
             val position = seasonsVH.adapterPosition
             if (position != -1) {
                 val season = seasons[position]
-                listener?.onItemClick(season)
+                listener.onItemClick(season)
             }
+        }
+        seasonsVH.localMenu.setOnClickListener {
+            val popupMenu = PopupMenu(context, it)
+            popupMenu.menuInflater.inflate(R.menu.season, popupMenu.menu)
+            popupMenu.setOnMenuItemClickListener {menuItem ->
+                val season = seasons.getOrNull(seasonsVH.adapterPosition) ?: return@setOnMenuItemClickListener false
+                val itemId = menuItem.itemId
+                if (itemId == R.id.set_all_watched) {
+                    menuListener.setAllEpisodeWatched(season)
+                    return@setOnMenuItemClickListener true
+                }
+                return@setOnMenuItemClickListener false
+            }
+            popupMenu.show()
         }
         return seasonsVH
     }
@@ -69,5 +89,6 @@ class SeasonsAdapter(val seasons: List<SRSeason>): RecyclerView.Adapter<SeasonsA
         val readableProgress: TextView by bindView(R.id.readable_progress)
         val progress: ProgressBar by bindView(R.id.season_progress)
         val poster: ImageView by bindView(R.id.poster)
+        val localMenu: ImageView by bindView(R.id.local_menu)
     }
 }

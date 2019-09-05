@@ -5,6 +5,7 @@ import hu.csabapap.seriesreminder.data.ShowsRepository
 import hu.csabapap.seriesreminder.data.db.entities.SREpisode
 import hu.csabapap.seriesreminder.data.db.entities.WatchedEpisode
 import hu.csabapap.seriesreminder.data.repositories.WatchedEpisodesRepository
+import kotlinx.coroutines.rx2.await
 import javax.inject.Inject
 
 class SetEpisodeWatchedUseCase @Inject constructor(
@@ -17,7 +18,10 @@ class SetEpisodeWatchedUseCase @Inject constructor(
         val result = watchedEpisodesRepository.setEpisodeWatched(watchedEpisode)
         if (result == -1L) return
         val nextEpisodeAbsNumber = episode.absNumber + 1
-        showsRepository.updateNextEpisode(episode.showId, nextEpisodeAbsNumber)
+        val show = showsRepository.getShow(episode.showId).await()
+        if (show != null && show.nextEpisode < nextEpisodeAbsNumber) {
+            showsRepository.updateNextEpisode(episode.showId, nextEpisodeAbsNumber)
+        }
 
         val season = seasonsRepository.getSeason(episode.showId, episode.season)
         val nmbOfWatchedEpisodes = season.nmbOfWatchedEpisodes + 1

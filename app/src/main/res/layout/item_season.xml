@@ -54,4 +54,13 @@
         app:layout_constraintTop_toTopOf="@+id/season_progress"
         tools:text="4/10" />
 
+    <ImageView
+        android:id="@+id/local_menu"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:scaleType="centerInside"
+        android:src="@drawable/ic_more"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

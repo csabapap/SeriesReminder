@@ -26,6 +26,9 @@ abstract class EpisodeDao {
     @Query("SELECT * FROM episodes WHERE show_id = :showId AND season = :season AND number = :episode LIMIT 1")
     abstract suspend fun getBySeasonAndEpisodeNumber(showId: Int, season: Int, episode: Int): EpisodeWithShow?
 
+    @Query("SELECT * FROM episodes WHERE show_id = :showId AND season = :seasonNumber")
+    abstract suspend fun getEpisodesBySeason(showId: Int, seasonNumber: Int): List<SREpisode>
+
     @Transaction
     open fun upsert(episode: SREpisode) {
         try {

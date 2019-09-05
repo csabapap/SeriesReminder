@@ -289,6 +289,12 @@ class ShowDetailsActivity : DaggerAppCompatActivity() {
             }
 
         }
+        seasonsAdapter.menuListener = object : SeasonsAdapter.SeasonMenuListener {
+            override fun setAllEpisodeWatched(season: SRSeason) {
+                viewModel.setWatchedAllEpisodeInSeason(season)
+            }
+
+        }
         seasons_list.isNestedScrollingEnabled = false
         seasons_list.layoutManager = LinearLayoutManager(this)
         seasons_list.adapter = seasonsAdapter

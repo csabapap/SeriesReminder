@@ -77,11 +77,11 @@ class ShowDetailsViewModel(private val showsRepository: ShowsRepository,
         }
     }
 
-    fun getSeasonsLiveData(showId: Int): LiveData<List<SRSeason>> {
+    private fun getSeasonsLiveData(showId: Int): LiveData<List<SRSeason>> {
         return seasonsRepository.getSeasonsLiveData(showId)
     }
 
-    suspend fun getNextEpisode(showId: Int, nextEpisodeAbsNumber: Int): SREpisode? {
+    private suspend fun getNextEpisode(showId: Int, nextEpisodeAbsNumber: Int): SREpisode? {
         return episodesRepository.getNextEpisode(showId, nextEpisodeAbsNumber)
     }
 
@@ -207,5 +207,28 @@ class ShowDetailsViewModel(private val showsRepository: ShowsRepository,
             }
         }
                 .distinctUntilChanged()
+    }
+
+    fun setWatchedAllEpisodeInSeason(season: SRSeason) {
+        scope.launch(dispatchers.io) {
+            val episodes = episodesRepository.getEpisodesBySeason(season.showId, season.number)
+                    .associateBy { it.number }
+
+            episodes.forEach {
+                setEpisodeWatchedUseCase(it.value)
+            }
+
+            val lastEpisodeInSeason = episodes[episodes.size - 1] ?: return@launch
+            val srShow = showsRepository.getShow(season.showId).await()
+            val nextEpisodeAbsNumber = srShow?.nextEpisode ?: return@launch
+            val nextEpisode = getNextEpisode(lastEpisodeInSeason.showId, nextEpisodeAbsNumber)
+            withContext(dispatchers.main) {
+                if (nextEpisode != null) {
+                    _detailsUiState.value = ShowDetailsState.NextEpisode(nextEpisode)
+                } else {
+                    _detailsUiState.value = ShowDetailsState.NextEpisodeNotFound
+                }
+            }
+        }
     }
 }
