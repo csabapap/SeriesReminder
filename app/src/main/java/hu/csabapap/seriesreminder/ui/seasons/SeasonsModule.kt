@@ -9,7 +9,7 @@ import javax.inject.Named
 @Module
 abstract class SeasonsModule {
     @ContributesAndroidInjector
-    internal abstract fun seasonsActivity() : SeasonsActivity
+    internal abstract fun seasonActivity() : SeasonActivity
 
     @Binds
     @Named("SeasonsViewModelFactory")

@@ -19,7 +19,7 @@ class DbModule {
         return Room.databaseBuilder(context, SRDatabase::class.java, "series_reminder.db")
                 .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_4_5, MIGRATION_5_6,
                         MIGRATION_6_7, MIGRATION_7_8, MIGRATION_8_9, MIGRATION_9_10, MIGRATION_10_11,
-                        MIGRATION_11_12)
+                        MIGRATION_11_12, MIGRATION_12_13)
                 .fallbackToDestructiveMigration()
                 .build()
     }
@@ -182,6 +182,23 @@ class DbModule {
                 database.execSQL("DROP TABLE episodes")
                 database.execSQL("ALTER TABLE episodes_new RENAME TO episodes")
                 database.execSQL("CREATE UNIQUE INDEX `index_episodes_trakt_id` ON `episodes` (`trakt_id`)")
+            }
+        }
+
+        val MIGRATION_12_13 = object: Migration(12,13) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.execSQL("CREATE TABLE IF NOT EXISTS `episodes_new` (`id` INTEGER, `season` INTEGER NOT NULL, `number` INTEGER NOT NULL, `title` TEXT NOT NULL, `trakt_id` INTEGER NOT NULL, `tvdb_id` INTEGER NOT NULL, `abs_number` INTEGER NOT NULL, `overview` TEXT NOT NULL, `first_aired` TEXT, `updated_at` TEXT NOT NULL, `rating` REAL NOT NULL, `votes` INTEGER NOT NULL, `image` TEXT NOT NULL, `show_id` INTEGER NOT NULL, `season_id` INTEGER NOT NULL, PRIMARY KEY(`id`), FOREIGN KEY(`show_id`) REFERENCES `shows`(`trakt_id`) ON UPDATE CASCADE ON DELETE CASCADE , FOREIGN KEY(`season_id`) REFERENCES `seasons`(`id`) ON UPDATE CASCADE ON DELETE CASCADE )")
+                database.execSQL("INSERT INTO episodes_new(id,season,number,title,trakt_id,tvdb_id,abs_number,overview,first_aired,updated_at,rating,votes,image,show_id,season_id) SELECT _id,season,number,title,trakt_id,tvdb_id,abs_number,overview,first_aired,updated_at,rating,votes,image,show_id,season_id FROM episodes")
+                database.execSQL("DROP TABLE episodes")
+                database.execSQL("ALTER TABLE episodes_new RENAME TO episodes")
+                database.execSQL("CREATE UNIQUE INDEX `index_episodes_trakt_id` ON `episodes` (`trakt_id`)")
+
+                database.execSQL("CREATE TABLE IF NOT EXISTS `watched_episodes_new` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `show_id` INTEGER NOT NULL, `season` INTEGER NOT NULL, `number` INTEGER NOT NULL, `episode_id` INTEGER NOT NULL, FOREIGN KEY(`show_id`) REFERENCES `shows`(`trakt_id`) ON UPDATE CASCADE ON DELETE CASCADE , FOREIGN KEY(`episode_id`) REFERENCES `episodes`(`id`) ON UPDATE CASCADE ON DELETE CASCADE)")
+                database.execSQL("INSERT INTO watched_episodes_new(id, show_id,season,number,episode_id) SELECT id, show_id,season,number,-1 FROM watched_episodes")
+                database.execSQL("UPDATE watched_episodes_new SET episode_id = (SELECT id FROM episodes WHERE episodes.show_id = watched_episodes_new.show_id AND episodes.season = watched_episodes_new.season AND episodes.number = watched_episodes_new.number)")
+                database.execSQL("DROP TABLE watched_episodes")
+                database.execSQL("ALTER TABLE watched_episodes_new RENAME TO watched_episodes")
+                database.execSQL("CREATE UNIQUE INDEX `index_watched_episodes_show_id_season_number` ON `watched_episodes` (`show_id`, `season`, `number`)")
             }
         }
     }

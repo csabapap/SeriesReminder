@@ -15,7 +15,7 @@ import org.threeten.bp.OffsetDateTime
                 onDelete = ForeignKey.CASCADE,
                 onUpdate = ForeignKey.CASCADE)],
         indices = [(Index(value = ["trakt_id"], unique = true))])
-data class SREpisode(@PrimaryKey val _id: Long?,
+data class SREpisode(@PrimaryKey(autoGenerate = true) val id: Long?,
                      val season: Int,
                      val number: Int,
                      val title: String,

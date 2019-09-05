@@ -14,7 +14,8 @@ class SetEpisodeWatchedUseCase @Inject constructor(
         private val watchedEpisodesRepository: WatchedEpisodesRepository) {
 
     suspend operator fun invoke(episode: SREpisode) {
-        val watchedEpisode = WatchedEpisode(null, episode.showId, episode.season, episode.number)
+        val episodeId = episode.id ?: throw Error("missing episode id")
+        val watchedEpisode = WatchedEpisode(null, episode.showId, episode.season, episode.number, episodeId)
         val result = watchedEpisodesRepository.setEpisodeWatched(watchedEpisode)
         if (result == -1L) return
         val nextEpisodeAbsNumber = episode.absNumber + 1

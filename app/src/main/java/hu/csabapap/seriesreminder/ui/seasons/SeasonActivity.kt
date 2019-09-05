@@ -4,20 +4,18 @@ import android.os.Bundle
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import dagger.android.support.DaggerAppCompatActivity
 import hu.csabapap.seriesreminder.R
 import hu.csabapap.seriesreminder.data.db.entities.SREpisode
 import hu.csabapap.seriesreminder.extensions.exhaustive
 import hu.csabapap.seriesreminder.utils.Activities
 import hu.csabapap.seriesreminder.utils.Episode
-import kotlinx.android.synthetic.main.activity_episode.*
 import kotlinx.android.synthetic.main.activity_episode.toolbar
 import kotlinx.android.synthetic.main.activity_seasons.*
 import javax.inject.Inject
 import javax.inject.Named
 
-class SeasonsActivity : DaggerAppCompatActivity() {
+class SeasonActivity : DaggerAppCompatActivity() {
 
     @Inject
     @Named("SeasonsViewModelFactory")
@@ -61,7 +59,7 @@ class SeasonsActivity : DaggerAppCompatActivity() {
         val adapter = EpisodesAdapter(episodes)
         adapter.listener = object : EpisodesAdapter.EpisodeItemClickListener {
             override fun onItemClick(episode: SREpisode) {
-                Episode.start(this@SeasonsActivity, episode.showId, episode.season, episode.number)
+                Episode.start(this@SeasonActivity, episode.showId, episode.season, episode.number)
             }
 
             override fun setEpisodeAsWatched(episode: SREpisode) {
