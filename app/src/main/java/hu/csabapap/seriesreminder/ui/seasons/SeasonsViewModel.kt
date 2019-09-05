@@ -3,9 +3,9 @@ package hu.csabapap.seriesreminder.ui.seasons
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import hu.csabapap.seriesreminder.data.SeasonsRepository
 import hu.csabapap.seriesreminder.data.ShowsRepository
 import hu.csabapap.seriesreminder.data.db.entities.SREpisode
+import hu.csabapap.seriesreminder.data.repositories.WatchedEpisodesRepository
 import hu.csabapap.seriesreminder.domain.SetEpisodeWatchedUseCase
 import hu.csabapap.seriesreminder.utils.AppCoroutineDispatchers
 import kotlinx.coroutines.CoroutineScope
@@ -13,10 +13,9 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.rx2.await
 import kotlinx.coroutines.withContext
-import timber.log.Timber
 
 class SeasonsViewModel(private val showsRepository: ShowsRepository,
-                       private val seasonsRepository: SeasonsRepository,
+                       private val watchedEpisodesRepository: WatchedEpisodesRepository,
                        private val setEpisodeWatchedUseCase: SetEpisodeWatchedUseCase,
                        private val dispatchers: AppCoroutineDispatchers) : ViewModel() {
 
@@ -41,11 +40,13 @@ class SeasonsViewModel(private val showsRepository: ShowsRepository,
 
     fun getSeasonWithEpisodes(showId: Int, seasonNumber: Int) {
         scope.launch(dispatchers.io) {
-            val seasonWithEpisodes = seasonsRepository.getSeasonWithEpisodes(showId, seasonNumber)
-
-            seasonWithEpisodes?.apply {
+            val episodes = watchedEpisodesRepository.getEpisodesWithWatchedData(showId, seasonNumber)
+            if (episodes != null) {
+                val episodeItems = episodes.map {
+                    EpisodeItem(it.episode, it.watched())
+                }
                 withContext(dispatchers.main) {
-                    _detailsUiState.value = SeasonsUiState.DisplayEpisodes(episodes ?: emptyList())
+                    _detailsUiState.value = SeasonsUiState.DisplayEpisodes(episodeItems)
                 }
             }
         }

@@ -55,15 +55,16 @@ class SeasonActivity : DaggerAppCompatActivity() {
         }.exhaustive
     }
 
-    private fun displayEpisodes(episodes: List<SREpisode>) {
-        val adapter = EpisodesAdapter(episodes)
+    private fun displayEpisodes(episodes: List<EpisodeItem>) {
+        val adapter = EpisodesAdapter(episodes.toMutableList())
         adapter.listener = object : EpisodesAdapter.EpisodeItemClickListener {
             override fun onItemClick(episode: SREpisode) {
                 Episode.start(this@SeasonActivity, episode.showId, episode.season, episode.number)
             }
 
-            override fun setEpisodeAsWatched(episode: SREpisode) {
+            override fun setEpisodeAsWatched(episode: SREpisode, position: Int) {
                 viewModel.setEpisodeAsWatched(episode)
+                adapter.updateItem(position, EpisodeItem(episode, true))
             }
         }
         val layoutManager = episodes_list.layoutManager as LinearLayoutManager

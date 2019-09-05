@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.squareup.picasso.Picasso
 import hu.csabapap.seriesreminder.R
@@ -13,11 +14,11 @@ import hu.csabapap.seriesreminder.data.db.entities.SREpisode
 import hu.csabapap.seriesreminder.data.network.getEpisodeUrl
 import hu.csabapap.seriesreminder.extensions.bindView
 
-class EpisodesAdapter(val episodes: List<SREpisode>): RecyclerView.Adapter<EpisodesAdapter.EpisodeVH>() {
+class EpisodesAdapter(val episodes: MutableList<EpisodeItem>): RecyclerView.Adapter<EpisodesAdapter.EpisodeVH>() {
 
     interface EpisodeItemClickListener {
         fun onItemClick(episode: SREpisode)
-        fun setEpisodeAsWatched(episode: SREpisode)
+        fun setEpisodeAsWatched(episode: SREpisode, position: Int)
     }
 
     lateinit var context: Context
@@ -29,23 +30,32 @@ class EpisodesAdapter(val episodes: List<SREpisode>): RecyclerView.Adapter<Episo
         val episodeVH = EpisodeVH(itemView)
         episodeVH.itemView.setOnClickListener {
             val position = episodeVH.adapterPosition
-            val episode = episodes[position]
-            listener.onItemClick(episode)
+            val episodeWithWatchedInfo = episodes[position]
+            listener.onItemClick(episodeWithWatchedInfo.episode)
         }
         episodeVH.setAsWatchedIcon.setOnClickListener {
             val position = episodeVH.adapterPosition
-            val episode = episodes[position]
-            listener.setEpisodeAsWatched(episode)
+            val episodeWithWatchedInfo = episodes[position]
+            listener.setEpisodeAsWatched(episodeWithWatchedInfo.episode, position)
         }
 
         return episodeVH
     }
 
     override fun onBindViewHolder(holder: EpisodeVH, position: Int) {
-        val episode = episodes[position]
+        val episodeItem = episodes[position]
+        val episode = episodeItem.episode
+        val isWatched = episodeItem.watched
 
         holder.title.text = context.getString(R.string.episode_title_with_numbers)
                 .format(episode.season, episode.number, episode.title)
+
+        val drawableId = if (isWatched) {
+            R.drawable.ic_check_box_24dp
+        } else {
+            R.drawable.ic_check_24dp
+        }
+        holder.setAsWatchedIcon.setImageDrawable(ContextCompat.getDrawable(context, drawableId))
 
         Picasso.with(context)
                 .load(getEpisodeUrl(episode.tvdbId))
@@ -53,6 +63,11 @@ class EpisodesAdapter(val episodes: List<SREpisode>): RecyclerView.Adapter<Episo
     }
 
     override fun getItemCount() = episodes.size
+
+    fun updateItem(position: Int, episodeItem: EpisodeItem) {
+        episodes[position] = episodeItem
+        notifyItemChanged(position)
+    }
 
     inner class EpisodeVH(itemView: View): RecyclerView.ViewHolder(itemView) {
 
