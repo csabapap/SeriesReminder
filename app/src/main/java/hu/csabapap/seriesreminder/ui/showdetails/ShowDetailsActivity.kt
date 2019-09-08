@@ -112,7 +112,7 @@ class ShowDetailsActivity : DaggerAppCompatActivity() {
 
         })
 
-        viewModel.getShowWithEpisode(showId)
+        viewModel.getShow(showId)
         viewModel.getNotifications(showId)
         viewModel.refreshRelatedShows(showId)
         viewModel.observeRelatedShows(showId).observe(this, Observer {
@@ -150,6 +150,11 @@ class ShowDetailsActivity : DaggerAppCompatActivity() {
         delete_notification.setOnClickListener {
             viewModel.removeNotification(showId)
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        viewModel.loadNextEpisode(showId)
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {

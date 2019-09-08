@@ -53,20 +53,20 @@ class ShowDetailsViewModel(private val showsRepository: ShowsRepository,
     val detailsUiState: LiveData<ShowDetailsState>
         get() = _detailsUiState
 
-    fun getShowWithEpisode(showId: Int) {
+    fun getShow(showId: Int) {
         scope.launch(dispatchers.io) {
             val show = showsRepository.getShow(showId).await() ?: return@launch
 
             withContext(dispatchers.main) {
                 _detailsUiState.value = ShowDetailsState.Show(show)
             }
+        }
+    }
 
-            val nextEpisodeAbsNumber =  if (show.nextEpisode == -1) {
-                1
-            } else {
-                show.nextEpisode
-            }
-            val episode = getNextEpisode(showId, nextEpisodeAbsNumber)
+    fun loadNextEpisode(showId: Int) {
+        scope.launch(dispatchers.io) {
+            val show = showsRepository.getShow(showId).await() ?: return@launch
+            val episode = getNextEpisode(showId, show.nextEpisode)
             withContext(dispatchers.main) {
                 if (episode != null) {
                     _detailsUiState.value = ShowDetailsState.NextEpisode(episode)
