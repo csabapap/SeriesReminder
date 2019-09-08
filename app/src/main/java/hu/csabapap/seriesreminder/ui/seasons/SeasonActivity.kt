@@ -4,6 +4,7 @@ import android.os.Bundle
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import dagger.android.support.DaggerAppCompatActivity
 import hu.csabapap.seriesreminder.R
 import hu.csabapap.seriesreminder.data.db.entities.SREpisode
@@ -68,7 +69,7 @@ class SeasonActivity : DaggerAppCompatActivity() {
             }
         }
         val layoutManager = episodes_list.layoutManager as LinearLayoutManager
-        layoutManager.orientation = LinearLayoutManager.VERTICAL
+        layoutManager.orientation = RecyclerView.VERTICAL
         val dividerItemDecoration = DividerItemDecoration(this, layoutManager.orientation)
         val drawable = getDrawable(R.drawable.separator_vertical)
         if (drawable != null) {
