@@ -5,7 +5,9 @@ import androidx.room.testing.MigrationTestHelper
 import androidx.sqlite.db.framework.FrameworkSQLiteOpenHelperFactory
 import androidx.test.InstrumentationRegistry
 import hu.csabapap.seriesreminder.data.db.SRDatabase
-import hu.csabapap.seriesreminder.data.db.entities.*
+import hu.csabapap.seriesreminder.data.db.entities.SREpisode
+import hu.csabapap.seriesreminder.data.db.entities.SRShow
+import hu.csabapap.seriesreminder.data.db.entities.WatchedEpisode
 import hu.csabapap.seriesreminder.inject.modules.DbModule
 import kotlinx.coroutines.runBlocking
 import org.junit.Assert.assertEquals
@@ -23,7 +25,7 @@ class WatchedEpisodesMigrationTest {
         val EPISODE = SREpisode(null, 1, 1, "Pilot", 1, 1,
                 1, "Lorem ipsum", OffsetDateTime.now(),
                 OffsetDateTime.now().toString(), 5.0f,123, "",1)
-        val WATCHED_EPISODE = WatchedEpisode(null,1, 1, 1)
+        val WATCHED_EPISODE = WatchedEpisode(null,1, 1, 1, -1)
     }
 
     @get:Rule
@@ -57,7 +59,7 @@ class WatchedEpisodesMigrationTest {
 
     private fun getMigratedRoomDatabase(): SRDatabase {
         val database = Room.databaseBuilder(InstrumentationRegistry.getTargetContext(),
-                SRDatabase::class.java, RemindersMigrationTest.DB_NAME)
+                SRDatabase::class.java, DB_NAME)
                 .addMigrations(DbModule.MIGRATION_1_2, DbModule.MIGRATION_2_3,DbModule.MIGRATION_4_5,
                         DbModule.MIGRATION_5_6, DbModule.MIGRATION_6_7, DbModule.MIGRATION_7_8,
                         DbModule.MIGRATION_8_9, DbModule.MIGRATION_9_10, DbModule.MIGRATION_10_11)
