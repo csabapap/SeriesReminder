@@ -53,7 +53,12 @@ class EpisodeActivity : DaggerAppCompatActivity() {
         })
 
         set_watched_button.setOnClickListener {
-            viewModel.setWatched(showId, seasonNumber, episodeNumber)
+            if (!set_watched_button.isChecked) {
+                viewModel.setWatched(showId, seasonNumber, episodeNumber)
+            } else {
+                viewModel.removeFromWatched(showId, seasonNumber, episodeNumber)
+            }
+            set_watched_button.toggle()
         }
     }
 
@@ -116,11 +121,5 @@ class EpisodeActivity : DaggerAppCompatActivity() {
         episode_title.text = String.format(Locale.ENGLISH, unformattedEpisodeTitle,
                 episode.season, episode.number, episode.title)
         episode_overview.text = episode.overview
-
-        if (episodeWithShow.isWatched()) {
-            setWatchedIcon()
-        } else {
-            removeWatchedIcon()
-        }
     }
 }

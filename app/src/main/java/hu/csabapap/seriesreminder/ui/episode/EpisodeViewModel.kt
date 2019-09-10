@@ -43,10 +43,6 @@ class EpisodeViewModel @Inject constructor(
             if (episode != null) {
                 setEpisodeWatchedUseCase(episode.episode)
             }
-
-            withContext(dispatchers.main) {
-                _uiState.value = EpisodeUiState.SetEpisodeWatched
-            }
         }
     }
 
