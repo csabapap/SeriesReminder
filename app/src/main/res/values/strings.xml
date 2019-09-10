@@ -67,4 +67,5 @@
     <string name="seasons_progress">%d/%d</string>
     <string name="seasons_title">Seasons %d</string>
     <string name="watched_all">Watched All</string>
+    <string name="aired">Aired</string>
 </resources>

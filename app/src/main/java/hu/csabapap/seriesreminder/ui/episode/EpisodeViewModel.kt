@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import hu.csabapap.seriesreminder.data.repositories.episodes.EpisodesRepository
+import hu.csabapap.seriesreminder.domain.SetEpisodeWatchedUseCase
 import hu.csabapap.seriesreminder.ui.showdetails.ShowDetailsState
 import hu.csabapap.seriesreminder.utils.AppCoroutineDispatchers
 import kotlinx.coroutines.CoroutineScope
@@ -14,6 +15,7 @@ import javax.inject.Inject
 
 class EpisodeViewModel @Inject constructor(
         private val episodesRepository: EpisodesRepository,
+        private val setEpisodeWatchedUseCase: SetEpisodeWatchedUseCase,
         private val dispatchers: AppCoroutineDispatchers): ViewModel() {
 
     private val job = Job()
@@ -35,4 +37,20 @@ class EpisodeViewModel @Inject constructor(
         }
     }
 
+    fun setWatched(showId: Int, seasonNumber: Int, episodeNumber: Int) {
+        scope.launch(dispatchers.io) {
+            val episode = episodesRepository.getEpisode(showId, seasonNumber, episodeNumber)
+            if (episode != null) {
+                setEpisodeWatchedUseCase(episode.episode)
+            }
+
+            withContext(dispatchers.main) {
+                _uiState.value = EpisodeUiState.SetEpisodeWatched
+            }
+        }
+    }
+
+    fun removeFromWatched(showId: Int, seasonNumber: Int, episodeNumber: Int) {
+
+    }
 }
