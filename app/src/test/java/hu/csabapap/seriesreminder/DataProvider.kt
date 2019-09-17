@@ -1,7 +1,6 @@
 package hu.csabapap.seriesreminder
 
-import hu.csabapap.seriesreminder.data.db.entities.SREpisode
-import hu.csabapap.seriesreminder.data.db.entities.SRSeason
+import hu.csabapap.seriesreminder.data.db.entities.*
 import hu.csabapap.seriesreminder.data.network.entities.BaseShow
 import hu.csabapap.seriesreminder.data.network.entities.Ids
 import hu.csabapap.seriesreminder.data.network.entities.SearchResult
@@ -33,6 +32,30 @@ val bigBangTheory = BaseShow(
         rating = 8.21645f,
         votes = 53481)
 
+val mindhunter = SRShow(
+        id = 1L,
+        traktId = 1,
+        tvdbId = 1,
+        title = "Mindhunter",
+        overview = "Lorem ipsum...",
+        poster = "",
+        posterThumb = "",
+        cover = "",
+        coverThumb = "",
+        rating = 99.8f,
+        votes = 1234,
+        genres = "drama",
+        runtime = 60,
+        airedEpisodes = 19,
+        status = "continuing",
+        network = "Netflix",
+        trailer = "",
+        updatedAt = OffsetDateTime.now(),
+        homepage = "",
+        airingTime = AiringTime("Monday", "20:00", "US"),
+        nextEpisode = 2
+)
+
 val mindhunterEpisode = SREpisode(
         1,
         1,
@@ -61,6 +84,14 @@ val mindhunterSeason = SRSeason(
         fileName = "",
         thumbnail = "",
         nmbOfWatchedEpisodes = 0
+)
+
+val watchedEpisode = WatchedEpisode(
+        id = 1,
+        showId = 1,
+        season = 1,
+        number = 1,
+        episodeId = 1
 )
 
 val trendingShow1 = TrendingShow(123, theBoys)

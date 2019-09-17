@@ -1,11 +1,9 @@
 package hu.csabapap.seriesreminder.data.repositories.trendingshows
 
 import hu.csabapap.seriesreminder.data.Result
-import hu.csabapap.seriesreminder.data.network.TraktApi
 import hu.csabapap.seriesreminder.data.network.entities.TrendingShow
 import hu.csabapap.seriesreminder.data.network.services.TrendingShowsService
 import hu.csabapap.seriesreminder.utils.safeApiCall
-import kotlinx.coroutines.rx2.await
 import java.io.IOException
 import javax.inject.Inject
 

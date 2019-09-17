@@ -88,17 +88,9 @@ class EpisodeActivity : DaggerAppCompatActivity() {
     private fun updateUi(state: EpisodeUiState) {
         when (state) {
             is EpisodeUiState.DisplayEpisode -> displayEpisode(state.episodeWithShow)
-            EpisodeUiState.SetEpisodeWatched -> setWatchedIcon()
-            EpisodeUiState.RemoveEpisodeFromWatched -> removeWatchedIcon()
+            EpisodeUiState.SetEpisodeWatched -> set_watched_button.isChecked = true
+            EpisodeUiState.RemoveEpisodeFromWatched -> set_watched_button.isChecked = false
         }.exhaustive
-    }
-
-    private fun setWatchedIcon() {
-        set_watched_button.setImageDrawable(getDrawable(R.drawable.ic_watched_48))
-    }
-
-    private fun removeWatchedIcon() {
-        set_watched_button.setImageDrawable(getDrawable(R.drawable.ic_check_24dp))
     }
 
     private fun displayEpisode(episodeWithShow: EpisodeWithShow) {
@@ -121,5 +113,7 @@ class EpisodeActivity : DaggerAppCompatActivity() {
         episode_title.text = String.format(Locale.ENGLISH, unformattedEpisodeTitle,
                 episode.season, episode.number, episode.title)
         episode_overview.text = episode.overview
+
+        set_watched_button.isChecked = episodeWithShow.isWatched()
     }
 }

@@ -13,4 +13,11 @@ class WatchedEpisodesRepository @Inject constructor(private val watchedEpisodesD
     suspend fun getEpisodesWithWatchedData(showId: Int, seasonNumber: Int) =
             watchedEpisodesDao.getEpisodesWithWatchedInfo(showId, seasonNumber)
 
+    suspend fun getWatchedEpisode(showId: Int, season: Int, episode: Int): WatchedEpisode {
+        return watchedEpisodesDao.get(showId, season, episode)
+    }
+
+    suspend fun removeEpisodeFromWatched(watchedEpisode: WatchedEpisode): Int {
+        return watchedEpisodesDao.delete(watchedEpisode)
+    }
 }
