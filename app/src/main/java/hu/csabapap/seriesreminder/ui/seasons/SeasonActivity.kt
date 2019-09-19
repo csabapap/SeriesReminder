@@ -67,6 +67,11 @@ class SeasonActivity : DaggerAppCompatActivity() {
                 viewModel.setEpisodeAsWatched(episode)
                 adapter.updateItem(position, EpisodeItem(episode, true))
             }
+
+            override fun removeEpisodeFromWatched(episode: SREpisode, position: Int) {
+                viewModel.removeEpisodeFromWatched(episode)
+                adapter.updateItem(position, EpisodeItem(episode, false))
+            }
         }
         val layoutManager = episodes_list.layoutManager as LinearLayoutManager
         layoutManager.orientation = RecyclerView.VERTICAL

@@ -6,19 +6,20 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.squareup.picasso.Picasso
 import hu.csabapap.seriesreminder.R
 import hu.csabapap.seriesreminder.data.db.entities.SREpisode
 import hu.csabapap.seriesreminder.data.network.getEpisodeUrl
 import hu.csabapap.seriesreminder.extensions.bindView
+import hu.csabapap.seriesreminder.ui.widget.CheckableImageButton
 
 class EpisodesAdapter(val episodes: MutableList<EpisodeItem>): RecyclerView.Adapter<EpisodesAdapter.EpisodeVH>() {
 
     interface EpisodeItemClickListener {
         fun onItemClick(episode: SREpisode)
         fun setEpisodeAsWatched(episode: SREpisode, position: Int)
+        fun removeEpisodeFromWatched(episode: SREpisode, position: Int)
     }
 
     lateinit var context: Context
@@ -36,7 +37,11 @@ class EpisodesAdapter(val episodes: MutableList<EpisodeItem>): RecyclerView.Adap
         episodeVH.setAsWatchedIcon.setOnClickListener {
             val position = episodeVH.adapterPosition
             val episodeWithWatchedInfo = episodes[position]
-            listener.setEpisodeAsWatched(episodeWithWatchedInfo.episode, position)
+            if (!episodeWithWatchedInfo.watched) {
+                listener.setEpisodeAsWatched(episodeWithWatchedInfo.episode, position)
+            } else {
+                listener.removeEpisodeFromWatched(episodeWithWatchedInfo.episode, position)
+            }
         }
 
         return episodeVH
@@ -50,12 +55,7 @@ class EpisodesAdapter(val episodes: MutableList<EpisodeItem>): RecyclerView.Adap
         holder.title.text = context.getString(R.string.episode_title_with_numbers)
                 .format(episode.season, episode.number, episode.title)
 
-        val drawableId = if (isWatched) {
-            R.drawable.ic_check_box_24dp
-        } else {
-            R.drawable.ic_check_24dp
-        }
-        holder.setAsWatchedIcon.setImageDrawable(ContextCompat.getDrawable(context, drawableId))
+        holder.setAsWatchedIcon.isChecked = isWatched
 
         Picasso.with(context)
                 .load(getEpisodeUrl(episode.tvdbId))
@@ -73,6 +73,6 @@ class EpisodesAdapter(val episodes: MutableList<EpisodeItem>): RecyclerView.Adap
 
         val title: TextView by bindView(R.id.episode_title)
         val episodeArt: ImageView by bindView(R.id.episode_art)
-        val setAsWatchedIcon: ImageView by bindView(R.id.set_watched)
+        val setAsWatchedIcon: CheckableImageButton by bindView(R.id.set_watched)
     }
 }
