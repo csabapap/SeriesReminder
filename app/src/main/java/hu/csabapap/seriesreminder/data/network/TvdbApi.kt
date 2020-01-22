@@ -24,7 +24,7 @@ class TvdbApi {
     private var okHttp: OkHttpClient = OkHttpClient.Builder()
             .addInterceptor(loggingInterceptor)
             .authenticator { _, response ->
-                if ("Bearer $token" == response.header("Authentictor")){
+                if ("Bearer $token" == response.header("Authorization")){
                     null
                 }else {
                     val loginResponse: Response<LoginResponse>? = login().execute()

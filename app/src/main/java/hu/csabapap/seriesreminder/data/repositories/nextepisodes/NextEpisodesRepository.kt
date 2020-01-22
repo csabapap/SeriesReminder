@@ -4,6 +4,7 @@ import hu.csabapap.seriesreminder.data.db.entities.NextEpisodeEntry
 import hu.csabapap.seriesreminder.data.network.entities.NextEpisode
 import hu.csabapap.seriesreminder.data.states.NextEpisodeState
 import hu.csabapap.seriesreminder.data.states.NextEpisodeSuccess
+import timber.log.Timber
 import javax.inject.Inject
 import javax.inject.Singleton
 
