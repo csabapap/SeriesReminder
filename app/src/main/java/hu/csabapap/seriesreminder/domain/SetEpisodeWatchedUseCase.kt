@@ -6,6 +6,7 @@ import hu.csabapap.seriesreminder.data.db.entities.SREpisode
 import hu.csabapap.seriesreminder.data.db.entities.WatchedEpisode
 import hu.csabapap.seriesreminder.data.repositories.WatchedEpisodesRepository
 import kotlinx.coroutines.rx2.await
+import org.threeten.bp.OffsetDateTime
 import javax.inject.Inject
 
 class SetEpisodeWatchedUseCase @Inject constructor(
@@ -15,7 +16,8 @@ class SetEpisodeWatchedUseCase @Inject constructor(
 
     suspend operator fun invoke(episode: SREpisode) {
         val episodeId = episode.id ?: throw Error("missing episode id")
-        val watchedEpisode = WatchedEpisode(null, episode.showId, episode.season, episode.number, episodeId)
+        val watchedAt = OffsetDateTime.now()
+        val watchedEpisode = WatchedEpisode(null, episode.showId, episode.season, episode.number, episodeId, watchedAt)
         val result = watchedEpisodesRepository.setEpisodeWatched(watchedEpisode)
         if (result == -1L) return
         val nextEpisodeAbsNumber = episode.absNumber + 1
