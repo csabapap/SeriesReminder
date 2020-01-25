@@ -24,10 +24,8 @@ class SetEpisodeWatchedUseCaseTest {
     fun `should not increase watched episode number when insert fails`() = runBlocking {
         val season = mindhunterSeason
         val episode = mindhunterEpisode
-        val watchedAt = OffsetDateTime.now()
-        val watchedEpisode = WatchedEpisode(null, episode.showId, episode.season, episode.number, episode.id!!, watchedAt)
-        whenever(watchedRepository.setEpisodeWatched(watchedEpisode)).thenReturn(-1L)
-        whenever(seasonsRepository.getSeason(episode.showId, episode.season)).thenReturn(season)
+        whenever(watchedRepository.setEpisodeWatched(any())).thenReturn(-1L)
+        whenever(seasonsRepository.getSeason(any(), any())).thenReturn(season)
 
         watchedEpisodeUseCase(mindhunterEpisode)
 

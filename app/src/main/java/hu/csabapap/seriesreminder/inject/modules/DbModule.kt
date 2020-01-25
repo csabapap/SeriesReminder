@@ -206,6 +206,8 @@ class DbModule {
             override fun migrate(database: SupportSQLiteDatabase) {
                 database.execSQL("DELETE FROM `watched_episodes`")
                 database.execSQL("ALTER TABLE `watched_episodes` ADD COLUMN watched_at TEXT NOT NULL DEFAULT ''")
+                database.execSQL("UPDATE shows SET next_episode = -1")
+                database.execSQL("UPDATE seasons SET watched_episodes = 0")
             }
         }
     }
