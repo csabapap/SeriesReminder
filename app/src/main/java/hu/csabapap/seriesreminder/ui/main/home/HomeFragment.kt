@@ -111,6 +111,7 @@ class HomeFragment : DaggerFragment(),
 
     override fun onStart() {
         super.onStart()
+        homeViewModel.getUpcomingEpisodes()
         homeViewModel.getNextEpisodes()
     }
 

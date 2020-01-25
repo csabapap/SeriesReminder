@@ -8,6 +8,7 @@ import hu.csabapap.seriesreminder.data.CollectionRepository
 import hu.csabapap.seriesreminder.data.Result
 import hu.csabapap.seriesreminder.data.repositories.episodes.EpisodesRepository
 import hu.csabapap.seriesreminder.data.db.entities.NextEpisodeItem
+import hu.csabapap.seriesreminder.data.db.entities.SRNextEpisode
 import hu.csabapap.seriesreminder.data.repositories.popularshows.PopularShowsRepository
 import hu.csabapap.seriesreminder.data.repositories.trendingshows.TrendingShowsRepository
 import hu.csabapap.seriesreminder.domain.SyncShowsUseCase
@@ -56,7 +57,7 @@ class HomeViewModel @Inject constructor(private val trendingShowsRepository: Tre
         }
     }
 
-    fun getNextEpisodes() {
+    fun getUpcomingEpisodes() {
         val disposable = episodesRepository.getNextEpisodes(3)
                 .subscribeOn(rxSchedulers.io)
                 .observeOn(rxSchedulers.main)
@@ -66,6 +67,13 @@ class HomeViewModel @Inject constructor(private val trendingShowsRepository: Tre
                     }
                 }, {Timber.e(it)})
         disposables.add(disposable)
+    }
+
+    fun getNextEpisodes() {
+        scope.launch(dispatchers.io) {
+            val nextEpisodes: List<SRNextEpisode> = episodesRepository.getNextEpisodes()
+            Timber.d("number of next episodes: ${nextEpisodes.size}")
+        }
     }
 
     private fun getTrendingShows() {

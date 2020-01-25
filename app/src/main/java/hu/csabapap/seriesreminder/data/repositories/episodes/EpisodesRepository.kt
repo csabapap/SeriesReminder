@@ -13,6 +13,7 @@ import hu.csabapap.seriesreminder.utils.safeApiCall
 import io.reactivex.Single
 import kotlinx.coroutines.rx2.await
 import org.threeten.bp.OffsetDateTime
+import timber.log.Timber
 import javax.inject.Inject
 
 class EpisodesRepository @Inject constructor(
@@ -69,7 +70,7 @@ class EpisodesRepository @Inject constructor(
 
     fun getNextEpisodes(limit: Int) = nextEpisodeDao.getNextEpisodes(limit)
 
-    suspend fun getNextEpisodes() = nextEpisodeDao.getNextEpisodes().await()
+    suspend fun getNextEpisodes() = nextEpisodeDao.getNextEpisodeInWatchList()
 
 
     fun getEpisodeInfoFromTvdb(tvdbId: Int) = tvdbApi.episodeSingle(tvdbId)
