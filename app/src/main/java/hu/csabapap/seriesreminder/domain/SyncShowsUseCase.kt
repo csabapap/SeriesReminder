@@ -4,12 +4,16 @@ import hu.csabapap.seriesreminder.data.CollectionRepository
 import hu.csabapap.seriesreminder.data.Result
 import hu.csabapap.seriesreminder.data.SeasonsRepository
 import hu.csabapap.seriesreminder.data.ShowsRepository
+import hu.csabapap.seriesreminder.data.db.daos.LastRequestDao
+import hu.csabapap.seriesreminder.data.db.entities.LastRequest
+import hu.csabapap.seriesreminder.data.db.entities.Request
 import hu.csabapap.seriesreminder.data.repositories.episodes.EpisodesRepository
 import hu.csabapap.seriesreminder.data.repositories.nextepisodes.NextEpisodesRepository
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.rx2.await
+import org.threeten.bp.Instant
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -17,19 +21,19 @@ class SyncShowsUseCase @Inject constructor(val showsRepository: ShowsRepository,
                                            private val seasonsRepository: SeasonsRepository,
                                            private val episodesRepository: EpisodesRepository,
                                            val collectionRepository: CollectionRepository,
-                                           private val nextEpisodesRepository: NextEpisodesRepository) {
+                                           private val nextEpisodesRepository: NextEpisodesRepository,
+                                           private val lastRequestDao: LastRequestDao) {
 
 
     suspend fun syncShows() {
         Timber.d("sync shows")
         coroutineScope {
             val collectionItems = collectionRepository.getCollectionsSuspendable()
-
+            lastRequestDao.insert(LastRequest(0L, LastRequest.SYNC_SHOWS_ID, Request.SHOW_DETAILS, Instant.now()))
             collectionItems.map {collectionItem ->
                 val show = collectionItem.show ?: return@map null
                 async {
                     showsRepository.getShowWithImages(show.traktId, show.tvdbId).await()
-
 
                     val seasons = seasonsRepository.getSeasonsFromDb(show.traktId)
                     val seasonsFromWeb = seasonsRepository.getSeasonsFromWeb(show.traktId)

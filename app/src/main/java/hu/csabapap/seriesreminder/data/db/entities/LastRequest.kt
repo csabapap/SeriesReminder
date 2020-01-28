@@ -13,4 +13,8 @@ data class LastRequest(
         @ColumnInfo(name = "entity_id") val traktId: Int,
         @ColumnInfo(name = "request") val request: Request,
         @ColumnInfo(name = "timestamp") val timestamp: Instant
-)
+) {
+    companion object {
+        const val SYNC_SHOWS_ID = -1
+    }
+}
