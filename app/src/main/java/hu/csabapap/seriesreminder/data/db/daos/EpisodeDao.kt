@@ -23,6 +23,9 @@ abstract class EpisodeDao {
     @Query("SELECT * FROM episodes WHERE show_id = :showId AND abs_number = :absNumber LIMIT 1")
     abstract suspend fun getByAbsNumber(showId: Int, absNumber: Int): SREpisode?
 
+    @Query("SELECT * FROM episodes WHERE show_id = :showId")
+    abstract suspend fun getAllForShow(showId: Int): List<SREpisode>
+
     @Query("SELECT * FROM episodes WHERE show_id = :showId AND season = :season AND number = :episode LIMIT 1")
     abstract suspend fun getBySeasonAndEpisodeNumber(showId: Int, season: Int, episode: Int): EpisodeWithShow?
 

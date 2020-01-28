@@ -17,7 +17,7 @@ class SyncShowsUseCase @Inject constructor(val showsRepository: ShowsRepository,
                                            private val seasonsRepository: SeasonsRepository,
                                            private val episodesRepository: EpisodesRepository,
                                            val collectionRepository: CollectionRepository,
-                                           val nextEpisodesRepository: NextEpisodesRepository) {
+                                           private val nextEpisodesRepository: NextEpisodesRepository) {
 
 
     suspend fun syncShows() {
@@ -50,6 +50,7 @@ class SyncShowsUseCase @Inject constructor(val showsRepository: ShowsRepository,
                     }
                             .flatten()
 
+                    val localSeasons = seasonsRepository.getSeasonsFromDb(show.traktId)?.associateBy { season -> season.number }
                     coroutineScope {
                         val episodesWithImages = episodes.map { episode ->
                             async {
@@ -62,8 +63,14 @@ class SyncShowsUseCase @Inject constructor(val showsRepository: ShowsRepository,
                                 episode.copy(image = episodeImage)
                             }
                         }.awaitAll()
-
-                        episodesRepository.saveEpisodes(episodesWithImages)
+                        val episodesToSave = episodesWithImages.map seasonIdCopy@{
+                            val season = localSeasons?.get(it.season)
+                            if (season?.id != null) {
+                                return@seasonIdCopy it.copy(seasonId = season.id)
+                            }
+                            it
+                        }
+                        episodesRepository.saveEpisodes(episodesToSave)
                     }
 
                         nextEpisodesRepository.fetchAndSaveNextEpisode(show.traktId)
