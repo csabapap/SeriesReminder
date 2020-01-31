@@ -8,8 +8,8 @@ import hu.csabapap.seriesreminder.data.db.relations.EpisodeWithShow
 @Dao
 abstract class EpisodeDao {
 
-    @Insert(onConflict = OnConflictStrategy.ABORT)
-    abstract fun insert(episode: SREpisode)
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    abstract fun insert(episode: SREpisode): Long
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     abstract fun insert(episodes: List<SREpisode>)
@@ -45,9 +45,8 @@ abstract class EpisodeDao {
     @Transaction
     open fun upsert(episodes: List<SREpisode>) {
         episodes.onEach {
-            try {
-                insert(it)
-            } catch (e: SQLiteConstraintException) {
+            val result = insert(it)
+            if (result == -1L) {
                 update(it)
             }
         }

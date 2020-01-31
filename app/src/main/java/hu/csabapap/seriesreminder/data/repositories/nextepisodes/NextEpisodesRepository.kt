@@ -17,6 +17,7 @@ class NextEpisodesRepository @Inject constructor(
         val state = remoteDataSource.fetchNextEpisode(showId)
 
         if (state is NextEpisodeSuccess) {
+            Timber.d("save next episode; show id: $showId; next episode: ${state.nextEpisode}")
             localDataSource.saveNextEpisode(mapToNextEpisodeEntry(state.nextEpisode, showId))
         }
 

@@ -54,6 +54,8 @@ class SyncShowsUseCase @Inject constructor(val showsRepository: ShowsRepository,
                     }
                             .flatten()
 
+                    Timber.d("nmb of episodes: ${episodes.size}")
+
                     val localSeasons = seasonsRepository.getSeasonsFromDb(show.traktId)?.associateBy { season -> season.number }
                     coroutineScope {
                         val episodesWithImages = episodes.map { episode ->
@@ -67,23 +69,30 @@ class SyncShowsUseCase @Inject constructor(val showsRepository: ShowsRepository,
                                 episode.copy(image = episodeImage)
                             }
                         }.awaitAll()
+
+                        val localEpisodes = episodesRepository.getEpisodes(show.traktId).associateBy { it.traktId }
                         val episodesToSave = episodesWithImages.map seasonIdCopy@{
                             val season = localSeasons?.get(it.season)
-                            if (season?.id != null) {
-                                return@seasonIdCopy it.copy(seasonId = season.id)
+                            val episodeWithSeasonId = if (season?.id != null) {
+                                it.copy(seasonId = season.id)
+                            } else {
+                                it
                             }
-                            it
+                            val localEpisode = localEpisodes[it.traktId]
+                            val episodeWithId = if (localEpisode != null) {
+                                 episodeWithSeasonId.copy(id = localEpisode.id)
+                            } else {
+                                episodeWithSeasonId
+                            }
+                            episodeWithId
                         }
                         episodesRepository.saveEpisodes(episodesToSave)
                     }
-
                         nextEpisodesRepository.fetchAndSaveNextEpisode(show.traktId)
                 }
             }
                     .filterNotNull()
                     .awaitAll()
-
         }
     }
-
 }
