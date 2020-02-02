@@ -34,6 +34,10 @@ class SeasonsRepository @Inject constructor(private val seasonsDao: SeasonsDao,
         return seasonsDao.getSeasons(showId)
     }
 
+    suspend fun getSeasonByNumber(showId: Int, number: Int): SRSeason? {
+        return seasonsDao.getSeason(showId, number)
+    }
+
     suspend fun getSeasonsFromWeb(showId: Int): List<SRSeason>? {
         val seasons = traktApi.seasons(showId).await() ?: emptyList()
         return seasons.map {

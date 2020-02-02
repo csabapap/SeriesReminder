@@ -1,14 +1,14 @@
 package hu.csabapap.seriesreminder.tasks
 
 import hu.csabapap.seriesreminder.data.CollectionRepository
-import hu.csabapap.seriesreminder.data.repositories.nextepisodes.NextEpisodesRepository
+import hu.csabapap.seriesreminder.domain.GetNextEpisodeUseCase
 import kotlinx.coroutines.rx2.await
 import javax.inject.Inject
 
 class FetchNextEpisodeTask(val showId: Int) : Task {
 
     @Inject
-    lateinit var nextEpisodeRepository: NextEpisodesRepository
+    lateinit var nextEpisodeUseCase: GetNextEpisodeUseCase
 
     @Inject
     lateinit var collectionRepository: CollectionRepository
@@ -19,6 +19,6 @@ class FetchNextEpisodeTask(val showId: Int) : Task {
 
         if (collectionEntry.id == null) return
 
-        nextEpisodeRepository.fetchAndSaveNextEpisode(showId)
+        nextEpisodeUseCase.getNextEpisode(showId)
     }
 }

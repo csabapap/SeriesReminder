@@ -15,3 +15,7 @@ fun OffsetDateTime.diffInHours(): Int {
     val duration = Duration.between(currentDateTime, this)
     return duration.toHours().toInt()
 }
+
+//operator fun OffsetDateTime.compareTo(other: OffsetDateTime): Int {
+//    return -1
+//}

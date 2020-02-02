@@ -6,9 +6,8 @@ import androidx.work.*
 import hu.csabapap.seriesreminder.BuildConfig
 import hu.csabapap.seriesreminder.data.ShowsRepository
 import hu.csabapap.seriesreminder.data.db.entities.SRShow
-import hu.csabapap.seriesreminder.data.repositories.nextepisodes.NextEpisodesRepository
 import hu.csabapap.seriesreminder.data.repositories.notifications.NotificationsRepository
-import hu.csabapap.seriesreminder.data.states.NextEpisodeSuccess
+import hu.csabapap.seriesreminder.domain.GetNextEpisodeUseCase
 import hu.csabapap.seriesreminder.utils.Reminder
 import hu.csabapap.seriesreminder.utils.getDateTimeForNextAir
 import kotlinx.coroutines.GlobalScope
@@ -22,7 +21,7 @@ import javax.inject.Inject
 
 class SyncNextEpisodeWorker(context: Context,
                             workerParameters: WorkerParameters,
-                            private val nextEpisodesRepository: NextEpisodesRepository,
+                            private val nextEpisodeUseCase: GetNextEpisodeUseCase,
                             private val showsRepository: ShowsRepository,
                             private val notificationsRepository: NotificationsRepository,
                             private val workManager: WorkManager)
@@ -35,8 +34,8 @@ class SyncNextEpisodeWorker(context: Context,
         }
 
         GlobalScope.launch {
-            val state = nextEpisodesRepository.fetchAndSaveNextEpisode(showId)
-            if (state is NextEpisodeSuccess) {
+            val result = nextEpisodeUseCase.getNextEpisode(showId)
+            if (result) {
                 val show = showsRepository.getShow(showId).await()
                 show?.let {
                     createAlarm(it)
@@ -85,14 +84,14 @@ class SyncNextEpisodeWorker(context: Context,
         }
     }
 
-    class Factory @Inject constructor(private val nextEpisodesRepository: NextEpisodesRepository,
+    class Factory @Inject constructor(private val nextEpisodeUseCase: GetNextEpisodeUseCase,
                                       private val showsRepository: ShowsRepository,
                                       private val notificationsRepository: NotificationsRepository,
                                       private val workManager: WorkManager)
         : ChildWorkerFactory {
         override fun create(appContext: Context, params: WorkerParameters): ListenableWorker {
-            return SyncNextEpisodeWorker(appContext, params, nextEpisodesRepository,
-                    showsRepository, notificationsRepository, workManager)
+            return SyncNextEpisodeWorker(appContext, params, nextEpisodeUseCase, showsRepository,
+                    notificationsRepository, workManager)
         }
     }
 }
