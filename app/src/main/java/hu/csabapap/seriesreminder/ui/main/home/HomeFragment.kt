@@ -15,12 +15,14 @@ import androidx.recyclerview.widget.RecyclerView
 import dagger.android.support.DaggerFragment
 import hu.csabapap.seriesreminder.R
 import hu.csabapap.seriesreminder.data.db.entities.NextEpisodeItem
+import hu.csabapap.seriesreminder.extensions.exhaustive
 import hu.csabapap.seriesreminder.services.SyncService
 import hu.csabapap.seriesreminder.ui.adapters.DiscoverPreviewAdapter
 import hu.csabapap.seriesreminder.ui.adapters.EpisodeCardsAdapter
 import hu.csabapap.seriesreminder.ui.adapters.HomeCardsAdapter
 import hu.csabapap.seriesreminder.ui.adapters.items.CardItem
 import hu.csabapap.seriesreminder.ui.adapters.items.DiscoverCardItem
+import hu.csabapap.seriesreminder.ui.adapters.items.NextEpisodesCardItem
 import hu.csabapap.seriesreminder.ui.adapters.items.UpcomingEpisodeCardItem
 import hu.csabapap.seriesreminder.ui.search.SearchActivity
 import hu.csabapap.seriesreminder.ui.settings.SettingsActivity
@@ -190,6 +192,7 @@ class HomeFragment : DaggerFragment(),
             is PopularState -> cardsAdapter.addCard(DiscoverCardItem(getString(R.string.popular_shows),
                     state.items, CardItem.POPULAR_CARD_TYPE, CardItem.PRIORITY_POPULAR))
             is MyShowsState -> Timber.d("display shows for popular shows")
-        }
+            is NextEpisodesState -> cardsAdapter.addCard(NextEpisodesCardItem(state.episodes, CardItem.NEXT_EPISODES_TYPE))
+        }.exhaustive
     }
 }

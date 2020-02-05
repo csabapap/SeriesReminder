@@ -1,10 +1,10 @@
 package hu.csabapap.seriesreminder.ui.adapters
 
 import android.content.Context
-import androidx.core.content.ContextCompat
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.PagerSnapHelper
@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.RecyclerView
 import hu.csabapap.seriesreminder.R
 import hu.csabapap.seriesreminder.ui.adapters.items.CardItem
 import hu.csabapap.seriesreminder.ui.adapters.items.DiscoverCardItem
+import hu.csabapap.seriesreminder.ui.adapters.items.NextEpisodesCardItem
 import hu.csabapap.seriesreminder.ui.adapters.items.UpcomingEpisodeCardItem
 import hu.csabapap.seriesreminder.ui.main.discover.DiscoverFragment
 import kotlinx.android.synthetic.main.item_discover_card.view.*
@@ -51,6 +52,20 @@ class HomeCardsAdapter(private val listener: CardClickListener)
                 }
             }
             return discoverCardVH
+        } else if (viewType == CardItem.NEXT_EPISODES_TYPE) {
+            val itemView = LayoutInflater.from(context).inflate(R.layout.item_episodes, parent, false)
+            val episodeCardVH = NextEpisodesListVH(itemView)
+            val episodesRv = episodeCardVH.itemView.episodes_rv
+            episodesRv.adapter = episodeCardVH.episodesAdapter
+            val layoutManager = episodesRv.layoutManager as LinearLayoutManager
+            val decoration = DividerItemDecoration(context, LinearLayoutManager.HORIZONTAL)
+            decoration.setDrawable(ContextCompat.getDrawable(context, R.drawable.horizontal_separator)!!)
+            episodesRv.addItemDecoration(decoration)
+            layoutManager.orientation = RecyclerView.VERTICAL
+            episodesRv.setHasFixedSize(true)
+            val snapHelper = PagerSnapHelper()
+            snapHelper.attachToRecyclerView(episodesRv)
+            return episodeCardVH
         }
 
         val itemView = LayoutInflater.from(context).inflate(R.layout.item_episodes, parent, false)
@@ -80,6 +95,9 @@ class HomeCardsAdapter(private val listener: CardClickListener)
             }
             is EpisodeCardVH -> {
                 holder.bind(cardItems[position] as UpcomingEpisodeCardItem)
+            }
+            is NextEpisodesListVH -> {
+                holder.bind(cardItems[position] as NextEpisodesCardItem)
             }
         }
     }
@@ -130,6 +148,15 @@ class HomeCardsAdapter(private val listener: CardClickListener)
             if (clickListener != null) {
                 episodesAdapter.listener = clickListener
             }
+        }
+    }
+   
+    inner class NextEpisodesListVH(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        val episodesAdapter = NextEpisodesAdapter()
+
+        fun bind(cardItem: NextEpisodesCardItem) {
+            itemView.label.text = "Next Episodes"
+            episodesAdapter.episodes = cardItem.episodes.toMutableList()
         }
     }
 }

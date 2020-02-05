@@ -72,7 +72,11 @@ class HomeViewModel @Inject constructor(private val trendingShowsRepository: Tre
     fun getNextEpisodes() {
         scope.launch(dispatchers.io) {
             val nextEpisodes: List<SRNextEpisode> = episodesRepository.getNextEpisodes()
-            Timber.d("number of next episodes: ${nextEpisodes.size}")
+            withContext(dispatchers.main) {
+                if (nextEpisodes.isNotEmpty()) {
+                    _viewStateLiveData.value = NextEpisodesState(nextEpisodes)
+                }
+            }
         }
     }
 
@@ -81,12 +85,17 @@ class HomeViewModel @Inject constructor(private val trendingShowsRepository: Tre
         disposables.add(trendingShowsRepository.getTrendingShowsFlowable()
                 .distinctUntilChanged()
                 .map { gridItems ->
-                    gridItems.map {
-                        ShowItem(it.show!!.traktId,
-                                it.show!!.tvdbId,
-                                it.show!!.title,
-                                it.show!!.posterThumb,
-                                it.inCollection)
+                    gridItems.mapNotNull {
+                        val show = it.show
+                        if (show != null) {
+                            ShowItem(show.traktId,
+                                    show.tvdbId,
+                                    show.title,
+                                    show.posterThumb,
+                                    it.inCollection)
+                        } else {
+                            null
+                        }
                     }
                 }
                 .subscribeOn(rxSchedulers.io)
@@ -103,12 +112,17 @@ class HomeViewModel @Inject constructor(private val trendingShowsRepository: Tre
         disposables.add(popularShowsRepository.getPopularShowsFlowable()
                 .distinctUntilChanged()
                 .map { gridItems ->
-                    gridItems.map {
-                        ShowItem(it.show!!.traktId,
-                                it.show!!.tvdbId,
-                                it.show!!.title,
-                                it.show!!.posterThumb,
-                                it.inCollection)
+                    gridItems.mapNotNull {
+                        val show = it.show
+                        if (show != null) {
+                            ShowItem(show.traktId,
+                                    show.tvdbId,
+                                    show.title,
+                                    show.posterThumb,
+                                    it.inCollection)
+                        } else {
+                            null
+                        }
                     }
                 }
                 .subscribeOn(rxSchedulers.io)

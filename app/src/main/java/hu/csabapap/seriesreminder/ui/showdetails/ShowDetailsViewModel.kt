@@ -176,7 +176,7 @@ class ShowDetailsViewModel(private val showsRepository: ShowsRepository,
     }
 
     fun setEpisodeWatched(episode: SREpisode) {
-        scope.launch {
+        scope.launch(dispatchers.io) {
             setEpisodeWatchedUseCase(episode)
             val nextEpisodeAbsNumber = episode.absNumber + 1
             val nextEpisode = getNextEpisode(episode.showId, nextEpisodeAbsNumber)
