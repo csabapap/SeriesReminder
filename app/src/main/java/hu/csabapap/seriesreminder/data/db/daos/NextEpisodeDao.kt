@@ -26,7 +26,7 @@ interface NextEpisodeDao {
     @Query("SELECT * FROM next_episodes")
     fun getNextEpisodes() : Single<List<NextEpisodeItem>>
 
-    @Query("SELECT shows.trakt_id AS showId, shows.title AS showTitle, " +
+    @Query("SELECT shows.trakt_id AS showId, shows.title AS showTitle, shows.poster_thumb as poster, " +
             "episodes.season AS season, episodes.number AS number, " +
             "episodes.abs_number AS absNumber, episodes.title AS episodeTitle" +
             " FROM episodes JOIN shows ON episodes.show_id = shows.trakt_id AND " +
