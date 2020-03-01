@@ -7,7 +7,6 @@ import androidx.lifecycle.ViewModel
 import androidx.work.Data
 import androidx.work.OneTimeWorkRequest
 import androidx.work.WorkManager
-import hu.csabapap.seriesreminder.BuildConfig
 import hu.csabapap.seriesreminder.data.CollectionRepository
 import hu.csabapap.seriesreminder.data.SeasonsRepository
 import hu.csabapap.seriesreminder.data.ShowsRepository
@@ -24,14 +23,13 @@ import hu.csabapap.seriesreminder.services.workers.SyncNextEpisodeWorker
 import hu.csabapap.seriesreminder.ui.adapters.items.ShowItem
 import hu.csabapap.seriesreminder.utils.AppCoroutineDispatchers
 import hu.csabapap.seriesreminder.utils.Reminder
-import hu.csabapap.seriesreminder.utils.getDateTimeForNextAir
+import hu.csabapap.seriesreminder.utils.getAirDateTimeInCurrentTimeZone
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.rx2.await
 import kotlinx.coroutines.withContext
-import org.threeten.bp.OffsetDateTime
-import org.threeten.bp.ZoneOffset
+import org.threeten.bp.LocalDateTime
 import timber.log.Timber
 import java.util.*
 import java.util.concurrent.TimeUnit
@@ -87,22 +85,15 @@ class ShowDetailsViewModel(private val showsRepository: ShowsRepository,
 
     fun createNotification(showId: Int, aheadOfTime: Int) {
         scope.launch(dispatchers.io) {
-            val show = showsRepository.getShow(showId).await()
-//            val notification = SrNotification(null, showId, aheadOfTime, -1)
-//            notificationsRepository.createNotification(notification)
-            val day = show!!.airingTime.day
-            val hours = show.airingTime.time
-            val airDateTime = getDateTimeForNextAir(OffsetDateTime.now(ZoneOffset.UTC), day, hours)
+            val show = showsRepository.getShow(showId).await() ?: return@launch
+            val airDateTime = getAirDateTimeInCurrentTimeZone(LocalDateTime.now(), show.airingTime)
 
             val calendar = Calendar.getInstance()
             calendar.set(Calendar.DAY_OF_MONTH, airDateTime.dayOfMonth)
             calendar.set(Calendar.HOUR_OF_DAY, airDateTime.hour)
             calendar.set(Calendar.MINUTE, airDateTime.minute)
             calendar.set(Calendar.SECOND, 0)
-            val duration = when (BuildConfig.DEBUG) {
-                true -> 5000
-                false -> calendar.timeInMillis - System.currentTimeMillis()
-            }
+            val duration = calendar.timeInMillis - System.currentTimeMillis()
             val request = OneTimeWorkRequest.Builder(ShowReminderWorker::class.java)
                     .setInitialDelay(duration, TimeUnit.MILLISECONDS)
                     .setInputData(

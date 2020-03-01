@@ -38,6 +38,7 @@ import hu.csabapap.seriesreminder.utils.*
 import kotlinx.android.synthetic.main.activity_show_details.*
 import kotlinx.android.synthetic.main.content_next_episode.*
 import kotlinx.android.synthetic.main.content_seasons.*
+import org.threeten.bp.LocalDateTime
 import timber.log.Timber
 import javax.inject.Inject
 import javax.inject.Named
@@ -215,7 +216,8 @@ class ShowDetailsActivity : DaggerAppCompatActivity() {
             show_title.text = it.title
             overview.text = it.overview
             status.text = it.status
-            air_daytime.text = String.format(getString(R.string.air_time), it.airingTime.day, it.airingTime.time)
+            val localDateTime = getAirDateTimeInCurrentTimeZone(LocalDateTime.now(), it.airingTime)
+            air_daytime.text = getDayAndTimeString(localDateTime)
             val posterUrl = if (it.posterThumb.isEmpty()) {
                 getPosterUrl(it.tvdbId)
             } else {

@@ -1,18 +1,38 @@
 package hu.csabapap.seriesreminder.utils
 
-import org.threeten.bp.*
+import hu.csabapap.seriesreminder.data.db.entities.AiringTime
+import org.threeten.bp.DayOfWeek
+import org.threeten.bp.LocalDateTime
+import org.threeten.bp.ZoneId
+import org.threeten.bp.ZonedDateTime
+import org.threeten.bp.format.DateTimeFormatter
 
-fun getDateTimeForNextAir(currentDateTime: OffsetDateTime, day: String, time: String): OffsetDateTime {
-    val nextDayOfWeek = DayOfWeek.valueOf(day.toUpperCase())
-    var nextDateTime = OffsetDateTime.of(currentDateTime.toLocalDateTime(), ZoneOffset.UTC)
-    println("next day of week: $nextDayOfWeek")
-    while (nextDateTime.dayOfWeek != nextDayOfWeek) {
-        nextDateTime = nextDateTime.plusDays(1)
+val dayAndTimeFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("EEEE H:mm")
+
+fun getAirDateTimeInCurrentTimeZone(localDateTime: LocalDateTime,
+                                    airingTime: AiringTime)
+        : ZonedDateTime {
+    val zoneId = ZoneId.of(airingTime.timezone)
+    val localZonedDateTime = ZonedDateTime.of(localDateTime, ZoneId.systemDefault())
+    var airingDateTime = localZonedDateTime.withZoneSameInstant(zoneId)
+    while (airingDateTime.dayOfWeek != DayOfWeek.valueOf(airingTime.day.toUpperCase())) {
+        airingDateTime = airingDateTime.plusDays(1)
     }
-    val (hours, mins) = toTime(time)
-    val newDateTime = ZonedDateTime.of(nextDateTime.toLocalDate(), LocalTime.of(hours, mins), ZoneOffset.UTC)
+    val (hours, minutes) = toTime(airingTime.time)
+    val airDateTime = ZonedDateTime.of(airingDateTime.year,
+            airingDateTime.monthValue,
+            airingDateTime.dayOfMonth,
+            hours,
+            minutes,
+            0,
+            0,
+            airingDateTime.zone)
 
-    return newDateTime.toOffsetDateTime()
+    return airDateTime.withZoneSameInstant(ZoneId.systemDefault())
+}
+
+fun getDayAndTimeString(dateTime: ZonedDateTime): String {
+    return dayAndTimeFormatter.format(dateTime)
 }
 
 fun toTime(time:String): SrTime {

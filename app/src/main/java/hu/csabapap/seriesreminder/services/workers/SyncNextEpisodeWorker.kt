@@ -3,18 +3,17 @@ package hu.csabapap.seriesreminder.services.workers
 import android.annotation.SuppressLint
 import android.content.Context
 import androidx.work.*
-import hu.csabapap.seriesreminder.BuildConfig
 import hu.csabapap.seriesreminder.data.ShowsRepository
 import hu.csabapap.seriesreminder.data.db.entities.SRShow
 import hu.csabapap.seriesreminder.data.repositories.notifications.NotificationsRepository
 import hu.csabapap.seriesreminder.domain.GetNextEpisodeUseCase
 import hu.csabapap.seriesreminder.utils.Reminder
-import hu.csabapap.seriesreminder.utils.getDateTimeForNextAir
+import hu.csabapap.seriesreminder.utils.getAirDateTimeInCurrentTimeZone
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.rx2.await
-import org.threeten.bp.OffsetDateTime
-import org.threeten.bp.ZoneOffset
+import org.threeten.bp.LocalDateTime
+import timber.log.Timber
 import java.util.*
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
@@ -48,17 +47,16 @@ class SyncNextEpisodeWorker(context: Context,
 
     @SuppressLint("RestrictedApi")
     private fun createAlarm(show: SRShow) {
-        val day = show.airingTime.day
-        val hours = show.airingTime.time
-        val airDateTime = getDateTimeForNextAir(OffsetDateTime.now(ZoneOffset.UTC), day, hours)
+        val airDateTime = getAirDateTimeInCurrentTimeZone(LocalDateTime.now(), show.airingTime)
         val calendar = Calendar.getInstance()
         calendar.set(Calendar.DAY_OF_MONTH, airDateTime.dayOfMonth)
         calendar.set(Calendar.HOUR_OF_DAY, airDateTime.hour)
         calendar.set(Calendar.MINUTE, airDateTime.minute)
         calendar.set(Calendar.SECOND, 0)
-        val duration = when(BuildConfig.DEBUG) {
-            true -> 1 * 60 * 1000
-            false -> calendar.timeInMillis - System.currentTimeMillis()
+        val duration = calendar.timeInMillis - System.currentTimeMillis()
+        Timber.d("duration: ${duration}ms")
+        if (duration < 0) {
+            return
         }
         val request = OneTimeWorkRequest.Builder(ShowReminderWorker::class.java)
                 .setInitialDelay(duration, TimeUnit.MILLISECONDS)
