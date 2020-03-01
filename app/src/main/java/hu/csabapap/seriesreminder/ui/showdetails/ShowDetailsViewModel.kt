@@ -93,7 +93,7 @@ class ShowDetailsViewModel(private val showsRepository: ShowsRepository,
             calendar.set(Calendar.HOUR_OF_DAY, airDateTime.hour)
             calendar.set(Calendar.MINUTE, airDateTime.minute)
             calendar.set(Calendar.SECOND, 0)
-            val duration = calendar.timeInMillis - System.currentTimeMillis()
+            val duration = calendar.timeInMillis - System.currentTimeMillis() - aheadOfTime
             val request = OneTimeWorkRequest.Builder(ShowReminderWorker::class.java)
                     .setInitialDelay(duration, TimeUnit.MILLISECONDS)
                     .setInputData(
