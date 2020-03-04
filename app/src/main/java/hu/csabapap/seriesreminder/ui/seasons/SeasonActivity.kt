@@ -11,7 +11,6 @@ import hu.csabapap.seriesreminder.data.db.entities.SREpisode
 import hu.csabapap.seriesreminder.extensions.exhaustive
 import hu.csabapap.seriesreminder.utils.Activities
 import hu.csabapap.seriesreminder.utils.Episode
-import kotlinx.android.synthetic.main.activity_episode.toolbar
 import kotlinx.android.synthetic.main.activity_seasons.*
 import javax.inject.Inject
 import javax.inject.Named

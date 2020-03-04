@@ -8,7 +8,6 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import androidx.appcompat.app.AlertDialog
-import androidx.constraintlayout.motion.widget.MotionLayout
 import androidx.core.app.ActivityOptionsCompat
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
@@ -38,6 +37,7 @@ import hu.csabapap.seriesreminder.utils.*
 import kotlinx.android.synthetic.main.activity_show_details.*
 import kotlinx.android.synthetic.main.content_next_episode.*
 import kotlinx.android.synthetic.main.content_seasons.*
+import org.threeten.bp.LocalDateTime
 import timber.log.Timber
 import javax.inject.Inject
 import javax.inject.Named
@@ -72,11 +72,9 @@ class ShowDetailsActivity : DaggerAppCompatActivity() {
         viewModel = ViewModelProviders.of(this, viewModelProvider)
                 .get(ShowDetailsViewModel::class.java)
 
-        setSupportActionBar(toolbar)
-        toolbar.setNavigationOnClickListener {
+        back_button.setOnClickListener {
             finish()
         }
-        supportActionBar?.title = ""
 
         adapter = DiscoverPreviewAdapter(CardItem.TRENDING_CARD_TYPE)
         adapter.listener = object:DiscoverPreviewAdapter.PreviewShowListener{
@@ -90,27 +88,6 @@ class ShowDetailsActivity : DaggerAppCompatActivity() {
         val dividerItemDecoration = DividerItemDecoration(this, layoutManager.orientation)
         dividerItemDecoration.setDrawable(this.getDrawable(R.drawable.vertical_separator))
         related_shows.addItemDecoration(dividerItemDecoration)
-
-        motion_layout.setTransitionListener(object : MotionLayout.TransitionListener {
-
-            @SuppressLint("RestrictedApi")
-            override fun onTransitionChange(p0: MotionLayout?, p1: Int, p2: Int, p3: Float) {
-
-            }
-
-            @SuppressLint("RestrictedApi")
-            override fun onTransitionCompleted(p0: MotionLayout?, id: Int) {
-                when (id) {
-                    R.id.collapsed -> {
-                        poster.visibility = View.GONE
-                    }
-                    R.id.expanded -> {
-                        poster.visibility = View.VISIBLE
-                    }
-                }
-            }
-
-        })
 
         viewModel.getShow(showId)
         viewModel.getNotifications(showId)
@@ -187,11 +164,7 @@ class ShowDetailsActivity : DaggerAppCompatActivity() {
             show_title.setTextColor(titleTextColor)
             status.setTextColor(titleTextColor)
             air_daytime.setTextColor(titleTextColor)
-            toolbar.setBackgroundColor(rgb)
-            toolbar.backgroundColorAlpha = 0
-            toolbar.navigationIcon?.setTint(titleTextColor)
             cover.setBackgroundColor(rgb)
-            cover_overflow.setBackgroundColor(rgb)
         }
     }
 
@@ -215,7 +188,8 @@ class ShowDetailsActivity : DaggerAppCompatActivity() {
             show_title.text = it.title
             overview.text = it.overview
             status.text = it.status
-            air_daytime.text = String.format(getString(R.string.air_time), it.airingTime.day, it.airingTime.time)
+            val localDateTime = getAirDateTimeInCurrentTimeZone(LocalDateTime.now(), it.airingTime)
+            air_daytime.text = getDayAndTimeString(localDateTime)
             val posterUrl = if (it.posterThumb.isEmpty()) {
                 getPosterUrl(it.tvdbId)
             } else {

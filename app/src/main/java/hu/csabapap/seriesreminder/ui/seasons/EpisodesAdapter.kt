@@ -13,6 +13,7 @@ import hu.csabapap.seriesreminder.data.db.entities.SREpisode
 import hu.csabapap.seriesreminder.data.network.getEpisodeUrl
 import hu.csabapap.seriesreminder.extensions.bindView
 import hu.csabapap.seriesreminder.ui.widget.CheckableImageButton
+import org.threeten.bp.OffsetDateTime
 
 class EpisodesAdapter(val episodes: MutableList<EpisodeItem>): RecyclerView.Adapter<EpisodesAdapter.EpisodeVH>() {
 
@@ -56,6 +57,17 @@ class EpisodesAdapter(val episodes: MutableList<EpisodeItem>): RecyclerView.Adap
                 .format(episode.season, episode.number, episode.title)
 
         holder.setAsWatchedIcon.isChecked = isWatched
+
+        val firstAired = episode.firstAired
+        if (firstAired == null) {
+            holder.setAsWatchedIcon.visibility = View.GONE
+        } else {
+            holder.setAsWatchedIcon.visibility = if (firstAired <= OffsetDateTime.now()) {
+                View.VISIBLE
+            } else {
+                View.GONE
+            }
+        }
 
         Picasso.with(context)
                 .load(getEpisodeUrl(episode.tvdbId))

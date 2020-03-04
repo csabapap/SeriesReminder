@@ -51,6 +51,5 @@ class ShowReminderWorker(context: Context, workerParameters: WorkerParameters)
         override fun create(appContext: Context, params: WorkerParameters): ListenableWorker {
             return ShowReminderWorker(appContext, params)
         }
-
     }
 }

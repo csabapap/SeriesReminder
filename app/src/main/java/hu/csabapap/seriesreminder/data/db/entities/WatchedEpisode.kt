@@ -1,6 +1,7 @@
 package hu.csabapap.seriesreminder.data.db.entities
 
 import androidx.room.*
+import org.threeten.bp.OffsetDateTime
 
 @Entity(tableName = "watched_episodes",
         foreignKeys = [ForeignKey(
@@ -20,5 +21,6 @@ data class WatchedEpisode(
         @ColumnInfo(name = "show_id") val showId: Int,
         @ColumnInfo(name = "season") val season: Int,
         @ColumnInfo(name = "number") val number: Int,
-        @ColumnInfo(name = "episode_id") val episodeId: Long
+        @ColumnInfo(name = "episode_id") val episodeId: Long,
+        @ColumnInfo(name = "watched_at") val watchedAt: OffsetDateTime
 )

@@ -8,8 +8,8 @@ import hu.csabapap.seriesreminder.data.db.relations.EpisodeWithShow
 @Dao
 abstract class EpisodeDao {
 
-    @Insert(onConflict = OnConflictStrategy.ABORT)
-    abstract fun insert(episode: SREpisode)
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    abstract fun insert(episode: SREpisode): Long
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     abstract fun insert(episodes: List<SREpisode>)
@@ -23,8 +23,8 @@ abstract class EpisodeDao {
     @Query("SELECT * FROM episodes WHERE show_id = :showId AND abs_number = :absNumber LIMIT 1")
     abstract suspend fun getByAbsNumber(showId: Int, absNumber: Int): SREpisode?
 
-    @Query("SELECT * FROM episodes WHERE id = :episodeId LIMIT 1")
-    abstract suspend fun getById(episodeId: Long): SREpisode?
+    @Query("SELECT * FROM episodes WHERE show_id = :showId")
+    abstract suspend fun getAllForShow(showId: Int): List<SREpisode>
 
     @Query("SELECT * FROM episodes WHERE show_id = :showId AND season = :season AND number = :episode LIMIT 1")
     abstract suspend fun getBySeasonAndEpisodeNumber(showId: Int, season: Int, episode: Int): EpisodeWithShow?
@@ -39,15 +39,13 @@ abstract class EpisodeDao {
         } catch (e: SQLiteConstraintException) {
             update(episode)
         }
-
     }
 
     @Transaction
     open fun upsert(episodes: List<SREpisode>) {
         episodes.onEach {
-            try {
-                insert(it)
-            } catch (e: SQLiteConstraintException) {
+            val result = insert(it)
+            if (result == -1L) {
                 update(it)
             }
         }

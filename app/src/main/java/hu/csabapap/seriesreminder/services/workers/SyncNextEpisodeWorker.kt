@@ -3,26 +3,24 @@ package hu.csabapap.seriesreminder.services.workers
 import android.annotation.SuppressLint
 import android.content.Context
 import androidx.work.*
-import hu.csabapap.seriesreminder.BuildConfig
 import hu.csabapap.seriesreminder.data.ShowsRepository
 import hu.csabapap.seriesreminder.data.db.entities.SRShow
-import hu.csabapap.seriesreminder.data.repositories.nextepisodes.NextEpisodesRepository
 import hu.csabapap.seriesreminder.data.repositories.notifications.NotificationsRepository
-import hu.csabapap.seriesreminder.data.states.NextEpisodeSuccess
+import hu.csabapap.seriesreminder.domain.GetNextEpisodeUseCase
 import hu.csabapap.seriesreminder.utils.Reminder
-import hu.csabapap.seriesreminder.utils.getDateTimeForNextAir
+import hu.csabapap.seriesreminder.utils.getAirDateTimeInCurrentTimeZone
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.rx2.await
-import org.threeten.bp.OffsetDateTime
-import org.threeten.bp.ZoneOffset
+import org.threeten.bp.LocalDateTime
+import timber.log.Timber
 import java.util.*
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 class SyncNextEpisodeWorker(context: Context,
                             workerParameters: WorkerParameters,
-                            private val nextEpisodesRepository: NextEpisodesRepository,
+                            private val nextEpisodeUseCase: GetNextEpisodeUseCase,
                             private val showsRepository: ShowsRepository,
                             private val notificationsRepository: NotificationsRepository,
                             private val workManager: WorkManager)
@@ -35,8 +33,8 @@ class SyncNextEpisodeWorker(context: Context,
         }
 
         GlobalScope.launch {
-            val state = nextEpisodesRepository.fetchAndSaveNextEpisode(showId)
-            if (state is NextEpisodeSuccess) {
+            val result = nextEpisodeUseCase.getNextEpisode(showId)
+            if (result) {
                 val show = showsRepository.getShow(showId).await()
                 show?.let {
                     createAlarm(it)
@@ -49,17 +47,16 @@ class SyncNextEpisodeWorker(context: Context,
 
     @SuppressLint("RestrictedApi")
     private fun createAlarm(show: SRShow) {
-        val day = show.airingTime.day
-        val hours = show.airingTime.time
-        val airDateTime = getDateTimeForNextAir(OffsetDateTime.now(ZoneOffset.UTC), day, hours)
+        val airDateTime = getAirDateTimeInCurrentTimeZone(LocalDateTime.now(), show.airingTime)
         val calendar = Calendar.getInstance()
         calendar.set(Calendar.DAY_OF_MONTH, airDateTime.dayOfMonth)
         calendar.set(Calendar.HOUR_OF_DAY, airDateTime.hour)
         calendar.set(Calendar.MINUTE, airDateTime.minute)
         calendar.set(Calendar.SECOND, 0)
-        val duration = when(BuildConfig.DEBUG) {
-            true -> 1 * 60 * 1000
-            false -> calendar.timeInMillis - System.currentTimeMillis()
+        val duration = calendar.timeInMillis - System.currentTimeMillis()
+        Timber.d("duration: ${duration}ms")
+        if (duration < 0) {
+            return
         }
         val request = OneTimeWorkRequest.Builder(ShowReminderWorker::class.java)
                 .setInitialDelay(duration, TimeUnit.MILLISECONDS)
@@ -85,14 +82,14 @@ class SyncNextEpisodeWorker(context: Context,
         }
     }
 
-    class Factory @Inject constructor(private val nextEpisodesRepository: NextEpisodesRepository,
+    class Factory @Inject constructor(private val nextEpisodeUseCase: GetNextEpisodeUseCase,
                                       private val showsRepository: ShowsRepository,
                                       private val notificationsRepository: NotificationsRepository,
                                       private val workManager: WorkManager)
         : ChildWorkerFactory {
         override fun create(appContext: Context, params: WorkerParameters): ListenableWorker {
-            return SyncNextEpisodeWorker(appContext, params, nextEpisodesRepository,
-                    showsRepository, notificationsRepository, workManager)
+            return SyncNextEpisodeWorker(appContext, params, nextEpisodeUseCase, showsRepository,
+                    notificationsRepository, workManager)
         }
     }
 }

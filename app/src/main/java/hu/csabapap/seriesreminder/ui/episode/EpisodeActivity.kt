@@ -33,12 +33,7 @@ class EpisodeActivity : DaggerAppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_episode)
-        setSupportActionBar(toolbar)
-
-        supportActionBar?.apply {
-            title = ""
-            setDisplayHomeAsUpEnabled(true)
-        }
+        back_button.setOnClickListener { finish() }
 
         viewModel = ViewModelProviders.of(this, viewModelProvider)
                 .get(EpisodeViewModel::class.java)

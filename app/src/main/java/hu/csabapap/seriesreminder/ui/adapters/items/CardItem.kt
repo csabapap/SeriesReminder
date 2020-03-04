@@ -2,6 +2,7 @@ package hu.csabapap.seriesreminder.ui.adapters.items
 
 import hu.csabapap.seriesreminder.data.db.entities.NextEpisodeItem
 import hu.csabapap.seriesreminder.data.db.entities.SREpisode
+import hu.csabapap.seriesreminder.data.db.entities.SRNextEpisode
 
 
 open class CardItem(val type: Int, private val priority: Int) : Comparable<CardItem> {
@@ -35,6 +36,7 @@ open class CardItem(val type: Int, private val priority: Int) : Comparable<CardI
         const val POPULAR_CARD_TYPE = 1
         const val UPCOMING_EPISODE_TYPE = 2
         const val MY_SHOWS_TYPE = 3
+        const val NEXT_EPISODES_TYPE = 4
 
         const val PRIORITY_POPULAR = 0
         const val PRIORITY_TRENDING = 1
@@ -56,6 +58,12 @@ class UpcomingEpisodeCardItem(
         priority: Int = CardItem.PRIORITY_HIGH)
     : CardItem(type, priority)
 
+class NextEpisodesCardItem(
+        val episodes: List<SRNextEpisode>,
+        type: Int,
+        priority: Int = CardItem.PRIORITY_HIGH)
+    : CardItem(type, priority)
+
 enum class CardType{
-    TRENDING, POPULAR, UPCOMING_EPISODES, MY_SHOWS, RELATED_SHOWS
+    TRENDING, POPULAR, UPCOMING_EPISODES, MY_SHOWS, RELATED_SHOWS, NEXT_EPISODES
 }

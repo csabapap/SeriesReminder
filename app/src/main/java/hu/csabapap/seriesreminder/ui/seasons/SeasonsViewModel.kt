@@ -15,6 +15,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.rx2.await
 import kotlinx.coroutines.withContext
+import org.threeten.bp.OffsetDateTime
 
 class SeasonsViewModel(private val showsRepository: ShowsRepository,
                        private val watchedEpisodesRepository: WatchedEpisodesRepository,
@@ -63,7 +64,7 @@ class SeasonsViewModel(private val showsRepository: ShowsRepository,
 
     fun removeEpisodeFromWatched(episode: SREpisode) {
         scope.launch(dispatchers.io) {
-            val watchedEpisode = WatchedEpisode(null, episode.showId, episode.season, episode.number, episode.id ?: -1)
+            val watchedEpisode = WatchedEpisode(null, episode.showId, episode.season, episode.number, episode.id ?: -1, OffsetDateTime.now())
             removeEpisodeFromWatchedUseCase(watchedEpisode)
         }
     }

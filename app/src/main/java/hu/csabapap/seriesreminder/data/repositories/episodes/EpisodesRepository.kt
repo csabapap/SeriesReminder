@@ -27,8 +27,12 @@ class EpisodesRepository @Inject constructor(
         return localDataSource.getBySeasonAndEpisodeNumber(showId, season, number)
     }
 
-    suspend fun getEpisodeById(episodeId: Long): SREpisode? {
-        return localDataSource.getById(episodeId)
+    suspend fun getEpisodes(showId: Int): List<SREpisode> {
+        return localDataSource.getAllEpisodesForShow(showId)
+    }
+
+    suspend fun getEpisodeFromTrakt(showId: Int, season: Int, number: Int): SREpisode? {
+        return remoteDataSource.getEpisode(showId, season, number)
     }
 
     suspend fun getNextEpisode(showId: Int, absNumber: Int ): SREpisode? {

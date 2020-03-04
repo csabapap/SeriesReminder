@@ -12,6 +12,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import org.threeten.bp.OffsetDateTime
 import javax.inject.Inject
 
 class EpisodeViewModel @Inject constructor(
@@ -50,7 +51,7 @@ class EpisodeViewModel @Inject constructor(
 
     fun removeFromWatched(showId: Int, seasonNumber: Int, episodeNumber: Int) {
         scope.launch(dispatchers.io) {
-            val watchedEpisode = WatchedEpisode(showId = showId, season = seasonNumber, number =  episodeNumber, episodeId = -1)
+            val watchedEpisode = WatchedEpisode(showId = showId, season = seasonNumber, number =  episodeNumber, episodeId = -1, watchedAt = OffsetDateTime.now())
             removeEpisodeFromWatchedUseCase(watchedEpisode)
         }
     }
