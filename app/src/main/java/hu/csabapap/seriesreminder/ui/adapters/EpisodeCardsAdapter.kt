@@ -8,8 +8,12 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import hu.csabapap.seriesreminder.R
 import hu.csabapap.seriesreminder.data.db.entities.NextEpisodeItem
+import hu.csabapap.seriesreminder.extensions.diffInDays
+import hu.csabapap.seriesreminder.extensions.diffInHours
 import hu.csabapap.seriesreminder.extensions.loadFromTmdbUrl
+import hu.csabapap.seriesreminder.utils.getAirDateTimeInCurrentTimeZone
 import kotlinx.android.synthetic.main.item_episode_card.view.*
+import org.threeten.bp.LocalDateTime
 
 class EpisodeCardsAdapter:  RecyclerView.Adapter<EpisodeCardsAdapter.CardVH>() {
 
@@ -66,20 +70,21 @@ class EpisodeCardsAdapter:  RecyclerView.Adapter<EpisodeCardsAdapter.CardVH>() {
                 val day = airingTime.day
                 val hours = airingTime.time
                 val timeZone = airingTime.timezone
-//                if (day.isEmpty().not() && hours.isEmpty().not()) {
-//                    val nextAirDateTime = getDateTimeForNextAir(OffsetDateTime.now(ZoneOffset.UTC), day, hours, timeZone)
-//                    val diffInDays = nextAirDateTime.diffInDays()
-//                    if (diffInDays > 0) {
-//                        itemView.airs_in_text.text = "in $diffInDays days"
-//                    } else {
-//                        val diffInHours = nextAirDateTime.diffInHours()
-//                        if (diffInHours > 0) {
-//                            itemView.airs_in_text.text = "in $diffInHours hours"
-//                        } else {
-//                            itemView.airs_in_text.text = "in less then an hour"
-//                        }
-//                    }
-//                }
+                if (day.isEmpty().not() && hours.isEmpty().not()) {
+                    val nextAirDateTime = getAirDateTimeInCurrentTimeZone(LocalDateTime.now(),airingTime)
+                            .toOffsetDateTime()
+                    val diffInDays = nextAirDateTime.diffInDays()
+                    if (diffInDays > 0) {
+                        itemView.airs_in_text.text = "in $diffInDays days"
+                    } else {
+                        val diffInHours = nextAirDateTime.diffInHours()
+                        if (diffInHours > 0) {
+                            itemView.airs_in_text.text = "in $diffInHours hours"
+                        } else {
+                            itemView.airs_in_text.text = "in less then an hour"
+                        }
+                    }
+                }
                 itemView.show_poster.loadFromTmdbUrl(tvdbId)
             }
         }
