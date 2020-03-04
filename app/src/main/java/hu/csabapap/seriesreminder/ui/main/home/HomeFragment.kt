@@ -15,11 +15,13 @@ import androidx.recyclerview.widget.RecyclerView
 import dagger.android.support.DaggerFragment
 import hu.csabapap.seriesreminder.R
 import hu.csabapap.seriesreminder.data.db.entities.NextEpisodeItem
+import hu.csabapap.seriesreminder.data.db.entities.SRNextEpisode
 import hu.csabapap.seriesreminder.extensions.exhaustive
 import hu.csabapap.seriesreminder.services.SyncService
 import hu.csabapap.seriesreminder.ui.adapters.DiscoverPreviewAdapter
 import hu.csabapap.seriesreminder.ui.adapters.EpisodeCardsAdapter
 import hu.csabapap.seriesreminder.ui.adapters.HomeCardsAdapter
+import hu.csabapap.seriesreminder.ui.adapters.NextEpisodesAdapter
 import hu.csabapap.seriesreminder.ui.adapters.items.CardItem
 import hu.csabapap.seriesreminder.ui.adapters.items.DiscoverCardItem
 import hu.csabapap.seriesreminder.ui.adapters.items.NextEpisodesCardItem
@@ -79,6 +81,19 @@ class HomeFragment : DaggerFragment(),
 
         cardsAdapter.previewShowListener = this
         cardsAdapter.episodesClickListener = this
+        cardsAdapter.nextEpisodesClickListener = object: NextEpisodesAdapter.NextEpisodeClickListener {
+            override fun onItemClick(nextEpisode: SRNextEpisode) {
+                val activity = activity
+                if (activity != null) {
+                    Episode.start(activity, nextEpisode.showId, nextEpisode.season, nextEpisode.number)
+                }
+            }
+
+            override fun onSetAsWatchedButtonClick(nextEpisode: NextEpisodeItem) {
+                TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+            }
+
+        }
 
         homeViewModel.myShowsLiveData.observe(this, Observer {
             it.apply {

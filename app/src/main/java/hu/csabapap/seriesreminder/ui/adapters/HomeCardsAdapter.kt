@@ -28,6 +28,7 @@ class HomeCardsAdapter(private val listener: CardClickListener)
     lateinit var context: Context
     var previewShowListener: DiscoverPreviewAdapter.PreviewShowListener? = null
     var episodesClickListener: EpisodeCardsAdapter.EpisodeClickListener? = null
+    var nextEpisodesClickListener: NextEpisodesAdapter.NextEpisodeClickListener? = null
     private var cardItems: MutableList<CardItem> = mutableListOf()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
@@ -157,6 +158,11 @@ class HomeCardsAdapter(private val listener: CardClickListener)
         fun bind(cardItem: NextEpisodesCardItem) {
             itemView.label.text = "Next Episodes"
             episodesAdapter.episodes = cardItem.episodes.toMutableList()
+
+            val clickListener = nextEpisodesClickListener
+            if (clickListener != null) {
+                episodesAdapter.listener = clickListener
+            }
         }
     }
 }
