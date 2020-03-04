@@ -36,8 +36,10 @@
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="8dp"
                 android:gravity="start|center_vertical"
+                android:textColor="?colorSecondary"
                 android:text="Add notification"
                 app:icon="@drawable/ic_notifications_black_24dp"
+                app:iconTint="?colorSecondary"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
