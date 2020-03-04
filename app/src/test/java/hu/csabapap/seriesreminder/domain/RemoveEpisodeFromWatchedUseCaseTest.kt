@@ -4,6 +4,7 @@ import com.nhaarman.mockitokotlin2.*
 import hu.csabapap.seriesreminder.data.SeasonsRepository
 import hu.csabapap.seriesreminder.data.ShowsRepository
 import hu.csabapap.seriesreminder.data.repositories.WatchedEpisodesRepository
+import hu.csabapap.seriesreminder.data.repositories.episodes.EpisodesRepository
 import hu.csabapap.seriesreminder.mindhunter
 import hu.csabapap.seriesreminder.mindhunterEpisode
 import hu.csabapap.seriesreminder.mindhunterSeason
@@ -15,16 +16,18 @@ class RemoveEpisodeFromWatchedUseCaseTest {
 
     private val showsRepository: ShowsRepository = mock()
     private val seasonsRepository: SeasonsRepository = mock()
+    private val episodesRepository: EpisodesRepository = mock()
     private val watchedRepository: WatchedEpisodesRepository = mock()
 
     private val removeWatchedEpisodeUseCase = RemoveEpisodeFromWatchedUseCase(showsRepository,
-            seasonsRepository, watchedRepository)
+            seasonsRepository, episodesRepository, watchedRepository)
 
 
     @Test
     fun `should do nothing if cannot delete watched episode`() = runBlocking {
         val watchedEpisode = watchedEpisode
 
+        whenever(watchedRepository.getWatchedEpisode(watchedEpisode.showId, watchedEpisode.season, watchedEpisode.number)).thenReturn(watchedEpisode)
         whenever(watchedRepository.removeEpisodeFromWatched(watchedEpisode)).thenReturn(0)
 
         removeWatchedEpisodeUseCase(watchedEpisode)
@@ -40,6 +43,7 @@ class RemoveEpisodeFromWatchedUseCaseTest {
         val episode = mindhunterEpisode
         val watchedEpisode = watchedEpisode
 
+        whenever(watchedRepository.getWatchedEpisode(watchedEpisode.showId, watchedEpisode.season, watchedEpisode.number)).thenReturn(watchedEpisode)
         whenever(watchedRepository.removeEpisodeFromWatched(watchedEpisode)).thenReturn(1)
         whenever(seasonsRepository.getSeason(watchedEpisode.showId, watchedEpisode.season)).thenReturn(season)
 

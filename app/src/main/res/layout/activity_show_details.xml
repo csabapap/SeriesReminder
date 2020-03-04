@@ -163,6 +163,13 @@
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                 app:layout_constraintTop_toBottomOf="@id/related_shows_label"/>
 
+            <androidx.constraintlayout.widget.Group
+                android:id="@+id/active_notification_group"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:constraint_referenced_ids="notification_icon,notification_text,delete_notification"
+                tools:visibility="gone" />
+
         </androidx.constraintlayout.widget.ConstraintLayout>
 
     </androidx.core.widget.NestedScrollView>
@@ -255,12 +262,5 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:constraint_referenced_ids="status,air_daytime" />
-
-    <androidx.constraintlayout.widget.Group
-        android:id="@+id/active_notification_group"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:constraint_referenced_ids="notification_icon,notification_text,delete_notification"
-        tools:visibility="gone" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
