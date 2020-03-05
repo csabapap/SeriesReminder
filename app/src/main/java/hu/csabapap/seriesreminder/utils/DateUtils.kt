@@ -29,7 +29,7 @@ fun getAirDateTimeInCurrentTimeZone(localDateTime: LocalDateTime,
             0,
             airingDateTime.zone)
 
-    return airDateTime.withZoneSameInstant(ZoneId.systemDefault())
+    return airDateTime.withZoneSameInstant(localZoneId)
 }
 
 fun getDayAndTimeString(dateTime: ZonedDateTime): String {
