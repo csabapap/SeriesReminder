@@ -10,10 +10,11 @@ import org.threeten.bp.format.DateTimeFormatter
 val dayAndTimeFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("EEEE H:mm")
 
 fun getAirDateTimeInCurrentTimeZone(localDateTime: LocalDateTime,
-                                    airingTime: AiringTime)
+                                    airingTime: AiringTime,
+                                    localZoneId: ZoneId = ZoneId.systemDefault())
         : ZonedDateTime {
     val zoneId = ZoneId.of(airingTime.timezone)
-    val localZonedDateTime = ZonedDateTime.of(localDateTime, ZoneId.systemDefault())
+    val localZonedDateTime = ZonedDateTime.of(localDateTime, localZoneId)
     var airingDateTime = localZonedDateTime.withZoneSameInstant(zoneId)
     while (airingDateTime.dayOfWeek != DayOfWeek.valueOf(airingTime.day.toUpperCase())) {
         airingDateTime = airingDateTime.plusDays(1)
