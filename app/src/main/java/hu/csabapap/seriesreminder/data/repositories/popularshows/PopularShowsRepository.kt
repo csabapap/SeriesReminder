@@ -3,6 +3,7 @@ package hu.csabapap.seriesreminder.data.repositories.popularshows
 import androidx.lifecycle.LiveData
 import androidx.paging.LivePagedListBuilder
 import androidx.paging.PagedList
+import hu.csabapap.seriesreminder.data.Result
 import hu.csabapap.seriesreminder.data.ShowsRepository
 import hu.csabapap.seriesreminder.data.db.PopularShowsResult
 import hu.csabapap.seriesreminder.data.db.entities.PopularGridItem
@@ -38,23 +39,26 @@ class PopularShowsRepository @Inject constructor(private val localPopularDataSou
     }
 
     suspend fun refreshShows(): List<SRPopularItem> = coroutineScope {
-        val popularShows = remotePopularDataSource.getShows("full").await()
+        val result = remotePopularDataSource.popularShows("full")
+        if (result is Result.Success) {
+            val popularShows = result.data
+            val popularItems = popularShows.map {
+                async {
+                    val show = showsRepository.getShowWithImages(it.ids.trakt, it.ids.tvdb).await()
+                    if (show != null) {
+                        return@async mapToSRPopularItem(show.traktId, 0)
+                    } else {
+                        return@async null
+                    }
 
-        val popularItems = popularShows.map {
-            async {
-                val show = showsRepository.getShowWithImages(it.ids.trakt, it.ids.tvdb).await()
-                if (show != null) {
-                    return@async mapToSRPopularItem(show.traktId, 0)
-                } else {
-                    return@async null
                 }
-
             }
+                    .awaitAll()
+                    .filterNotNull()
+            localPopularDataSource.insertShows(0, popularItems)
+            return@coroutineScope popularItems
         }
-                .awaitAll()
-                .filterNotNull()
-        localPopularDataSource.insertShows(0, popularItems)
-        return@coroutineScope popularItems
+        return@coroutineScope emptyList<SRPopularItem>()
     }
 
     suspend fun updatePopularShows() {
@@ -62,13 +66,16 @@ class PopularShowsRepository @Inject constructor(private val localPopularDataSou
         var page = localPopularDataSource.getLastPage()
         page += 1
         if (page > 3) return
-        val popularShows = remotePopularDataSource.getShows("full", page, NETWORK_PAGE_SIZE).await()
-        val popularShowItems = popularShows.map {
-            showsRepository.getShowWithImages(it.ids.trakt, it.ids.tvdb).await()
-            mapToSRPopularItem(it.ids.trakt, page)
+        val result = remotePopularDataSource.popularShows("full", page, NETWORK_PAGE_SIZE)
+        if (result is Result.Success) {
+            val popularShows = result.data
+            val popularShowItems = popularShows.map {
+                showsRepository.getShowWithImages(it.ids.trakt, it.ids.tvdb).await()
+                mapToSRPopularItem(it.ids.trakt, page)
+            }
+            localPopularDataSource.insertShows(page, popularShowItems)
+            Timber.d("populars shows loaded in %d ms", (System.currentTimeMillis() - start))
         }
-        localPopularDataSource.insertShows(page, popularShowItems)
-        Timber.d("populars shows loaded in %d ms", (System.currentTimeMillis() - start))
     }
 
     private fun mapToSRPopularItem(showId: Int, page: Int) : SRPopularItem =

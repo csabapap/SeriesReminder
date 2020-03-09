@@ -1,15 +1,13 @@
 package hu.csabapap.seriesreminder.data.network.services
 
+import hu.csabapap.seriesreminder.data.Result
 import hu.csabapap.seriesreminder.data.network.entities.NextEpisode
 import hu.csabapap.seriesreminder.data.network.entities.Show
 import hu.csabapap.seriesreminder.data.network.entities.TrendingShow
-import io.reactivex.Flowable
-import io.reactivex.Observable
+import hu.csabapap.seriesreminder.utils.safeApiCall
 import io.reactivex.Single
 import kotlinx.coroutines.Deferred
-import retrofit2.Call
 import retrofit2.Response
-import retrofit2.adapter.rxjava2.Result
 import retrofit2.http.GET
 import retrofit2.http.Path
 import retrofit2.http.Query
@@ -32,9 +30,9 @@ interface ShowsService{
             : Deferred<List<TrendingShow>>
 
     @GET("shows/popular?extended=full")
-    fun popularShows(@Query("extended") extended: String,
+    suspend fun popularShows(@Query("extended") extended: String,
                      @Query("page") page: Int,
-                     @Query("limit") limit: Int) : Single<List<Show>>
+                     @Query("limit") limit: Int): Result<List<Show>>
 
     @GET("shows/{id}?extended=full")
     fun show(@Path("id") traktId: Int) : Single<Show>

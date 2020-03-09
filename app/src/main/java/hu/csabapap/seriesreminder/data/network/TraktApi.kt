@@ -25,7 +25,7 @@ class TraktApi(private val retrofit: Retrofit) {
         return retrofit.create(ShowsService::class.java).deferredPaginatedTrendingShows(extended, page, limit)
     }
 
-    fun popularShows(extended: String = "", page: Int = 1, limit: Int = 20) =
+    suspend fun popularShows(extended: String = "", page: Int = 1, limit: Int = 20) =
         retrofit.create(ShowsService::class.java).popularShows(extended, page, limit)
 
 
