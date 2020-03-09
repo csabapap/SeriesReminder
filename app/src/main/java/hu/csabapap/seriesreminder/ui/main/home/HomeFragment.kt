@@ -62,7 +62,7 @@ class HomeFragment : DaggerFragment(),
         if (context is HomeFragmentListener) {
             listener = context
         } else {
-            throw RuntimeException((context.toString() + " must implement HomeFragmentListener"))
+            throw RuntimeException(("$context must implement HomeFragmentListener"))
         }
     }
 
@@ -89,10 +89,9 @@ class HomeFragment : DaggerFragment(),
                 }
             }
 
-            override fun onSetAsWatchedButtonClick(nextEpisode: NextEpisodeItem) {
-                TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+            override fun onSetAsWatchedButtonClick(nextEpisode: SRNextEpisode) {
+                homeViewModel.setEpisodeWatched(nextEpisode)
             }
-
         }
 
         homeViewModel.myShowsLiveData.observe(this, Observer {

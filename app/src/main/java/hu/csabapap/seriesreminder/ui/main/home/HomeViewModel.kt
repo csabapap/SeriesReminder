@@ -8,9 +8,11 @@ import hu.csabapap.seriesreminder.data.CollectionRepository
 import hu.csabapap.seriesreminder.data.Result
 import hu.csabapap.seriesreminder.data.repositories.episodes.EpisodesRepository
 import hu.csabapap.seriesreminder.data.db.entities.NextEpisodeItem
+import hu.csabapap.seriesreminder.data.db.entities.SREpisode
 import hu.csabapap.seriesreminder.data.db.entities.SRNextEpisode
 import hu.csabapap.seriesreminder.data.repositories.popularshows.PopularShowsRepository
 import hu.csabapap.seriesreminder.data.repositories.trendingshows.TrendingShowsRepository
+import hu.csabapap.seriesreminder.domain.SetEpisodeWatchedUseCase
 import hu.csabapap.seriesreminder.domain.SyncShowsUseCase
 import hu.csabapap.seriesreminder.ui.adapters.items.ShowItem
 import hu.csabapap.seriesreminder.utils.AppCoroutineDispatchers
@@ -27,6 +29,7 @@ class HomeViewModel @Inject constructor(private val trendingShowsRepository: Tre
                                         private val popularShowsRepository: PopularShowsRepository,
                                         collectionRepository: CollectionRepository,
                                         private val episodesRepository: EpisodesRepository,
+                                        private val setEpisodeWatchedUseCase: SetEpisodeWatchedUseCase,
                                         private val synchShowsUseCase: SyncShowsUseCase,
                                         private val rxSchedulers: AppRxSchedulers,
                                         private val dispatchers: AppCoroutineDispatchers)
@@ -157,6 +160,17 @@ class HomeViewModel @Inject constructor(private val trendingShowsRepository: Tre
     fun syncShows() {
         scope.launch(dispatchers.io) {
             synchShowsUseCase.syncShows()
+        }
+    }
+
+    fun setEpisodeWatched(nextEpisode: SRNextEpisode) {
+        scope.launch(dispatchers.io) {
+            val episode = episodesRepository.getEpisode(nextEpisode.showId, nextEpisode.season,
+                    nextEpisode.number)
+            if (episode != null) {
+                setEpisodeWatchedUseCase(episode.episode)
+                getNextEpisodes()
+            }
         }
     }
 }

@@ -7,16 +7,18 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.squareup.picasso.Picasso
 import hu.csabapap.seriesreminder.R
-import hu.csabapap.seriesreminder.data.db.entities.NextEpisodeItem
 import hu.csabapap.seriesreminder.data.db.entities.SRNextEpisode
 import hu.csabapap.seriesreminder.data.network.getThumbnailUrl
-import kotlinx.android.synthetic.main.item_episode_card.view.*
+import kotlinx.android.synthetic.main.item_episode_card.view.episode_info
+import kotlinx.android.synthetic.main.item_episode_card.view.show_poster
+import kotlinx.android.synthetic.main.item_episode_card.view.title
+import kotlinx.android.synthetic.main.item_next_episode.view.*
 
 class NextEpisodesAdapter: RecyclerView.Adapter<NextEpisodesAdapter.NextEpisodeVH>() {
 
     interface NextEpisodeClickListener {
         fun onItemClick(nextEpisode: SRNextEpisode)
-        fun onSetAsWatchedButtonClick(nextEpisode: NextEpisodeItem)
+        fun onSetAsWatchedButtonClick(nextEpisode: SRNextEpisode)
     }
 
     lateinit var context: Context
@@ -30,7 +32,7 @@ class NextEpisodesAdapter: RecyclerView.Adapter<NextEpisodesAdapter.NextEpisodeV
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): NextEpisodeVH {
         context = parent.context
-        val itemView = LayoutInflater.from(parent.context).inflate(R.layout.item_episode_card,
+        val itemView = LayoutInflater.from(parent.context).inflate(R.layout.item_next_episode,
                 parent, false)
         val nextEpisodeVH = NextEpisodeVH(itemView)
         nextEpisodeVH.itemView.setOnClickListener {
@@ -38,6 +40,14 @@ class NextEpisodesAdapter: RecyclerView.Adapter<NextEpisodesAdapter.NextEpisodeV
             val nextEpisode = episodes.getOrNull(position)
             if (nextEpisode != null) {
                 listener?.onItemClick(nextEpisode)
+            }
+        }
+        nextEpisodeVH.itemView.set_watched.setOnClickListener {
+            itemView.set_watched.isChecked = true
+            val position = nextEpisodeVH.adapterPosition
+            val nextEpisode = episodes.getOrNull(position)
+            if (nextEpisode != null) {
+                listener?.onSetAsWatchedButtonClick(nextEpisode)
             }
         }
         return nextEpisodeVH
@@ -57,6 +67,7 @@ class NextEpisodesAdapter: RecyclerView.Adapter<NextEpisodesAdapter.NextEpisodeV
                     nextEpisode.season,
                     nextEpisode.number)
             itemView.episode_info.text = episodeInfo
+            itemView.set_watched.isChecked = false
             Picasso.with(context)
                     .load(getThumbnailUrl(nextEpisode.poster))
                     .into(itemView.show_poster)
