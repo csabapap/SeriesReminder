@@ -18,8 +18,15 @@ abstract class LastRequestDao {
     @Query("SELECT * FROM LAST_REQUEST WHERE entity_id = :id AND request = :request")
     abstract fun getLastRequestById(id: Int, request: Request): LastRequest?
 
+    @Query("SELECT * FROM LAST_REQUEST WHERE request = :request LIMIT 1")
+    abstract fun getLastRequestByType(request: Request): LastRequest?
+
     fun isRequestBefore(lastRequest: LastRequest?, threshold: TemporalAmount): Boolean {
         return lastRequest?.timestamp?.isBefore(Instant.now().minus(threshold)) ?: false
+    }
+
+    fun isRequestAfter(lastRequest: LastRequest?, threshold: TemporalAmount): Boolean {
+        return !isRequestBefore(lastRequest, threshold)
     }
 
 }

@@ -6,10 +6,9 @@ import androidx.lifecycle.Transformations
 import androidx.lifecycle.ViewModel
 import hu.csabapap.seriesreminder.data.CollectionRepository
 import hu.csabapap.seriesreminder.data.Result
-import hu.csabapap.seriesreminder.data.repositories.episodes.EpisodesRepository
 import hu.csabapap.seriesreminder.data.db.entities.NextEpisodeItem
-import hu.csabapap.seriesreminder.data.db.entities.SREpisode
 import hu.csabapap.seriesreminder.data.db.entities.SRNextEpisode
+import hu.csabapap.seriesreminder.data.repositories.episodes.EpisodesRepository
 import hu.csabapap.seriesreminder.data.repositories.popularshows.PopularShowsRepository
 import hu.csabapap.seriesreminder.data.repositories.trendingshows.TrendingShowsRepository
 import hu.csabapap.seriesreminder.domain.SetEpisodeWatchedUseCase
@@ -46,6 +45,7 @@ class HomeViewModel @Inject constructor(private val trendingShowsRepository: Tre
         getTrendingShows()
         getPopularShows()
         refresh()
+        syncShows()
     }
 
     val upcomingEpisodesLiveData = MutableLiveData<List<NextEpisodeItem>>()
@@ -157,7 +157,7 @@ class HomeViewModel @Inject constructor(private val trendingShowsRepository: Tre
         disposables.clear()
     }
 
-    fun syncShows() {
+    private fun syncShows() {
         scope.launch(dispatchers.io) {
             synchShowsUseCase.syncShows()
         }

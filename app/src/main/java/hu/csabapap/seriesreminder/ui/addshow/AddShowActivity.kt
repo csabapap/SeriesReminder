@@ -139,7 +139,7 @@ class AddShowActivity : DaggerAppCompatActivity() {
 
     private fun startSyncWorkManager() {
         val workRequest = PeriodicWorkRequest.Builder(SyncShowsWorker::class.java,
-                1, TimeUnit.DAYS,
+                8, TimeUnit.HOURS,
                 30, TimeUnit.MINUTES)
                 .build()
 

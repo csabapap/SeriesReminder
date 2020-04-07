@@ -37,10 +37,11 @@ class ShowsRepository @Inject constructor(private val traktApi: TraktApi,
 
         val fromWeb = Maybe.fromCallable {
             val lastRequest = requestDao.getLastRequestById(traktId, Request.SHOW_DETAILS)
-            if (requestDao.isRequestBefore(lastRequest, Duration.ofHours(4)))
+            if (requestDao.isRequestBefore(lastRequest, Duration.ofHours(4))) {
                 Maybe.just(true)
-            else
+            } else {
                 Maybe.empty()
+            }
         }.flatMap {
             requestDao.insert(LastRequest(0L, traktId,
                     Request.SHOW_DETAILS, Instant.now()))

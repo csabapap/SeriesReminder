@@ -13,6 +13,7 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.rx2.await
+import org.threeten.bp.Duration
 import org.threeten.bp.Instant
 import timber.log.Timber
 import javax.inject.Inject
@@ -28,8 +29,12 @@ class SyncShowsUseCase @Inject constructor(val showsRepository: ShowsRepository,
     suspend fun syncShows() {
         Timber.d("sync shows")
         coroutineScope {
+            val lastSyncRequest = lastRequestDao.getLastRequestByType(Request.SYNC_SHOWS)
+            if (lastRequestDao.isRequestAfter(lastSyncRequest, Duration.ofHours(8))) {
+                return@coroutineScope
+            }
             val collectionItems = collectionRepository.getCollectionsSuspendable()
-            lastRequestDao.insert(LastRequest(0L, LastRequest.SYNC_SHOWS_ID, Request.SHOW_DETAILS, Instant.now()))
+            lastRequestDao.insert(LastRequest(0L, LastRequest.SYNC_SHOWS_ID, Request.SYNC_SHOWS, Instant.now()))
             collectionItems.map {collectionItem ->
                 val show = collectionItem.show ?: return@map null
                 async {

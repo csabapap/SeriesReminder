@@ -30,7 +30,6 @@ class SyncService : DaggerIntentService("SyncService") {
             when {
                 ACTION_SYNC_SHOW == action -> syncShow()
                 ACTION_SYNC_MY_SHOWS == action -> syncCollection()
-                ACTION_SYNC_NEXT_EPISODES == action -> syncUpcomingEpisodes()
             }
         }
     }
@@ -45,34 +44,6 @@ class SyncService : DaggerIntentService("SyncService") {
         Timber.d("sync collection")
     }
 
-    private fun syncUpcomingEpisodes() {
-//        episodesRepository.getNextEpisodes()
-//                .flattenAsFlowable { it }
-//                .flatMap {
-//                    it.episodeSingle?.let {episodeSingle ->
-//                        showsRepository.fetchAndSaveNextEpisode(episodeSingle.showId)
-//                                .toFlowable()
-//                                .flatMap {
-//                                    if (it is NextEpisodeSuccess) {
-//                                        Timber.d("update episodeSingle, episodeSingle id: %d", episodeSingle.traktId)
-//                                        episodesRepository.getEpisode(it.nextEpisode.showId,
-//                                                it.nextEpisode.season, it.nextEpisode.number)
-//                                                .toFlowable()
-//                                    } else {
-//                                        Flowable.just(EpisodeError)
-//                                    }
-//                                }
-//                    }
-//                }
-//                .toList()
-//                .subscribe({
-//                    Timber.d("nmb of episodes updated: %d", it.size)
-//                }, {
-//                    Timber.e(it)
-//                })
-
-    }
-
     companion object {
         private const val ACTION_SYNC_SHOW = "hu.csabapap.seriesreminder.services.action.SyncEpisode"
         private const val ACTION_SYNC_MY_SHOWS = "hu.csabapap.seriesreminder.services.action.SyncMyShows"
@@ -81,18 +52,6 @@ class SyncService : DaggerIntentService("SyncService") {
         fun syncShow(context: Context) {
             val intent = Intent(context, SyncService::class.java)
             intent.action = ACTION_SYNC_SHOW
-            context.startService(intent)
-        }
-
-        fun syncMyShows(context: Context) {
-            val intent = Intent(context, SyncService::class.java)
-            intent.action = ACTION_SYNC_MY_SHOWS
-            context.startService(intent)
-        }
-
-        fun syncNextEpisodes(context: Context) {
-            val intent = Intent(context, SyncService::class.java)
-            intent.action = ACTION_SYNC_NEXT_EPISODES
             context.startService(intent)
         }
     }

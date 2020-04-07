@@ -13,22 +13,6 @@ import retrofit2.Retrofit
 
 class TraktApi(private val retrofit: Retrofit) {
 
-    fun trendingShows(extended: String = ""): Single<List<TrendingShow>> {
-        return retrofit.create(ShowsService::class.java).trendingShows(extended)
-    }
-
-    fun paginatedTrendingShows(extended: String = "", page: Int = 1, limit: Int = 20): Single<List<TrendingShow>> {
-        return retrofit.create(ShowsService::class.java).paginatedTrendingShows(extended, page, limit)
-    }
-
-    fun deferredPaginatedTrendingShows(extended: String = "", page: Int = 1, limit: Int = 20): Deferred<List<TrendingShow>> {
-        return retrofit.create(ShowsService::class.java).deferredPaginatedTrendingShows(extended, page, limit)
-    }
-
-    suspend fun popularShows(extended: String = "", page: Int = 1, limit: Int = 20) =
-        retrofit.create(ShowsService::class.java).popularShows(extended, page, limit)
-
-
     fun show(traktId: Int) : Single<Show>{
         return retrofit.create(ShowsService::class.java).show(traktId)
     }

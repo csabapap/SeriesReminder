@@ -142,14 +142,6 @@ class HomeFragment : DaggerFragment(),
                 search()
                 return true
             }
-            R.id.sync -> {
-                syncShows()
-                return true
-            }
-            R.id.sync_next_episodes -> {
-                syncNextEpisodes()
-                return true
-            }
             R.id.settings -> {
                 startActivity(Intent(this.activity, SettingsActivity::class.java))
             }
@@ -159,17 +151,6 @@ class HomeFragment : DaggerFragment(),
 
     private fun search() {
         startActivity(Intent(this.activity, SearchActivity::class.java))
-    }
-
-    private fun syncShows() {
-        Toast.makeText(activity, "syncing shows...", Toast.LENGTH_SHORT).show()
-        homeViewModel.syncShows()
-    }
-
-    private fun syncNextEpisodes() {
-        activity?.let {
-            SyncService.syncNextEpisodes(it.applicationContext)
-        }
     }
 
     interface HomeFragmentListener {

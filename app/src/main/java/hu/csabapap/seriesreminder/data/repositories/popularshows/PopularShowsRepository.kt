@@ -66,7 +66,7 @@ class PopularShowsRepository @Inject constructor(private val localPopularDataSou
         var page = localPopularDataSource.getLastPage()
         page += 1
         if (page > 3) return
-        val result = remotePopularDataSource.popularShows("full", page, NETWORK_PAGE_SIZE)
+        val result = remotePopularDataSource.paginatedPopularShows("full", page, NETWORK_PAGE_SIZE)
         if (result is Result.Success) {
             val popularShows = result.data
             val popularShowItems = popularShows.map {
