@@ -23,7 +23,8 @@ class SyncShowsUseCase @Inject constructor(val showsRepository: ShowsRepository,
                                            private val episodesRepository: EpisodesRepository,
                                            val collectionRepository: CollectionRepository,
                                            private val nextEpisodesRepository: NextEpisodesRepository,
-                                           private val lastRequestDao: LastRequestDao) {
+                                           private val lastRequestDao: LastRequestDao,
+                                           private val createNotificationAlarmUseCase: CreateNotificationAlarmUseCase) {
 
 
     suspend fun syncShows() {
@@ -93,11 +94,16 @@ class SyncShowsUseCase @Inject constructor(val showsRepository: ShowsRepository,
                         }
                         episodesRepository.saveEpisodes(episodesToSave)
                     }
-                        nextEpisodesRepository.fetchAndSaveNextEpisode(show.traktId)
+                    nextEpisodesRepository.fetchAndSaveNextEpisode(show.traktId)
+                    createAlarm(show.traktId)
                 }
             }
                     .filterNotNull()
                     .awaitAll()
         }
+    }
+
+    private fun createAlarm(showId: Int) {
+        createNotificationAlarmUseCase(showId)
     }
 }
