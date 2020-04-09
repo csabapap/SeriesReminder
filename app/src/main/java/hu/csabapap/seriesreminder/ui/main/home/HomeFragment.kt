@@ -5,8 +5,6 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.*
-import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProviders
@@ -17,7 +15,6 @@ import hu.csabapap.seriesreminder.R
 import hu.csabapap.seriesreminder.data.db.entities.NextEpisodeItem
 import hu.csabapap.seriesreminder.data.db.entities.SRNextEpisode
 import hu.csabapap.seriesreminder.extensions.exhaustive
-import hu.csabapap.seriesreminder.services.SyncService
 import hu.csabapap.seriesreminder.ui.adapters.DiscoverPreviewAdapter
 import hu.csabapap.seriesreminder.ui.adapters.EpisodeCardsAdapter
 import hu.csabapap.seriesreminder.ui.adapters.HomeCardsAdapter
@@ -36,7 +33,7 @@ import javax.inject.Inject
 import javax.inject.Named
 
 
-class HomeFragment : DaggerFragment(),
+class HomeFragment: DaggerFragment(),
         DiscoverPreviewAdapter.PreviewShowListener,
         HomeCardsAdapter.CardClickListener,
         EpisodeCardsAdapter.EpisodeClickListener {
@@ -116,10 +113,6 @@ class HomeFragment : DaggerFragment(),
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        home_toolbar.title = getString(R.string.app_name)
-        (activity as AppCompatActivity).setSupportActionBar(home_toolbar)
-
         home_recycler_view.adapter = cardsAdapter
         layoutManager = home_recycler_view.layoutManager as LinearLayoutManager
         layoutManager.orientation = RecyclerView.VERTICAL

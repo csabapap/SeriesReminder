@@ -33,6 +33,10 @@ class HomeCardsAdapter(private val listener: CardClickListener)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         context = parent.context
+        if (viewType == CardItem.HEADER) {
+            val itemView = LayoutInflater.from(context).inflate(R.layout.item_home_header, parent, false)
+            return HeaderVH(itemView)
+        }
         if (viewType == CardItem.POPULAR_CARD_TYPE || viewType == CardItem.TRENDING_CARD_TYPE || viewType == CardItem.MY_SHOWS_TYPE) {
             val itemView = LayoutInflater.from(context).inflate(R.layout.item_discover_card, parent, false)
             val discoverCardVH = DiscoverCardVH(itemView, viewType)
@@ -45,7 +49,7 @@ class HomeCardsAdapter(private val listener: CardClickListener)
             discoverCardVH.itemView.more_btn.setOnClickListener {
                 val position = discoverCardVH.layoutPosition
                 if (position != -1) {
-                    val cardItem = cardItems[position]
+                    val cardItem = cardItems[position-1]
                     when (cardItem.type) {
                         CardItem.TRENDING_CARD_TYPE -> listener.onMoreButtonClick(DiscoverFragment.TYPE_TRENDING)
                         CardItem.POPULAR_CARD_TYPE -> listener.onMoreButtonClick(DiscoverFragment.TYPE_POPULAR)
@@ -59,7 +63,7 @@ class HomeCardsAdapter(private val listener: CardClickListener)
             val episodesRv = episodeCardVH.itemView.episodes_rv
             episodesRv.adapter = episodeCardVH.episodesAdapter
             val layoutManager = episodesRv.layoutManager as LinearLayoutManager
-            val decoration = DividerItemDecoration(context, LinearLayoutManager.HORIZONTAL)
+            val decoration = DividerItemDecoration(context, layoutManager.orientation)
             decoration.setDrawable(ContextCompat.getDrawable(context, R.drawable.horizontal_separator)!!)
             episodesRv.addItemDecoration(decoration)
             layoutManager.orientation = RecyclerView.VERTICAL
@@ -74,7 +78,7 @@ class HomeCardsAdapter(private val listener: CardClickListener)
         val episodesRv = episodeCardVH.itemView.episodes_rv
         episodesRv.adapter = episodeCardVH.episodesAdapter
         val layoutManager = episodesRv.layoutManager as LinearLayoutManager
-        val decoration = DividerItemDecoration(context, LinearLayoutManager.HORIZONTAL)
+        val decoration = DividerItemDecoration(context, LinearLayoutManager.VERTICAL)
         decoration.setDrawable(ContextCompat.getDrawable(context, R.drawable.horizontal_separator)!!)
         episodesRv.addItemDecoration(decoration)
         layoutManager.orientation = RecyclerView.VERTICAL
@@ -82,23 +86,29 @@ class HomeCardsAdapter(private val listener: CardClickListener)
         val snapHelper = PagerSnapHelper()
         snapHelper.attachToRecyclerView(episodesRv)
         return episodeCardVH
-
     }
 
-    override fun getItemCount() = cardItems.size
+    override fun getItemCount() = cardItems.size + 1
 
-    override fun getItemViewType(position: Int) = cardItems[position].type
+    override fun getItemViewType(position: Int): Int {
+        if (position == 0) {
+            return CardItem.HEADER
+        }
+        return cardItems[position-1].type
+    }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+        if (position == 0) return
+        val card = cardItems[position-1]
         when (holder) {
             is DiscoverCardVH -> {
-                holder.bind(cardItems[position] as DiscoverCardItem)
+                holder.bind(card as DiscoverCardItem)
             }
             is EpisodeCardVH -> {
-                holder.bind(cardItems[position] as UpcomingEpisodeCardItem)
+                holder.bind(card as UpcomingEpisodeCardItem)
             }
             is NextEpisodesListVH -> {
-                holder.bind(cardItems[position] as NextEpisodesCardItem)
+                holder.bind(card as NextEpisodesCardItem)
             }
         }
     }
@@ -165,4 +175,6 @@ class HomeCardsAdapter(private val listener: CardClickListener)
             }
         }
     }
+
+    inner class HeaderVH(itemView: View) : RecyclerView.ViewHolder(itemView) { }
 }

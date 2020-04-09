@@ -104,6 +104,6 @@ class SyncShowsUseCase @Inject constructor(val showsRepository: ShowsRepository,
     }
 
     private fun createAlarm(showId: Int) {
-        createNotificationAlarmUseCase(showId)
+        createNotificationAlarmUseCase.updateReminderAlarm(showId)
     }
 }

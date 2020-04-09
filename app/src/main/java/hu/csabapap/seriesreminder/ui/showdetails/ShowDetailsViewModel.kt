@@ -4,36 +4,25 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations
 import androidx.lifecycle.ViewModel
-import androidx.work.Data
-import androidx.work.OneTimeWorkRequest
-import androidx.work.WorkManager
-import hu.csabapap.seriesreminder.BuildConfig
 import hu.csabapap.seriesreminder.data.CollectionRepository
 import hu.csabapap.seriesreminder.data.SeasonsRepository
 import hu.csabapap.seriesreminder.data.ShowsRepository
 import hu.csabapap.seriesreminder.data.db.entities.SREpisode
 import hu.csabapap.seriesreminder.data.db.entities.SRSeason
-import hu.csabapap.seriesreminder.data.db.entities.SrNotification
 import hu.csabapap.seriesreminder.data.repositories.episodes.EpisodesRepository
 import hu.csabapap.seriesreminder.data.repositories.notifications.NotificationsRepository
 import hu.csabapap.seriesreminder.data.repositories.relatedshows.RelatedShowsRepository
+import hu.csabapap.seriesreminder.domain.CreateNotificationAlarmUseCase
 import hu.csabapap.seriesreminder.domain.SetEpisodeWatchedUseCase
 import hu.csabapap.seriesreminder.extensions.distinctUntilChanged
-import hu.csabapap.seriesreminder.services.workers.ShowReminderWorker
-import hu.csabapap.seriesreminder.services.workers.SyncNextEpisodeWorker
 import hu.csabapap.seriesreminder.ui.adapters.items.ShowItem
 import hu.csabapap.seriesreminder.utils.AppCoroutineDispatchers
-import hu.csabapap.seriesreminder.utils.Reminder
-import hu.csabapap.seriesreminder.utils.getAirDateTimeInCurrentTimeZone
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.rx2.await
 import kotlinx.coroutines.withContext
-import org.threeten.bp.LocalDateTime
 import timber.log.Timber
-import java.util.*
-import java.util.concurrent.TimeUnit
 
 class ShowDetailsViewModel(private val showsRepository: ShowsRepository,
                            private val seasonsRepository: SeasonsRepository,
@@ -42,7 +31,7 @@ class ShowDetailsViewModel(private val showsRepository: ShowsRepository,
                            private val notificationsRepository: NotificationsRepository,
                            private val relatedShowsRepository: RelatedShowsRepository,
                            private val setEpisodeWatchedUseCase: SetEpisodeWatchedUseCase,
-                           private val workManager: WorkManager,
+                           private val createNotificationAlarmUseCase: CreateNotificationAlarmUseCase,
                            private val dispatchers: AppCoroutineDispatchers) : ViewModel() {
 
     private val job = Job()
@@ -91,38 +80,7 @@ class ShowDetailsViewModel(private val showsRepository: ShowsRepository,
 
     fun createNotification(showId: Int, aheadOfTime: Int) {
         scope.launch(dispatchers.io) {
-            val show = showsRepository.getShow(showId).await() ?: return@launch
-            val airDateTime = getAirDateTimeInCurrentTimeZone(LocalDateTime.now(), show.airingTime)
-
-            val calendar = Calendar.getInstance()
-            calendar.set(Calendar.DAY_OF_MONTH, airDateTime.dayOfMonth)
-            calendar.set(Calendar.HOUR_OF_DAY, airDateTime.hour)
-            calendar.set(Calendar.MINUTE, airDateTime.minute)
-            calendar.set(Calendar.SECOND, 0)
-//            val duration = calendar.timeInMillis - System.currentTimeMillis() - aheadOfTime
-            val duration = when (BuildConfig.DEBUG) {
-                true -> 5000
-                false -> calendar.timeInMillis - System.currentTimeMillis() - aheadOfTime
-            }
-            val request = OneTimeWorkRequest.Builder(ShowReminderWorker::class.java)
-                    .setInitialDelay(duration, TimeUnit.MILLISECONDS)
-                    .setInputData(
-                            Data.Builder()
-                                    .put(Reminder.SHOW_ID, show.traktId)
-                                    .put(Reminder.SHOW_TITLE, show.title)
-                                    .build())
-                    .build()
-            val getNextEpisodeRequest = OneTimeWorkRequest.Builder(SyncNextEpisodeWorker::class.java)
-                    .setInputData(Data.Builder()
-                            .put(Reminder.SHOW_ID, show.traktId)
-                            .build())
-                    .build()
-            workManager.beginWith(request)
-                    .then(getNextEpisodeRequest)
-                    .enqueue()
-
-            val notification = SrNotification(null, showId, aheadOfTime, request.id.toString())
-            notificationsRepository.createNotification(notification)
+            createNotificationAlarmUseCase.createReminderAlarm(showId, aheadOfTime)
             withContext(dispatchers.main) {
                 _detailsUiState.value = ShowDetailsState.NotificationCreated
             }
@@ -155,11 +113,7 @@ class ShowDetailsViewModel(private val showsRepository: ShowsRepository,
 
     fun removeNotification(showId: Int) {
         scope.launch(dispatchers.io) {
-            val notification = notificationsRepository.getNotification(showId)
-            notification?.let {
-                workManager.cancelWorkById(UUID.fromString(it.workerId))
-                notificationsRepository.deleteNotification(it)
-            }
+            createNotificationAlarmUseCase.cancelNotification(showId)
             withContext(dispatchers.main) {
                 _detailsUiState.value = ShowDetailsState.NotificationDeleted
             }

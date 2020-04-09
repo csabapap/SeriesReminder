@@ -15,7 +15,7 @@ import hu.csabapap.seriesreminder.utils.getAirDateTimeInCurrentTimeZone
 import kotlinx.android.synthetic.main.item_episode_card.view.*
 import org.threeten.bp.LocalDateTime
 
-class EpisodeCardsAdapter:  RecyclerView.Adapter<EpisodeCardsAdapter.CardVH>() {
+class EpisodeCardsAdapter: RecyclerView.Adapter<EpisodeCardsAdapter.CardVH>() {
 
     interface EpisodeClickListener {
         fun onItemClick(nextEpisode: NextEpisodeItem)
@@ -56,17 +56,18 @@ class EpisodeCardsAdapter:  RecyclerView.Adapter<EpisodeCardsAdapter.CardVH>() {
 
     inner class CardVH(itemView: View): RecyclerView.ViewHolder(itemView) {
         fun bind(nextEpisode: NextEpisodeItem) {
-            val episode = nextEpisode.episode!!
+            val episode = nextEpisode.episode ?: return
+            val show = nextEpisode.show ?: return
+            itemView.show_title.text = show.title
             itemView.title.text = episode.title
             if (episode.title.trim().isEmpty()) {
-                itemView.title.text = nextEpisode.show?.title ?: ""
+                itemView.title.text = show.title
             }
             val episodeInfo = String.format(context.getString(R.string.episode_number),
                     episode.season,
                     episode.number)
             itemView.episode_info.text = episodeInfo
-            val show = nextEpisode.show
-            show?.apply {
+            show.apply {
                 val nextAirDateTime = getAirDateTimeInCurrentTimeZone(LocalDateTime.now(),airingTime)
                         .toOffsetDateTime()
                 val diffInDays = nextAirDateTime.diffInDays()

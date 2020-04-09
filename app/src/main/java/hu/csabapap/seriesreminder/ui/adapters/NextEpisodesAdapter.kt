@@ -68,6 +68,7 @@ class NextEpisodesAdapter: RecyclerView.Adapter<NextEpisodesAdapter.NextEpisodeV
                     nextEpisode.number)
             itemView.episode_info.text = episodeInfo
             itemView.set_watched.isChecked = false
+            itemView.show_title.text = nextEpisode.showTitle
             Picasso.with(context)
                     .load(getThumbnailUrl(nextEpisode.poster))
                     .into(itemView.show_poster)

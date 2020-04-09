@@ -47,7 +47,7 @@ class SyncNextEpisodeWorker(context: Context,
 
     @SuppressLint("RestrictedApi")
     private fun createAlarm(show: SRShow) {
-        createNotificationAlarmUseCase(show.traktId)
+        createNotificationAlarmUseCase.updateReminderAlarm(show.traktId)
     }
 
     class Factory @Inject constructor(private val nextEpisodeUseCase: GetNextEpisodeUseCase,
