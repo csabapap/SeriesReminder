@@ -68,4 +68,8 @@
     <string name="seasons_title">Seasons %d</string>
     <string name="watched_all">Watched All</string>
     <string name="aired">Aired</string>
+    <string name="title_activity_main2">Main2Activity</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

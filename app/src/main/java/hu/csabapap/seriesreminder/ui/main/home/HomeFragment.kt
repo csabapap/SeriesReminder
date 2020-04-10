@@ -2,9 +2,10 @@ package hu.csabapap.seriesreminder.ui.main.home
 
 
 import android.content.Context
-import android.content.Intent
 import android.os.Bundle
-import android.view.*
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProviders
@@ -23,8 +24,6 @@ import hu.csabapap.seriesreminder.ui.adapters.items.CardItem
 import hu.csabapap.seriesreminder.ui.adapters.items.DiscoverCardItem
 import hu.csabapap.seriesreminder.ui.adapters.items.NextEpisodesCardItem
 import hu.csabapap.seriesreminder.ui.adapters.items.UpcomingEpisodeCardItem
-import hu.csabapap.seriesreminder.ui.search.SearchActivity
-import hu.csabapap.seriesreminder.ui.settings.SettingsActivity
 import hu.csabapap.seriesreminder.utils.Collectible
 import hu.csabapap.seriesreminder.utils.Episode
 import kotlinx.android.synthetic.main.fragment_home.*
@@ -122,28 +121,6 @@ class HomeFragment: DaggerFragment(),
         super.onStart()
         homeViewModel.getUpcomingEpisodes()
         homeViewModel.getNextEpisodes()
-    }
-
-    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        activity?.menuInflater?.inflate(R.menu.main, menu)
-        super.onCreateOptionsMenu(menu, inflater)
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when (item.itemId) {
-            R.id.search -> {
-                search()
-                return true
-            }
-            R.id.settings -> {
-                startActivity(Intent(this.activity, SettingsActivity::class.java))
-            }
-        }
-        return super.onOptionsItemSelected(item)
-    }
-
-    private fun search() {
-        startActivity(Intent(this.activity, SearchActivity::class.java))
     }
 
     interface HomeFragmentListener {

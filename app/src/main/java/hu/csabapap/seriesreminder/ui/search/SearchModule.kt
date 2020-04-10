@@ -9,7 +9,7 @@ import javax.inject.Named
 @Module
 abstract class SearchModule {
     @ContributesAndroidInjector()
-    internal abstract fun searchActivity() : SearchActivity
+    internal abstract fun searchFragment() : SearchFragment
 
     @Binds
     @Named("SearchViewModelFactory")
