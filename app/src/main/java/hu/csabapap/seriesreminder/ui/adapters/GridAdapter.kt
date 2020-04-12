@@ -30,9 +30,8 @@ internal class GridAdapter : PagedListAdapter<GridItem<Item>, GridAdapter.GridVi
     }
 
     override fun onBindViewHolder(holder: GridViewHolder, position: Int) {
-
         val gridItem = getItem(position) ?: return
-        val show = gridItem.show!!
+        val show = gridItem.show ?: return
         show.inCollection = gridItem.inCollection
         holder.bind(show)
         holder.setOnClickListener(View.OnClickListener {

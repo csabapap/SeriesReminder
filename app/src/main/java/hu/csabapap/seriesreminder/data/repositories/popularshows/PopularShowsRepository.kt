@@ -39,6 +39,7 @@ class PopularShowsRepository @Inject constructor(private val localPopularDataSou
     }
 
     suspend fun refreshShows(): List<SRPopularItem> = coroutineScope {
+        localPopularDataSource.clearShows()
         val result = remotePopularDataSource.popularShows("full")
         if (result is Result.Success) {
             val popularShows = result.data

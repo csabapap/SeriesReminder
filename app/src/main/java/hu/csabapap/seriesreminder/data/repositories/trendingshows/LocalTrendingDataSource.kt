@@ -1,7 +1,10 @@
 package hu.csabapap.seriesreminder.data.repositories.trendingshows
 
+import androidx.paging.DataSource
 import hu.csabapap.seriesreminder.data.db.daos.TrendingDao
 import hu.csabapap.seriesreminder.data.db.entities.SRTrendingItem
+import hu.csabapap.seriesreminder.data.db.entities.TrendingGridItem
+import timber.log.Timber
 import javax.inject.Inject
 
 class LocalTrendingDataSource @Inject constructor(private val trendingDao: TrendingDao) {
@@ -11,9 +14,13 @@ class LocalTrendingDataSource @Inject constructor(private val trendingDao: Trend
         trendingDao.insert(trendingShows)
     }
 
-    fun getShows(limit: Int) = trendingDao.getTrendingShowsFactory(limit)
+    fun getShows(page: Int, limit: Int): DataSource.Factory<Int, TrendingGridItem> {
+        return trendingDao.getTrendingShowsFactory(limit)
+    }
 
     fun getShowsFlowable(limit: Int) = trendingDao.getTrendingShows(limit)
+
+    fun clearTrendingShows() = trendingDao.deleteAll()
 
     fun getLastPage(): Int {
         return trendingDao.getLastPage() ?: 0

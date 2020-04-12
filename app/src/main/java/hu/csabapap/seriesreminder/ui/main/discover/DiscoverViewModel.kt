@@ -14,6 +14,7 @@ import hu.csabapap.seriesreminder.data.db.entities.PopularGridItem
 import hu.csabapap.seriesreminder.data.db.entities.TrendingGridItem
 import hu.csabapap.seriesreminder.data.repositories.popularshows.PopularShowsRepository
 import hu.csabapap.seriesreminder.data.repositories.trendingshows.TrendingShowsRepository
+import hu.csabapap.seriesreminder.ui.search.SearchFragment
 import io.reactivex.disposables.CompositeDisposable
 import javax.inject.Inject
 
@@ -34,6 +35,7 @@ class DiscoverViewModel @Inject constructor(
     }
 
     val trendingShows: LiveData<PagedList<TrendingGridItem>> = Transformations.switchMap(trendingShowsResult) {
+        it.data.value
         it.data
     }
 
@@ -43,8 +45,8 @@ class DiscoverViewModel @Inject constructor(
 
     fun getItems(type: Int) {
         when (type) {
-            DiscoverFragment.TYPE_TRENDING -> loadTrendingShows()
-            DiscoverFragment.TYPE_POPULAR -> loadPopularShows()
+            SearchFragment.TYPE_TRENDING -> loadTrendingShows()
+            SearchFragment.TYPE_POPULAR -> loadPopularShows()
         }
     }
 

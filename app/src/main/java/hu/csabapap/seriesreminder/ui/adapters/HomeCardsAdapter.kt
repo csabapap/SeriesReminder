@@ -14,7 +14,7 @@ import hu.csabapap.seriesreminder.ui.adapters.items.CardItem
 import hu.csabapap.seriesreminder.ui.adapters.items.DiscoverCardItem
 import hu.csabapap.seriesreminder.ui.adapters.items.NextEpisodesCardItem
 import hu.csabapap.seriesreminder.ui.adapters.items.UpcomingEpisodeCardItem
-import hu.csabapap.seriesreminder.ui.main.discover.DiscoverFragment
+import hu.csabapap.seriesreminder.ui.search.SearchFragment
 import kotlinx.android.synthetic.main.item_discover_card.view.*
 import kotlinx.android.synthetic.main.item_episodes.view.*
 
@@ -51,8 +51,8 @@ class HomeCardsAdapter(private val listener: CardClickListener)
                 if (position != -1) {
                     val cardItem = cardItems[position-1]
                     when (cardItem.type) {
-                        CardItem.TRENDING_CARD_TYPE -> listener.onMoreButtonClick(DiscoverFragment.TYPE_TRENDING)
-                        CardItem.POPULAR_CARD_TYPE -> listener.onMoreButtonClick(DiscoverFragment.TYPE_POPULAR)
+                        CardItem.TRENDING_CARD_TYPE -> listener.onMoreButtonClick(SearchFragment.TYPE_TRENDING)
+                        CardItem.POPULAR_CARD_TYPE -> listener.onMoreButtonClick(SearchFragment.TYPE_POPULAR)
                     }
                 }
             }

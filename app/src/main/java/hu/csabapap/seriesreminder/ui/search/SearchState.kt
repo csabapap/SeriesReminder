@@ -5,6 +5,7 @@ import hu.csabapap.seriesreminder.data.models.SrSearchResult
 sealed class SearchState {
     object Loading: SearchState()
     object NoResult: SearchState()
+    object HideDiscoverContent: SearchState()
     class SearchResultLoaded(val result: List<SrSearchResult>): SearchState()
 
 }

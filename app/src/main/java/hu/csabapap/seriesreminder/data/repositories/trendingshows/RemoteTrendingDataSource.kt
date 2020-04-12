@@ -9,27 +9,9 @@ import javax.inject.Inject
 
 class RemoteTrendingDataSource @Inject constructor(private val trendingService: TrendingShowsService) {
 
-    suspend fun getDeferredPaginatedShows(extended: String, page: Int = 1, limit: Int = 15) = safeApiCall({
-        requestPaginatedTrendingShows(extended, page, limit)
+    suspend fun getDeferredPaginatedShows(page: Int = 1, limit: Int = 20) = safeApiCall({
+        requestPaginatedTrendingShows(extended = "full", page = page, limit = limit)
     }, "fetch paginated trending shows error")
-
-    suspend fun getShows(extended: String) = safeApiCall(
-            call = { requestTrendingShows(extended) },
-            errorMessage =  "fetch trending shows error")
-
-    private suspend fun requestTrendingShows(param: String): Result<List<TrendingShow>> {
-        val response = trendingService.trendingShows(param)
-        if (response.isSuccessful) {
-            val data = response.body()
-            if (data != null) {
-                return Result.Success(data)
-            }
-        }
-
-        return Result.Error(
-                IOException("Error getting trending shows ${response.code()} ${response.message()}")
-        )
-    }
 
     private suspend fun requestPaginatedTrendingShows(extended: String, page: Int = 1, limit: Int = 15)
     : Result<List<TrendingShow>>{

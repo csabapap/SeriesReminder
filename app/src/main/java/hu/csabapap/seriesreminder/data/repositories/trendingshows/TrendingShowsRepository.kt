@@ -16,15 +16,17 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class TrendingShowsRepository @Inject constructor(private val localTrendingDataSource: LocalTrendingDataSource,
-                              private val remoteTrendingDataSource: RemoteTrendingDataSource,
-                              private val showsRepository: ShowsRepository) {
+class TrendingShowsRepository @Inject constructor(
+        private val localTrendingDataSource: LocalTrendingDataSource,
+        private val remoteTrendingDataSource: RemoteTrendingDataSource,
+        private val showsRepository: ShowsRepository) {
 
     fun getTrendingShowsFlowable() = localTrendingDataSource.getShowsFlowable(10)
 
     fun getTrendingShows(limit: Int = DATABASE_PAGE_SIZE): TrendingShowsResult {
         Timber.d("get trending shows")
-        val dataSourceFactory = localTrendingDataSource.getShows(limit)
+        var page = 1
+        val dataSourceFactory = localTrendingDataSource.getShows(page, limit)
         val config = PagedList.Config.Builder()
                 .setPageSize(DATABASE_PAGE_SIZE)
                 .setInitialLoadSizeHint(1 * DATABASE_PAGE_SIZE)
@@ -33,6 +35,8 @@ class TrendingShowsRepository @Inject constructor(private val localTrendingDataS
                 LivePagedListBuilder(dataSourceFactory, config)
                         .setBoundaryCallback(object : PagedList.BoundaryCallback<TrendingGridItem>() {
                             override fun onItemAtEndLoaded(itemAtEnd: TrendingGridItem) {
+                                page += 1
+                                Timber.d("db page: $page")
                                 GlobalScope.launch {
                                     updateTrendingShows()
                                 }
@@ -43,7 +47,8 @@ class TrendingShowsRepository @Inject constructor(private val localTrendingDataS
     }
 
     suspend fun refreshTrendingShow(): Result<List<SRTrendingItem>> = coroutineScope {
-        val trendingShowsResult = remoteTrendingDataSource.getShows("full")
+        localTrendingDataSource.clearTrendingShows()
+        val trendingShowsResult = remoteTrendingDataSource.getDeferredPaginatedShows()
 
         if (trendingShowsResult is Result.Error) {
             return@coroutineScope Result.Error(trendingShowsResult.exception)
@@ -58,7 +63,7 @@ class TrendingShowsRepository @Inject constructor(private val localTrendingDataS
         val trendingItems = trendingShows.map {
             async {
                 showsRepository.getShowWithImages(it.show.ids.trakt, it.show.ids.tvdb).await()
-                mapToSRTrendingShow(it.show.ids.trakt, it.watchers, 0)
+                mapToSRTrendingShow(it.show.ids.trakt, it.watchers, 1)
             }
         }.awaitAll()
         localTrendingDataSource.insertShows(0, trendingItems)
@@ -69,7 +74,7 @@ class TrendingShowsRepository @Inject constructor(private val localTrendingDataS
         var lastPage = localTrendingDataSource.getLastPage()
         lastPage += 1
         if (lastPage > 3) return
-        val trendingShowsResult = remoteTrendingDataSource.getDeferredPaginatedShows("full", lastPage, NETWORK_PAGE_SIZE)
+        val trendingShowsResult = remoteTrendingDataSource.getDeferredPaginatedShows(lastPage, NETWORK_PAGE_SIZE)
         val trendingShows = if (trendingShowsResult is Result.Success) {
             trendingShowsResult.data
         } else {

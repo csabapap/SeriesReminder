@@ -1,49 +1,66 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <FrameLayout
-        android:id="@+id/toolbar"
+    <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        android:theme="@style/SearchViewTheme"
-        android:background="?colorPrimary">
+        android:layout_height="wrap_content">
+
+<!--        <androidx.appcompat.widget.Toolbar-->
+<!--            android:id="@+id/discover_toolbar"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="?attr/actionBarSize"-->
+<!--            android:background="?attr/colorPrimary"-->
+<!--            android:minHeight="?attr/actionBarSize"-->
+<!--            android:theme="@style/ThemeOverlay.AppCompat.Light"-->
+<!--            app:layout_scrollFlags="scroll|enterAlways|snap"/>-->
 
         <SearchView
             android:id="@+id/search_view"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="?attr/actionBarSize"
             android:iconifiedByDefault="false"
-            android:paddingEnd="16dp"
-            android:transitionGroup="true"/>
+            app:layout_scrollFlags="scroll|enterAlways|snap"/>
 
-        <FrameLayout
-            android:id="@+id/searchback_container"
-            android:layout_width="96dp"
-            android:layout_height="match_parent"
-            android:background="@android:color/transparent"
-            android:paddingStart="4dp">
+        <com.google.android.material.tabs.TabLayout
+            android:id="@+id/tab_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_scrollFlags="exitUntilCollapsed">
 
-            <ImageButton
-                android:id="@+id/searchback"
+            <com.google.android.material.tabs.TabItem
                 android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:background="?android:selectableItemBackgroundBorderless"
-                android:src="@drawable/ic_arrow_back_padded" />
+                android:layout_height="wrap_content"
+                android:text="@string/title_trending"
+                android:textColor="@color/white"/>
 
-        </FrameLayout>
+            <com.google.android.material.tabs.TabItem
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/title_popular"
+                android:textColor="@color/white"/>
 
-    </FrameLayout>
+        </com.google.android.material.tabs.TabLayout>
 
-    <FrameLayout
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <androidx.viewpager.widget.ViewPager
+        android:id="@+id/view_pager"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+
+    <FrameLayout
+        android:id="@+id/search_result_content"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone"
         android:background="?colorPrimary"
-        android:layout_marginTop="?attr/actionBarSize">
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
         <ProgressBar
             android:id="@+id/progress_bar"
@@ -65,4 +82,4 @@
 
     </FrameLayout>
 
-</FrameLayout>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

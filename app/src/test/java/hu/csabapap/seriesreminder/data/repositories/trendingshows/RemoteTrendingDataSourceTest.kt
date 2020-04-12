@@ -19,9 +19,9 @@ class RemoteTrendingDataSourceTest {
     @Test
     fun `get trending shows with successful request`() = runBlocking {
         val response = Response.success(trendingShows)
-        whenever(trendingShowsService.trendingShows("full")).thenReturn(response)
+        whenever(trendingShowsService.paginatedTrendingShows("full", 1, 20)).thenReturn(response)
 
-        val result =  dataSource.getShows("full")
+        val result =  dataSource.getDeferredPaginatedShows()
 
         assertNotNull(result)
         assertEquals(Result.Success(trendingShows), result)

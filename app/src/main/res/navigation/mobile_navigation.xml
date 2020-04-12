@@ -12,14 +12,14 @@
         tools:layout="@layout/fragment_home" />
 
     <fragment
-        android:id="@+id/navigation_dashboard"
+        android:id="@+id/navigation_menu_search"
         android:name="hu.csabapap.seriesreminder.ui.search.SearchFragment"
         android:label="@string/search"
-        tools:layout="@layout/fragment_dashboard" />
+        tools:layout="@layout/fragment_search" />
 
     <fragment
-        android:id="@+id/navigation_notifications"
+        android:id="@+id/navigation_settings"
         android:name="hu.csabapap.seriesreminder.ui.settings.SRSettingsFragment"
         android:label="@string/settings"
-        tools:layout="@layout/fragment_notifications" />
+        tools:layout="@layout/activity_settings" />
 </navigation>

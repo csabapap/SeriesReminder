@@ -59,22 +59,22 @@ class GridFragment : DaggerFragment(), GridAdapter.GridItemClickListener {
         if (listType == TYPE_TRENDING) {
             discoverViewModel.trendingShows.observe(this, Observer {
                 it?.apply {
-                    adapter.submitList(it as PagedList<GridItem<Item>>)
+                    adapter.submitList(this as PagedList<GridItem<Item>>)
                 }
             })
         } else {
             discoverViewModel.popularShows.observe(this, Observer {
                 it?.apply {
-                    adapter.submitList(it as PagedList<GridItem<Item>>)
+                    adapter.submitList(this as PagedList<GridItem<Item>>)
                 }
             })
         }
+        discoverViewModel.getItems(listType)
     }
 
-    override fun onStart() {
-        super.onStart()
-
-        discoverViewModel.getItems(listType)
+    override fun onDestroyView() {
+        super.onDestroyView()
+        this.viewLifecycleOwnerLiveData.removeObservers(this)
     }
 
     override fun onItemClick(traktId: Int, inCollection: Boolean) {

@@ -6,6 +6,8 @@ import com.nhaarman.mockitokotlin2.*
 import hu.csabapap.seriesreminder.data.CollectionRepository
 import hu.csabapap.seriesreminder.data.ShowsRepository
 import hu.csabapap.seriesreminder.data.models.SrSearchResult
+import hu.csabapap.seriesreminder.data.repositories.popularshows.PopularShowsRepository
+import hu.csabapap.seriesreminder.data.repositories.trendingshows.TrendingShowsRepository
 import hu.csabapap.seriesreminder.domain.GetSearchResultUseCase
 import hu.csabapap.seriesreminder.getShow
 import hu.csabapap.seriesreminder.utils.AppCoroutineDispatchers
@@ -28,6 +30,8 @@ class TestSearchViewModel {
 
     private var getSearchResultUseCase = mock<GetSearchResultUseCase>()
     private val showsRepository = mock<ShowsRepository>()
+    private val trendingShowsRepository: TrendingShowsRepository = mock()
+    private val popularShowsRepository: PopularShowsRepository = mock()
     private val collectionRepository = mock<CollectionRepository>()
     private val schedulers: RxSchedulers = TestAppRxSchedulers()
     private val dispatchers = AppCoroutineDispatchers(
@@ -38,8 +42,8 @@ class TestSearchViewModel {
 
     @Before
     fun setUp() {
-        searchViewModel = SearchViewModel(getSearchResultUseCase, showsRepository, collectionRepository,
-                schedulers, dispatchers)
+        searchViewModel = SearchViewModel(getSearchResultUseCase, trendingShowsRepository,
+                popularShowsRepository, schedulers, dispatchers)
         searchViewModel.searchState.observeForever(stateObserver)
     }
 

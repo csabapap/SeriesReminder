@@ -17,4 +17,6 @@ class LocalPopularDataSource @Inject constructor(private val popularDao: Popular
     }
 
     fun getLastPage() = popularDao.getLastPage() ?: 0
+
+    fun clearShows() = popularDao.deleteAll()
 }

@@ -91,7 +91,8 @@ val watchedEpisode = WatchedEpisode(
         showId = 1,
         season = 1,
         number = 1,
-        episodeId = 1
+        episodeId = 1,
+        watchedAt = OffsetDateTime.now()
 )
 
 val trendingShow1 = TrendingShow(123, theBoys)

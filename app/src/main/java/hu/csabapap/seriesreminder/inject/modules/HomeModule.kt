@@ -7,7 +7,6 @@ import dagger.android.ContributesAndroidInjector
 import hu.csabapap.seriesreminder.ui.main.HomeActivity
 import hu.csabapap.seriesreminder.ui.main.MainViewModelProvider
 import hu.csabapap.seriesreminder.ui.main.collection.CollectionModule
-import hu.csabapap.seriesreminder.ui.main.discover.DiscoverModule
 import hu.csabapap.seriesreminder.ui.main.home.HomeFragmentModule
 import javax.inject.Named
 
@@ -16,7 +15,6 @@ abstract class HomeModule {
 
     @ContributesAndroidInjector(modules = [
         HomeFragmentModule::class,
-        DiscoverModule::class,
         CollectionModule::class
     ])
     internal abstract fun homeActivity(): HomeActivity
