@@ -1,5 +1,6 @@
 package hu.csabapap.seriesreminder.ui.addshow
 
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import hu.csabapap.seriesreminder.data.CollectionRepository
@@ -22,7 +23,7 @@ class AddShowViewModel(
         showsRepository.getShow(traktId = showId)
                 .observeOn(schedulers.main)
                 .doAfterSuccess({
-                    showLiveData.value = AddShowState(it)
+                    showLiveData.value = DisplayShow(it)
                 })
                 .observeOn(schedulers.io)
                 .toObservable()
@@ -32,7 +33,7 @@ class AddShowViewModel(
                 .subscribeOn(schedulers.io)
                 .observeOn(schedulers.main)
                 .subscribe({
-                    showLiveData.value = AddShowState(it)
+                    showLiveData.value = DisplayShow(it)
                 },
                         { Timber.e(it)})
     }
@@ -41,4 +42,7 @@ class AddShowViewModel(
         taskExecutor.queue.add(task)
     }
 
+    fun onBackButtonClick() {
+        showLiveData.value = Close
+    }
 }

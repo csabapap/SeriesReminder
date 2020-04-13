@@ -39,7 +39,6 @@ import hu.csabapap.seriesreminder.services.workers.SyncShowsWorker
 import hu.csabapap.seriesreminder.tasks.DownloadShowTask
 import hu.csabapap.seriesreminder.utils.AddShow
 import kotlinx.android.synthetic.main.activity_add_show.*
-import timber.log.Timber
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 import javax.inject.Named
@@ -74,8 +73,9 @@ class AddShowActivity : DaggerAppCompatActivity() {
         }
 
         addShowViewModel.showLiveData.observe(this, Observer {
-            it?.apply {
-                displayShow(it.show)
+            when (it) {
+                is DisplayShow -> displayShow(it.show)
+                is Close -> onBackPressed()
             }
         })
 
@@ -110,12 +110,9 @@ class AddShowActivity : DaggerAppCompatActivity() {
 
             @SuppressLint("RestrictedApi")
             override fun onTransitionChange(p0: MotionLayout?, p1: Int, p2: Int, p3: Float) {
-                Timber.d("p3: $p3")
                 if (poster.y <= toolbar.height + toolbar.y) {
-                    poster.visibility = View.GONE
                     fab_add_show.hide()
                 } else {
-                    poster.visibility = View.VISIBLE
                     fab_add_show.show()
                 }
             }
@@ -124,16 +121,13 @@ class AddShowActivity : DaggerAppCompatActivity() {
             override fun onTransitionCompleted(p0: MotionLayout?, id: Int) {
                 when (id) {
                     R.id.collapsed -> {
-                        poster.visibility = View.GONE
                         fab_add_show.visibility = View.GONE
                     }
                     R.id.expanded -> {
-                        poster.visibility = View.VISIBLE
                         fab_add_show.visibility = View.VISIBLE
                     }
                 }
             }
-
         })
     }
 
@@ -164,9 +158,15 @@ class AddShowActivity : DaggerAppCompatActivity() {
     }
 
     private fun displayShow(srShow: SRShow) {
+        toolbar.title = srShow.title
         show_title.text = srShow.title
         status.text = srShow.status
-        air_daytime.text = String.format(getString(R.string.air_time), srShow.airingTime.day, srShow.airingTime.time)
+        if (srShow.status == "ended") {
+            air_daytime.visibility = View.GONE
+        } else {
+            air_daytime.text = String.format(getString(R.string.air_time), srShow.airingTime.day, srShow.airingTime.time)
+            air_daytime.visibility = View.VISIBLE
+        }
         tv_overview.text = srShow.overview
         ratings.text = String.format(getString(R.string.ratings_value), (srShow.rating * 10).toInt(), srShow.votes)
         genres.text = srShow.genres
@@ -180,7 +180,6 @@ class AddShowActivity : DaggerAppCompatActivity() {
             override fun onError() {
 
             }
-
         }))
         val url = if (srShow.coverThumb.isEmpty()) {
             getCoverUrl(srShow.tvdbId)
@@ -199,6 +198,7 @@ class AddShowActivity : DaggerAppCompatActivity() {
                     val vibrant = it?.vibrantSwatch
                     vibrant?.apply {
                         title_background.setBackgroundColor(rgb)
+                        toolbar.setBackgroundColor(rgb)
                         cover_overflow.setBackgroundColor(
                                 ColorUtils.setAlphaComponent(rgb, /* 30% */ 0x40))
                         show_title.setTextColor(titleTextColor)
