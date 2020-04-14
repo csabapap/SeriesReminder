@@ -1,27 +1,20 @@
 package hu.csabapap.seriesreminder.data.repositories.episodes
 
 import hu.csabapap.seriesreminder.data.Result
-import hu.csabapap.seriesreminder.data.db.daos.EpisodeDao
 import hu.csabapap.seriesreminder.data.db.daos.NextEpisodeDao
-import hu.csabapap.seriesreminder.data.db.entities.NextEpisodeEntry
 import hu.csabapap.seriesreminder.data.db.entities.SREpisode
 import hu.csabapap.seriesreminder.data.db.relations.EpisodeWithShow
 import hu.csabapap.seriesreminder.data.network.TvdbApi
 import hu.csabapap.seriesreminder.data.network.entities.Episode
-import hu.csabapap.seriesreminder.data.network.entities.EpisodeData
 import hu.csabapap.seriesreminder.utils.safeApiCall
-import io.reactivex.Single
-import kotlinx.coroutines.rx2.await
 import org.threeten.bp.OffsetDateTime
-import timber.log.Timber
 import javax.inject.Inject
 
 class EpisodesRepository @Inject constructor(
         private val localDataSource: LocalEpisodesDataSource,
         private val remoteDataSource: RemoteEpisodesDataSource,
         private val tvdbApi: TvdbApi,
-        private val nextEpisodeDao: NextEpisodeDao,
-        private val episodesDao: EpisodeDao) {
+        private val nextEpisodeDao: NextEpisodeDao) {
 
     suspend fun getEpisode(showId: Int, season: Int, number: Int ): EpisodeWithShow? {
         return localDataSource.getBySeasonAndEpisodeNumber(showId, season, number)
@@ -39,26 +32,6 @@ class EpisodesRepository @Inject constructor(
         return localDataSource.get(showId, absNumber)
     }
 
-    fun insertNextEpisode(nextEpisodeEntry: NextEpisodeEntry) {
-        nextEpisodeDao.insert(nextEpisodeEntry)
-    }
-
-    fun fetchEpisodeImage(episode: SREpisode): Single<SREpisode> {
-        return tvdbApi.episodeSingle(episode.tvdbId)
-                .map {
-                    var filename = "-1"
-                    if (it.data.filename.isEmpty().not()) {
-                        filename = it.data.filename
-                    }
-                    episode.copy(image = filename)
-                }
-                .doOnSuccess {
-                    if (it.image.isEmpty().not()) {
-                        updateEpisode(it)
-                    }
-                }
-    }
-
     suspend fun fetchEpisodeImage(tvdbId: Int): Result<String> {
         return safeApiCall({
             val episode = tvdbApi.episode(tvdbId)
@@ -66,18 +39,9 @@ class EpisodesRepository @Inject constructor(
         }, "fetch EpisodeData error from TheTvdb")
     }
 
-    private fun updateEpisode(episode: SREpisode) {
-        episodesDao.update(episode)
-    }
-
-    fun getNextEpisode(showId: Int) = nextEpisodeDao.getNextEpisode(showId)
-
-    fun getNextEpisodes(limit: Int) = nextEpisodeDao.getNextEpisodes(limit)
+    fun getUpcomingEpisodes(limit: Int = 3) = localDataSource.getUpcomingEpisodes(limit)
 
     suspend fun getNextEpisodes() = nextEpisodeDao.getNextEpisodeInWatchList()
-
-
-    fun getEpisodeInfoFromTvdb(tvdbId: Int) = tvdbApi.episodeSingle(tvdbId)
 
     fun saveEpisode(episode: SREpisode) {
         localDataSource.save(episode)

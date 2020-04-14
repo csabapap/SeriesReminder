@@ -13,8 +13,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import dagger.android.support.DaggerFragment
 import hu.csabapap.seriesreminder.R
-import hu.csabapap.seriesreminder.data.db.entities.NextEpisodeItem
 import hu.csabapap.seriesreminder.data.db.entities.SRNextEpisode
+import hu.csabapap.seriesreminder.data.db.relations.EpisodeWithShow
 import hu.csabapap.seriesreminder.extensions.exhaustive
 import hu.csabapap.seriesreminder.ui.adapters.DiscoverPreviewAdapter
 import hu.csabapap.seriesreminder.ui.adapters.EpisodeCardsAdapter
@@ -137,10 +137,10 @@ class HomeFragment: DaggerFragment(),
         listener?.onMoreButtonClick(type)
     }
 
-    override fun onItemClick(nextEpisode: NextEpisodeItem) {
-        val entry = nextEpisode.entry
+    override fun onItemClick(nextEpisode: EpisodeWithShow) {
+        val entry = nextEpisode.episode
         val activity = activity
-        if (entry != null && activity != null) {
+        if (activity != null) {
             Episode.start(activity, entry.showId, entry.season, entry.number)
         }
     }

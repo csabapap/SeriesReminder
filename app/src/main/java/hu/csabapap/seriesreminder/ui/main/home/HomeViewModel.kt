@@ -8,6 +8,7 @@ import hu.csabapap.seriesreminder.data.CollectionRepository
 import hu.csabapap.seriesreminder.data.Result
 import hu.csabapap.seriesreminder.data.db.entities.NextEpisodeItem
 import hu.csabapap.seriesreminder.data.db.entities.SRNextEpisode
+import hu.csabapap.seriesreminder.data.db.relations.EpisodeWithShow
 import hu.csabapap.seriesreminder.data.repositories.episodes.EpisodesRepository
 import hu.csabapap.seriesreminder.data.repositories.popularshows.PopularShowsRepository
 import hu.csabapap.seriesreminder.data.repositories.trendingshows.TrendingShowsRepository
@@ -48,7 +49,7 @@ class HomeViewModel @Inject constructor(private val trendingShowsRepository: Tre
         syncShows()
     }
 
-    val upcomingEpisodesLiveData = MutableLiveData<List<NextEpisodeItem>>()
+    val upcomingEpisodesLiveData = MutableLiveData<List<EpisodeWithShow>>()
 
     val myShowsLiveData: LiveData<List<ShowItem>> = Transformations.map(collectionRepository.getCollectionGridItems()) {
         result -> result.map {
@@ -61,7 +62,7 @@ class HomeViewModel @Inject constructor(private val trendingShowsRepository: Tre
     }
 
     fun getUpcomingEpisodes() {
-        val disposable = episodesRepository.getNextEpisodes(3)
+        val disposable = episodesRepository.getUpcomingEpisodes()
                 .subscribeOn(rxSchedulers.io)
                 .observeOn(rxSchedulers.main)
                 .subscribe( { nextEpisodes ->

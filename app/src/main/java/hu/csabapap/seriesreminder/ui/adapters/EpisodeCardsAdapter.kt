@@ -7,7 +7,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import hu.csabapap.seriesreminder.R
-import hu.csabapap.seriesreminder.data.db.entities.NextEpisodeItem
+import hu.csabapap.seriesreminder.data.db.relations.EpisodeWithShow
 import hu.csabapap.seriesreminder.extensions.diffInDays
 import hu.csabapap.seriesreminder.extensions.diffInHours
 import hu.csabapap.seriesreminder.extensions.loadFromTmdbUrl
@@ -18,14 +18,14 @@ import org.threeten.bp.LocalDateTime
 class EpisodeCardsAdapter: RecyclerView.Adapter<EpisodeCardsAdapter.CardVH>() {
 
     interface EpisodeClickListener {
-        fun onItemClick(nextEpisode: NextEpisodeItem)
+        fun onItemClick(nextEpisode: EpisodeWithShow)
     }
 
     lateinit var context: Context
     lateinit var listener: EpisodeClickListener
-    var episodes: List<NextEpisodeItem> = emptyList()
+    var episodes: List<EpisodeWithShow> = emptyList()
 
-    fun updateItems(newItems: List<NextEpisodeItem>) {
+    fun updateItems(newItems: List<EpisodeWithShow>) {
         val diffResult = DiffUtil.calculateDiff(PreviewDiffs(newItems, episodes))
         episodes = newItems
         diffResult.dispatchUpdatesTo(this)
@@ -55,8 +55,8 @@ class EpisodeCardsAdapter: RecyclerView.Adapter<EpisodeCardsAdapter.CardVH>() {
 
 
     inner class CardVH(itemView: View): RecyclerView.ViewHolder(itemView) {
-        fun bind(nextEpisode: NextEpisodeItem) {
-            val episode = nextEpisode.episode ?: return
+        fun bind(nextEpisode: EpisodeWithShow) {
+            val episode = nextEpisode.episode
             val show = nextEpisode.show ?: return
             itemView.show_title.text = show.title
             itemView.title.text = episode.title
@@ -86,15 +86,15 @@ class EpisodeCardsAdapter: RecyclerView.Adapter<EpisodeCardsAdapter.CardVH>() {
         }
     }
 
-    inner class PreviewDiffs(private val newItems: List<NextEpisodeItem>,
-                             private val oldItems: List<NextEpisodeItem>)
+    inner class PreviewDiffs(private val newItems: List<EpisodeWithShow>,
+                             private val oldItems: List<EpisodeWithShow>)
         : DiffUtil.Callback() {
 
         override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
             val oldItem = oldItems[oldItemPosition]
             val newItem = newItems[newItemPosition]
 
-            return newItem.episode?.traktId == oldItem.episode?.traktId
+            return newItem.episode.traktId == oldItem.episode.traktId
         }
 
         override fun getOldListSize() = oldItems.size

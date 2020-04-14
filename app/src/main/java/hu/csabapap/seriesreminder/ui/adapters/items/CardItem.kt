@@ -3,6 +3,7 @@ package hu.csabapap.seriesreminder.ui.adapters.items
 import hu.csabapap.seriesreminder.data.db.entities.NextEpisodeItem
 import hu.csabapap.seriesreminder.data.db.entities.SREpisode
 import hu.csabapap.seriesreminder.data.db.entities.SRNextEpisode
+import hu.csabapap.seriesreminder.data.db.relations.EpisodeWithShow
 
 
 open class CardItem(val type: Int, private val priority: Int) : Comparable<CardItem> {
@@ -54,7 +55,7 @@ class DiscoverCardItem(
     : CardItem(type, priority)
 
 class UpcomingEpisodeCardItem(
-        val episodes: List<NextEpisodeItem>,
+        val episodes: List<EpisodeWithShow>,
         type: Int,
         priority: Int = CardItem.PRIORITY_HIGH)
     : CardItem(type, priority)
