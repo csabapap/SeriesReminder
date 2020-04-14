@@ -15,7 +15,6 @@ import androidx.palette.graphics.Palette
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import androidx.work.WorkManager
 import com.google.android.material.snackbar.Snackbar
 import com.squareup.picasso.Callback
 import com.squareup.picasso.Picasso
@@ -49,7 +48,6 @@ class ShowDetailsActivity : DaggerAppCompatActivity() {
     lateinit var viewModelProvider: ShowDetailsViewModelProvider
 
     private lateinit var viewModel: ShowDetailsViewModel
-    private lateinit var workManager: WorkManager
 
     lateinit var adapter: DiscoverPreviewAdapter
 
@@ -59,8 +57,6 @@ class ShowDetailsActivity : DaggerAppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_show_details)
-
-        workManager = WorkManager.getInstance()
 
         showId = intent.getIntExtra(ShowDetails.EXTRA_SHOW_ID, -1)
 
@@ -72,9 +68,8 @@ class ShowDetailsActivity : DaggerAppCompatActivity() {
         viewModel = ViewModelProviders.of(this, viewModelProvider)
                 .get(ShowDetailsViewModel::class.java)
 
-        back_button.setOnClickListener {
-            finish()
-        }
+        back_button.setOnClickListener { finish() }
+        toolbar.setNavigationOnClickListener { finish() }
 
         adapter = DiscoverPreviewAdapter(CardItem.TRENDING_CARD_TYPE)
         adapter.listener = object:DiscoverPreviewAdapter.PreviewShowListener{
@@ -161,10 +156,12 @@ class ShowDetailsActivity : DaggerAppCompatActivity() {
     private fun updateUiColors(swatch: Palette.Swatch) {
         swatch.apply {
             title_background.setBackgroundColor(rgb)
+            toolbar.setBackgroundColor(rgb)
             show_title.setTextColor(titleTextColor)
             status.setTextColor(titleTextColor)
             air_daytime.setTextColor(titleTextColor)
             cover.setBackgroundColor(rgb)
+            cover_overflow.setBackgroundColor(rgb)
         }
     }
 
@@ -186,6 +183,7 @@ class ShowDetailsActivity : DaggerAppCompatActivity() {
     private fun displayShow(show: SRShow) {
         show.let {
             show_title.text = it.title
+            toolbar.title = it.title
             overview.text = it.overview
             status.text = it.status
             val localDateTime = getAirDateTimeInCurrentTimeZone(LocalDateTime.now(), it.airingTime)
@@ -223,13 +221,10 @@ class ShowDetailsActivity : DaggerAppCompatActivity() {
                                 }
                             }
                         }
-
                         override fun onError() {
 
                         }
-
                     })
-
             val url = if (it.coverThumb.isEmpty()) {
                 getCoverUrl(it.tvdbId)
             } else {

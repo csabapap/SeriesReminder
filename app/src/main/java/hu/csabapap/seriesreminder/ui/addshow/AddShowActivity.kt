@@ -199,8 +199,7 @@ class AddShowActivity : DaggerAppCompatActivity() {
                     vibrant?.apply {
                         title_background.setBackgroundColor(rgb)
                         toolbar.setBackgroundColor(rgb)
-                        cover_overflow.setBackgroundColor(
-                                ColorUtils.setAlphaComponent(rgb, /* 30% */ 0x40))
+                        cover_overflow.setBackgroundColor(rgb)
                         show_title.setTextColor(titleTextColor)
                     }
                     val darkVibrant = it?.darkVibrantSwatch

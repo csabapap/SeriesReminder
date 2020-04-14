@@ -14,7 +14,7 @@
         <KeyFrameSet>
             <KeyAttribute
                 android:alpha="0"
-                app:framePosition="40"
+                app:framePosition="20"
                 app:target="@id/cover_overflow" />
             <KeyPosition
                 app:keyPositionType="deltaRelative"
@@ -54,6 +54,7 @@
             app:layout_constraintEnd_toEndOf="@id/cover"
             app:layout_constraintStart_toStartOf="@id/cover"
             app:layout_constraintTop_toTopOf="@id/cover"
+            app:transitionEasing="accelerate"
             android:alpha="0"/>
 
         <Constraint
