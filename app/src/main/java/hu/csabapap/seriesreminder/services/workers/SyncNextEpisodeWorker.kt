@@ -2,21 +2,17 @@ package hu.csabapap.seriesreminder.services.workers
 
 import android.annotation.SuppressLint
 import android.content.Context
-import androidx.work.*
+import androidx.work.ListenableWorker
+import androidx.work.Worker
+import androidx.work.WorkerParameters
 import hu.csabapap.seriesreminder.data.ShowsRepository
 import hu.csabapap.seriesreminder.data.db.entities.SRShow
-import hu.csabapap.seriesreminder.data.repositories.notifications.NotificationsRepository
 import hu.csabapap.seriesreminder.domain.CreateNotificationAlarmUseCase
 import hu.csabapap.seriesreminder.domain.GetNextEpisodeUseCase
 import hu.csabapap.seriesreminder.utils.Reminder
-import hu.csabapap.seriesreminder.utils.getAirDateTimeInCurrentTimeZone
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.rx2.await
-import org.threeten.bp.LocalDateTime
-import timber.log.Timber
-import java.util.*
-import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 class SyncNextEpisodeWorker(context: Context,
@@ -46,7 +42,7 @@ class SyncNextEpisodeWorker(context: Context,
     }
 
     @SuppressLint("RestrictedApi")
-    private fun createAlarm(show: SRShow) {
+    private suspend fun createAlarm(show: SRShow) {
         createNotificationAlarmUseCase.updateReminderAlarm(show.traktId)
     }
 

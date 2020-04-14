@@ -45,6 +45,7 @@ object AddShow {
 object Reminder {
     const val SHOW_ID = "show_id"
     const val SHOW_TITLE = "show_title"
+    const val EPISODE_ABS_NUMBER = "episode_abs_number"
 }
 
 object Collectible {

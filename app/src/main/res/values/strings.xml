@@ -35,6 +35,7 @@
 
     <!--episodes-->
     <string name="episode_title_with_numbers">S%02dE%02d - %s</string>
+    <string name="notification_episode_title_with_numbers">S%02dE%02d - %s is airing soon</string>
 
     <!-- Strings related to Settings -->
 

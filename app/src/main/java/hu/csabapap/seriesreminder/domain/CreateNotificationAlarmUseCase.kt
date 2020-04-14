@@ -3,11 +3,10 @@ package hu.csabapap.seriesreminder.domain
 import androidx.work.Data
 import androidx.work.OneTimeWorkRequest
 import androidx.work.WorkManager
-import androidx.work.WorkRequest
 import hu.csabapap.seriesreminder.data.ShowsRepository
-import hu.csabapap.seriesreminder.data.db.daos.NotificationsDao
 import hu.csabapap.seriesreminder.data.db.entities.SRShow
 import hu.csabapap.seriesreminder.data.db.entities.SrNotification
+import hu.csabapap.seriesreminder.data.repositories.episodes.EpisodesRepository
 import hu.csabapap.seriesreminder.data.repositories.notifications.NotificationsRepository
 import hu.csabapap.seriesreminder.services.workers.ShowReminderWorker
 import hu.csabapap.seriesreminder.services.workers.SyncNextEpisodeWorker
@@ -22,19 +21,22 @@ import javax.inject.Inject
 class CreateNotificationAlarmUseCase @Inject constructor(
         private val notificationsRepository: NotificationsRepository,
         private val showsRepository: ShowsRepository,
+        private val episodesRepository: EpisodesRepository,
         private val workManager: WorkManager
 ) {
-    fun createReminderAlarm(showId: Int, aheadOfTime: Int) {
+    suspend fun createReminderAlarm(showId: Int, aheadOfTime: Int) {
         val show = showsRepository.getShow(showId).blockingGet() ?: return
-        val requestId = createAlarm(show, aheadOfTime) ?: return
+        val upcomingEpisode = episodesRepository.getUpcomingEpisode(showId)
+        val requestId = createAlarm(show, upcomingEpisode.episode.absNumber, aheadOfTime) ?: return
         val notification = SrNotification(null, showId, aheadOfTime, requestId)
         notificationsRepository.createNotification(notification)
     }
 
-    fun updateReminderAlarm(showId: Int) {
+    suspend fun updateReminderAlarm(showId: Int) {
         val notification = notificationsRepository.getNotification(showId) ?: return
         val show = showsRepository.getShow(showId).blockingGet() ?: return
-        val requestId = createAlarm(show, notification.delay) ?: return
+        val upcomingEpisode = episodesRepository.getUpcomingEpisode(showId)
+        val requestId = createAlarm(show, upcomingEpisode.episode.absNumber, notification.delay) ?: return
         val updatedNotification = notification.copy(workerId = requestId)
         notificationsRepository.update(updatedNotification)
         Timber.d("notification alert created")
@@ -48,7 +50,7 @@ class CreateNotificationAlarmUseCase @Inject constructor(
         }
     }
 
-    private fun createAlarm(show: SRShow, aheadOfTime: Int): String? {
+    private fun createAlarm(show: SRShow, episodeNumber: Int, aheadOfTime: Int): String? {
         val airDateTime = getAirDateTimeInCurrentTimeZone(LocalDateTime.now(), show.airingTime)
         val calendar = Calendar.getInstance()
         calendar.set(Calendar.DAY_OF_MONTH, airDateTime.dayOfMonth)
@@ -66,6 +68,7 @@ class CreateNotificationAlarmUseCase @Inject constructor(
                         Data.Builder()
                                 .put(Reminder.SHOW_ID, show.traktId)
                                 .put(Reminder.SHOW_TITLE, show.title)
+                                .put(Reminder.EPISODE_ABS_NUMBER, episodeNumber)
                                 .build())
                 .build()
         val getNextEpisodeRequest = OneTimeWorkRequest.Builder(SyncNextEpisodeWorker::class.java)
