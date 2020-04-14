@@ -26,7 +26,7 @@ abstract class LastRequestDao {
     }
 
     fun isRequestAfter(lastRequest: LastRequest?, threshold: TemporalAmount): Boolean {
-        return !isRequestBefore(lastRequest, threshold)
+        return lastRequest?.timestamp?.isAfter(Instant.now().minus(threshold)) ?: false
     }
 
 }

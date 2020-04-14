@@ -32,6 +32,6 @@ interface NextEpisodeDao {
             " FROM episodes JOIN shows ON episodes.show_id = shows.trakt_id AND " +
             "episodes.abs_number = shows.next_episode " +
             "JOIN watched_episodes ON watched_episodes.show_id = shows.trakt_id " +
-            "GROUP BY shows.trakt_id ORDER BY watched_episodes.id DESC")
+            "GROUP BY shows.trakt_id ORDER BY watched_episodes.id DESC LIMIT 3")
     suspend fun getNextEpisodeInWatchList(): List<SRNextEpisode>
 }

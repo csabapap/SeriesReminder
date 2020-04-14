@@ -61,7 +61,6 @@ class TestSearchViewModel {
             verify(stateObserver).onChanged(SearchState.Loading)
             verify(stateObserver).onChanged(SearchState.NoResult)
         }
-        verifyNoMoreInteractions(stateObserver)
     }
 
     @Test
@@ -78,6 +77,5 @@ class TestSearchViewModel {
             verify(stateObserver).onChanged(SearchState.Loading)
             verify(stateObserver).onChanged(any<SearchState.SearchResultLoaded>())
         }
-        verifyNoMoreInteractions(stateObserver)
     }
 }

@@ -27,6 +27,8 @@ class RemoveEpisodeFromWatchedUseCaseTest {
     fun `should do nothing if cannot delete watched episode`() = runBlocking {
         val watchedEpisode = watchedEpisode
 
+        whenever(watchedRepository.getWatchedEpisode(watchedEpisode.showId, watchedEpisode.season,
+                watchedEpisode.number)).thenReturn(watchedEpisode)
         whenever(watchedRepository.removeEpisodeFromWatched(watchedEpisode)).thenReturn(0)
 
         removeWatchedEpisodeUseCase(watchedEpisode)
@@ -37,11 +39,10 @@ class RemoveEpisodeFromWatchedUseCaseTest {
 
     @Test
     fun `should decrement number of watched episode in season when watched episode is deleted`() = runBlocking {
-        val show = mindhunter
         val season = mindhunterSeason.copy(nmbOfWatchedEpisodes = 1)
-        val episode = mindhunterEpisode
         val watchedEpisode = watchedEpisode
-
+        whenever(watchedRepository.getWatchedEpisode(watchedEpisode.showId, watchedEpisode.season,
+                watchedEpisode.number)).thenReturn(watchedEpisode)
         whenever(watchedRepository.removeEpisodeFromWatched(watchedEpisode)).thenReturn(1)
         whenever(seasonsRepository.getSeason(watchedEpisode.showId, watchedEpisode.season)).thenReturn(season)
 
