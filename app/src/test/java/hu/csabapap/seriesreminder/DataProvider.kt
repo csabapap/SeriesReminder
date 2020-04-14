@@ -6,6 +6,7 @@ import hu.csabapap.seriesreminder.data.network.entities.Ids
 import hu.csabapap.seriesreminder.data.network.entities.SearchResult
 import hu.csabapap.seriesreminder.data.network.entities.TrendingShow
 import org.threeten.bp.OffsetDateTime
+import org.threeten.bp.ZoneOffset
 
 
 fun getSearchResult() = SearchResult(getShow())
@@ -92,7 +93,7 @@ val watchedEpisode = WatchedEpisode(
         season = 1,
         number = 1,
         episodeId = 1,
-        watchedAt = OffsetDateTime.now()
+        watchedAt = OffsetDateTime.of(2020, 3, 3, 12, 0, 0, 0, ZoneOffset.UTC)
 )
 
 val trendingShow1 = TrendingShow(123, theBoys)
