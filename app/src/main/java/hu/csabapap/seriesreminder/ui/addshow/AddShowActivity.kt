@@ -13,7 +13,6 @@ import android.os.Build
 import android.os.Bundle
 import android.view.View
 import androidx.constraintlayout.motion.widget.MotionLayout
-import androidx.core.graphics.ColorUtils
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -161,11 +160,10 @@ class AddShowActivity : DaggerAppCompatActivity() {
         toolbar.title = srShow.title
         show_title.text = srShow.title
         status.text = srShow.status
-        if (srShow.status == "ended") {
-            air_daytime.visibility = View.GONE
+        status.text = if (srShow.status == "ended") {
+            srShow.status
         } else {
-            air_daytime.text = String.format(getString(R.string.air_time), srShow.airingTime.day, srShow.airingTime.time)
-            air_daytime.visibility = View.VISIBLE
+            "${srShow.status} - ${String.format(getString(R.string.air_time), srShow.airingTime.day, srShow.airingTime.time)}"
         }
         tv_overview.text = srShow.overview
         ratings.text = String.format(getString(R.string.ratings_value), (srShow.rating * 10).toInt(), srShow.votes)
