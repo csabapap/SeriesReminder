@@ -11,6 +11,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.snackbar.Snackbar
 import dagger.android.support.DaggerFragment
 import hu.csabapap.seriesreminder.R
 import hu.csabapap.seriesreminder.data.db.entities.SRNextEpisode
@@ -87,6 +88,10 @@ class HomeFragment: DaggerFragment(),
 
             override fun onSetAsWatchedButtonClick(nextEpisode: SRNextEpisode) {
                 homeViewModel.setEpisodeWatched(nextEpisode)
+                val message = String.format(getString(R.string.episode_number), nextEpisode.season, nextEpisode.number) + " set as watched"
+                view?.let {
+                    Snackbar.make(it, message, Snackbar.LENGTH_SHORT).show()
+                }
             }
         }
 
