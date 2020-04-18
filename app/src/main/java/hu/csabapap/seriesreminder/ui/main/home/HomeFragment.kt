@@ -118,6 +118,7 @@ class HomeFragment: DaggerFragment(),
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         home_recycler_view.adapter = cardsAdapter
+        home_recycler_view.isNestedScrollingEnabled = false
         layoutManager = home_recycler_view.layoutManager as LinearLayoutManager
         layoutManager.orientation = RecyclerView.VERTICAL
     }

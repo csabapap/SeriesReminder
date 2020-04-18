@@ -2,6 +2,8 @@ package hu.csabapap.seriesreminder.inject.modules
 
 import android.app.AlarmManager
 import android.content.Context
+import android.content.SharedPreferences
+import androidx.preference.PreferenceManager
 import androidx.work.WorkManager
 import dagger.Module
 import dagger.Provides
@@ -54,8 +56,13 @@ class AppModule{
     }
 
     @Provides
-    fun provideWorkManager(): WorkManager {
-        return WorkManager.getInstance()
+    fun provideWorkManager(context: Context): WorkManager {
+        return WorkManager.getInstance(context)
+    }
+
+    @Provides
+    fun providePreferences(context: Context): SharedPreferences {
+        return PreferenceManager.getDefaultSharedPreferences(context)
     }
 
     @Singleton

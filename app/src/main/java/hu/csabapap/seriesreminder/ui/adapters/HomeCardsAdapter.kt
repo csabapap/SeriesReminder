@@ -37,6 +37,12 @@ class HomeCardsAdapter(private val listener: CardClickListener)
             val itemView = LayoutInflater.from(context).inflate(R.layout.item_home_header, parent, false)
             return HeaderVH(itemView)
         }
+
+        if (viewType == CardItem.FOOTER) {
+            val itemView = LayoutInflater.from(context).inflate(R.layout.item_home_footer, parent, false)
+            return HeaderVH(itemView)
+        }
+
         if (viewType == CardItem.POPULAR_CARD_TYPE || viewType == CardItem.TRENDING_CARD_TYPE || viewType == CardItem.MY_SHOWS_TYPE) {
             val itemView = LayoutInflater.from(context).inflate(R.layout.item_discover_card, parent, false)
             val discoverCardVH = DiscoverCardVH(itemView, viewType)
@@ -88,17 +94,21 @@ class HomeCardsAdapter(private val listener: CardClickListener)
         return episodeCardVH
     }
 
-    override fun getItemCount() = cardItems.size + 1
+    override fun getItemCount() = cardItems.size + 2
 
     override fun getItemViewType(position: Int): Int {
         if (position == 0) {
             return CardItem.HEADER
+        }
+        if (position == cardItems.size + 1) {
+            return CardItem.FOOTER
         }
         return cardItems[position-1].type
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         if (position == 0) return
+        if (position == cardItems.size + 1) return
         val card = cardItems[position-1]
         when (holder) {
             is DiscoverCardVH -> {

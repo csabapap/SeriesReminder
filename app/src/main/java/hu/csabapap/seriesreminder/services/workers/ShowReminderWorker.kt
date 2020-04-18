@@ -4,6 +4,7 @@ import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import androidx.core.app.NotificationCompat
 import androidx.work.CoroutineWorker
 import androidx.work.ListenableWorker
@@ -19,7 +20,10 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 import javax.inject.Inject
 
-class ShowReminderWorker(context: Context, workerParameters: WorkerParameters, val episodesRepository: EpisodesRepository)
+class ShowReminderWorker(context: Context,
+                         workerParameters: WorkerParameters,
+                         val episodesRepository: EpisodesRepository,
+                         private val sharedPreferences: SharedPreferences)
     : CoroutineWorker(context, workerParameters) {
 
     override suspend fun doWork(): Result {
@@ -27,6 +31,10 @@ class ShowReminderWorker(context: Context, workerParameters: WorkerParameters, v
         val showId = inputData.getInt(Reminder.SHOW_ID, -1)
         val title = inputData.getString(Reminder.SHOW_TITLE) ?: return Result.failure()
         val episodeAbsNumber = inputData.getInt(Reminder.EPISODE_ABS_NUMBER, -1)
+        val notificationEnabled = sharedPreferences.getBoolean("notifications", false)
+        if (!notificationEnabled) {
+            return Result.success()
+        }
         if (showId == -1) {
             return Result.failure()
         }
@@ -63,9 +71,11 @@ class ShowReminderWorker(context: Context, workerParameters: WorkerParameters, v
         notificationManager.notify(id, builder.build())
     }
 
-    class Factory @Inject constructor(private val episodesRepository: EpisodesRepository): ChildWorkerFactory {
+    class Factory @Inject constructor(
+            private val episodesRepository: EpisodesRepository,
+            private val sharedPreferences: SharedPreferences): ChildWorkerFactory {
         override fun create(appContext: Context, params: WorkerParameters): ListenableWorker {
-            return ShowReminderWorker(appContext, params, episodesRepository)
+            return ShowReminderWorker(appContext, params, episodesRepository, sharedPreferences)
         }
     }
 }

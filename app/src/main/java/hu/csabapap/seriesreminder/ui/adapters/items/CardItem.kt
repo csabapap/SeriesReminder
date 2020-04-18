@@ -1,7 +1,5 @@
 package hu.csabapap.seriesreminder.ui.adapters.items
 
-import hu.csabapap.seriesreminder.data.db.entities.NextEpisodeItem
-import hu.csabapap.seriesreminder.data.db.entities.SREpisode
 import hu.csabapap.seriesreminder.data.db.entities.SRNextEpisode
 import hu.csabapap.seriesreminder.data.db.relations.EpisodeWithShow
 
@@ -39,6 +37,7 @@ open class CardItem(val type: Int, private val priority: Int) : Comparable<CardI
         const val MY_SHOWS_TYPE = 3
         const val NEXT_EPISODES_TYPE = 4
         const val HEADER = 5
+        const val FOOTER = 6
 
         const val PRIORITY_POPULAR = 0
         const val PRIORITY_TRENDING = 1
