@@ -21,22 +21,4 @@
         android:layout_gravity="center"
         android:visibility="gone"/>
 
-<!--    <com.google.android.material.appbar.MaterialToolbar-->
-<!--        android:id="@+id/home_toolbar"-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="?attr/actionBarSize"-->
-<!--        android:background="@color/primaryLightColor"-->
-<!--        android:minHeight="?attr/actionBarSize"-->
-<!--        android:elevation="0dp"-->
-<!--        android:theme="@style/ThemeOverlay.AppCompat.Light">-->
-
-<!--        <TextView-->
-<!--            android:layout_width="wrap_content"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:text="@string/app_name"-->
-<!--            android:layout_gravity="center"-->
-<!--            android:textAppearance="@style/TextAppearance.AppCompat.Widget.ActionBar.Title"/>-->
-
-<!--    </com.google.android.material.appbar.MaterialToolbar>-->
-
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

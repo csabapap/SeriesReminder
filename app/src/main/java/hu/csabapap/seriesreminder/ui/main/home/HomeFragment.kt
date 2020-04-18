@@ -153,13 +153,13 @@ class HomeFragment: DaggerFragment(),
     private fun updateState(state: HomeViewState) {
         Timber.d("view state: $state")
         when (state) {
-            DisplayTrendingLoader -> cardsAdapter.addCard(DiscoverCardItem(getString(R.string.trending_shows), emptyList(),
+            DisplayTrendingLoader -> cardsAdapter.addCard(DiscoverCardItem(getString(R.string.title_trending), emptyList(),
                     CardItem.TRENDING_CARD_TYPE, CardItem.PRIORITY_TRENDING))
-            DisplayPopularLoader -> cardsAdapter.addCard(DiscoverCardItem(getString(R.string.popular_shows), emptyList(),
+            DisplayPopularLoader -> cardsAdapter.addCard(DiscoverCardItem(getString(R.string.title_popular), emptyList(),
                     CardItem.POPULAR_CARD_TYPE, CardItem.PRIORITY_POPULAR))
-            is TrendingState -> cardsAdapter.addCard(DiscoverCardItem(getString(R.string.trending_shows),
+            is TrendingState -> cardsAdapter.addCard(DiscoverCardItem(getString(R.string.title_trending),
                     state.items, CardItem.TRENDING_CARD_TYPE, CardItem.PRIORITY_TRENDING))
-            is PopularState -> cardsAdapter.addCard(DiscoverCardItem(getString(R.string.popular_shows),
+            is PopularState -> cardsAdapter.addCard(DiscoverCardItem(getString(R.string.title_popular),
                     state.items, CardItem.POPULAR_CARD_TYPE, CardItem.PRIORITY_POPULAR))
             is MyShowsState -> Timber.d("display shows for popular shows")
             is NextEpisodesState -> cardsAdapter.addCard(NextEpisodesCardItem(state.episodes, CardItem.NEXT_EPISODES_TYPE))
