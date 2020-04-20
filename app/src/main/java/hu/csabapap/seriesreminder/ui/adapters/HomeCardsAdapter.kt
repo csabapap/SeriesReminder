@@ -151,7 +151,7 @@ class HomeCardsAdapter(private val listener: CardClickListener)
             }
 
             if (discoverCardItem.type == CardItem.MY_SHOWS_TYPE) {
-                itemView.more_btn.visibility = View.GONE
+                itemView.more_btn.text = context.getString(R.string.show_all)
                 itemView.rv_shows.layoutManager?.scrollToPosition(0)
             }
 

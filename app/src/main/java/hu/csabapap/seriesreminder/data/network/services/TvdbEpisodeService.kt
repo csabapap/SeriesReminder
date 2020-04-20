@@ -9,9 +9,6 @@ import retrofit2.http.Path
 interface TvdbEpisodeService {
 
     @GET("/episodes/{id}")
-    fun episodeSingle(@Path("id") id: Int): Single<EpisodeData>
-
-    @GET("/episodes/{id}")
     suspend fun episode(@Path("id") id: Int): EpisodeData
 
     @GET("/episodes/{id}")

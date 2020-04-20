@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
+import com.squareup.picasso.Callback
 import hu.csabapap.seriesreminder.R
 import hu.csabapap.seriesreminder.data.db.relations.EpisodeWithShow
 import hu.csabapap.seriesreminder.extensions.diffInDays
@@ -81,7 +82,15 @@ class EpisodeCardsAdapter: RecyclerView.Adapter<EpisodeCardsAdapter.CardVH>() {
                         itemView.airs_in_text.text = "in less then an hour"
                     }
                 }
-                itemView.show_poster.loadFromTmdbUrl(tvdbId)
+                itemView.show_poster.loadFromTmdbUrl(tvdbId, R.drawable.placeholder_bg, object: Callback {
+                    override fun onSuccess() {
+
+                    }
+
+                    override fun onError() {
+
+                    }
+                })
             }
         }
     }

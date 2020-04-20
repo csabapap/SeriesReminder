@@ -8,6 +8,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 import dagger.android.support.DaggerAppCompatActivity
 import hu.csabapap.seriesreminder.R
 import hu.csabapap.seriesreminder.data.db.entities.SRShow
+import hu.csabapap.seriesreminder.ui.adapters.items.CardItem
 import hu.csabapap.seriesreminder.ui.main.collection.CollectionFragment
 import hu.csabapap.seriesreminder.ui.main.home.HomeFragment
 import hu.csabapap.seriesreminder.ui.search.SearchFragment
@@ -29,6 +30,9 @@ class HomeActivity : DaggerAppCompatActivity(), HomeFragment.HomeFragmentListene
     }
 
     override fun onMoreButtonClick(type: Int) {
+        if (type == CardItem.MY_SHOWS_TYPE) {
+//            startActivity(Intent(this, CollecAc))
+        }
         val args = bundleOf(SearchFragment.ARG_DISCOVER_TYPE to type)
         findNavController(R.id.nav_host_fragment).navigate(R.id.navigation_menu_search, args)
         navView.menu.findItem(R.id.navigation_menu_search).isChecked = true

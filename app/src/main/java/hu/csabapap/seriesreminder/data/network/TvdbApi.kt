@@ -88,10 +88,6 @@ class TvdbApi {
         return retrofit.create(TvdbImagesService::class.java).imagesSingle(tvdbId, type)
     }
 
-    fun episodeSingle(tvdbId: Int): Single<EpisodeData>{
-        return retrofit.create(TvdbEpisodeService::class.java).episodeSingle(tvdbId)
-    }
-
     suspend fun episode(tvdbId: Int): EpisodeData{
         return retrofit.create(TvdbEpisodeService::class.java).episode(tvdbId)
     }

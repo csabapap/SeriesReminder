@@ -5,6 +5,8 @@ import hu.csabapap.seriesreminder.data.network.TvdbApi
 import hu.csabapap.seriesreminder.data.network.entities.Episode
 import hu.csabapap.seriesreminder.data.network.services.EpisodesService
 import org.threeten.bp.OffsetDateTime
+import timber.log.Timber
+import java.lang.Exception
 import javax.inject.Inject
 
 class RemoteEpisodesDataSource @Inject constructor(
@@ -14,8 +16,13 @@ class RemoteEpisodesDataSource @Inject constructor(
     suspend fun getEpisode(showId: Int, seasonNumber: Int, episodeNumber: Int) : SREpisode {
         val episode = episodesService.episode(showId, seasonNumber, episodeNumber)
         val srEpisode = mapToSREpisode(episode, showId)
-        val images = tvdbApi.episode(episode.ids.tvdb)
-        return srEpisode.copy(image = images.data.filename)
+        try {
+            val images = tvdbApi.episode(episode.ids.tvdb)
+            return srEpisode.copy(image = images.data.filename)
+        } catch (e: Exception) {
+            Timber.e(e)
+        }
+        return srEpisode
     }
 
     private fun mapToSREpisode(episode: Episode, showId: Int) : SREpisode {

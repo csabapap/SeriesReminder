@@ -22,4 +22,9 @@
         android:name="hu.csabapap.seriesreminder.ui.settings.SRSettingsFragment"
         android:label="@string/settings"
         tools:layout="@layout/activity_settings" />
+
+    <fragment
+        android:id="@+id/collection_fragment"
+        android:name="hu.csabapap.seriesreminder.ui.main.collection.CollectionFragment"
+        tools:layout="@layout/fragment_collection" />
 </navigation>

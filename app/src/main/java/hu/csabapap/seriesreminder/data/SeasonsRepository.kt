@@ -1,11 +1,9 @@
 package hu.csabapap.seriesreminder.data
 
 import androidx.lifecycle.LiveData
-import hu.csabapap.seriesreminder.BuildConfig
 import hu.csabapap.seriesreminder.data.db.daos.SeasonsDao
 import hu.csabapap.seriesreminder.data.db.entities.SREpisode
 import hu.csabapap.seriesreminder.data.db.entities.SRSeason
-import hu.csabapap.seriesreminder.data.db.relations.SeasonWithEpisodes
 import hu.csabapap.seriesreminder.data.exceptions.ItemNotFoundException
 import hu.csabapap.seriesreminder.data.network.TraktApi
 import hu.csabapap.seriesreminder.data.network.TvdbApi
@@ -13,6 +11,7 @@ import hu.csabapap.seriesreminder.data.network.entities.Image
 import hu.csabapap.seriesreminder.data.network.entities.Season
 import hu.csabapap.seriesreminder.data.repositories.episodes.EpisodesRepository
 import kotlinx.coroutines.rx2.await
+import timber.log.Timber
 import javax.inject.Inject
 
 class SeasonsRepository @Inject constructor(private val seasonsDao: SeasonsDao,
@@ -21,7 +20,13 @@ class SeasonsRepository @Inject constructor(private val seasonsDao: SeasonsDao,
                                             private val episodesRepository: EpisodesRepository) {
 
     suspend fun getSeasonImages(tvdbId: Int): Map<String, Image?> {
-        val images = tvdbApi.images(tvdbId, "season")
+
+        val images = try {
+            tvdbApi.images(tvdbId, "season")
+        } catch (e: Exception) {
+            Timber.e(e)
+            null
+        }
         if (images != null) {
             return images.data.groupBy {
                 it.subKey
@@ -32,10 +37,6 @@ class SeasonsRepository @Inject constructor(private val seasonsDao: SeasonsDao,
 
     suspend fun getSeasonsFromDb(showId: Int): List<SRSeason>? {
         return seasonsDao.getSeasons(showId)
-    }
-
-    suspend fun getSeasonByNumber(showId: Int, number: Int): SRSeason? {
-        return seasonsDao.getSeason(showId, number)
     }
 
     suspend fun getSeasonsFromWeb(showId: Int): List<SRSeason>? {
@@ -87,9 +88,4 @@ class SeasonsRepository @Inject constructor(private val seasonsDao: SeasonsDao,
 
         seasonsDao.upsert(seasonsToSave)
     }
-
-    suspend fun getSeasonWithEpisodes(showId: Int, seasonNumber: Int): SeasonWithEpisodes? {
-        return seasonsDao.getSeasonWithEpisodes(showId, seasonNumber)
-    }
-
 }

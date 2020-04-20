@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.squareup.picasso.Callback
 import com.squareup.picasso.Picasso
 import hu.csabapap.seriesreminder.R
 import hu.csabapap.seriesreminder.data.db.entities.SRNextEpisode
@@ -13,6 +14,7 @@ import kotlinx.android.synthetic.main.item_episode_card.view.episode_info
 import kotlinx.android.synthetic.main.item_episode_card.view.show_poster
 import kotlinx.android.synthetic.main.item_episode_card.view.title
 import kotlinx.android.synthetic.main.item_next_episode.view.*
+import timber.log.Timber
 
 class NextEpisodesAdapter: RecyclerView.Adapter<NextEpisodesAdapter.NextEpisodeVH>() {
 
@@ -71,7 +73,15 @@ class NextEpisodesAdapter: RecyclerView.Adapter<NextEpisodesAdapter.NextEpisodeV
             itemView.show_title.text = nextEpisode.showTitle
             Picasso.with(context)
                     .load(getThumbnailUrl(nextEpisode.poster))
-                    .into(itemView.show_poster)
+                    .into(itemView.show_poster, object: Callback {
+                        override fun onSuccess() {
+                            Timber.d("success")
+                        }
+
+                        override fun onError() {
+                            Timber.d("error")
+                        }
+                    })
         }
     }
 }
