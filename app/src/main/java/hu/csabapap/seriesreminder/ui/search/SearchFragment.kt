@@ -29,6 +29,7 @@ import hu.csabapap.seriesreminder.utils.Search
 import hu.csabapap.seriesreminder.utils.ShowDetails
 import hu.csabapap.seriesreminder.utils.hideKeyboard
 import kotlinx.android.synthetic.main.fragment_search.*
+import timber.log.Timber
 import javax.inject.Inject
 import javax.inject.Named
 
@@ -71,11 +72,11 @@ class SearchFragment : DaggerFragment(), SearchResultAdapter.SearchItemClickList
             it.adapter = adapter
         }
         searchViewModel.searchState.observe(this,
-                Observer<SearchState> { state ->
+                Observer { state ->
                     when(state) {
                         is SearchState.Loading -> displayLoader()
                         is SearchState.SearchResultLoaded -> displaySearchResult(state.result)
-                        SearchState.NoResult -> TODO()
+                        SearchState.NoResult -> Timber.d("no result")// do nothing
                         SearchState.HideDiscoverContent -> hideDiscoverContent()
                     }.exhaustive
                 })

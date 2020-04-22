@@ -4,6 +4,7 @@ import hu.csabapap.seriesreminder.data.CollectionRepository
 import hu.csabapap.seriesreminder.data.SeasonsRepository
 import hu.csabapap.seriesreminder.data.ShowsRepository
 import hu.csabapap.seriesreminder.data.db.entities.CollectionEntry
+import hu.csabapap.seriesreminder.data.db.entities.SRSeason
 import hu.csabapap.seriesreminder.data.network.TvdbApi
 import hu.csabapap.seriesreminder.data.repositories.episodes.EpisodesRepository
 import hu.csabapap.seriesreminder.data.repositories.nextepisodes.NextEpisodesRepository
@@ -70,7 +71,9 @@ class DownloadShowTask(private val showId: Int): Task {
             }
 
             if (seasonsFromWeb == null) return
-            val episodes = seasonsFromWeb.map { season ->
+            val seasonsWithCheckedAbsNumber = setEpisodeAbsNumberIfNotExists(seasonsFromWeb)
+
+            val episodes = seasonsWithCheckedAbsNumber.map { season ->
                 season.episodes
             }
                     .flatten()
@@ -87,5 +90,24 @@ class DownloadShowTask(private val showId: Int): Task {
             Timber.d("seasons: $seasons")
             nextEpisodesRepository.fetchAndSaveNextEpisode(newShow.traktId)
         }
+    }
+
+    fun setEpisodeAbsNumberIfNotExists(seasons: List<SRSeason>): List<SRSeason> {
+        var absNumber = 0
+        return seasons.sortedBy { season -> season.number }
+                .map {season ->
+                    if (season.number == 0) return@map season
+
+                    season.episodes = season.episodes.sortedBy { episode -> episode.number }
+                            .map episodeMap@{ episode ->
+                                absNumber += 1
+                                return@episodeMap if (episode.absNumber == 0) {
+                                    episode.copy(absNumber = absNumber)
+                                } else {
+                                    episode
+                                }
+                            }
+                    season
+                }
     }
 }
