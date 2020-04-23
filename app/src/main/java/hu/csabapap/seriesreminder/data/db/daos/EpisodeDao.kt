@@ -37,7 +37,7 @@ abstract class EpisodeDao {
     abstract fun getUpcomingEpisodes(limit: Int) : Flowable<List<EpisodeWithShow>>
 
     @Query("SELECT * FROM episodes LEFT JOIN shows ON episodes.show_id = shows.trakt_id WHERE show_id = :showId AND datetime(episodes.first_aired) > datetime('now') ORDER BY datetime(episodes.first_aired) LIMIT 1")
-    abstract suspend fun getUpcomingEpisode(showId: Int): EpisodeWithShow
+    abstract suspend fun getUpcomingEpisode(showId: Int): EpisodeWithShow?
 
     @Transaction
     open fun upsert(episode: SREpisode) {

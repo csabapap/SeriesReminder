@@ -26,7 +26,7 @@ class CreateNotificationAlarmUseCase @Inject constructor(
 ) {
     suspend fun createReminderAlarm(showId: Int, aheadOfTime: Int) {
         val show = showsRepository.getShow(showId).blockingGet() ?: return
-        val upcomingEpisode = episodesRepository.getUpcomingEpisode(showId)
+        val upcomingEpisode = episodesRepository.getUpcomingEpisode(showId) ?: return
         val requestId = createAlarm(show, upcomingEpisode.episode.absNumber, aheadOfTime) ?: return
         val notification = SrNotification(null, showId, aheadOfTime, requestId)
         notificationsRepository.createNotification(notification)
@@ -35,7 +35,7 @@ class CreateNotificationAlarmUseCase @Inject constructor(
     suspend fun updateReminderAlarm(showId: Int) {
         val notification = notificationsRepository.getNotification(showId) ?: return
         val show = showsRepository.getShow(showId).blockingGet() ?: return
-        val upcomingEpisode = episodesRepository.getUpcomingEpisode(showId)
+        val upcomingEpisode = episodesRepository.getUpcomingEpisode(showId) ?: return
         val requestId = createAlarm(show, upcomingEpisode.episode.absNumber, notification.delay) ?: return
         val updatedNotification = notification.copy(workerId = requestId)
         notificationsRepository.update(updatedNotification)
