@@ -9,6 +9,7 @@ import hu.csabapap.seriesreminder.data.network.TvdbApi
 import hu.csabapap.seriesreminder.data.network.getFullSizeUrl
 import hu.csabapap.seriesreminder.data.network.getThumbnailUrl
 import hu.csabapap.seriesreminder.data.repositories.episodes.EpisodesRepository
+import timber.log.Timber
 import javax.inject.Inject
 
 
@@ -23,13 +24,14 @@ class TvdbRequestHandler @Inject constructor(private val tvdbApi: TvdbApi,
 
     override fun load(request: Request?, networkPolicy: Int): Result? {
         val uri = request?.uri ?: return null
-        val type = uri.host
-        val tvdbId = uri.getQueryParameter("id").toInt()
+        val type = uri.host ?: return null
+        val tvdbId = uri.getQueryParameter("id")?.toInt() ?: return null
         if (type == "screen") {
             return downloadScreen(tvdbId, networkPolicy)
         }
-        val response = tvdbApi.imagesCall(tvdbId, type).execute().body()
-        response?.let {
+        val response = tvdbApi.imagesCall(tvdbId, type).execute()
+        val responseBody = response.body()
+        responseBody?.let {
             val popularImage = it.data.maxBy { image ->
                 image.ratingsInfo.average
             }
@@ -46,7 +48,6 @@ class TvdbRequestHandler @Inject constructor(private val tvdbApi: TvdbApi,
                     Uri.parse(imageUrl),
                     networkPolicy)
         }
-
         return null
     }
 

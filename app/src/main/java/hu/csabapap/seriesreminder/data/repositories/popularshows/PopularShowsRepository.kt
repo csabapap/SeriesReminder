@@ -45,7 +45,7 @@ class PopularShowsRepository @Inject constructor(private val localPopularDataSou
             val popularShows = result.data
             val popularItems = popularShows.map {
                 async {
-                    val show = showsRepository.getShowWithImages(it.ids.trakt, it.ids.tvdb).await()
+                    val show = showsRepository.getShowWithImages(it.ids.trakt, it.ids.tvdb)
                     if (show != null) {
                         return@async mapToSRPopularItem(show.traktId, 0)
                     } else {
@@ -71,7 +71,7 @@ class PopularShowsRepository @Inject constructor(private val localPopularDataSou
         if (result is Result.Success) {
             val popularShows = result.data
             val popularShowItems = popularShows.map {
-                showsRepository.getShowWithImages(it.ids.trakt, it.ids.tvdb).await()
+                showsRepository.getShowWithImages(it.ids.trakt, it.ids.tvdb)
                 mapToSRPopularItem(it.ids.trakt, page)
             }
             localPopularDataSource.insertShows(page, popularShowItems)

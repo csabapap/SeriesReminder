@@ -136,6 +136,7 @@
             android:layout_height="149dp"
             android:layout_marginStart="8dp"
             android:contentDescription="@null"
+            android:background="@drawable/placeholder_bg"
             app:layout_constraintBottom_toBottomOf="@+id/title_background"
             app:layout_constraintStart_toStartOf="parent" />
 

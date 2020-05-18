@@ -35,7 +35,10 @@ interface ShowsService{
                      @Query("limit") limit: Int): Result<List<Show>>
 
     @GET("shows/{id}?extended=full")
-    fun show(@Path("id") traktId: Int) : Single<Show>
+    fun showSingle(@Path("id") traktId: Int) : Single<Show>
+
+    @GET("shows/{id}?extended=full")
+    suspend fun show(@Path("id") traktId: Int) : Response<Show>
 
     @GET("shows/{id}/next_episode")
     fun nextEpisode(@Path("id") traktId: Int) : Deferred<Response<NextEpisode>>

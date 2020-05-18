@@ -1,18 +1,15 @@
 package hu.csabapap.seriesreminder.data
 
-import hu.csabapap.seriesreminder.data.db.daos.LastRequestDao
 import hu.csabapap.seriesreminder.data.db.daos.SRShowDao
-import hu.csabapap.seriesreminder.data.db.entities.*
+import hu.csabapap.seriesreminder.data.db.entities.AiringTime
+import hu.csabapap.seriesreminder.data.db.entities.SRShow
 import hu.csabapap.seriesreminder.data.network.TraktApi
 import hu.csabapap.seriesreminder.data.network.TvdbApi
 import hu.csabapap.seriesreminder.data.network.entities.Image
 import hu.csabapap.seriesreminder.data.network.entities.Show
+import hu.csabapap.seriesreminder.utils.safeApiCall
 import io.reactivex.Flowable
 import io.reactivex.Maybe
-import io.reactivex.Single
-import io.reactivex.functions.BiFunction
-import org.threeten.bp.Duration
-import org.threeten.bp.Instant
 import org.threeten.bp.OffsetDateTime
 import timber.log.Timber
 import javax.inject.Inject
@@ -21,8 +18,7 @@ import javax.inject.Singleton
 @Singleton
 class ShowsRepository @Inject constructor(private val traktApi: TraktApi,
                                           private val tvdbApi: TvdbApi,
-                                          private val showDao: SRShowDao,
-                                          private val requestDao: LastRequestDao){
+                                          private val showDao: SRShowDao){
 
     fun getShow(traktId: Int) : Maybe<SRShow> {
         val showFromDb = showDao.getShowMaybe(traktId)
@@ -32,26 +28,19 @@ class ShowsRepository @Inject constructor(private val traktApi: TraktApi,
         return Maybe.concat(showFromDb, fromWeb).firstElement()
     }
 
-    fun getShowWithImages(traktId: Int, tvdbId: Int): Maybe<SRShow> {
-        val showFromDb = showDao.getShowMaybe(traktId)
-
-        val fromWeb = Maybe.fromCallable {
-            val lastRequest = requestDao.getLastRequestById(traktId, Request.SHOW_DETAILS)
-            if (requestDao.isRequestBefore(lastRequest, Duration.ofHours(4))) {
-                Maybe.just(true)
-            } else {
-                Maybe.empty()
-            }
-        }.flatMap {
-            requestDao.insert(LastRequest(0L, traktId,
-                    Request.SHOW_DETAILS, Instant.now()))
-            getShowFromWebWithImages(traktId, tvdbId).toMaybe()
-                    .doOnSuccess { show ->
-                        insertOrUpdateShow(show)
-                    }
+    suspend fun getShowWithImages(traktId: Int, tvdbId: Int): SRShow? {
+        val showFromDb = showDao.getShow(traktId)
+        if (showFromDb != null) {
+            return showFromDb
         }
+        val showResult = getShowFromWebWithImages(traktId, tvdbId)
 
-        return Maybe.concat(showFromDb, fromWeb).firstElement()
+        if (showResult is Result.Success) {
+            val show = showResult.data
+            insertOrUpdateShow(show)
+            return show
+        }
+        return null
     }
 
     fun insertShow(show: SRShow) {
@@ -64,24 +53,22 @@ class ShowsRepository @Inject constructor(private val traktApi: TraktApi,
     }
 
     private fun getShowFromWeb(traktId: Int) : Flowable<SRShow>{
-        return traktApi.show(traktId)
+        return traktApi.showSingle(traktId)
                 .toFlowable()
                 .flatMap {
                     Flowable.just(mapToSRShow(it))
                 }
     }
 
-    private fun getShowFromWebWithImages(traktId: Int, tvdbId: Int): Single<SRShow> {
-        val showSingle = traktApi.show(traktId)
-        val imagesSingle = tvdbApi.imagesSingle(tvdbId)
-                .map {
-                    it.data.maxBy { image ->
-                        image.ratingsInfo.average
-                    }
-                }
-        return showSingle.zipWith(imagesSingle, BiFunction { show, image ->
-            mapToSRShow(show, image)
-        })
+    private suspend fun getShowFromWebWithImages(traktId: Int, tvdbId: Int): Result<SRShow> {
+        return safeApiCall({
+            val show = traktApi.show(traktId).body()!!
+            val images = tvdbApi.images(tvdbId)
+            val bestVotedImage = images?.data?.maxBy { image ->
+                image.ratingsInfo.average
+            }
+            return@safeApiCall Result.Success(mapToSRShow(show, bestVotedImage))
+        }, "error during get show with images, trakt id: $traktId, tvdb id: $tvdbId")
     }
 
     private fun mapToSRShow(show : Show, images: Image? = null) : SRShow {

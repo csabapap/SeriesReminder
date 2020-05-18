@@ -19,7 +19,7 @@ class RelatedShowsRepository @Inject constructor(
         val relatedShows = mutableListOf<RelatedShow>()
         for (remoteRelatedShow in remoteRelatedShows) {
             try {
-                val show = showsRepository.getShowWithImages(remoteRelatedShow.ids.trakt, remoteRelatedShow.ids.tvdb).await()
+                val show = showsRepository.getShowWithImages(remoteRelatedShow.ids.trakt, remoteRelatedShow.ids.tvdb)
                 show?.let {
                     showsRepository.insertShow(it)
                 }

@@ -25,7 +25,6 @@ class GetSearchResultUseCase @Inject constructor(private val searchRepository: S
                                 .flatMap {
                                     val srSearchResult = mutableListOf<SrSearchResult>()
                                     searchResult.forEach { item ->
-                                        System.out.println("adding item")
                                         srSearchResult.add(SrSearchResult(item.show, it.contains(item.show.ids.trakt)))
                                     }
                                     Single.just(srSearchResult)

@@ -20,6 +20,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import timber.log.Timber
+import java.lang.Exception
 
 class SearchViewModel(private val getSearchResultUseCase: GetSearchResultUseCase,
                       private val trendingShowsRepository: TrendingShowsRepository,
@@ -54,10 +55,14 @@ class SearchViewModel(private val getSearchResultUseCase: GetSearchResultUseCase
                 .subscribeOn(schedulers.io())
                 .observeOn(schedulers.ui())
                 .subscribe({
-                    if (it.isEmpty()) {
-                        searchState.value = SearchState.NoResult
-                    } else {
-                        searchState.value = SearchState.SearchResultLoaded(it)
+                    try {
+                        if (it.isEmpty()) {
+                            searchState.value = SearchState.NoResult
+                        } else {
+                            searchState.value = SearchState.SearchResultLoaded(it)
+                        }
+                    } catch (e: Exception) {
+                        Timber.e(e)
                     }
                 }, {
                     Timber.e(it)
@@ -72,29 +77,5 @@ class SearchViewModel(private val getSearchResultUseCase: GetSearchResultUseCase
         if (job.isActive) {
             job.cancel()
         }
-    }
-
-    private val trendingShowsResult: LiveData<TrendingShowsResult> = Transformations.map(loadTrendingShows) {
-        trendingShowsRepository.getTrendingShows(60)
-    }
-
-    private val popularShowsResult: LiveData<PopularShowsResult> = Transformations.map(loadPopularShows) {
-        popularShowsRepository.getPopularShows(60)
-    }
-
-    val trendingShows: LiveData<PagedList<TrendingGridItem>> = Transformations.switchMap(trendingShowsResult) {
-        it.data
-    }
-
-    val popularShows: LiveData<PagedList<PopularGridItem>> = Transformations.switchMap(popularShowsResult) {
-        it.data
-    }
-
-    private fun loadTrendingShows() {
-        loadTrendingShows.value = true
-    }
-
-    private fun loadPopularShows() {
-        loadPopularShows.value = true
     }
 }

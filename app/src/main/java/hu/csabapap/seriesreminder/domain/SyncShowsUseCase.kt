@@ -39,7 +39,7 @@ class SyncShowsUseCase @Inject constructor(val showsRepository: ShowsRepository,
             collectionItems.map {collectionItem ->
                 val show = collectionItem.show ?: return@map null
                 async {
-                    showsRepository.getShowWithImages(show.traktId, show.tvdbId).await()
+                    showsRepository.getShowWithImages(show.traktId, show.tvdbId)
 
                     val seasons = seasonsRepository.getSeasonsFromDb(show.traktId)
                     val seasonsFromWeb = seasonsRepository.getSeasonsFromWeb(show.traktId)

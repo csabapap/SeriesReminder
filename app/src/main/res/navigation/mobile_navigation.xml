@@ -9,7 +9,11 @@
         android:id="@+id/navigation_home"
         android:name="hu.csabapap.seriesreminder.ui.main.home.HomeFragment"
         android:label="@string/title_home"
-        tools:layout="@layout/fragment_home" />
+        tools:layout="@layout/fragment_home" >
+        <action
+            android:id="@+id/action_navigation_home_to_collection_fragment"
+            app:destination="@id/collection_fragment" />
+    </fragment>
 
     <fragment
         android:id="@+id/navigation_menu_search"

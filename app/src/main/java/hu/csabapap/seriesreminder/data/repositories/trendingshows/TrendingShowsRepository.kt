@@ -62,7 +62,7 @@ class TrendingShowsRepository @Inject constructor(
 
         val trendingItems = trendingShows.map {
             async {
-                showsRepository.getShowWithImages(it.show.ids.trakt, it.show.ids.tvdb).await()
+                showsRepository.getShowWithImages(it.show.ids.trakt, it.show.ids.tvdb)
                 mapToSRTrendingShow(it.show.ids.trakt, it.watchers, 1)
             }
         }.awaitAll()
@@ -83,7 +83,7 @@ class TrendingShowsRepository @Inject constructor(
 
         val srTrendingItems = trendingShows
                 .map {
-                    showsRepository.getShowWithImages(it.show.ids.trakt, it.show.ids.tvdb).await()
+                    showsRepository.getShowWithImages(it.show.ids.trakt, it.show.ids.tvdb)
                     mapToSRTrendingShow(it.show.ids.trakt, it.watchers, lastPage)
                 }
         localTrendingDataSource.insertShows(lastPage, srTrendingItems)

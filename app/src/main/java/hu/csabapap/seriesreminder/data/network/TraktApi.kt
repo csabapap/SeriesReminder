@@ -13,7 +13,11 @@ import retrofit2.Retrofit
 
 class TraktApi(private val retrofit: Retrofit) {
 
-    fun show(traktId: Int) : Single<Show>{
+    fun showSingle(traktId: Int) : Single<Show>{
+        return retrofit.create(ShowsService::class.java).showSingle(traktId)
+    }
+
+    suspend fun show(traktId: Int) : Response<Show>{
         return retrofit.create(ShowsService::class.java).show(traktId)
     }
 

@@ -31,9 +31,15 @@ class HomeActivity : DaggerAppCompatActivity(), HomeFragment.HomeFragmentListene
 
     override fun onMoreButtonClick(type: Int) {
         if (type == CardItem.MY_SHOWS_TYPE) {
-//            startActivity(Intent(this, CollecAc))
+            findNavController(R.id.nav_host_fragment).navigate(R.id.action_navigation_home_to_collection_fragment)
+            return
         }
-        val args = bundleOf(SearchFragment.ARG_DISCOVER_TYPE to type)
+        val searchType = if (type == CardItem.TRENDING_CARD_TYPE) {
+            SearchFragment.TYPE_TRENDING
+        } else {
+            SearchFragment.TYPE_POPULAR
+        }
+        val args = bundleOf(SearchFragment.ARG_DISCOVER_TYPE to searchType)
         findNavController(R.id.nav_host_fragment).navigate(R.id.navigation_menu_search, args)
         navView.menu.findItem(R.id.navigation_menu_search).isChecked = true
     }

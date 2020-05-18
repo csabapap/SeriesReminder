@@ -20,7 +20,7 @@ class SeasonsRepository @Inject constructor(private val seasonsDao: SeasonsDao,
                                             private val episodesRepository: EpisodesRepository) {
 
     suspend fun getSeasonImages(tvdbId: Int): Map<String, Image?> {
-
+        Timber.d("getSeasonsImages")
         val images = try {
             tvdbApi.images(tvdbId, "season")
         } catch (e: Exception) {
@@ -40,6 +40,7 @@ class SeasonsRepository @Inject constructor(private val seasonsDao: SeasonsDao,
     }
 
     suspend fun getSeasonsFromWeb(showId: Int): List<SRSeason>? {
+        Timber.d("getSeasonsFromWeb")
         val seasons = traktApi.seasons(showId).await() ?: emptyList()
         return seasons.map {
             mapToSRSeasons(it, showId)
