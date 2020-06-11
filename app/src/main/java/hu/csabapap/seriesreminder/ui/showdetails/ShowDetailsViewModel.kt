@@ -6,12 +6,12 @@ import androidx.lifecycle.Transformations
 import androidx.lifecycle.ViewModel
 import hu.csabapap.seriesreminder.data.CollectionRepository
 import hu.csabapap.seriesreminder.data.SeasonsRepository
-import hu.csabapap.seriesreminder.data.ShowsRepository
 import hu.csabapap.seriesreminder.data.db.entities.SREpisode
 import hu.csabapap.seriesreminder.data.db.entities.SRSeason
 import hu.csabapap.seriesreminder.data.repositories.episodes.EpisodesRepository
 import hu.csabapap.seriesreminder.data.repositories.notifications.NotificationsRepository
 import hu.csabapap.seriesreminder.data.repositories.relatedshows.RelatedShowsRepository
+import hu.csabapap.seriesreminder.data.repositories.shows.ShowsRepository
 import hu.csabapap.seriesreminder.domain.CreateNotificationAlarmUseCase
 import hu.csabapap.seriesreminder.domain.SetEpisodeWatchedUseCase
 import hu.csabapap.seriesreminder.extensions.distinctUntilChanged
@@ -20,7 +20,6 @@ import hu.csabapap.seriesreminder.utils.AppCoroutineDispatchers
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.rx2.await
 import kotlinx.coroutines.withContext
 import timber.log.Timber
 
@@ -43,8 +42,7 @@ class ShowDetailsViewModel(private val showsRepository: ShowsRepository,
 
     fun getShow(showId: Int) {
         scope.launch(dispatchers.io) {
-            val show = showsRepository.getShow(showId).await() ?: return@launch
-
+            val show = showsRepository.getShow(showId) ?: return@launch
             withContext(dispatchers.main) {
                 _detailsUiState.value = ShowDetailsState.Show(show)
             }
@@ -53,7 +51,7 @@ class ShowDetailsViewModel(private val showsRepository: ShowsRepository,
 
     fun loadNextEpisode(showId: Int) {
         scope.launch(dispatchers.io) {
-            val show = showsRepository.getShow(showId).await() ?: return@launch
+            val show = showsRepository.getShow(showId) ?: return@launch
             val nextEpisodeAbsNumber = if (show.nextEpisode == -1) {
                 1
             } else {
@@ -174,8 +172,8 @@ class ShowDetailsViewModel(private val showsRepository: ShowsRepository,
             }
 
             val lastEpisodeInSeason = episodes[episodes.size - 1] ?: return@launch
-            val srShow = showsRepository.getShow(season.showId).await()
-            val nextEpisodeAbsNumber = srShow?.nextEpisode ?: return@launch
+            val srShow = showsRepository.getShow(season.showId) ?: return@launch
+            val nextEpisodeAbsNumber = srShow.nextEpisode
             val nextEpisode = getNextEpisode(lastEpisodeInSeason.showId, nextEpisodeAbsNumber)
             withContext(dispatchers.main) {
                 if (nextEpisode != null) {

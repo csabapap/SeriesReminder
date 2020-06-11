@@ -1,5 +1,6 @@
-package hu.csabapap.seriesreminder.data
+package hu.csabapap.seriesreminder.data.repositories.shows
 
+import hu.csabapap.seriesreminder.data.Result
 import hu.csabapap.seriesreminder.data.db.daos.SRShowDao
 import hu.csabapap.seriesreminder.data.db.entities.AiringTime
 import hu.csabapap.seriesreminder.data.db.entities.SRShow
@@ -8,8 +9,6 @@ import hu.csabapap.seriesreminder.data.network.TvdbApi
 import hu.csabapap.seriesreminder.data.network.entities.Image
 import hu.csabapap.seriesreminder.data.network.entities.Show
 import hu.csabapap.seriesreminder.utils.safeApiCall
-import io.reactivex.Flowable
-import io.reactivex.Maybe
 import org.threeten.bp.OffsetDateTime
 import timber.log.Timber
 import javax.inject.Inject
@@ -18,14 +17,17 @@ import javax.inject.Singleton
 @Singleton
 class ShowsRepository @Inject constructor(private val traktApi: TraktApi,
                                           private val tvdbApi: TvdbApi,
-                                          private val showDao: SRShowDao){
-
-    fun getShow(traktId: Int) : Maybe<SRShow> {
-        val showFromDb = showDao.getShowMaybe(traktId)
-
-        val fromWeb = getShowFromWeb(traktId).singleElement()
-
-        return Maybe.concat(showFromDb, fromWeb).firstElement()
+                                          private val showDao: SRShowDao,
+                                          private val remoteDataSource: RemoteDataSource
+){
+    suspend fun getShow(traktId: Int): SRShow? {
+        val showFromDb = showDao.getShow(traktId)
+        if (showFromDb != null) return showFromDb
+        val showResult = remoteDataSource.show(traktId)
+        if (showResult is Result.Success) {
+            return mapToSRShow(showResult.data)
+        }
+        return null
     }
 
     suspend fun getShowWithImages(traktId: Int, tvdbId: Int): SRShow? {
@@ -50,14 +52,6 @@ class ShowsRepository @Inject constructor(private val traktApi: TraktApi,
     private fun insertOrUpdateShow(show: SRShow): SRShow {
         Timber.d("insert or update show: %d", show.traktId)
         return showDao.insertOrUpdateShow(show)
-    }
-
-    private fun getShowFromWeb(traktId: Int) : Flowable<SRShow>{
-        return traktApi.showSingle(traktId)
-                .toFlowable()
-                .flatMap {
-                    Flowable.just(mapToSRShow(it))
-                }
     }
 
     private suspend fun getShowFromWebWithImages(traktId: Int, tvdbId: Int): Result<SRShow> {

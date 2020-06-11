@@ -4,7 +4,7 @@ import android.content.Context
 import android.content.Intent
 import dagger.android.DaggerIntentService
 import hu.csabapap.seriesreminder.data.repositories.episodes.EpisodesRepository
-import hu.csabapap.seriesreminder.data.ShowsRepository
+import hu.csabapap.seriesreminder.data.repositories.shows.ShowsRepository
 import hu.csabapap.seriesreminder.data.network.TvdbApi
 import hu.csabapap.seriesreminder.tasks.TaskExecutor
 import timber.log.Timber

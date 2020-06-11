@@ -1,10 +1,9 @@
 package hu.csabapap.seriesreminder.data.repositories.relatedshows
 
 import androidx.lifecycle.LiveData
-import hu.csabapap.seriesreminder.data.ShowsRepository
+import hu.csabapap.seriesreminder.data.repositories.shows.ShowsRepository
 import hu.csabapap.seriesreminder.data.db.entities.RelatedShow
 import hu.csabapap.seriesreminder.data.db.relations.RelatedShowWithShow
-import kotlinx.coroutines.rx2.await
 import timber.log.Timber
 import javax.inject.Inject
 

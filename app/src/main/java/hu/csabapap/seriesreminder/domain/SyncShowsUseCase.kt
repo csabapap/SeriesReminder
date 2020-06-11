@@ -3,7 +3,7 @@ package hu.csabapap.seriesreminder.domain
 import hu.csabapap.seriesreminder.data.CollectionRepository
 import hu.csabapap.seriesreminder.data.Result
 import hu.csabapap.seriesreminder.data.SeasonsRepository
-import hu.csabapap.seriesreminder.data.ShowsRepository
+import hu.csabapap.seriesreminder.data.repositories.shows.ShowsRepository
 import hu.csabapap.seriesreminder.data.db.daos.LastRequestDao
 import hu.csabapap.seriesreminder.data.db.entities.LastRequest
 import hu.csabapap.seriesreminder.data.db.entities.Request
@@ -12,7 +12,6 @@ import hu.csabapap.seriesreminder.data.repositories.nextepisodes.NextEpisodesRep
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.rx2.await
 import org.threeten.bp.Duration
 import org.threeten.bp.Instant
 import timber.log.Timber

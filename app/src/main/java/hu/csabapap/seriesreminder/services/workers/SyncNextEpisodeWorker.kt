@@ -5,7 +5,7 @@ import android.content.Context
 import androidx.work.ListenableWorker
 import androidx.work.Worker
 import androidx.work.WorkerParameters
-import hu.csabapap.seriesreminder.data.ShowsRepository
+import hu.csabapap.seriesreminder.data.repositories.shows.ShowsRepository
 import hu.csabapap.seriesreminder.data.db.entities.SRShow
 import hu.csabapap.seriesreminder.domain.CreateNotificationAlarmUseCase
 import hu.csabapap.seriesreminder.domain.GetNextEpisodeUseCase
@@ -31,7 +31,7 @@ class SyncNextEpisodeWorker(context: Context,
         GlobalScope.launch {
             val result = nextEpisodeUseCase.getNextEpisode(showId)
             if (result) {
-                val show = showsRepository.getShow(showId).await()
+                val show = showsRepository.getShow(showId)
                 show?.let {
                     createAlarm(it)
                 }

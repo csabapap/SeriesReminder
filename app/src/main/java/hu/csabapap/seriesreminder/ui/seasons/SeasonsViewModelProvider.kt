@@ -2,7 +2,7 @@ package hu.csabapap.seriesreminder.ui.seasons
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import hu.csabapap.seriesreminder.data.ShowsRepository
+import hu.csabapap.seriesreminder.data.repositories.shows.ShowsRepository
 import hu.csabapap.seriesreminder.data.repositories.WatchedEpisodesRepository
 import hu.csabapap.seriesreminder.domain.RemoveEpisodeFromWatchedUseCase
 import hu.csabapap.seriesreminder.domain.SetEpisodeWatchedUseCase

@@ -2,11 +2,9 @@ package hu.csabapap.seriesreminder.domain
 
 import com.nhaarman.mockitokotlin2.*
 import hu.csabapap.seriesreminder.data.SeasonsRepository
-import hu.csabapap.seriesreminder.data.ShowsRepository
+import hu.csabapap.seriesreminder.data.repositories.shows.ShowsRepository
 import hu.csabapap.seriesreminder.data.repositories.WatchedEpisodesRepository
 import hu.csabapap.seriesreminder.data.repositories.episodes.EpisodesRepository
-import hu.csabapap.seriesreminder.mindhunter
-import hu.csabapap.seriesreminder.mindhunterEpisode
 import hu.csabapap.seriesreminder.mindhunterSeason
 import hu.csabapap.seriesreminder.watchedEpisode
 import kotlinx.coroutines.runBlocking

@@ -13,22 +13,6 @@ import retrofit2.http.Path
 import retrofit2.http.Query
 
 interface ShowsService{
-    @GET("shows/trending")
-    fun trendingShows(@Query("extended") extended: String)
-            : Single<List<TrendingShow>>
-
-    @GET("shows/trending")
-    fun paginatedTrendingShows(@Query("extended") extended: String,
-                      @Query("page") page: Int,
-                      @Query("limit") limit: Int)
-            : Single<List<TrendingShow>>
-
-    @GET("shows/trending")
-    fun deferredPaginatedTrendingShows(@Query("extended") extended: String,
-                               @Query("page") page: Int,
-                               @Query("limit") limit: Int)
-            : Deferred<List<TrendingShow>>
-
     @GET("shows/popular?extended=full")
     suspend fun popularShows(@Query("extended") extended: String,
                      @Query("page") page: Int,
@@ -38,7 +22,10 @@ interface ShowsService{
     fun showSingle(@Path("id") traktId: Int) : Single<Show>
 
     @GET("shows/{id}?extended=full")
-    suspend fun show(@Path("id") traktId: Int) : Response<Show>
+    suspend fun showResponse(@Path("id") traktId: Int) : Response<Show>
+
+    @GET("shows/{id}?extended=full")
+    suspend fun show(@Path("id") traktId: Int): Show
 
     @GET("shows/{id}/next_episode")
     fun nextEpisode(@Path("id") traktId: Int) : Deferred<Response<NextEpisode>>

@@ -1,7 +1,7 @@
 package hu.csabapap.seriesreminder.domain
 
 import hu.csabapap.seriesreminder.data.SeasonsRepository
-import hu.csabapap.seriesreminder.data.ShowsRepository
+import hu.csabapap.seriesreminder.data.repositories.shows.ShowsRepository
 import hu.csabapap.seriesreminder.data.db.entities.WatchedEpisode
 import hu.csabapap.seriesreminder.data.repositories.WatchedEpisodesRepository
 import hu.csabapap.seriesreminder.data.repositories.episodes.EpisodesRepository

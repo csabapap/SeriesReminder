@@ -1,7 +1,7 @@
 package hu.csabapap.seriesreminder.domain
 
 import hu.csabapap.seriesreminder.data.SeasonsRepository
-import hu.csabapap.seriesreminder.data.ShowsRepository
+import hu.csabapap.seriesreminder.data.repositories.shows.ShowsRepository
 import hu.csabapap.seriesreminder.data.db.entities.SREpisode
 import hu.csabapap.seriesreminder.data.db.entities.WatchedEpisode
 import hu.csabapap.seriesreminder.data.repositories.WatchedEpisodesRepository
@@ -21,7 +21,7 @@ class SetEpisodeWatchedUseCase @Inject constructor(
         val result = watchedEpisodesRepository.setEpisodeWatched(watchedEpisode)
         if (result == -1L) return
         val nextEpisodeAbsNumber = episode.absNumber + 1
-        val show = showsRepository.getShow(episode.showId).await()
+        val show = showsRepository.getShow(episode.showId)
         if (show != null && show.nextEpisode < nextEpisodeAbsNumber) {
             showsRepository.updateNextEpisode(episode.showId, nextEpisodeAbsNumber)
         }

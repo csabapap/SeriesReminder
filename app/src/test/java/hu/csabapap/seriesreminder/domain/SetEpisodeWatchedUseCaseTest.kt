@@ -2,14 +2,12 @@ package hu.csabapap.seriesreminder.domain
 
 import com.nhaarman.mockitokotlin2.*
 import hu.csabapap.seriesreminder.data.SeasonsRepository
-import hu.csabapap.seriesreminder.data.ShowsRepository
-import hu.csabapap.seriesreminder.data.db.entities.WatchedEpisode
+import hu.csabapap.seriesreminder.data.repositories.shows.ShowsRepository
 import hu.csabapap.seriesreminder.data.repositories.WatchedEpisodesRepository
 import hu.csabapap.seriesreminder.mindhunterEpisode
 import hu.csabapap.seriesreminder.mindhunterSeason
 import kotlinx.coroutines.runBlocking
 import org.junit.Test
-import org.threeten.bp.OffsetDateTime
 
 class SetEpisodeWatchedUseCaseTest {
 

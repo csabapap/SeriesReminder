@@ -3,7 +3,7 @@ package hu.csabapap.seriesreminder.ui.seasons
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import hu.csabapap.seriesreminder.data.ShowsRepository
+import hu.csabapap.seriesreminder.data.repositories.shows.ShowsRepository
 import hu.csabapap.seriesreminder.data.db.entities.SREpisode
 import hu.csabapap.seriesreminder.data.db.entities.WatchedEpisode
 import hu.csabapap.seriesreminder.data.repositories.WatchedEpisodesRepository
@@ -32,8 +32,7 @@ class SeasonsViewModel(private val showsRepository: ShowsRepository,
 
     fun getShow(showId: Int) {
         scope.launch(dispatchers.io) {
-            val show = showsRepository.getShow(showId).await()
-
+            val show = showsRepository.getShow(showId)
             withContext(dispatchers.main) {
                 if (show != null) {
                     _detailsUiState.value = SeasonsUiState.DisplayShow(show)

@@ -18,7 +18,7 @@ abstract class SRShowDao {
     abstract fun getShowMaybe(id: Int) : Maybe<SRShow>
 
     @Query("SELECT * FROM shows WHERE trakt_id = :id")
-    abstract fun getShow(id: Int) : SRShow?
+    abstract suspend fun getShow(id: Int) : SRShow?
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     abstract fun insert(show: SRShow) : Long
