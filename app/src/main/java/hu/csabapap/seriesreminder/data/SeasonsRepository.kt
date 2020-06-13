@@ -42,9 +42,24 @@ class SeasonsRepository @Inject constructor(private val seasonsDao: SeasonsDao,
     suspend fun getSeasonsFromWeb(showId: Int): List<SRSeason>? {
         Timber.d("getSeasonsFromWeb")
         val seasons = traktApi.seasons(showId).await() ?: emptyList()
+        var absNumber = 0
         return seasons.map {
             mapToSRSeasons(it, showId)
-        }
+        }.sortedBy { season -> season.number }
+                .map {season ->
+                    if (season.number == 0) return@map season
+
+                    season.episodes = season.episodes.sortedBy { episode -> episode.number }
+                            .map episodeMap@{ episode ->
+                                absNumber += 1
+                                return@episodeMap if (episode.absNumber == 0) {
+                                    episode.copy(absNumber = absNumber)
+                                } else {
+                                    episode
+                                }
+                            }
+                    season
+                }
     }
 
     fun getSeasonsLiveData(showId: Int): LiveData<List<SRSeason>> {

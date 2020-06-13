@@ -1,5 +1,6 @@
 package hu.csabapap.seriesreminder.domain
 
+import hu.csabapap.seriesreminder.BuildConfig
 import hu.csabapap.seriesreminder.data.CollectionRepository
 import hu.csabapap.seriesreminder.data.Result
 import hu.csabapap.seriesreminder.data.SeasonsRepository

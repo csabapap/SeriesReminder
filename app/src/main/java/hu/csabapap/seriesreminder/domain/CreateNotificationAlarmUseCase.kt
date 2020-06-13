@@ -3,6 +3,7 @@ package hu.csabapap.seriesreminder.domain
 import androidx.work.Data
 import androidx.work.OneTimeWorkRequest
 import androidx.work.WorkManager
+import hu.csabapap.seriesreminder.BuildConfig
 import hu.csabapap.seriesreminder.data.repositories.shows.ShowsRepository
 import hu.csabapap.seriesreminder.data.db.entities.SRShow
 import hu.csabapap.seriesreminder.data.db.entities.SrNotification
@@ -36,7 +37,9 @@ class CreateNotificationAlarmUseCase @Inject constructor(
         val notification = notificationsRepository.getNotification(showId) ?: return
         val show = showsRepository.getShow(showId) ?: return
         val upcomingEpisode = episodesRepository.getUpcomingEpisode(showId) ?: return
-        val requestId = createAlarm(show, upcomingEpisode.episode.absNumber, notification.delay) ?: return
+        val episodeNumber = upcomingEpisode.episode.absNumber + 1
+        workManager.cancelWorkById(UUID.fromString(notification.workerId))
+        val requestId = createAlarm(show, episodeNumber, notification.delay) ?: return
         val updatedNotification = notification.copy(workerId = requestId)
         notificationsRepository.update(updatedNotification)
         Timber.d("notification alert created")
@@ -57,7 +60,11 @@ class CreateNotificationAlarmUseCase @Inject constructor(
         calendar.set(Calendar.HOUR_OF_DAY, airDateTime.hour)
         calendar.set(Calendar.MINUTE, airDateTime.minute)
         calendar.set(Calendar.SECOND, 0)
-        val duration = calendar.timeInMillis - System.currentTimeMillis() - aheadOfTime
+        val duration = if (BuildConfig.DEBUG) {
+            5000
+        } else {
+            calendar.timeInMillis - System.currentTimeMillis() - aheadOfTime
+        }
         Timber.d("duration: ${duration}ms")
         if (duration < 0) {
             return null
