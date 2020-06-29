@@ -53,23 +53,21 @@ class DownloadShowTask(private val showId: Int): Task {
 
         showsRepository.insertShow(newShow)
         val collectionEntry = CollectionEntry(showId = newShow.traktId, added = OffsetDateTime.now())
-        val collectionId = collectionRepository.save(collectionEntry)
-
+        collectionRepository.save(collectionEntry)
 
         val seasons = seasonsRepository.getSeasonsFromDb(show.traktId)
-        val seasonsFromWeb = seasonsRepository.getSeasonsFromWeb(show.traktId)
+        val seasonsFromWeb = seasonsRepository.getSeasonsFromWeb(show.traktId) ?: return
         val images = seasonsRepository.getSeasonImages(newShow.tvdbId)
 
-        val seasonsWithImages = seasonsFromWeb?.map { season ->
+        val seasonsWithImages = seasonsFromWeb.map { season ->
             val image = images[season.number.toString()]
             season.copy(fileName = image?.fileName ?: "", thumbnail = image?.thumbnail ?: "")
         }
 
-        if (seasons != null && seasonsWithImages != null) {
+        if (seasons != null) {
             seasonsRepository.insertOrUpdateSeasons(seasons, seasonsWithImages)
         }
 
-        if (seasonsFromWeb == null) return
         val seasonsWithCheckedAbsNumber = setEpisodeAbsNumberIfNotExists(seasonsFromWeb)
 
         val episodes = seasonsWithCheckedAbsNumber.map { season ->

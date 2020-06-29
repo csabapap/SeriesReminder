@@ -11,16 +11,8 @@ import retrofit2.Retrofit
 
 class TraktApi(private val retrofit: Retrofit) {
 
-    fun showSingle(traktId: Int) : Single<Show>{
-        return retrofit.create(ShowsService::class.java).showSingle(traktId)
-    }
-
     suspend fun show(traktId: Int) : Response<Show>{
         return retrofit.create(ShowsService::class.java).showResponse(traktId)
-    }
-
-    fun seasons(showId: Int): Single<List<Season>> {
-        return retrofit.create(SeasonsService::class.java).seasons(showId)
     }
 
     fun nextEpisode(traktId: Int): Deferred<Response<NextEpisode>> {

@@ -83,6 +83,11 @@ class NetworkModule {
     }
 
     @Provides
+    fun seasonsService(@Named("trakt") retrofit: Retrofit): SeasonsService {
+        return retrofit.create(SeasonsService::class.java)
+    }
+
+    @Provides
     fun showService(@Named("trakt") retrofit: Retrofit): ShowsService {
         return retrofit.create(ShowsService::class.java)
     }
