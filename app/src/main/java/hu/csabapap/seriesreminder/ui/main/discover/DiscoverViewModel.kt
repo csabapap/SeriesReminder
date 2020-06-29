@@ -5,11 +5,8 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations
 import androidx.lifecycle.ViewModel
 import androidx.paging.PagedList
-import hu.csabapap.seriesreminder.data.CollectionRepository
 import hu.csabapap.seriesreminder.data.db.PopularShowsResult
 import hu.csabapap.seriesreminder.data.db.TrendingShowsResult
-import hu.csabapap.seriesreminder.data.db.entities.GridItem
-import hu.csabapap.seriesreminder.data.db.entities.Item
 import hu.csabapap.seriesreminder.data.db.entities.PopularGridItem
 import hu.csabapap.seriesreminder.data.db.entities.TrendingGridItem
 import hu.csabapap.seriesreminder.data.repositories.popularshows.PopularShowsRepository
@@ -27,7 +24,7 @@ class DiscoverViewModel @Inject constructor(
     private val loadPopularShows = MutableLiveData<Boolean>()
 
     private val trendingShowsResult: LiveData<TrendingShowsResult> = Transformations.map(loadTrendingShows) {
-        trendingShowsRepository.getTrendingShows(60)
+        trendingShowsRepository.getPaginatedTrendingShows(60)
     }
 
     private val popularShowsResult: LiveData<PopularShowsResult> = Transformations.map(loadPopularShows) {

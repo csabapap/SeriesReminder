@@ -22,10 +22,10 @@ class TrendingShowsRepository @Inject constructor(
 
     fun getTrendingShowsFlowable() = localTrendingDataSource.getShowsFlowable(10)
 
-    fun getTrendingShows(limit: Int = DATABASE_PAGE_SIZE): TrendingShowsResult {
+    fun getPaginatedTrendingShows(limit: Int = DATABASE_PAGE_SIZE): TrendingShowsResult {
         Timber.d("get trending shows")
         var page = 1
-        val dataSourceFactory = localTrendingDataSource.getShows(page, limit)
+        val dataSourceFactory = localTrendingDataSource.getPaginatedShows(page, limit)
         val config = PagedList.Config.Builder()
                 .setPageSize(DATABASE_PAGE_SIZE)
                 .setInitialLoadSizeHint(1 * DATABASE_PAGE_SIZE)

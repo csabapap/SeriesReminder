@@ -22,7 +22,10 @@ interface TrendingDao {
 
     @Language("RoomSql")
     @Query("SELECT * FROM trending_shows ORDER BY page ASC, watchers DESC LIMIT :limit")
-    fun getTrendingShows(limit: Int) : Flowable<List<TrendingGridItem>>
+    fun getTrendingShowsFlowable(limit: Int) : Flowable<List<TrendingGridItem>>
+
+    @Query("SELECT * FROM trending_shows ORDER BY page ASC, watchers DESC LIMIT :limit")
+    suspend fun getTrendingShows(limit: Int) : List<TrendingGridItem>?
 
     @Query("SELECT * FROM trending_shows ORDER BY page ASC, watchers DESC LIMIT :limit")
     fun getTrendingShowsFactory(limit: Int): DataSource.Factory<Int, TrendingGridItem>
