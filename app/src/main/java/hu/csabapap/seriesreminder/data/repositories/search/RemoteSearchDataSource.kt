@@ -1,22 +1,20 @@
 package hu.csabapap.seriesreminder.data.repositories.search
 
-import hu.csabapap.seriesreminder.data.network.TraktApi
 import hu.csabapap.seriesreminder.data.network.entities.SearchResult
-import io.reactivex.Single
+import hu.csabapap.seriesreminder.data.network.services.SearchService
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class RemoteSearchDataSource @Inject constructor(val traktApi: TraktApi) {
+class RemoteSearchDataSource @Inject constructor(private val searchService: SearchService) {
 
     val cache: MutableList<SearchResult> = mutableListOf()
 
-    fun search(query: String): Single<List<SearchResult>> {
-        return traktApi.search(query, "show")
-                .doOnSuccess {
-                    cache.clear()
-                    cache.addAll(it)
-                }
+    suspend fun search(query: String): List<SearchResult> {
+        return searchService.search(query, "show").also {
+            cache.clear()
+            cache.addAll(it)
+        }
     }
 
     fun clearCache() {

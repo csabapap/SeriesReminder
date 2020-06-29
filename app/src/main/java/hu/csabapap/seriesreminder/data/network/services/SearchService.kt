@@ -8,8 +8,8 @@ import retrofit2.http.Query
 
 interface SearchService {
     @GET("search/{type}")
-    fun search(@Path("type") type: String,
-                @Query("query") query: String,
-                @Query("extended") extended: String = "full")
-            : Single<List<SearchResult>>
+    suspend fun search(@Path("type") type: String,
+               @Query("query") query: String,
+               @Query("extended") extended: String = "full")
+            : List<SearchResult>
 }

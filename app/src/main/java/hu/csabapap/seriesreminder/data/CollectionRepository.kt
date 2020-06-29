@@ -6,17 +6,11 @@ import hu.csabapap.seriesreminder.data.db.daos.CollectionsDao
 import hu.csabapap.seriesreminder.data.db.entities.CollectionEntry
 import hu.csabapap.seriesreminder.data.db.entities.CollectionItem
 import hu.csabapap.seriesreminder.data.db.entities.MyShowGridItem
-import io.reactivex.Completable
 import io.reactivex.Single
+import kotlinx.coroutines.rx2.await
 import javax.inject.Inject
 
 class CollectionRepository @Inject constructor(private val collectionsDao: CollectionsDao) {
-
-    fun addToCollection(item: CollectionEntry) : Completable {
-        return Completable.fromCallable {
-            collectionsDao.insert(item)
-        }
-    }
 
     fun save(item: CollectionEntry): Long {
         return collectionsDao.insert(item)
@@ -30,19 +24,15 @@ class CollectionRepository @Inject constructor(private val collectionsDao: Colle
         return collectionsDao.getCollectionSuspendable()
     }
 
-    fun getEntry(showId: Int): LiveData<CollectionEntry> {
-        return collectionsDao.getCollectionItem(showId)
-    }
-
     fun getCollectionItem(showId: Int): Single<CollectionEntry> {
         return collectionsDao.getCollectionItemSingle(showId)
     }
 
-    fun getCollection(): LiveData<List<CollectionEntry>> {
-        return collectionsDao.getCollectionEntries()
+    fun getItemsFromCollectionSingle(ids: List<Int>): Single<List<Int>> {
+        return collectionsDao.getIdsFromCollectionSingle(ids)
     }
 
-    fun getItemsFromCollection(ids: List<Int>): Single<List<Int>> {
+    suspend fun getItemsFromCollection(ids: List<Int>): List<Int>? {
         return collectionsDao.getIdsFromCollection(ids)
     }
 

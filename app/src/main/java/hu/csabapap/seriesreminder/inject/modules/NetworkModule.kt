@@ -91,4 +91,9 @@ class NetworkModule {
     fun showService(@Named("trakt") retrofit: Retrofit): ShowsService {
         return retrofit.create(ShowsService::class.java)
     }
+
+    @Provides
+    fun searchService(@Named("trakt") retrofit: Retrofit): SearchService {
+        return retrofit.create(SearchService::class.java)
+    }
 }

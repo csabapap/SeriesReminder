@@ -11,7 +11,6 @@ import javax.inject.Inject
 
 class SearchViewModelProvider @Inject constructor(
         private val getSearchResultUseCase: GetSearchResultUseCase,
-        private val schedulers: RxSchedulers,
         private val dispatchers: AppCoroutineDispatchers)
     : ViewModelProvider.NewInstanceFactory() {
 
@@ -20,6 +19,6 @@ class SearchViewModelProvider @Inject constructor(
         if (modelClass != SearchViewModel::class.java) {
             throw IllegalArgumentException("Unknown ViewModel class")
         }
-        return SearchViewModel(getSearchResultUseCase, schedulers, dispatchers) as T
+        return SearchViewModel(getSearchResultUseCase, dispatchers) as T
     }
 }

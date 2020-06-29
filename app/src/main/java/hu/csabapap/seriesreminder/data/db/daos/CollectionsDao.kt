@@ -33,7 +33,10 @@ interface CollectionsDao {
     fun getCollectionGridItems(limit: Int) : LiveData<List<MyShowGridItem>>
 
     @Query("SELECT show_id  FROM collection WHERE show_id IN (:showIds)")
-    fun getIdsFromCollection(showIds: List<Int>) : Single<List<Int>>
+    fun getIdsFromCollectionSingle(showIds: List<Int>) : Single<List<Int>>
+
+    @Query("SELECT show_id  FROM collection WHERE show_id IN (:showIds)")
+    suspend fun getIdsFromCollection(showIds: List<Int>) : List<Int>?
 
     @Query("DELETE FROM collection")
     fun deleteAll()
