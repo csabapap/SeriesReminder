@@ -21,6 +21,8 @@ class PopularShowsRepository @Inject constructor(private val localPopularDataSou
 
     fun getPopularShowsFlowable() = localPopularDataSource.getShowsFlowable(10)
 
+    fun getPopularShowsFlow() = localPopularDataSource.getShowsFlow(10)
+
     fun getPopularShows(limit: Int = DATABASE_PAGE_SIZE): PopularShowsResult {
         Timber.d("get popular shows")
         val dataSourceFactory = localPopularDataSource.getShows(limit)

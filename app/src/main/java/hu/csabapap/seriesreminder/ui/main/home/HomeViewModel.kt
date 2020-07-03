@@ -19,7 +19,9 @@ import hu.csabapap.seriesreminder.utils.AppRxSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.conflate
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import timber.log.Timber
@@ -110,27 +112,23 @@ class HomeViewModel @Inject constructor(private val trendingShowsRepository: Tre
 
     private fun getPopularShows() {
         _viewStateLiveData.value = DisplayPopularLoader
-        disposables.add(popularShowsRepository.getPopularShowsFlowable()
-                .distinctUntilChanged()
-                .map { gridItems ->
-                    gridItems.mapNotNull {
-                        val show = it.show
-                        if (show != null) {
+        scope.launch(dispatchers.main) {
+            popularShowsRepository.getPopularShowsFlow()
+                    .map { trendingShows ->
+                        trendingShows.map {
+                            val show = it.show ?: return@map null
                             ShowItem(show.traktId,
                                     show.tvdbId,
                                     show.title,
                                     show.posterThumb,
                                     it.inCollection)
-                        } else {
-                            null
-                        }
+                        }.filterNotNull()
                     }
-                }
-                .subscribeOn(rxSchedulers.io)
-                .observeOn(rxSchedulers.main)
-                .subscribe({ showItems ->
-                    _viewStateLiveData.value = PopularState(showItems)
-                }, Timber::e))
+                    .conflate()
+                    .collect {
+                        _viewStateLiveData.value = PopularState(it)
+                    }
+        }
     }
 
     private fun refresh() {

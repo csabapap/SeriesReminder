@@ -12,14 +12,12 @@ import hu.csabapap.seriesreminder.data.db.entities.TrendingGridItem
 import hu.csabapap.seriesreminder.data.repositories.popularshows.PopularShowsRepository
 import hu.csabapap.seriesreminder.data.repositories.trendingshows.TrendingShowsRepository
 import hu.csabapap.seriesreminder.ui.search.SearchFragment
-import io.reactivex.disposables.CompositeDisposable
 import javax.inject.Inject
 
 class DiscoverViewModel @Inject constructor(
         private val trendingShowsRepository: TrendingShowsRepository,
         private val popularShowsRepository: PopularShowsRepository)
     : ViewModel() {
-    private val disposables = CompositeDisposable()
     private val loadTrendingShows = MutableLiveData<Boolean>()
     private val loadPopularShows = MutableLiveData<Boolean>()
 
@@ -53,10 +51,5 @@ class DiscoverViewModel @Inject constructor(
 
     private fun loadPopularShows() {
         loadPopularShows.value = true
-    }
-
-    override fun onCleared() {
-        super.onCleared()
-        disposables.clear()
     }
 }
