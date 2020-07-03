@@ -4,9 +4,10 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import hu.csabapap.seriesreminder.domain.GetSearchResultUseCase
 import hu.csabapap.seriesreminder.utils.AppCoroutineDispatchers
-import io.reactivex.disposables.CompositeDisposable
-import kotlinx.coroutines.*
-import kotlinx.coroutines.rx2.await
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class SearchViewModel(private val getSearchResultUseCase: GetSearchResultUseCase,
                       private val dispatchers: AppCoroutineDispatchers)
@@ -16,7 +17,6 @@ class SearchViewModel(private val getSearchResultUseCase: GetSearchResultUseCase
     private val scope = CoroutineScope(dispatchers.main + job)
 
     val searchState = MutableLiveData<SearchState>()
-    private val disposables = CompositeDisposable()
 
     fun search(query: String) {
         searchState.value = SearchState.HideDiscoverContent
@@ -37,7 +37,6 @@ class SearchViewModel(private val getSearchResultUseCase: GetSearchResultUseCase
     override fun onCleared() {
         super.onCleared()
         getSearchResultUseCase.clearLastSearchResults()
-        disposables.clear()
         if (job.isActive) {
             job.cancel()
         }
