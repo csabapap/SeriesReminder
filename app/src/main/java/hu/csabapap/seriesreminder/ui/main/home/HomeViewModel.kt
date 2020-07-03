@@ -6,7 +6,6 @@ import androidx.lifecycle.Transformations
 import androidx.lifecycle.ViewModel
 import hu.csabapap.seriesreminder.data.CollectionRepository
 import hu.csabapap.seriesreminder.data.Result
-import hu.csabapap.seriesreminder.data.db.entities.NextEpisodeItem
 import hu.csabapap.seriesreminder.data.db.entities.SRNextEpisode
 import hu.csabapap.seriesreminder.data.db.relations.EpisodeWithShow
 import hu.csabapap.seriesreminder.data.repositories.episodes.EpisodesRepository
@@ -20,6 +19,7 @@ import hu.csabapap.seriesreminder.utils.AppRxSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import timber.log.Timber
@@ -86,29 +86,26 @@ class HomeViewModel @Inject constructor(private val trendingShowsRepository: Tre
 
     private fun getTrendingShows() {
         _viewStateLiveData.value = DisplayTrendingLoader
-        disposables.add(trendingShowsRepository.getTrendingShowsFlowable()
-                .distinctUntilChanged()
-                .map { gridItems ->
-                    gridItems.mapNotNull {
-                        val show = it.show
-                        if (show != null) {
+
+        scope.launch(dispatchers.main) {
+            trendingShowsRepository.getTrendingShowsFlow()
+                    .map { trendingShows ->
+                        trendingShows?.map {
+                            val show = it.show ?: return@map null
                             ShowItem(show.traktId,
                                     show.tvdbId,
                                     show.title,
                                     show.posterThumb,
                                     it.inCollection)
-                        } else {
-                            null
+                        }?.filterNotNull()
+                    }
+                    .conflate()
+                    .collect {
+                        if (it != null) {
+                            _viewStateLiveData.value = TrendingState(it)
                         }
                     }
-                }
-                .subscribeOn(rxSchedulers.io)
-                .observeOn(rxSchedulers.main)
-                .subscribe({ showItems ->
-                    Timber.d("nmb of show items: %d", showItems.size)
-                    _viewStateLiveData.value = TrendingState(showItems)
-                }, Timber::e))
-
+        }
     }
 
     private fun getPopularShows() {

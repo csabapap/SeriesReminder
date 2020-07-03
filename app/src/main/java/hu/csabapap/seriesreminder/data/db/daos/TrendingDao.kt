@@ -9,6 +9,7 @@ import androidx.room.Query
 import hu.csabapap.seriesreminder.data.db.entities.SRTrendingItem
 import hu.csabapap.seriesreminder.data.db.entities.TrendingGridItem
 import io.reactivex.Flowable
+import kotlinx.coroutines.flow.Flow
 import org.intellij.lang.annotations.Language
 
 @Dao
@@ -26,6 +27,9 @@ interface TrendingDao {
 
     @Query("SELECT * FROM trending_shows ORDER BY page ASC, watchers DESC LIMIT :limit")
     suspend fun getTrendingShows(limit: Int) : List<TrendingGridItem>?
+
+    @Query("SELECT * FROM trending_shows ORDER BY page ASC, watchers DESC LIMIT :limit")
+    fun getTrendingShowsFlow(limit: Int): Flow<List<TrendingGridItem>?>
 
     @Query("SELECT * FROM trending_shows ORDER BY page ASC, watchers DESC LIMIT :limit")
     fun getTrendingShowsFactory(limit: Int): DataSource.Factory<Int, TrendingGridItem>

@@ -20,7 +20,9 @@ class TrendingShowsRepository @Inject constructor(
         private val remoteTrendingDataSource: RemoteTrendingDataSource,
         private val showsRepository: ShowsRepository) {
 
-    fun getTrendingShowsFlowable() = localTrendingDataSource.getShowsFlowable(10)
+    suspend fun getTrendingShows() = localTrendingDataSource.getShows(10)
+
+    fun getTrendingShowsFlow() = localTrendingDataSource.getShowsFlow(10)
 
     fun getPaginatedTrendingShows(limit: Int = DATABASE_PAGE_SIZE): TrendingShowsResult {
         Timber.d("get trending shows")
