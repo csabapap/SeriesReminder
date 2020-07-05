@@ -14,6 +14,7 @@ import org.junit.Assert.assertEquals
 import org.junit.Rule
 import org.junit.Test
 import org.threeten.bp.OffsetDateTime
+import org.threeten.bp.ZoneOffset
 import java.io.IOException
 
 class WatchedEpisodesMigrationTest {
@@ -25,7 +26,8 @@ class WatchedEpisodesMigrationTest {
         val EPISODE = SREpisode(null, 1, 1, "Pilot", 1, 1,
                 1, "Lorem ipsum", OffsetDateTime.now(),
                 OffsetDateTime.now().toString(), 5.0f,123, "",1)
-        val WATCHED_EPISODE = WatchedEpisode(null,1, 1, 1, -1)
+        val WATCHED_EPISODE = WatchedEpisode(null,1, 1, 1, -1,
+                OffsetDateTime.of(2020, 3, 3, 12, 0, 0, 0, ZoneOffset.UTC))
     }
 
     @get:Rule

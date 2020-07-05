@@ -6,7 +6,6 @@ import androidx.lifecycle.Transformations
 import androidx.lifecycle.ViewModel
 import hu.csabapap.seriesreminder.data.CollectionRepository
 import hu.csabapap.seriesreminder.data.Result
-import hu.csabapap.seriesreminder.data.db.entities.NextEpisodeItem
 import hu.csabapap.seriesreminder.data.db.entities.SRNextEpisode
 import hu.csabapap.seriesreminder.data.db.relations.EpisodeWithShow
 import hu.csabapap.seriesreminder.data.repositories.episodes.EpisodesRepository
@@ -16,10 +15,11 @@ import hu.csabapap.seriesreminder.domain.SetEpisodeWatchedUseCase
 import hu.csabapap.seriesreminder.domain.SyncShowsUseCase
 import hu.csabapap.seriesreminder.ui.adapters.items.ShowItem
 import hu.csabapap.seriesreminder.utils.AppCoroutineDispatchers
-import hu.csabapap.seriesreminder.utils.AppRxSchedulers
-import io.reactivex.disposables.CompositeDisposable
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import timber.log.Timber
@@ -30,12 +30,10 @@ class HomeViewModel @Inject constructor(private val trendingShowsRepository: Tre
                                         collectionRepository: CollectionRepository,
                                         private val episodesRepository: EpisodesRepository,
                                         private val setEpisodeWatchedUseCase: SetEpisodeWatchedUseCase,
-                                        private val synchShowsUseCase: SyncShowsUseCase,
-                                        private val rxSchedulers: AppRxSchedulers,
+                                        private val syncShowsUseCase: SyncShowsUseCase,
                                         private val dispatchers: AppCoroutineDispatchers)
     : ViewModel() {
 
-    private val disposables = CompositeDisposable()
     private val job = Job()
     private val scope = CoroutineScope(dispatchers.main + job)
     private val _viewStateLiveData = MutableLiveData<HomeViewState>()
@@ -62,15 +60,14 @@ class HomeViewModel @Inject constructor(private val trendingShowsRepository: Tre
     }
 
     fun getUpcomingEpisodes() {
-        val disposable = episodesRepository.getUpcomingEpisodes()
-                .subscribeOn(rxSchedulers.io)
-                .observeOn(rxSchedulers.main)
-                .subscribe( { nextEpisodes ->
-                    if (nextEpisodes.isEmpty().not()) {
-                        upcomingEpisodesLiveData.value = nextEpisodes
+        scope.launch(dispatchers.main) {
+            episodesRepository.getUpcomingEpisodesFlow()
+                    .collect { upcomingEpisodes ->
+                        if (upcomingEpisodes.isNotEmpty()) {
+                            upcomingEpisodesLiveData.value = upcomingEpisodes
+                        }
                     }
-                }, {Timber.e(it)})
-        disposables.add(disposable)
+        }
     }
 
     fun getNextEpisodes() {
@@ -86,54 +83,47 @@ class HomeViewModel @Inject constructor(private val trendingShowsRepository: Tre
 
     private fun getTrendingShows() {
         _viewStateLiveData.value = DisplayTrendingLoader
-        disposables.add(trendingShowsRepository.getTrendingShowsFlowable()
-                .distinctUntilChanged()
-                .map { gridItems ->
-                    gridItems.mapNotNull {
-                        val show = it.show
-                        if (show != null) {
+
+        scope.launch(dispatchers.main) {
+            trendingShowsRepository.getTrendingShowsFlow()
+                    .map { trendingShows ->
+                        trendingShows?.map {
+                            val show = it.show ?: return@map null
                             ShowItem(show.traktId,
                                     show.tvdbId,
                                     show.title,
                                     show.posterThumb,
                                     it.inCollection)
-                        } else {
-                            null
+                        }?.filterNotNull()
+                    }
+                    .distinctUntilChanged()
+                    .collect {
+                        if (it != null) {
+                            _viewStateLiveData.value = TrendingState(it)
                         }
                     }
-                }
-                .subscribeOn(rxSchedulers.io)
-                .observeOn(rxSchedulers.main)
-                .subscribe({ showItems ->
-                    Timber.d("nmb of show items: %d", showItems.size)
-                    _viewStateLiveData.value = TrendingState(showItems)
-                }, Timber::e))
-
+        }
     }
 
     private fun getPopularShows() {
         _viewStateLiveData.value = DisplayPopularLoader
-        disposables.add(popularShowsRepository.getPopularShowsFlowable()
-                .distinctUntilChanged()
-                .map { gridItems ->
-                    gridItems.mapNotNull {
-                        val show = it.show
-                        if (show != null) {
+        scope.launch(dispatchers.main) {
+            popularShowsRepository.getPopularShowsFlow()
+                    .map { trendingShows ->
+                        trendingShows.map {
+                            val show = it.show ?: return@map null
                             ShowItem(show.traktId,
                                     show.tvdbId,
                                     show.title,
                                     show.posterThumb,
                                     it.inCollection)
-                        } else {
-                            null
-                        }
+                        }.filterNotNull()
                     }
-                }
-                .subscribeOn(rxSchedulers.io)
-                .observeOn(rxSchedulers.main)
-                .subscribe({ showItems ->
-                    _viewStateLiveData.value = PopularState(showItems)
-                }, Timber::e))
+                    .distinctUntilChanged()
+                    .collect {
+                        _viewStateLiveData.value = PopularState(it)
+                    }
+        }
     }
 
     private fun refresh() {
@@ -153,14 +143,9 @@ class HomeViewModel @Inject constructor(private val trendingShowsRepository: Tre
         }
     }
 
-    override fun onCleared() {
-        super.onCleared()
-        disposables.clear()
-    }
-
     private fun syncShows() {
         scope.launch(dispatchers.io) {
-            synchShowsUseCase.syncShows()
+            syncShowsUseCase.syncShows()
         }
     }
 

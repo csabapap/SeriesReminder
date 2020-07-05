@@ -5,17 +5,16 @@ import hu.csabapap.seriesreminder.data.db.daos.SeasonsDao
 import hu.csabapap.seriesreminder.data.db.entities.SREpisode
 import hu.csabapap.seriesreminder.data.db.entities.SRSeason
 import hu.csabapap.seriesreminder.data.exceptions.ItemNotFoundException
-import hu.csabapap.seriesreminder.data.network.TraktApi
 import hu.csabapap.seriesreminder.data.network.TvdbApi
 import hu.csabapap.seriesreminder.data.network.entities.Image
 import hu.csabapap.seriesreminder.data.network.entities.Season
+import hu.csabapap.seriesreminder.data.network.services.SeasonsService
 import hu.csabapap.seriesreminder.data.repositories.episodes.EpisodesRepository
-import kotlinx.coroutines.rx2.await
 import timber.log.Timber
 import javax.inject.Inject
 
 class SeasonsRepository @Inject constructor(private val seasonsDao: SeasonsDao,
-                                            private val traktApi: TraktApi,
+                                            private val seasonsService: SeasonsService,
                                             private val tvdbApi: TvdbApi,
                                             private val episodesRepository: EpisodesRepository) {
 
@@ -41,7 +40,7 @@ class SeasonsRepository @Inject constructor(private val seasonsDao: SeasonsDao,
 
     suspend fun getSeasonsFromWeb(showId: Int): List<SRSeason>? {
         Timber.d("getSeasonsFromWeb")
-        val seasons = traktApi.seasons(showId).await() ?: emptyList()
+        val seasons = seasonsService.seasons(showId)
         var absNumber = 0
         return seasons.map {
             mapToSRSeasons(it, showId)

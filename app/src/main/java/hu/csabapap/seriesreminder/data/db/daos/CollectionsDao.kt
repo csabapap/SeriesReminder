@@ -2,12 +2,14 @@ package hu.csabapap.seriesreminder.data.db.daos
 
 import androidx.lifecycle.LiveData
 import androidx.paging.DataSource
-import androidx.room.*
+import androidx.room.Dao
+import androidx.room.Insert
+import androidx.room.OnConflictStrategy
+import androidx.room.Query
 import hu.csabapap.seriesreminder.data.db.entities.CollectionEntry
 import hu.csabapap.seriesreminder.data.db.entities.CollectionItem
 import hu.csabapap.seriesreminder.data.db.entities.MyShowGridItem
 import io.reactivex.Single
-import org.intellij.lang.annotations.Language
 
 @Dao
 interface CollectionsDao {
@@ -21,10 +23,10 @@ interface CollectionsDao {
     suspend fun getCollectionSuspendable() : List<CollectionItem>
 
     @Query("SELECT * FROM collection WHERE show_id = :showId LIMIT 1")
-    fun getCollectionItem(showId: Int): LiveData<CollectionEntry>
+    fun getCollectionItemLiveData(showId: Int): LiveData<CollectionEntry>
 
     @Query("SELECT * FROM collection WHERE show_id = :showId LIMIT 1")
-    fun getCollectionItemSingle(showId: Int): Single<CollectionEntry>
+    suspend fun getCollectionItem(showId: Int): CollectionEntry
 
     @Query("SELECT * FROM collection")
     fun getCollectionEntries() : LiveData<List<CollectionEntry>>
@@ -33,7 +35,7 @@ interface CollectionsDao {
     fun getCollectionGridItems(limit: Int) : LiveData<List<MyShowGridItem>>
 
     @Query("SELECT show_id  FROM collection WHERE show_id IN (:showIds)")
-    fun getIdsFromCollection(showIds: List<Int>) : Single<List<Int>>
+    suspend fun getIdsFromCollection(showIds: List<Int>) : List<Int>?
 
     @Query("DELETE FROM collection")
     fun deleteAll()

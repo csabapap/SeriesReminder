@@ -42,19 +42,18 @@ class SyncShowsUseCase @Inject constructor(val showsRepository: ShowsRepository,
                     showsRepository.getShowWithImages(show.traktId, show.tvdbId)
 
                     val seasons = seasonsRepository.getSeasonsFromDb(show.traktId)
-                    val seasonsFromWeb = seasonsRepository.getSeasonsFromWeb(show.traktId)
+                    val seasonsFromWeb = seasonsRepository.getSeasonsFromWeb(show.traktId) ?: return@async
                     val images = seasonsRepository.getSeasonImages(show.tvdbId)
 
-                    val seasonsWithImages = seasonsFromWeb?.map { season ->
+                    val seasonsWithImages = seasonsFromWeb.map { season ->
                         val image = images[season.number.toString()]
                         season.copy(fileName = image?.fileName ?: "", thumbnail = image?.thumbnail ?: "")
                     }
 
-                    if (seasons != null && seasonsWithImages != null) {
+                    if (seasons != null) {
                         seasonsRepository.insertOrUpdateSeasons(seasons, seasonsWithImages)
                     }
 
-                    if (seasonsFromWeb == null) return@async
                     val episodes = seasonsFromWeb.map { season ->
                         season.episodes
                     }

@@ -7,11 +7,7 @@ import javax.inject.Singleton
 @Singleton
 class SearchRepository @Inject constructor(private val remoteDataSource: RemoteSearchDataSource) {
 
-    fun search(query: String) = remoteDataSource.search(query)
-
-    fun getLastResults(): List<SearchResult> {
-        return remoteDataSource.cache
-    }
+    suspend fun search(query: String) = remoteDataSource.search(query)
 
     fun clearCache() {
         remoteDataSource.clearCache()

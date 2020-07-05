@@ -9,6 +9,7 @@ import androidx.room.Query
 import hu.csabapap.seriesreminder.data.db.entities.SRTrendingItem
 import hu.csabapap.seriesreminder.data.db.entities.TrendingGridItem
 import io.reactivex.Flowable
+import kotlinx.coroutines.flow.Flow
 import org.intellij.lang.annotations.Language
 
 @Dao
@@ -20,9 +21,11 @@ interface TrendingDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insert(trendingItems: List<SRTrendingItem>)
 
-    @Language("RoomSql")
     @Query("SELECT * FROM trending_shows ORDER BY page ASC, watchers DESC LIMIT :limit")
-    fun getTrendingShows(limit: Int) : Flowable<List<TrendingGridItem>>
+    suspend fun getTrendingShows(limit: Int) : List<TrendingGridItem>?
+
+    @Query("SELECT * FROM trending_shows ORDER BY page ASC, watchers DESC LIMIT :limit")
+    fun getTrendingShowsFlow(limit: Int): Flow<List<TrendingGridItem>?>
 
     @Query("SELECT * FROM trending_shows ORDER BY page ASC, watchers DESC LIMIT :limit")
     fun getTrendingShowsFactory(limit: Int): DataSource.Factory<Int, TrendingGridItem>

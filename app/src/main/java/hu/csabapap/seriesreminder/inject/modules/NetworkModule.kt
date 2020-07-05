@@ -11,7 +11,6 @@ import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
-import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.moshi.MoshiConverterFactory
 import timber.log.Timber
 import javax.inject.Named
@@ -56,7 +55,6 @@ class NetworkModule {
         return Retrofit.Builder()
                 .client(client)
                 .baseUrl("https://api.trakt.tv")
-                .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                 .addCallAdapterFactory(CoroutineCallAdapterFactory.invoke())
                 .addConverterFactory(MoshiConverterFactory.create(moshi))
                 .build()
@@ -83,7 +81,17 @@ class NetworkModule {
     }
 
     @Provides
+    fun seasonsService(@Named("trakt") retrofit: Retrofit): SeasonsService {
+        return retrofit.create(SeasonsService::class.java)
+    }
+
+    @Provides
     fun showService(@Named("trakt") retrofit: Retrofit): ShowsService {
         return retrofit.create(ShowsService::class.java)
+    }
+
+    @Provides
+    fun searchService(@Named("trakt") retrofit: Retrofit): SearchService {
+        return retrofit.create(SearchService::class.java)
     }
 }
