@@ -2,20 +2,16 @@ package hu.csabapap.seriesreminder.ui.search
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.Observer
-import com.nhaarman.mockitokotlin2.*
-import hu.csabapap.seriesreminder.data.CollectionRepository
-import hu.csabapap.seriesreminder.data.repositories.shows.ShowsRepository
+import com.nhaarman.mockitokotlin2.any
+import com.nhaarman.mockitokotlin2.inOrder
+import com.nhaarman.mockitokotlin2.mock
+import com.nhaarman.mockitokotlin2.whenever
 import hu.csabapap.seriesreminder.data.models.SrSearchResult
-import hu.csabapap.seriesreminder.data.repositories.popularshows.PopularShowsRepository
-import hu.csabapap.seriesreminder.data.repositories.trendingshows.TrendingShowsRepository
 import hu.csabapap.seriesreminder.domain.GetSearchResultUseCase
 import hu.csabapap.seriesreminder.getShow
 import hu.csabapap.seriesreminder.utils.AppCoroutineDispatchers
-import hu.csabapap.seriesreminder.utils.RxSchedulers
-import hu.csabapap.seriesreminder.utils.TestAppRxSchedulers
-import io.reactivex.Single
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.rx2.asCoroutineDispatcher
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -30,11 +26,10 @@ class TestSearchViewModel {
     private val stateObserver = mock<Observer<SearchState>>()
 
     private var getSearchResultUseCase = mock<GetSearchResultUseCase>()
-    private val schedulers: RxSchedulers = TestAppRxSchedulers()
     private val dispatchers = AppCoroutineDispatchers(
-            schedulers.io().asCoroutineDispatcher(),
-            schedulers.compoutation().asCoroutineDispatcher(),
-            schedulers.ui().asCoroutineDispatcher())
+            Dispatchers.Default,
+            Dispatchers.Default,
+            Dispatchers.Default)
 
 
     @Before

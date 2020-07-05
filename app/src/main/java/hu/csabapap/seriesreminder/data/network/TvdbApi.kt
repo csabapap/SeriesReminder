@@ -11,7 +11,6 @@ import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Call
 import retrofit2.Response
 import retrofit2.Retrofit
-import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.moshi.MoshiConverterFactory
 import timber.log.Timber
 
@@ -45,7 +44,6 @@ class TvdbApi {
     private var retrofit: Retrofit = Retrofit.Builder()
             .client(okHttp)
             .baseUrl("https://api.thetvdb.com/")
-            .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
             .addConverterFactory(MoshiConverterFactory.create())
             .build()
 

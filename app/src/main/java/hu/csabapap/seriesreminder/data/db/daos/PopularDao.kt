@@ -7,9 +7,7 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import hu.csabapap.seriesreminder.data.db.entities.PopularGridItem
 import hu.csabapap.seriesreminder.data.db.entities.SRPopularItem
-import io.reactivex.Flowable
 import kotlinx.coroutines.flow.Flow
-import org.intellij.lang.annotations.Language
 
 @Dao
 interface PopularDao {
@@ -19,9 +17,6 @@ interface PopularDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insert(popularShows: List<SRPopularItem>)
-
-    @Query("SELECT * FROM popular_shows LIMIT :limit")
-    fun getPopularShows(limit: Int) : Flowable<List<PopularGridItem>>
 
     @Query("SELECT * FROM popular_shows LIMIT :limit")
     fun getPopularShowsFlow(limit: Int) : Flow<List<PopularGridItem>>

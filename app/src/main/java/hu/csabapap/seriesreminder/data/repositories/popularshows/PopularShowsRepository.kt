@@ -4,10 +4,10 @@ import androidx.lifecycle.LiveData
 import androidx.paging.LivePagedListBuilder
 import androidx.paging.PagedList
 import hu.csabapap.seriesreminder.data.Result
-import hu.csabapap.seriesreminder.data.repositories.shows.ShowsRepository
 import hu.csabapap.seriesreminder.data.db.PopularShowsResult
 import hu.csabapap.seriesreminder.data.db.entities.PopularGridItem
 import hu.csabapap.seriesreminder.data.db.entities.SRPopularItem
+import hu.csabapap.seriesreminder.data.repositories.shows.ShowsRepository
 import hu.csabapap.seriesreminder.extensions.distinctUntilChanged
 import kotlinx.coroutines.*
 import timber.log.Timber
@@ -18,8 +18,6 @@ import javax.inject.Singleton
 class PopularShowsRepository @Inject constructor(private val localPopularDataSource: LocalPopularDataSource,
                                                  private val remotePopularDataSource: RemotePopularDataSource,
                                                  private val showsRepository: ShowsRepository) {
-
-    fun getPopularShowsFlowable() = localPopularDataSource.getShowsFlowable(10)
 
     fun getPopularShowsFlow() = localPopularDataSource.getShowsFlow(10)
 

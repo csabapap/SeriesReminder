@@ -9,13 +9,9 @@ import dagger.Module
 import dagger.Provides
 import hu.csabapap.seriesreminder.SRApplication
 import hu.csabapap.seriesreminder.data.CollectionRepository
-import hu.csabapap.seriesreminder.data.db.daos.*
+import hu.csabapap.seriesreminder.data.db.daos.CollectionsDao
 import hu.csabapap.seriesreminder.utils.AppCoroutineDispatchers
-import hu.csabapap.seriesreminder.utils.AppRxSchedulers
-import hu.csabapap.seriesreminder.utils.RxSchedulers
-import hu.csabapap.seriesreminder.utils.SRRxSchedulers
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.rx2.asCoroutineDispatcher
 import javax.inject.Singleton
 
 
@@ -35,22 +31,10 @@ class AppModule{
 
     @Singleton
     @Provides
-    fun provideRxSchedulers() : AppRxSchedulers {
-        return AppRxSchedulers()
-    }
-
-    @Singleton
-    @Provides
-    fun provideSrRxSchedulers() : RxSchedulers {
-        return SRRxSchedulers()
-    }
-
-    @Singleton
-    @Provides
-    fun provideAppDispatchers(rxSchedulers: RxSchedulers) : AppCoroutineDispatchers {
+    fun provideAppDispatchers() : AppCoroutineDispatchers {
         return AppCoroutineDispatchers(
-                io = rxSchedulers.io().asCoroutineDispatcher(),
-                computation = rxSchedulers.compoutation().asCoroutineDispatcher(),
+                io = Dispatchers.IO,
+                computation = Dispatchers.IO,
                 main = Dispatchers.Main
         )
     }

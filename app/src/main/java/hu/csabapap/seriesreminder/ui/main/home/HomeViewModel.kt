@@ -15,12 +15,10 @@ import hu.csabapap.seriesreminder.domain.SetEpisodeWatchedUseCase
 import hu.csabapap.seriesreminder.domain.SyncShowsUseCase
 import hu.csabapap.seriesreminder.ui.adapters.items.ShowItem
 import hu.csabapap.seriesreminder.utils.AppCoroutineDispatchers
-import hu.csabapap.seriesreminder.utils.AppRxSchedulers
-import io.reactivex.disposables.CompositeDisposable
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.conflate
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -32,12 +30,10 @@ class HomeViewModel @Inject constructor(private val trendingShowsRepository: Tre
                                         collectionRepository: CollectionRepository,
                                         private val episodesRepository: EpisodesRepository,
                                         private val setEpisodeWatchedUseCase: SetEpisodeWatchedUseCase,
-                                        private val synchShowsUseCase: SyncShowsUseCase,
-                                        private val rxSchedulers: AppRxSchedulers,
+                                        private val syncShowsUseCase: SyncShowsUseCase,
                                         private val dispatchers: AppCoroutineDispatchers)
     : ViewModel() {
 
-    private val disposables = CompositeDisposable()
     private val job = Job()
     private val scope = CoroutineScope(dispatchers.main + job)
     private val _viewStateLiveData = MutableLiveData<HomeViewState>()
@@ -64,15 +60,14 @@ class HomeViewModel @Inject constructor(private val trendingShowsRepository: Tre
     }
 
     fun getUpcomingEpisodes() {
-        val disposable = episodesRepository.getUpcomingEpisodes()
-                .subscribeOn(rxSchedulers.io)
-                .observeOn(rxSchedulers.main)
-                .subscribe( { nextEpisodes ->
-                    if (nextEpisodes.isEmpty().not()) {
-                        upcomingEpisodesLiveData.value = nextEpisodes
+        scope.launch(dispatchers.main) {
+            episodesRepository.getUpcomingEpisodesFlow()
+                    .collect { upcomingEpisodes ->
+                        if (upcomingEpisodes.isNotEmpty()) {
+                            upcomingEpisodesLiveData.value = upcomingEpisodes
+                        }
                     }
-                }, {Timber.e(it)})
-        disposables.add(disposable)
+        }
     }
 
     fun getNextEpisodes() {
@@ -101,7 +96,7 @@ class HomeViewModel @Inject constructor(private val trendingShowsRepository: Tre
                                     it.inCollection)
                         }?.filterNotNull()
                     }
-                    .conflate()
+                    .distinctUntilChanged()
                     .collect {
                         if (it != null) {
                             _viewStateLiveData.value = TrendingState(it)
@@ -124,7 +119,7 @@ class HomeViewModel @Inject constructor(private val trendingShowsRepository: Tre
                                     it.inCollection)
                         }.filterNotNull()
                     }
-                    .conflate()
+                    .distinctUntilChanged()
                     .collect {
                         _viewStateLiveData.value = PopularState(it)
                     }
@@ -148,14 +143,9 @@ class HomeViewModel @Inject constructor(private val trendingShowsRepository: Tre
         }
     }
 
-    override fun onCleared() {
-        super.onCleared()
-        disposables.clear()
-    }
-
     private fun syncShows() {
         scope.launch(dispatchers.io) {
-            synchShowsUseCase.syncShows()
+            syncShowsUseCase.syncShows()
         }
     }
 

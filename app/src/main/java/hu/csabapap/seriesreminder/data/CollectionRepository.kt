@@ -7,7 +7,6 @@ import hu.csabapap.seriesreminder.data.db.entities.CollectionEntry
 import hu.csabapap.seriesreminder.data.db.entities.CollectionItem
 import hu.csabapap.seriesreminder.data.db.entities.MyShowGridItem
 import io.reactivex.Single
-import kotlinx.coroutines.rx2.await
 import javax.inject.Inject
 
 class CollectionRepository @Inject constructor(private val collectionsDao: CollectionsDao) {
@@ -24,12 +23,8 @@ class CollectionRepository @Inject constructor(private val collectionsDao: Colle
         return collectionsDao.getCollectionSuspendable()
     }
 
-    fun getCollectionItem(showId: Int): Single<CollectionEntry> {
-        return collectionsDao.getCollectionItemSingle(showId)
-    }
-
-    fun getItemsFromCollectionSingle(ids: List<Int>): Single<List<Int>> {
-        return collectionsDao.getIdsFromCollectionSingle(ids)
+    suspend fun getCollectionItem(showId: Int): CollectionEntry {
+        return collectionsDao.getCollectionItem(showId)
     }
 
     suspend fun getItemsFromCollection(ids: List<Int>): List<Int>? {

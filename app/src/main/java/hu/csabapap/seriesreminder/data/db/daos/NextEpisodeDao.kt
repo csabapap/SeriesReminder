@@ -5,18 +5,13 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import hu.csabapap.seriesreminder.data.db.entities.NextEpisodeEntry
-import hu.csabapap.seriesreminder.data.db.entities.NextEpisodeItem
 import hu.csabapap.seriesreminder.data.db.entities.SRNextEpisode
-import io.reactivex.Single
 
 @Dao
 interface NextEpisodeDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insert(nextEpisode: NextEpisodeEntry)
-
-    @Query("SELECT * FROM next_episodes")
-    fun getNextEpisodes() : Single<List<NextEpisodeItem>>
 
     @Query("SELECT shows.trakt_id AS showId, shows.title AS showTitle, shows.poster_thumb as poster, " +
             "episodes.season AS season, episodes.number AS number, " +

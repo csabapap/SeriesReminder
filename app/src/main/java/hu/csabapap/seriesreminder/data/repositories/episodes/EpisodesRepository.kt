@@ -39,7 +39,7 @@ class EpisodesRepository @Inject constructor(
         }, "fetch EpisodeData error from TheTvdb")
     }
 
-    fun getUpcomingEpisodes(limit: Int = 3) = localDataSource.getUpcomingEpisodes(limit)
+    fun getUpcomingEpisodesFlow(limit: Int = 3) = localDataSource.getUpcomingEpisodesFlow(limit)
 
     suspend fun getNextEpisodes() = nextEpisodeDao.getNextEpisodeInWatchList()
 

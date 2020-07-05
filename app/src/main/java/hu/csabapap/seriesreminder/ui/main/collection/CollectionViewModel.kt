@@ -4,12 +4,9 @@ import androidx.lifecycle.ViewModel
 import androidx.paging.LivePagedListBuilder
 import hu.csabapap.seriesreminder.data.CollectionRepository
 import hu.csabapap.seriesreminder.data.db.entities.CollectionItem
-import hu.csabapap.seriesreminder.utils.AppRxSchedulers
 import javax.inject.Inject
 
-class CollectionViewModel @Inject constructor(
-        private val collectionRepository: CollectionRepository,
-        private val schedulers: AppRxSchedulers)
+class CollectionViewModel @Inject constructor(collectionRepository: CollectionRepository)
     : ViewModel() {
 
     var collectionsLiveData =

@@ -21,10 +21,6 @@ interface TrendingDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insert(trendingItems: List<SRTrendingItem>)
 
-    @Language("RoomSql")
-    @Query("SELECT * FROM trending_shows ORDER BY page ASC, watchers DESC LIMIT :limit")
-    fun getTrendingShowsFlowable(limit: Int) : Flowable<List<TrendingGridItem>>
-
     @Query("SELECT * FROM trending_shows ORDER BY page ASC, watchers DESC LIMIT :limit")
     suspend fun getTrendingShows(limit: Int) : List<TrendingGridItem>?
 
