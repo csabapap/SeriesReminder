@@ -2,6 +2,7 @@ package hu.csabapap.seriesreminder.ui.search
 
 import android.app.SearchManager
 import android.content.Context
+import android.opengl.Visibility
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -76,7 +77,7 @@ class SearchFragment : DaggerFragment(), SearchResultAdapter.SearchItemClickList
                     when(state) {
                         is SearchState.Loading -> displayLoader()
                         is SearchState.SearchResultLoaded -> displaySearchResult(state.result)
-                        SearchState.NoResult -> Timber.d("no result")// do nothing
+                        SearchState.NoResult -> displayNoResultMessage()
                         SearchState.HideDiscoverContent -> hideDiscoverContent()
                     }.exhaustive
                 })
@@ -89,6 +90,10 @@ class SearchFragment : DaggerFragment(), SearchResultAdapter.SearchItemClickList
         if (type == TYPE_POPULAR) {
             view_pager.currentItem = 1
         }
+    }
+
+    private fun displayNoResultMessage() {
+        no_result_message.visibility = View.VISIBLE
     }
 
     private fun setupSearchView() {
