@@ -71,7 +71,6 @@ android {
     }
 
     lintOptions {
-        disable 'TimberArgTypes'
         disable 'RestrictedApi'
     }
 

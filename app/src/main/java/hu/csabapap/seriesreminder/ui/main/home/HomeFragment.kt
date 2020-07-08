@@ -95,7 +95,7 @@ class HomeFragment: DaggerFragment(),
             }
         }
 
-        homeViewModel.myShowsLiveData.observe(this, Observer {
+        homeViewModel.myShowsLiveData.observe(viewLifecycleOwner, Observer {
             it.apply {
                 if (isEmpty().not()) {
                     cardsAdapter.addCard(DiscoverCardItem(getString(R.string.title_my_shows), it,
@@ -104,13 +104,13 @@ class HomeFragment: DaggerFragment(),
             }
         })
 
-        homeViewModel.upcomingEpisodesLiveData.observe(this, Observer {
+        homeViewModel.upcomingEpisodesLiveData.observe(viewLifecycleOwner, Observer {
             it?.apply {
                 cardsAdapter.addCard(UpcomingEpisodeCardItem(it, CardItem.UPCOMING_EPISODE_TYPE))
             }
         })
 
-        homeViewModel.viewStateLiveData.observe(this, Observer {
+        homeViewModel.viewStateLiveData.observe(viewLifecycleOwner, Observer {
             updateState(it)
         })
     }

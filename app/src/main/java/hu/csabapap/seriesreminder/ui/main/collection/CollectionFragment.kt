@@ -47,7 +47,7 @@ class CollectionFragment : DaggerFragment() {
         rv_collection.layoutManager = LinearLayoutManager(activity)
         rv_collection.adapter = adapter
 
-        collectionViewModel.collectionsLiveData.observe(this, Observer {
+        collectionViewModel.collectionsLiveData.observe(viewLifecycleOwner, Observer {
             it?.apply {
                 Timber.d("nmb of shows in collection: ${it.size}")
                 adapter.submitList(it)

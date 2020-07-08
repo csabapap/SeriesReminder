@@ -72,7 +72,7 @@ class SearchFragment : DaggerFragment(), SearchResultAdapter.SearchItemClickList
             adapter.listener = this
             it.adapter = adapter
         }
-        searchViewModel.searchState.observe(this,
+        searchViewModel.searchState.observe(viewLifecycleOwner,
                 Observer { state ->
                     when(state) {
                         is SearchState.Loading -> displayLoader()

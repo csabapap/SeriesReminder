@@ -57,13 +57,13 @@ class GridFragment : DaggerFragment(), GridAdapter.GridItemClickListener {
         }
 
         if (listType == TYPE_TRENDING) {
-            discoverViewModel.trendingShows.observe(this, Observer {
+            discoverViewModel.trendingShows.observe(viewLifecycleOwner, Observer {
                 it?.apply {
                     adapter.submitList(this as PagedList<GridItem<Item>>)
                 }
             })
         } else {
-            discoverViewModel.popularShows.observe(this, Observer {
+            discoverViewModel.popularShows.observe(viewLifecycleOwner, Observer {
                 it?.apply {
                     adapter.submitList(this as PagedList<GridItem<Item>>)
                 }
