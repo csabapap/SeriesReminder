@@ -14,6 +14,7 @@ import hu.csabapap.seriesreminder.services.workers.SyncNextEpisodeWorker
 import hu.csabapap.seriesreminder.utils.Reminder
 import hu.csabapap.seriesreminder.utils.getAirDateTimeInCurrentTimeZone
 import org.threeten.bp.LocalDateTime
+import org.threeten.bp.ZonedDateTime
 import timber.log.Timber
 import java.util.*
 import java.util.concurrent.TimeUnit
@@ -63,7 +64,7 @@ class CreateNotificationAlarmUseCase @Inject constructor(
         val duration = if (BuildConfig.DEBUG) {
             5000
         } else {
-            calendar.timeInMillis - System.currentTimeMillis() - aheadOfTime
+            calendar.timeInMillis - System.currentTimeMillis() + aheadOfTime
         }
         Timber.d("duration: ${duration}ms")
         if (duration < 0) {
@@ -88,5 +89,9 @@ class CreateNotificationAlarmUseCase @Inject constructor(
                 .enqueue()
 
         return request.id.toString()
+    }
+
+    fun getInitialDelay(airDateTime: ZonedDateTime, currentDateTime: ZonedDateTime, delay: Int): Long {
+        return airDateTime.toInstant().toEpochMilli() - currentDateTime.toInstant().toEpochMilli() + delay
     }
 }

@@ -8,9 +8,7 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import hu.csabapap.seriesreminder.data.db.entities.SRTrendingItem
 import hu.csabapap.seriesreminder.data.db.entities.TrendingGridItem
-import io.reactivex.Flowable
 import kotlinx.coroutines.flow.Flow
-import org.intellij.lang.annotations.Language
 
 @Dao
 interface TrendingDao {

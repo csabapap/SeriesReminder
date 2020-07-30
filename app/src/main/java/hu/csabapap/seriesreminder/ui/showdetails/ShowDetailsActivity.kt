@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import android.widget.*
 import androidx.appcompat.app.AlertDialog
 import androidx.core.app.ActivityOptionsCompat
 import androidx.lifecycle.Observer
@@ -103,18 +104,45 @@ class ShowDetailsActivity : DaggerAppCompatActivity() {
         })
 
         add_notification_button.setOnClickListener {
-            val builder = AlertDialog.Builder(this)
-            builder.setTitle("Select a Group Name")
+            val layoutInflater = layoutInflater
+            val viewGroup = layoutInflater.inflate(R.layout.layout_reminder_dialog, null)
+            val optionsGroup = viewGroup.findViewById<RadioGroup>(R.id.options)
+
+            val hourSpinner = viewGroup.findViewById<Spinner>(R.id.hour_spinner)
+
+            hourSpinner.adapter = ArrayAdapter<Int>(this, android.R.layout.simple_spinner_dropdown_item, (1..8).toMutableList())
+            val spinner = viewGroup.findViewById<TextView>(R.id.placeholder)
             var notificationTime = 0
-            builder.setSingleChoiceItems(arrayOf("30 minutes", "1 hour"), -1) { _, which ->
-                Timber.d("positions: $which")
-                notificationTime = when (which) {
-                    0 -> 30 * 60 * 1000
-                    1 -> 60 * 60 * 1000
-                    else -> 0
+            optionsGroup.setOnCheckedChangeListener { _, i ->
+                val visibility = if (i == R.id.before_start || i == R.id.after_start) {
+                    View.VISIBLE
+                } else {
+                    View.GONE
                 }
+                hourSpinner.visibility = visibility
+                spinner.visibility = visibility
             }
-            builder.setPositiveButton("Create Reminder") { _, _ -> viewModel.createNotification(showId, notificationTime) }
+            hourSpinner.onItemSelectedListener = object: AdapterView.OnItemSelectedListener {
+                override fun onNothingSelected(p0: AdapterView<*>?) {
+
+                }
+
+                override fun onItemSelected(p0: AdapterView<*>?, p1: View?, position: Int, p3: Long) {
+                    notificationTime = (position + 1) * 60 * 60 * 1000
+                }
+
+            }
+            val builder = AlertDialog.Builder(this)
+            builder.setTitle("Set Reminder")
+            builder.setView(viewGroup)
+
+            builder.setPositiveButton("Create Reminder") { _, _ ->
+                val index = optionsGroup.indexOfChild(optionsGroup.findViewById(optionsGroup.checkedRadioButtonId))
+                if (index == 1) {
+                    notificationTime *= -1
+                }
+                viewModel.createNotification(showId, notificationTime)
+            }
             builder.setNegativeButton("Cancel", null)
             builder.create().show()
         }

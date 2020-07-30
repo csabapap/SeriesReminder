@@ -1,11 +1,13 @@
 package hu.csabapap.seriesreminder.data.network
 
 import hu.csabapap.seriesreminder.BuildConfig
-import hu.csabapap.seriesreminder.data.network.entities.*
+import hu.csabapap.seriesreminder.data.network.entities.EpisodeData
+import hu.csabapap.seriesreminder.data.network.entities.Images
+import hu.csabapap.seriesreminder.data.network.entities.LoginRequest
+import hu.csabapap.seriesreminder.data.network.entities.LoginResponse
 import hu.csabapap.seriesreminder.data.network.services.TvdbAuthService
 import hu.csabapap.seriesreminder.data.network.services.TvdbEpisodeService
 import hu.csabapap.seriesreminder.data.network.services.TvdbImagesService
-import io.reactivex.Single
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Call
@@ -80,10 +82,6 @@ class TvdbApi {
 
     suspend fun images(tvdbId : Int, type : String = "poster"): Images? {
         return retrofit.create(TvdbImagesService::class.java).images(tvdbId, type)
-    }
-
-    fun imagesSingle(tvdbId : Int, type : String = "poster"): Single<Images>{
-        return retrofit.create(TvdbImagesService::class.java).imagesSingle(tvdbId, type)
     }
 
     suspend fun episode(tvdbId: Int): EpisodeData{

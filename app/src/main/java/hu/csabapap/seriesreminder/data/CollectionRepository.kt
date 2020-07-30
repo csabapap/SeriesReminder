@@ -6,7 +6,6 @@ import hu.csabapap.seriesreminder.data.db.daos.CollectionsDao
 import hu.csabapap.seriesreminder.data.db.entities.CollectionEntry
 import hu.csabapap.seriesreminder.data.db.entities.CollectionItem
 import hu.csabapap.seriesreminder.data.db.entities.MyShowGridItem
-import io.reactivex.Single
 import javax.inject.Inject
 
 class CollectionRepository @Inject constructor(private val collectionsDao: CollectionsDao) {

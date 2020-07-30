@@ -3,7 +3,6 @@ package hu.csabapap.seriesreminder.domain
 import hu.csabapap.seriesreminder.data.CollectionRepository
 import hu.csabapap.seriesreminder.data.models.SrSearchResult
 import hu.csabapap.seriesreminder.data.repositories.search.SearchRepository
-import kotlinx.coroutines.rx2.await
 import javax.inject.Inject
 
 class GetSearchResultUseCase @Inject constructor(private val searchRepository: SearchRepository,

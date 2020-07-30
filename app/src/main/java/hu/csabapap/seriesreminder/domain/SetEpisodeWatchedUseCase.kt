@@ -5,7 +5,6 @@ import hu.csabapap.seriesreminder.data.repositories.shows.ShowsRepository
 import hu.csabapap.seriesreminder.data.db.entities.SREpisode
 import hu.csabapap.seriesreminder.data.db.entities.WatchedEpisode
 import hu.csabapap.seriesreminder.data.repositories.WatchedEpisodesRepository
-import kotlinx.coroutines.rx2.await
 import org.threeten.bp.OffsetDateTime
 import javax.inject.Inject
 

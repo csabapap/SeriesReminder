@@ -2,7 +2,6 @@ package hu.csabapap.seriesreminder.data.db.daos
 
 import androidx.room.*
 import hu.csabapap.seriesreminder.data.db.entities.SRShow
-import io.reactivex.Single
 
 @Dao
 abstract class SRShowDao {
