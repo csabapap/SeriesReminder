@@ -31,17 +31,17 @@ class CreateNotificationAlarmUseCase @Inject constructor(
         val show = showsRepository.getShow(showId) ?: return
         val upcomingEpisode = episodesRepository.getUpcomingEpisode(showId) ?: return
         val requestId = createAlarm(show, upcomingEpisode.episode.absNumber, aheadOfTime) ?: return
-        val notification = SrNotification(null, showId, aheadOfTime, requestId)
+        val notification = SrNotification(null, showId, upcomingEpisode.episode.absNumber, aheadOfTime, requestId)
         notificationsRepository.createNotification(notification)
     }
 
     suspend fun updateReminderAlarm(showId: Int) {
         val notification = notificationsRepository.getNotification(showId) ?: return
         val show = showsRepository.getShow(showId) ?: return
-        val upcomingEpisode = episodesRepository.getUpcomingEpisode(showId) ?: return
-        val episodeNumber = upcomingEpisode.episode.absNumber + 1
+        val episodeNumber = notification.episodeAbsNumber + 1
         workManager.cancelWorkById(UUID.fromString(notification.workerId))
-        val requestId = createAlarm(show, episodeNumber, notification.delay) ?: return
+        val episode = episodesRepository.getEpisodeByAbsNumber(showId, episodeNumber) ?: return
+        val requestId = createAlarm(show, episode.absNumber, notification.delay) ?: return
         val updatedNotification = notification.copy(workerId = requestId)
         notificationsRepository.update(updatedNotification)
         Timber.d("notification alert created")
@@ -62,10 +62,6 @@ class CreateNotificationAlarmUseCase @Inject constructor(
             5000
         } else {
             getInitialDelay(airDateTime, currentDateTime, aheadOfTime)
-        }
-        Timber.d("duration: ${duration}ms")
-        if (duration < 0) {
-            return null
         }
         val request = OneTimeWorkRequest.Builder(ShowReminderWorker::class.java)
                 .setInitialDelay(duration, TimeUnit.MILLISECONDS)

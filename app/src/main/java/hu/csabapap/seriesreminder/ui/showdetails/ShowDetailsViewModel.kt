@@ -73,7 +73,7 @@ class ShowDetailsViewModel(private val showsRepository: ShowsRepository,
     }
 
     private suspend fun getNextEpisode(showId: Int, nextEpisodeAbsNumber: Int): SREpisode? {
-        return episodesRepository.getNextEpisode(showId, nextEpisodeAbsNumber)
+        return episodesRepository.getEpisodeByAbsNumber(showId, nextEpisodeAbsNumber)
     }
 
     fun createNotification(showId: Int, aheadOfTime: Int) {
