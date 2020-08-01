@@ -108,9 +108,10 @@ class ShowDetailsActivity : DaggerAppCompatActivity() {
             val viewGroup = layoutInflater.inflate(R.layout.layout_reminder_dialog, null)
             val optionsGroup = viewGroup.findViewById<RadioGroup>(R.id.options)
 
-            val hourSpinner = viewGroup.findViewById<Spinner>(R.id.hour_spinner)
-
-            hourSpinner.adapter = ArrayAdapter<Int>(this, android.R.layout.simple_spinner_dropdown_item, (1..8).toMutableList())
+            val hourPicker = viewGroup.findViewById<NumberPicker>(R.id.hour_picker).apply {
+                minValue = 1
+                maxValue = 8
+            }
             val spinner = viewGroup.findViewById<TextView>(R.id.placeholder)
             var notificationTime = 0
             optionsGroup.setOnCheckedChangeListener { _, i ->
@@ -119,18 +120,8 @@ class ShowDetailsActivity : DaggerAppCompatActivity() {
                 } else {
                     View.GONE
                 }
-                hourSpinner.visibility = visibility
+                hourPicker.visibility = visibility
                 spinner.visibility = visibility
-            }
-            hourSpinner.onItemSelectedListener = object: AdapterView.OnItemSelectedListener {
-                override fun onNothingSelected(p0: AdapterView<*>?) {
-
-                }
-
-                override fun onItemSelected(p0: AdapterView<*>?, p1: View?, position: Int, p3: Long) {
-                    notificationTime = (position + 1) * 60 * 60 * 1000
-                }
-
             }
             val builder = AlertDialog.Builder(this)
             builder.setTitle("Set Reminder")
@@ -138,6 +129,9 @@ class ShowDetailsActivity : DaggerAppCompatActivity() {
 
             builder.setPositiveButton("Create Reminder") { _, _ ->
                 val index = optionsGroup.indexOfChild(optionsGroup.findViewById(optionsGroup.checkedRadioButtonId))
+                if (index > 0) {
+                    notificationTime = hourPicker.value * 60 * 60 * 1000
+                }
                 if (index == 1) {
                     notificationTime *= -1
                 }
