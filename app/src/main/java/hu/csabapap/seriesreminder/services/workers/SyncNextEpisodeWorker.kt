@@ -12,7 +12,6 @@ import hu.csabapap.seriesreminder.domain.GetNextEpisodeUseCase
 import hu.csabapap.seriesreminder.utils.Reminder
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.rx2.await
 import javax.inject.Inject
 
 class SyncNextEpisodeWorker(context: Context,

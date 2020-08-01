@@ -14,6 +14,7 @@ import androidx.room.PrimaryKey
 data class SrNotification(
         @PrimaryKey(autoGenerate = true) val _id: Long?,
         @ColumnInfo(name = "show_id") val showId: Int,
+        @ColumnInfo(name = "episode_abs_number") val episodeAbsNumber: Int,
         val delay: Int,
         @ColumnInfo(name = "worker_id") val workerId: String
 )

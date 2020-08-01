@@ -3,9 +3,6 @@ package hu.csabapap.seriesreminder.data.network.services
 import hu.csabapap.seriesreminder.data.Result
 import hu.csabapap.seriesreminder.data.network.entities.NextEpisode
 import hu.csabapap.seriesreminder.data.network.entities.Show
-import hu.csabapap.seriesreminder.data.network.entities.TrendingShow
-import hu.csabapap.seriesreminder.utils.safeApiCall
-import io.reactivex.Single
 import kotlinx.coroutines.Deferred
 import retrofit2.Response
 import retrofit2.http.GET

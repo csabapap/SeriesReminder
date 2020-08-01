@@ -8,7 +8,6 @@ import hu.csabapap.seriesreminder.data.db.entities.SRSeason
 import hu.csabapap.seriesreminder.data.network.TvdbApi
 import hu.csabapap.seriesreminder.data.repositories.episodes.EpisodesRepository
 import hu.csabapap.seriesreminder.data.repositories.nextepisodes.NextEpisodesRepository
-import kotlinx.coroutines.rx2.await
 import org.threeten.bp.OffsetDateTime
 import timber.log.Timber
 import javax.inject.Inject
@@ -35,8 +34,8 @@ class DownloadShowTask(private val showId: Int): Task {
 
     override suspend fun execute() {
         val show = showsRepository.getShow(showId) ?: return
-        val posters = tvdbApi.imagesSingle(show.tvdbId, "poster").await()
-        val covers = tvdbApi.imagesSingle(show.tvdbId, "fanart").await()
+        val posters = tvdbApi.images(show.tvdbId, "poster") ?: return
+        val covers = tvdbApi.images(show.tvdbId, "fanart") ?: return
 
         val popularPoster = posters.data.maxBy { image ->
             image.ratingsInfo.average

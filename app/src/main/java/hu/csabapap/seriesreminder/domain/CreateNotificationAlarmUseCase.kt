@@ -14,6 +14,8 @@ import hu.csabapap.seriesreminder.services.workers.SyncNextEpisodeWorker
 import hu.csabapap.seriesreminder.utils.Reminder
 import hu.csabapap.seriesreminder.utils.getAirDateTimeInCurrentTimeZone
 import org.threeten.bp.LocalDateTime
+import org.threeten.bp.ZoneId
+import org.threeten.bp.ZonedDateTime
 import timber.log.Timber
 import java.util.*
 import java.util.concurrent.TimeUnit
@@ -29,17 +31,17 @@ class CreateNotificationAlarmUseCase @Inject constructor(
         val show = showsRepository.getShow(showId) ?: return
         val upcomingEpisode = episodesRepository.getUpcomingEpisode(showId) ?: return
         val requestId = createAlarm(show, upcomingEpisode.episode.absNumber, aheadOfTime) ?: return
-        val notification = SrNotification(null, showId, aheadOfTime, requestId)
+        val notification = SrNotification(null, showId, upcomingEpisode.episode.absNumber, aheadOfTime, requestId)
         notificationsRepository.createNotification(notification)
     }
 
     suspend fun updateReminderAlarm(showId: Int) {
         val notification = notificationsRepository.getNotification(showId) ?: return
         val show = showsRepository.getShow(showId) ?: return
-        val upcomingEpisode = episodesRepository.getUpcomingEpisode(showId) ?: return
-        val episodeNumber = upcomingEpisode.episode.absNumber + 1
+        val episodeNumber = notification.episodeAbsNumber + 1
         workManager.cancelWorkById(UUID.fromString(notification.workerId))
-        val requestId = createAlarm(show, episodeNumber, notification.delay) ?: return
+        val episode = episodesRepository.getEpisodeByAbsNumber(showId, episodeNumber) ?: return
+        val requestId = createAlarm(show, episode.absNumber, notification.delay) ?: return
         val updatedNotification = notification.copy(workerId = requestId)
         notificationsRepository.update(updatedNotification)
         Timber.d("notification alert created")
@@ -55,19 +57,11 @@ class CreateNotificationAlarmUseCase @Inject constructor(
 
     private fun createAlarm(show: SRShow, episodeNumber: Int, aheadOfTime: Int): String? {
         val airDateTime = getAirDateTimeInCurrentTimeZone(LocalDateTime.now(), show.airingTime)
-        val calendar = Calendar.getInstance()
-        calendar.set(Calendar.DAY_OF_MONTH, airDateTime.dayOfMonth)
-        calendar.set(Calendar.HOUR_OF_DAY, airDateTime.hour)
-        calendar.set(Calendar.MINUTE, airDateTime.minute)
-        calendar.set(Calendar.SECOND, 0)
+        val currentDateTime = ZonedDateTime.now(ZoneId.systemDefault())
         val duration = if (BuildConfig.DEBUG) {
             5000
         } else {
-            calendar.timeInMillis - System.currentTimeMillis() - aheadOfTime
-        }
-        Timber.d("duration: ${duration}ms")
-        if (duration < 0) {
-            return null
+            getInitialDelay(airDateTime, currentDateTime, aheadOfTime)
         }
         val request = OneTimeWorkRequest.Builder(ShowReminderWorker::class.java)
                 .setInitialDelay(duration, TimeUnit.MILLISECONDS)
@@ -88,5 +82,10 @@ class CreateNotificationAlarmUseCase @Inject constructor(
                 .enqueue()
 
         return request.id.toString()
+    }
+
+    fun getInitialDelay(airDateTime: ZonedDateTime, currentDateTime: ZonedDateTime, delay: Int): Long {
+        if (airDateTime.isBefore(currentDateTime)) return 0L
+        return airDateTime.toInstant().toEpochMilli() - currentDateTime.toInstant().toEpochMilli() + delay
     }
 }

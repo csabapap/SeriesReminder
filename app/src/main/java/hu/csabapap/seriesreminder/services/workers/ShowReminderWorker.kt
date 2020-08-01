@@ -43,7 +43,7 @@ class ShowReminderWorker(context: Context,
         }
         return coroutineScope {
             val job = async {
-                val episode = episodesRepository.getNextEpisode(showId, episodeAbsNumber)
+                val episode = episodesRepository.getEpisodeByAbsNumber(showId, episodeAbsNumber)
                 displayNotification(showId, title, episode)
             }
             job.await()

@@ -19,7 +19,7 @@ class DbModule {
         return Room.databaseBuilder(context, SRDatabase::class.java, "series_reminder.db")
                 .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_4_5, MIGRATION_5_6,
                         MIGRATION_6_7, MIGRATION_7_8, MIGRATION_8_9, MIGRATION_9_10, MIGRATION_10_11,
-                        MIGRATION_11_12, MIGRATION_12_13, MIGRATION_13_14)
+                        MIGRATION_11_12, MIGRATION_12_13, MIGRATION_13_14, MIGRATION_14_15)
                 .fallbackToDestructiveMigration()
                 .build()
     }
@@ -208,6 +208,13 @@ class DbModule {
                 database.execSQL("ALTER TABLE `watched_episodes` ADD COLUMN watched_at TEXT NOT NULL DEFAULT ''")
                 database.execSQL("UPDATE shows SET next_episode = -1")
                 database.execSQL("UPDATE seasons SET watched_episodes = 0")
+            }
+        }
+
+        val MIGRATION_14_15 = object: Migration(14, 15) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.execSQL("DELETE FROM `notifications`")
+                database.execSQL("ALTER TABLE `notifications` ADD COLUMN episode_abs_number INTEGER NOT NULL DEFAULT 0")
             }
         }
     }

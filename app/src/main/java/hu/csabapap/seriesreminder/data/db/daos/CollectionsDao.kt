@@ -9,7 +9,6 @@ import androidx.room.Query
 import hu.csabapap.seriesreminder.data.db.entities.CollectionEntry
 import hu.csabapap.seriesreminder.data.db.entities.CollectionItem
 import hu.csabapap.seriesreminder.data.db.entities.MyShowGridItem
-import io.reactivex.Single
 
 @Dao
 interface CollectionsDao {
