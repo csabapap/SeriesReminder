@@ -310,7 +310,17 @@ class ShowDetailsActivity : DaggerAppCompatActivity() {
         add_notification_button.visibility = View.GONE
         active_notification_group.visibility = View.VISIBLE
         active_notification_group.updatePreLayout(show_content)
-        notification_text.text = "${readableDate(notification.delay)} before"
+        notification_text.text = when {
+            notification.delay == 0 -> {
+                "when episode starts"
+            }
+            notification.delay < 0 -> {
+                "${readableDate(notification.delay)} before"
+            }
+            else -> {
+                "${readableDate(notification.delay)} after"
+            }
+        }
     }
 
     private fun displayAddNotificationButton() {
