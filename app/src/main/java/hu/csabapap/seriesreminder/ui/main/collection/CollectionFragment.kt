@@ -44,6 +44,10 @@ class CollectionFragment : DaggerFragment() {
         super.onViewCreated(view, savedInstanceState)
         collection_toolbar.setTitle(R.string.title_my_shows)
 
+        collection_toolbar.setNavigationOnClickListener {
+            activity?.onBackPressed()
+        }
+
         rv_collection.layoutManager = LinearLayoutManager(activity)
         rv_collection.adapter = adapter
 
