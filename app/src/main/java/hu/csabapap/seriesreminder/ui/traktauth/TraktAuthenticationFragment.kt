@@ -10,16 +10,20 @@ import android.webkit.WebViewClient
 import dagger.android.support.DaggerFragment
 import hu.csabapap.seriesreminder.BuildConfig
 import hu.csabapap.seriesreminder.R
-import hu.csabapap.seriesreminder.data.network.services.AuthService
+import hu.csabapap.seriesreminder.domain.AuthenticateUseCase
+import hu.csabapap.seriesreminder.utils.AppCoroutineDispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import timber.log.Timber
 import javax.inject.Inject
 
 class TraktAuthenticationFragment : DaggerFragment() {
 
     @Inject
-    lateinit var authService: AuthService
+    lateinit var authenticateUseCase: AuthenticateUseCase
+    @Inject
+    lateinit var dispatchers: AppCoroutineDispatchers
 
     lateinit var webView: WebView
 
@@ -53,8 +57,10 @@ class TraktAuthenticationFragment : DaggerFragment() {
 
     private fun requestToken(code: String) {
         GlobalScope.launch {
-            val result = authService.requestToken(code, BuildConfig.TRAKT_CLIENT_ID, BuildConfig.TRAKT_SECRET_ID, "http://localhost")
-
+            val result = authenticateUseCase.getToken(code, BuildConfig.TRAKT_CLIENT_ID, BuildConfig.TRAKT_SECRET_ID, "http://localhost")
+            withContext(dispatchers.main) {
+                activity?.onBackPressed()
+            }
             Timber.d("result: $result")
         }
     }
