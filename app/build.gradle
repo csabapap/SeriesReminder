@@ -22,6 +22,7 @@ spotless {
 def appVersionCode = propOrDef('series_reminder.version_code', "1") as Integer
 
 def traktClientId = propOrDef('series_reminder.trakt_client_id', "")
+def traktSecretId = propOrDef('series_reminder.trakt_secret_id', "")
 def tvdbClientId = propOrDef('series_reminder.tvdb_client_id', "")
 
 android {
@@ -39,6 +40,7 @@ android {
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
         buildConfigField "String", "TRAKT_CLIENT_ID", "\"" + traktClientId + "\""
+        buildConfigField "String", "TRAKT_SECRET_ID", "\"" + traktSecretId + "\""
         buildConfigField "String", "TVDB_CLIENT_ID", "\"" + tvdbClientId + "\""
 
         javaCompileOptions {

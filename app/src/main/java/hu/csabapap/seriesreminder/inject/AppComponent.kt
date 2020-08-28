@@ -12,6 +12,7 @@ import hu.csabapap.seriesreminder.ui.episode.EpisodeModule
 import hu.csabapap.seriesreminder.ui.search.SearchModule
 import hu.csabapap.seriesreminder.ui.seasons.SeasonsModule
 import hu.csabapap.seriesreminder.ui.showdetails.ShowDetailsModule
+import hu.csabapap.seriesreminder.ui.traktauth.TraktAuthModule
 import javax.inject.Singleton
 
 
@@ -30,7 +31,8 @@ import javax.inject.Singleton
             ShowDetailsModule::class,
             WorkerBindingModule::class,
             SeasonsModule::class,
-            EpisodeModule::class
+            EpisodeModule::class,
+            TraktAuthModule::class
         ])
 interface AppComponent : TasksComponent, AndroidInjector<SRApplication>{
 

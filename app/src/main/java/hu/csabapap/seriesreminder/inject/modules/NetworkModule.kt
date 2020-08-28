@@ -94,4 +94,9 @@ class NetworkModule {
     fun searchService(@Named("trakt") retrofit: Retrofit): SearchService {
         return retrofit.create(SearchService::class.java)
     }
+
+    @Provides
+    fun authService(@Named("trakt") retrofit: Retrofit): AuthService {
+        return retrofit.create(AuthService::class.java)
+    }
 }
