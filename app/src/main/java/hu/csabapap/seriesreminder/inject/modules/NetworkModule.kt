@@ -7,6 +7,7 @@ import dagger.Provides
 import hu.csabapap.seriesreminder.BuildConfig
 import hu.csabapap.seriesreminder.data.ApplicationJsonAdapterFactory
 import hu.csabapap.seriesreminder.data.network.services.*
+import hu.csabapap.seriesreminder.data.repositories.loggedinuser.LoggedInUserRepository
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -38,14 +39,30 @@ class NetworkModule {
         }
     }
 
+    @Provides @Named("auth")
+    fun providesTraktAuthHeaderInterceptor(loggedInUserRepository: LoggedInUserRepository): Interceptor {
+        return Interceptor { chain ->
+            val request = chain.request()
+            if (loggedInUserRepository.isLoggedIn()) {
+                val newRequest = request.newBuilder()
+                        .header("Authorization", "Bearer ${loggedInUserRepository.loggedInUser()?.accessToken ?: ""}")
+                        .build()
+                chain.proceed(newRequest)
+            } else {
+                chain.proceed(request)
+            }
+        }
+    }
+
     @Provides
-    fun providesOkHttp(traktApiInterceptor: Interceptor): OkHttpClient {
+    fun providesOkHttp(traktApiInterceptor: Interceptor, @Named("auth") traktAuthInterceptor: Interceptor): OkHttpClient {
         val loggingInterceptor : HttpLoggingInterceptor = HttpLoggingInterceptor(
                 HttpLoggingInterceptor.Logger { Timber.tag("TraktOkHttp").d(it) })
                 .setLevel(HttpLoggingInterceptor.Level.BODY)
         return OkHttpClient.Builder()
                 .addInterceptor(loggingInterceptor)
                 .addInterceptor(traktApiInterceptor)
+                .addInterceptor(traktAuthInterceptor)
                 .build()
     }
 
@@ -98,5 +115,10 @@ class NetworkModule {
     @Provides
     fun authService(@Named("trakt") retrofit: Retrofit): AuthService {
         return retrofit.create(AuthService::class.java)
+    }
+
+    @Provides
+    fun usersService(@Named("trakt") retrofit: Retrofit): UsersService {
+        return retrofit.create(UsersService::class.java)
     }
 }

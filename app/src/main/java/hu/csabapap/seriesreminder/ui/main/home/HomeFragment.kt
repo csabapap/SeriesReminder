@@ -127,6 +127,7 @@ class HomeFragment: DaggerFragment(),
         super.onStart()
         homeViewModel.getUpcomingEpisodes()
         homeViewModel.getNextEpisodes()
+        homeViewModel.syncWatchedShows()
     }
 
     interface HomeFragmentListener {

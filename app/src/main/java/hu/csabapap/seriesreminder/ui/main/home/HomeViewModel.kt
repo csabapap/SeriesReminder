@@ -13,6 +13,7 @@ import hu.csabapap.seriesreminder.data.repositories.popularshows.PopularShowsRep
 import hu.csabapap.seriesreminder.data.repositories.trendingshows.TrendingShowsRepository
 import hu.csabapap.seriesreminder.domain.SetEpisodeWatchedUseCase
 import hu.csabapap.seriesreminder.domain.SyncShowsUseCase
+import hu.csabapap.seriesreminder.domain.SyncWatchedShowsUseCase
 import hu.csabapap.seriesreminder.ui.adapters.items.ShowItem
 import hu.csabapap.seriesreminder.utils.AppCoroutineDispatchers
 import kotlinx.coroutines.CoroutineScope
@@ -31,6 +32,7 @@ class HomeViewModel @Inject constructor(private val trendingShowsRepository: Tre
                                         private val episodesRepository: EpisodesRepository,
                                         private val setEpisodeWatchedUseCase: SetEpisodeWatchedUseCase,
                                         private val syncShowsUseCase: SyncShowsUseCase,
+                                        private val syncWatchedShowsUseCase: SyncWatchedShowsUseCase,
                                         private val dispatchers: AppCoroutineDispatchers)
     : ViewModel() {
 
@@ -157,6 +159,12 @@ class HomeViewModel @Inject constructor(private val trendingShowsRepository: Tre
                 setEpisodeWatchedUseCase(episode.episode)
                 getNextEpisodes()
             }
+        }
+    }
+
+    fun syncWatchedShows() {
+        scope.launch {
+            syncWatchedShowsUseCase.sync()
         }
     }
 }
