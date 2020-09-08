@@ -146,8 +146,10 @@ dependencies {
     kapt "com.google.dagger:dagger-compiler:${versions.dagger}"
     kapt "com.google.dagger:dagger-android-processor:${versions.dagger}"
 
-    implementation "org.threeten:threetenbp:1.3.6:no-tzdb"
-    implementation 'com.gabrielittner.threetenbp:lazythreetenbp:0.2.0'
+    implementation ('com.uwetrottmann.trakt5:trakt-java:6.6.0') {
+        exclude group: 'org.threeten', module: 'threetenbp'
+    }
+    implementation 'com.jakewharton.threetenabp:threetenabp:1.2.4'
 
     testImplementation "android.arch.core:core-testing:2.0.0-rc1"
     testImplementation "junit:junit:${versions.junit}"
