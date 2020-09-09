@@ -13,7 +13,7 @@ class RelatedShowsRepository @Inject constructor(
         private val showsRepository: ShowsRepository) {
 
     suspend fun refreshRelatedShows(id: Int) {
-        val remoteRelatedShows = remoteDataSource.relatedShows(id).await()
+        val remoteRelatedShows = remoteDataSource.relatedShows(id).execute().body() ?: return
 
         val relatedShows = mutableListOf<RelatedShow>()
         for (remoteRelatedShow in remoteRelatedShows) {

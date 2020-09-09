@@ -17,7 +17,7 @@ import javax.inject.Singleton
 @Singleton
 class TrendingShowsRepository @Inject constructor(
         private val localTrendingDataSource: LocalTrendingDataSource,
-        private val remoteTrendingDataSource: RemoteTrendingDataSource,
+        private val remoteTrendingDataSource: RemoteTrendingDataSourceImpl,
         private val showsRepository: ShowsRepository) {
 
     suspend fun getTrendingShows() = localTrendingDataSource.getShows(10)

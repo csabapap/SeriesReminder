@@ -2,6 +2,7 @@ package hu.csabapap.seriesreminder.inject.modules
 
 import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
 import com.squareup.moshi.Moshi
+import com.uwetrottmann.trakt5.TraktV2
 import dagger.Module
 import dagger.Provides
 import hu.csabapap.seriesreminder.BuildConfig
@@ -78,24 +79,27 @@ class NetworkModule {
     }
 
     @Provides
-    fun trendingShowsService(@Named("trakt") retrofit: Retrofit): TrendingShowsService {
-        return retrofit.create(TrendingShowsService::class.java)
+    fun logInterceptor(): HttpLoggingInterceptor {
+        return HttpLoggingInterceptor(
+                HttpLoggingInterceptor.Logger { Timber.tag("TraktOkHttp").d(it) })
+                .setLevel(HttpLoggingInterceptor.Level.BODY)
     }
 
     @Provides
-    fun popularShowsService(@Named("trakt") retrofit: Retrofit): PopularShowsService {
-        return retrofit.create(PopularShowsService::class.java)
+    fun provideTrakt(logInterceptor: HttpLoggingInterceptor): TraktV2 {
+        return object : TraktV2(BuildConfig.TRAKT_CLIENT_ID) {
+            override fun setOkHttpClientDefaults(builder: OkHttpClient.Builder) {
+                super.setOkHttpClientDefaults(builder)
+                builder.addInterceptor(logInterceptor)
+            }
+        }
     }
 
     @Provides
-    fun relatedShowsService(@Named("trakt") retrofit: Retrofit): RelatedShowsService {
-        return retrofit.create(RelatedShowsService::class.java)
-    }
+    fun provideTraktShowsService(trakt: TraktV2) = trakt.shows()
 
     @Provides
-    fun episodesService(@Named("trakt") retrofit: Retrofit): EpisodesService {
-        return retrofit.create(EpisodesService::class.java)
-    }
+    fun provideTraktepisodesService(trakt: TraktV2) = trakt.episodes()
 
     @Provides
     fun seasonsService(@Named("trakt") retrofit: Retrofit): SeasonsService {

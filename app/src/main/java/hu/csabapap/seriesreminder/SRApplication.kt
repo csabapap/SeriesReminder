@@ -2,8 +2,8 @@ package hu.csabapap.seriesreminder
 
 import androidx.work.Configuration
 import androidx.work.WorkManager
-import com.gabrielittner.threetenbp.LazyThreeTen
 import com.jakewharton.picasso.OkHttp3Downloader
+import com.jakewharton.threetenabp.AndroidThreeTen
 import com.squareup.picasso.Picasso
 import dagger.android.AndroidInjector
 import dagger.android.support.DaggerApplication
@@ -25,7 +25,7 @@ open class SRApplication : DaggerApplication() {
     override fun onCreate() {
         super.onCreate()
         appComponent.inject(this)
-        LazyThreeTen.init(this)
+        AndroidThreeTen.init(this)
 
         val factory: SRWorkerFactory = appComponent.factory()
         WorkManager.initialize(this, Configuration.Builder()

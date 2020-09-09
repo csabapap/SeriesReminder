@@ -4,7 +4,6 @@ import hu.csabapap.seriesreminder.data.db.entities.*
 import hu.csabapap.seriesreminder.data.network.entities.BaseShow
 import hu.csabapap.seriesreminder.data.network.entities.Ids
 import hu.csabapap.seriesreminder.data.network.entities.SearchResult
-import hu.csabapap.seriesreminder.data.network.entities.TrendingShow
 import org.threeten.bp.OffsetDateTime
 import org.threeten.bp.ZoneOffset
 
@@ -95,8 +94,3 @@ val watchedEpisode = WatchedEpisode(
         episodeId = 1,
         watchedAt = OffsetDateTime.of(2020, 3, 3, 12, 0, 0, 0, ZoneOffset.UTC)
 )
-
-val trendingShow1 = TrendingShow(123, theBoys)
-val trendingShow2 = TrendingShow(2, bigBangTheory)
-
-val trendingShows = listOf(trendingShow1, trendingShow2)
