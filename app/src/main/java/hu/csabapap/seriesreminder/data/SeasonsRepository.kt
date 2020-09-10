@@ -1,21 +1,24 @@
 package hu.csabapap.seriesreminder.data
 
 import androidx.lifecycle.LiveData
+import com.uwetrottmann.trakt5.enums.Extended
+import com.uwetrottmann.trakt5.services.Seasons
+import com.uwetrottmann.trakt5.services.Shows
 import hu.csabapap.seriesreminder.data.db.daos.SeasonsDao
 import hu.csabapap.seriesreminder.data.db.entities.SREpisode
 import hu.csabapap.seriesreminder.data.db.entities.SRSeason
 import hu.csabapap.seriesreminder.data.exceptions.ItemNotFoundException
 import hu.csabapap.seriesreminder.data.network.TvdbApi
 import hu.csabapap.seriesreminder.data.network.entities.Image
-import hu.csabapap.seriesreminder.data.network.entities.Season
-import hu.csabapap.seriesreminder.data.network.services.SeasonsService
 import hu.csabapap.seriesreminder.data.repositories.episodes.EpisodesRepository
 import hu.csabapap.seriesreminder.utils.safeApiCall
+import retrofit2.HttpException
 import timber.log.Timber
 import javax.inject.Inject
 
 class SeasonsRepository @Inject constructor(private val seasonsDao: SeasonsDao,
-                                            private val seasonsService: SeasonsService,
+                                            private val traktSeasons: Seasons,
+                                            private val traktShows: Shows,
                                             private val tvdbApi: TvdbApi,
                                             private val episodesRepository: EpisodesRepository) {
 
@@ -42,8 +45,11 @@ class SeasonsRepository @Inject constructor(private val seasonsDao: SeasonsDao,
     suspend fun getSeasonsFromWeb(showId: Int): List<SRSeason>? {
         Timber.d("getSeasonsFromWeb")
         val result = safeApiCall({
-            val seasons = seasonsService.seasons(showId)
-            Result.Success(data = seasons)
+            val seasonsResponse = traktSeasons.summary(showId.toString(), Extended.FULLEPISODES).execute()
+            if (seasonsResponse.isSuccessful) {
+                return@safeApiCall Result.Success(data = seasonsResponse.body() ?: emptyList())
+            }
+            return@safeApiCall Result.Error(HttpException(seasonsResponse))
         }, errorMessage = "fetch seasons error")
         if (result is Result.Error) {
             return null
@@ -73,7 +79,7 @@ class SeasonsRepository @Inject constructor(private val seasonsDao: SeasonsDao,
         return seasonsDao.getSeasonsLiveData(showId)
     }
 
-    private fun mapToSRSeasons(season: Season, showId: Int): SRSeason {
+    private fun mapToSRSeasons(season: com.uwetrottmann.trakt5.entities.Season, showId: Int): SRSeason {
         val episodes = mutableListOf<SREpisode>()
         if (season.episodes.isEmpty().not()) {
             season.episodes.forEach {
@@ -83,8 +89,8 @@ class SeasonsRepository @Inject constructor(private val seasonsDao: SeasonsDao,
         val srSeason = SRSeason(null,
                 season.number,
                 season.ids.trakt,
-                season.episodeCount,
-                season.airedEpisodes,
+                season.episode_count,
+                season.aired_episodes,
                 showId)
         srSeason.episodes = episodes
         return srSeason

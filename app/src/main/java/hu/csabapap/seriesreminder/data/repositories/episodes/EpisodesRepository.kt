@@ -5,9 +5,7 @@ import hu.csabapap.seriesreminder.data.db.daos.NextEpisodeDao
 import hu.csabapap.seriesreminder.data.db.entities.SREpisode
 import hu.csabapap.seriesreminder.data.db.relations.EpisodeWithShow
 import hu.csabapap.seriesreminder.data.network.TvdbApi
-import hu.csabapap.seriesreminder.data.network.entities.Episode
 import hu.csabapap.seriesreminder.utils.safeApiCall
-import org.threeten.bp.OffsetDateTime
 import javax.inject.Inject
 
 class EpisodesRepository @Inject constructor(
@@ -55,18 +53,18 @@ class EpisodesRepository @Inject constructor(
         localDataSource.saveImage(tvdbId, url)
     }
 
-    fun mapToSREpisode(episode: Episode, showId: Int) : SREpisode {
+    fun mapToSREpisode(episode: com.uwetrottmann.trakt5.entities.Episode, showId: Int) : SREpisode {
         return SREpisode(null,
                 episode.season,
                 episode.number,
                 episode.title,
                 episode.ids.trakt,
                 episode.ids.tvdb,
-                episode.absNumber,
+                episode.number_abs,
                 episode.overview,
-                OffsetDateTime.parse(episode.firstAired),
-                episode.updatedAt,
-                episode.rating,
+                episode.first_aired,
+                episode.updated_at.toString(),
+                episode.rating.toFloat(),
                 episode.votes,
                 "",
                 showId,

@@ -102,9 +102,7 @@ class NetworkModule {
     fun provideTraktepisodesService(trakt: TraktV2) = trakt.episodes()
 
     @Provides
-    fun seasonsService(@Named("trakt") retrofit: Retrofit): SeasonsService {
-        return retrofit.create(SeasonsService::class.java)
-    }
+    fun provideTraktSeasonsService(trakt: TraktV2) = trakt.seasons()
 
     @Provides
     fun showService(@Named("trakt") retrofit: Retrofit): ShowsService {
