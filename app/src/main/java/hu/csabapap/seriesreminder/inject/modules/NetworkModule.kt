@@ -16,6 +16,7 @@ import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
 import timber.log.Timber
 import javax.inject.Named
+import javax.inject.Singleton
 
 @Module
 class NetworkModule {
@@ -85,6 +86,7 @@ class NetworkModule {
                 .setLevel(HttpLoggingInterceptor.Level.BODY)
     }
 
+    @Singleton
     @Provides
     fun provideTrakt(logInterceptor: HttpLoggingInterceptor): TraktV2 {
         return object : TraktV2(BuildConfig.TRAKT_CLIENT_ID) {
@@ -105,6 +107,9 @@ class NetworkModule {
     fun provideTraktSeasonsService(trakt: TraktV2) = trakt.seasons()
 
     @Provides
+    fun providesUserService(trakt: TraktV2) = trakt.users()
+
+    @Provides
     fun showService(@Named("trakt") retrofit: Retrofit): ShowsService {
         return retrofit.create(ShowsService::class.java)
     }
@@ -117,10 +122,5 @@ class NetworkModule {
     @Provides
     fun authService(@Named("trakt") retrofit: Retrofit): AuthService {
         return retrofit.create(AuthService::class.java)
-    }
-
-    @Provides
-    fun usersService(@Named("trakt") retrofit: Retrofit): UsersService {
-        return retrofit.create(UsersService::class.java)
     }
 }

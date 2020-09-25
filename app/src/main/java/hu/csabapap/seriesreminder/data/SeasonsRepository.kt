@@ -18,7 +18,6 @@ import javax.inject.Inject
 
 class SeasonsRepository @Inject constructor(private val seasonsDao: SeasonsDao,
                                             private val traktSeasons: Seasons,
-                                            private val traktShows: Shows,
                                             private val tvdbApi: TvdbApi,
                                             private val episodesRepository: EpisodesRepository) {
 
