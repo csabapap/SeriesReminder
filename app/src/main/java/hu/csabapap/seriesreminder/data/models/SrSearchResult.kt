@@ -1,5 +1,5 @@
 package hu.csabapap.seriesreminder.data.models
 
-import hu.csabapap.seriesreminder.data.network.entities.BaseShow
+import com.uwetrottmann.trakt5.entities.Show
 
-data class SrSearchResult(val show: BaseShow, var inCollection: Boolean)
+data class SrSearchResult(val show: Show, var inCollection: Boolean)

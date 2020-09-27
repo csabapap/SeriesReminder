@@ -3,12 +3,9 @@ package hu.csabapap.seriesreminder
 import hu.csabapap.seriesreminder.data.db.entities.*
 import hu.csabapap.seriesreminder.data.network.entities.BaseShow
 import hu.csabapap.seriesreminder.data.network.entities.Ids
-import hu.csabapap.seriesreminder.data.network.entities.SearchResult
 import org.threeten.bp.OffsetDateTime
 import org.threeten.bp.ZoneOffset
 
-
-fun getSearchResult() = SearchResult(getShow())
 
 fun getShow() = BaseShow(
         title = "Humans",
