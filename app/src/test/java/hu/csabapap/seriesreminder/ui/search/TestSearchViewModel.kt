@@ -10,7 +10,6 @@ import hu.csabapap.seriesreminder.data.models.SrSearchResult
 import hu.csabapap.seriesreminder.domain.GetSearchResultUseCase
 import hu.csabapap.seriesreminder.getShow
 import hu.csabapap.seriesreminder.utils.AppCoroutineDispatchers
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.TestCoroutineDispatcher
 import org.junit.Before
@@ -58,7 +57,7 @@ class TestSearchViewModel {
     @Test
     fun `when the list of search results display search loaded`() = runBlocking {
         // given
-        val srResponse = listOf(SrSearchResult(getShow(), false), SrSearchResult(getShow(), false))
+        val srResponse = listOf(SrSearchResult(getShow().show!!, false), SrSearchResult(getShow().show!!, false))
         whenever(getSearchResultUseCase.search("humans")).thenReturn(srResponse)
 
         // when

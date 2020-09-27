@@ -7,7 +7,6 @@ import hu.csabapap.seriesreminder.data.db.daos.LastRequestDao
 import hu.csabapap.seriesreminder.data.db.entities.LastRequest
 import hu.csabapap.seriesreminder.data.db.entities.Request
 import hu.csabapap.seriesreminder.data.repositories.episodes.EpisodesRepository
-import hu.csabapap.seriesreminder.data.repositories.nextepisodes.NextEpisodesRepository
 import hu.csabapap.seriesreminder.data.repositories.shows.ShowsRepository
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
@@ -21,7 +20,6 @@ class SyncShowsUseCase @Inject constructor(val showsRepository: ShowsRepository,
                                            private val seasonsRepository: SeasonsRepository,
                                            private val episodesRepository: EpisodesRepository,
                                            val collectionRepository: CollectionRepository,
-                                           private val nextEpisodesRepository: NextEpisodesRepository,
                                            private val lastRequestDao: LastRequestDao,
                                            private val createNotificationAlarmUseCase: CreateNotificationAlarmUseCase) {
 
@@ -92,7 +90,6 @@ class SyncShowsUseCase @Inject constructor(val showsRepository: ShowsRepository,
                         }
                         episodesRepository.saveEpisodes(episodesToSave)
                     }
-                    nextEpisodesRepository.fetchAndSaveNextEpisode(show.traktId)
                     createAlarm(show.traktId)
                 }
             }

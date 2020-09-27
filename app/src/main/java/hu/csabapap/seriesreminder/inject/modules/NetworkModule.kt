@@ -8,7 +8,6 @@ import dagger.Provides
 import hu.csabapap.seriesreminder.BuildConfig
 import hu.csabapap.seriesreminder.data.ApplicationJsonAdapterFactory
 import hu.csabapap.seriesreminder.data.network.services.AuthService
-import hu.csabapap.seriesreminder.data.network.services.ShowsService
 import hu.csabapap.seriesreminder.data.repositories.loggedinuser.LoggedInUserRepository
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
@@ -112,11 +111,6 @@ class NetworkModule {
 
     @Provides
     fun provedesSeratchService(trakt: TraktV2) = trakt.search()
-
-    @Provides
-    fun showService(@Named("trakt") retrofit: Retrofit): ShowsService {
-        return retrofit.create(ShowsService::class.java)
-    }
 
     @Provides
     fun authService(@Named("trakt") retrofit: Retrofit): AuthService {

@@ -39,6 +39,9 @@ abstract class EpisodeDao {
     @Query("SELECT * FROM episodes LEFT JOIN shows ON episodes.show_id = shows.trakt_id WHERE show_id = :showId AND datetime(episodes.first_aired) > datetime('now') ORDER BY datetime(episodes.first_aired) LIMIT 1")
     abstract suspend fun getUpcomingEpisode(showId: Int): EpisodeWithShow?
 
+    @Query("SELECT * FROM episodes WHERE show_id = :showId AND datetime(episodes.first_aired) > datetime('now') ORDER BY datetime(episodes.first_aired) LIMIT 1")
+    abstract suspend fun getNextUpcomingShowId(showId: Int): SREpisode?
+
     @Transaction
     open fun upsert(episode: SREpisode) {
         try {

@@ -2,12 +2,11 @@ package hu.csabapap.seriesreminder.tasks
 
 import hu.csabapap.seriesreminder.data.CollectionRepository
 import hu.csabapap.seriesreminder.data.SeasonsRepository
-import hu.csabapap.seriesreminder.data.repositories.shows.ShowsRepository
 import hu.csabapap.seriesreminder.data.db.entities.CollectionEntry
 import hu.csabapap.seriesreminder.data.db.entities.SRSeason
 import hu.csabapap.seriesreminder.data.network.TvdbApi
 import hu.csabapap.seriesreminder.data.repositories.episodes.EpisodesRepository
-import hu.csabapap.seriesreminder.data.repositories.nextepisodes.NextEpisodesRepository
+import hu.csabapap.seriesreminder.data.repositories.shows.ShowsRepository
 import org.threeten.bp.OffsetDateTime
 import timber.log.Timber
 import javax.inject.Inject
@@ -22,9 +21,6 @@ class DownloadShowTask(private val showId: Int): Task {
 
     @Inject
     lateinit var episodesRepository: EpisodesRepository
-
-    @Inject
-    lateinit var nextEpisodesRepository: NextEpisodesRepository
 
     @Inject
     lateinit var collectionRepository: CollectionRepository
@@ -82,9 +78,7 @@ class DownloadShowTask(private val showId: Int): Task {
             }
         }
 
-
         Timber.d("seasons: $seasons")
-        nextEpisodesRepository.fetchAndSaveNextEpisode(newShow.traktId)
     }
 
     fun setEpisodeAbsNumberIfNotExists(seasons: List<SRSeason>): List<SRSeason> {

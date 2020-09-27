@@ -41,6 +41,8 @@ class EpisodesRepository @Inject constructor(
 
     suspend fun getNextEpisodes() = nextEpisodeDao.getNextEpisodeInWatchList()
 
+    suspend fun getNextUpcomingEpisode(showId: Int) = localDataSource.getNextUpcomingEpisode(showId)
+
     fun saveEpisode(episode: SREpisode) {
         localDataSource.save(episode)
     }
