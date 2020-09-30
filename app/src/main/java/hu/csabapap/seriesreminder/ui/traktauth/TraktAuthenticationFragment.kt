@@ -7,8 +7,8 @@ import android.view.ViewGroup
 import android.webkit.WebResourceRequest
 import android.webkit.WebView
 import android.webkit.WebViewClient
+import com.uwetrottmann.trakt5.TraktV2
 import dagger.android.support.DaggerFragment
-import hu.csabapap.seriesreminder.BuildConfig
 import hu.csabapap.seriesreminder.R
 import hu.csabapap.seriesreminder.domain.AuthenticateUseCase
 import hu.csabapap.seriesreminder.utils.AppCoroutineDispatchers
@@ -22,6 +22,8 @@ class TraktAuthenticationFragment : DaggerFragment() {
 
     @Inject
     lateinit var authenticateUseCase: AuthenticateUseCase
+    @Inject
+    lateinit var trakt: TraktV2
     @Inject
     lateinit var dispatchers: AppCoroutineDispatchers
 
@@ -52,12 +54,13 @@ class TraktAuthenticationFragment : DaggerFragment() {
 
     override fun onResume() {
         super.onResume()
-        webView.loadUrl("https://trakt.tv/oauth/authorize?response_type=code&client_id=${BuildConfig.TRAKT_CLIENT_ID}&redirect_uri=http%3A%2F%2Flocalhost")
+        val url = trakt.buildAuthorizationUrl("r3m1nd3r")
+        webView.loadUrl(url)
     }
 
     private fun requestToken(code: String) {
         GlobalScope.launch {
-            val result = authenticateUseCase.getToken(code, BuildConfig.TRAKT_CLIENT_ID, BuildConfig.TRAKT_SECRET_ID, "http://localhost")
+            val result = authenticateUseCase.getToken(code)
             withContext(dispatchers.main) {
                 activity?.onBackPressed()
             }

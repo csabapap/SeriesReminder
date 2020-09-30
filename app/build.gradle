@@ -23,6 +23,7 @@ def appVersionCode = propOrDef('series_reminder.version_code', "1") as Integer
 
 def traktClientId = propOrDef('series_reminder.trakt_client_id', "")
 def traktSecretId = propOrDef('series_reminder.trakt_secret_id', "")
+def traktRedirectUrl = propOrDef('series_reminder.redirect_url', "")
 def tvdbClientId = propOrDef('series_reminder.tvdb_client_id', "")
 
 android {
@@ -41,6 +42,7 @@ android {
 
         buildConfigField "String", "TRAKT_CLIENT_ID", "\"" + traktClientId + "\""
         buildConfigField "String", "TRAKT_SECRET_ID", "\"" + traktSecretId + "\""
+        buildConfigField "String", "TRAKT_REDIRECT_URL", "\"" + traktRedirectUrl + "\""
         buildConfigField "String", "TVDB_CLIENT_ID", "\"" + tvdbClientId + "\""
 
         javaCompileOptions {

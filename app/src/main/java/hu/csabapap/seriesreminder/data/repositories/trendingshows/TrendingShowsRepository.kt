@@ -63,10 +63,11 @@ class TrendingShowsRepository @Inject constructor(
 
         val trendingItems = trendingShows.map {
             async {
-                showsRepository.getShowWithImages(it.show.ids.trakt, it.show.ids.tvdb)
+                val show = showsRepository.getShowWithImages(it.show.ids.trakt, it.show.ids.tvdb) ?: return@async null
                 mapToSRTrendingShow(it.show.ids.trakt, it.watchers, 1)
             }
         }.awaitAll()
+                .filterNotNull()
         localTrendingDataSource.insertShows(0, trendingItems)
         return@coroutineScope Result.Success(trendingItems)
     }

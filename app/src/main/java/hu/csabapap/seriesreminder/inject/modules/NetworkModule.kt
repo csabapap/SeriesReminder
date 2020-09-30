@@ -7,7 +7,6 @@ import dagger.Module
 import dagger.Provides
 import hu.csabapap.seriesreminder.BuildConfig
 import hu.csabapap.seriesreminder.data.ApplicationJsonAdapterFactory
-import hu.csabapap.seriesreminder.data.network.services.AuthService
 import hu.csabapap.seriesreminder.data.repositories.loggedinuser.LoggedInUserRepository
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
@@ -89,7 +88,10 @@ class NetworkModule {
     @Singleton
     @Provides
     fun provideTrakt(logInterceptor: HttpLoggingInterceptor): TraktV2 {
-        return object : TraktV2(BuildConfig.TRAKT_CLIENT_ID) {
+        return object : TraktV2(
+                BuildConfig.TRAKT_CLIENT_ID,
+                BuildConfig.TRAKT_SECRET_ID,
+                BuildConfig.TRAKT_REDIRECT_URL) {
             override fun setOkHttpClientDefaults(builder: OkHttpClient.Builder) {
                 super.setOkHttpClientDefaults(builder)
                 builder.addInterceptor(logInterceptor)
@@ -111,9 +113,4 @@ class NetworkModule {
 
     @Provides
     fun provedesSeratchService(trakt: TraktV2) = trakt.search()
-
-    @Provides
-    fun authService(@Named("trakt") retrofit: Retrofit): AuthService {
-        return retrofit.create(AuthService::class.java)
-    }
 }
