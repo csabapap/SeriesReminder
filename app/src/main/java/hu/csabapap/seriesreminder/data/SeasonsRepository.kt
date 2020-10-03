@@ -1,6 +1,7 @@
 package hu.csabapap.seriesreminder.data
 
 import androidx.lifecycle.LiveData
+import com.uwetrottmann.trakt5.entities.Season
 import com.uwetrottmann.trakt5.enums.Extended
 import com.uwetrottmann.trakt5.services.Seasons
 import com.uwetrottmann.trakt5.services.Shows
@@ -78,7 +79,7 @@ class SeasonsRepository @Inject constructor(private val seasonsDao: SeasonsDao,
         return seasonsDao.getSeasonsLiveData(showId)
     }
 
-    private fun mapToSRSeasons(season: com.uwetrottmann.trakt5.entities.Season, showId: Int): SRSeason {
+    private fun mapToSRSeasons(season: Season, showId: Int): SRSeason {
         val episodes = mutableListOf<SREpisode>()
         if (season.episodes.isEmpty().not()) {
             season.episodes.forEach {
