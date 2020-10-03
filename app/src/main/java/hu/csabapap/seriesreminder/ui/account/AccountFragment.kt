@@ -34,16 +34,29 @@ class AccountFragment : DaggerFragment() {
         super.onViewCreated(view, savedInstanceState)
         connectButton = view.findViewById<Button>(R.id.connect_trakt).apply {
             setOnClickListener {
+                if (loggedInUserRepository.isLoggedIn()) {
+                    loggedInUserRepository.logout()
+                    return@setOnClickListener
+                }
                 findNavController().navigate(R.id.action_navigation_account_to_tratk_auth_fragment)
-//              activity?.findNavController(R.id.nav_host_fragment)?.navigate(R.id.action_navigation_account_to_tratk_auth_fragment)
             }
         }
     }
 
     override fun onResume() {
         super.onResume()
+        loggedInUserRepository.onUserStateChanged = {isLoggedIn ->
+            if (isLoggedIn) {
+                connectButton.text = "disconnect from trakt"
+            } else {
+                connectButton.text = "log in to trakt.tv"
+            }
+        }
+
         if (loggedInUserRepository.isLoggedIn()) {
             connectButton.text = "disconnect from trakt"
+        } else {
+            connectButton.text = "log in to trakt.tv"
         }
     }
 }
