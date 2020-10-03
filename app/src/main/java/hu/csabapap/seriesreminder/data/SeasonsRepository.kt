@@ -4,7 +4,6 @@ import androidx.lifecycle.LiveData
 import com.uwetrottmann.trakt5.entities.Season
 import com.uwetrottmann.trakt5.enums.Extended
 import com.uwetrottmann.trakt5.services.Seasons
-import com.uwetrottmann.trakt5.services.Shows
 import hu.csabapap.seriesreminder.data.db.daos.SeasonsDao
 import hu.csabapap.seriesreminder.data.db.entities.SREpisode
 import hu.csabapap.seriesreminder.data.db.entities.SRSeason
