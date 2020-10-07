@@ -7,7 +7,7 @@ buildscript {
             "constraintLayout" : '1.1.0',
             "dagger" : '2.16',
             "rxJava" : '2.1.6',
-            "retrofit" : '2.6.0',
+            "retrofit" : '2.9.0',
             "room": '2.2.5',
             "lifecycle": '1.1.1'
     ]

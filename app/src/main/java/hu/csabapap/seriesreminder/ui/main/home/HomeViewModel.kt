@@ -4,15 +4,18 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations
 import androidx.lifecycle.ViewModel
+import com.uwetrottmann.trakt5.TraktV2
 import hu.csabapap.seriesreminder.data.CollectionRepository
 import hu.csabapap.seriesreminder.data.Result
 import hu.csabapap.seriesreminder.data.db.entities.SRNextEpisode
 import hu.csabapap.seriesreminder.data.db.relations.EpisodeWithShow
 import hu.csabapap.seriesreminder.data.repositories.episodes.EpisodesRepository
+import hu.csabapap.seriesreminder.data.repositories.loggedinuser.LoggedInUserRepository
 import hu.csabapap.seriesreminder.data.repositories.popularshows.PopularShowsRepository
 import hu.csabapap.seriesreminder.data.repositories.trendingshows.TrendingShowsRepository
 import hu.csabapap.seriesreminder.domain.SetEpisodeWatchedUseCase
 import hu.csabapap.seriesreminder.domain.SyncShowsUseCase
+import hu.csabapap.seriesreminder.domain.SyncWatchedShowsUseCase
 import hu.csabapap.seriesreminder.ui.adapters.items.ShowItem
 import hu.csabapap.seriesreminder.utils.AppCoroutineDispatchers
 import kotlinx.coroutines.CoroutineScope
@@ -31,6 +34,9 @@ class HomeViewModel @Inject constructor(private val trendingShowsRepository: Tre
                                         private val episodesRepository: EpisodesRepository,
                                         private val setEpisodeWatchedUseCase: SetEpisodeWatchedUseCase,
                                         private val syncShowsUseCase: SyncShowsUseCase,
+                                        private val loggedInUserRepository: LoggedInUserRepository,
+                                        private val syncWatchedShowsUseCase: SyncWatchedShowsUseCase,
+                                        private val traktV2: TraktV2,
                                         private val dispatchers: AppCoroutineDispatchers)
     : ViewModel() {
 
@@ -157,6 +163,17 @@ class HomeViewModel @Inject constructor(private val trendingShowsRepository: Tre
                 setEpisodeWatchedUseCase(episode.episode)
                 getNextEpisodes()
             }
+        }
+    }
+
+    fun syncWatchedShows() {
+        scope.launch(dispatchers.io) {
+            if (!loggedInUserRepository.isLoggedIn()) return@launch
+            traktV2.apply {
+                accessToken(loggedInUserRepository.loggedInUser()?.accessToken)
+                refreshToken(loggedInUserRepository.loggedInUser()?.refreshToken)
+            }
+            syncWatchedShowsUseCase.sync()
         }
     }
 }

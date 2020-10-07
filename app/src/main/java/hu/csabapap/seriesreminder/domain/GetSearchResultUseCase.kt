@@ -13,12 +13,14 @@ class GetSearchResultUseCase @Inject constructor(private val searchRepository: S
         if (searchResult.isEmpty()) {
             return emptyList()
         }
-        val ids = searchResult.map { it.show.ids.trakt }
+        val ids = searchResult.mapNotNull { it.show?.ids?.trakt }
         val collectionIds = collectionRepository.getItemsFromCollection(ids)
         return searchResult.map { searchItem ->
-            val inCollection = collectionIds?.contains(searchItem.show.ids.trakt) ?: false
-            SrSearchResult(searchItem.show, inCollection)
+            val show = searchItem.show ?: return@map null
+            val inCollection = collectionIds?.contains(show.ids?.trakt ?: -1) ?: false
+            SrSearchResult(show, inCollection)
         }
+                .filterNotNull()
     }
 
     fun clearLastSearchResults() {

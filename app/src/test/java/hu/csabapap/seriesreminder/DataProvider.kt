@@ -1,61 +1,28 @@
 package hu.csabapap.seriesreminder
 
-import hu.csabapap.seriesreminder.data.db.entities.*
-import hu.csabapap.seriesreminder.data.network.entities.BaseShow
-import hu.csabapap.seriesreminder.data.network.entities.Ids
-import hu.csabapap.seriesreminder.data.network.entities.SearchResult
-import hu.csabapap.seriesreminder.data.network.entities.TrendingShow
+import com.uwetrottmann.trakt5.entities.BaseShow
+import com.uwetrottmann.trakt5.entities.Show
+import com.uwetrottmann.trakt5.entities.ShowIds
+import hu.csabapap.seriesreminder.data.db.entities.SREpisode
+import hu.csabapap.seriesreminder.data.db.entities.SRSeason
+import hu.csabapap.seriesreminder.data.db.entities.WatchedEpisode
 import org.threeten.bp.OffsetDateTime
 import org.threeten.bp.ZoneOffset
 
 
-fun getSearchResult() = SearchResult(getShow())
 
-fun getShow() = BaseShow(
-        title = "Humans",
-        ids = Ids(1, 1),
-        overview = "Lorem ipsum",
-        rating = 3.14f,
+fun getShow() = BaseShow().apply{
+    show = Show().apply {
+        title = "Humans"
+        ids = ShowIds().apply {
+            trakt = 1
+            tvdb = 1
+        }
+        overview = "Lorem ipsum"
+        rating = 3.14
         votes = 42
-)
-
-val theBoys = BaseShow(
-        title = "The Boys",
-        ids = Ids(139960, 355567),
-        overview = "In a world where superheroes embrace the darker side of their massive celebrity and fame, The Boys centres on a group of vigilantes known informally as \\\"The Boys,\\\" who set out to take down corrupt superheroes with no more than blue collar grit and a willingness to fight dirty.",
-        rating = 8.61099f,
-        votes = 1820)
-
-val bigBangTheory = BaseShow(
-        title = "The Big Bang Theory",
-        ids = Ids(1234, 4321),
-        overview = "A woman who moves into an apartment across the hall from two brilliant but socially awkward physicists shows them how little they know about life outside of the laboratory.",
-        rating = 8.21645f,
-        votes = 53481)
-
-val mindhunter = SRShow(
-        id = 1L,
-        traktId = 1,
-        tvdbId = 1,
-        title = "Mindhunter",
-        overview = "Lorem ipsum...",
-        poster = "",
-        posterThumb = "",
-        cover = "",
-        coverThumb = "",
-        rating = 99.8f,
-        votes = 1234,
-        genres = "drama",
-        runtime = 60,
-        airedEpisodes = 19,
-        status = "continuing",
-        network = "Netflix",
-        trailer = "",
-        updatedAt = OffsetDateTime.now(),
-        homepage = "",
-        airingTime = AiringTime("Monday", "20:00", "US"),
-        nextEpisode = 2
-)
+    }
+}
 
 val mindhunterEpisode = SREpisode(
         1,
@@ -95,8 +62,3 @@ val watchedEpisode = WatchedEpisode(
         episodeId = 1,
         watchedAt = OffsetDateTime.of(2020, 3, 3, 12, 0, 0, 0, ZoneOffset.UTC)
 )
-
-val trendingShow1 = TrendingShow(123, theBoys)
-val trendingShow2 = TrendingShow(2, bigBangTheory)
-
-val trendingShows = listOf(trendingShow1, trendingShow2)

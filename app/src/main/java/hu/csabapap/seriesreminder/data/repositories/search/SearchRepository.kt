@@ -1,7 +1,7 @@
 package hu.csabapap.seriesreminder.data.repositories.search
 
+import com.uwetrottmann.trakt5.entities.SearchResult
 import hu.csabapap.seriesreminder.data.Result
-import hu.csabapap.seriesreminder.data.network.entities.SearchResult
 import javax.inject.Inject
 import javax.inject.Singleton
 

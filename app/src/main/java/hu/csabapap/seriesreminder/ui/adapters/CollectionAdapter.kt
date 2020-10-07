@@ -17,12 +17,26 @@ import timber.log.Timber
 class CollectionAdapter :
         PagedListAdapter<CollectionItem, CollectionAdapter.CollectionVH>(diffCallback) {
 
+    interface CollectionItemClickListener {
+        fun onCollectionItemClick(item: CollectionItem)
+    }
+
     var context: Context? = null
+    var listener: CollectionItemClickListener? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CollectionVH {
         context = parent.context
         val itemView = LayoutInflater.from(context).inflate(R.layout.item_collection, parent, false)
-        return CollectionVH(itemView)
+        val collectionVH = CollectionVH(itemView)
+        collectionVH.itemView.setOnClickListener {
+            val position = collectionVH.adapterPosition
+            if (position == RecyclerView.NO_POSITION) return@setOnClickListener
+            val item = getItem(position) ?: return@setOnClickListener
+            listener?.apply {
+                onCollectionItemClick(item)
+            }
+        }
+        return collectionVH
     }
 
     override fun onBindViewHolder(holder: CollectionVH, position: Int) {

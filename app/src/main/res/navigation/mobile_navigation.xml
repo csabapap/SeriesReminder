@@ -22,13 +22,22 @@
         tools:layout="@layout/fragment_search" />
 
     <fragment
-        android:id="@+id/navigation_settings"
-        android:name="hu.csabapap.seriesreminder.ui.settings.SRSettingsFragment"
-        android:label="@string/settings"
-        tools:layout="@layout/activity_settings" />
+        android:id="@+id/navigation_account"
+        android:name="hu.csabapap.seriesreminder.ui.account.AccountFragment"
+        android:label="@string/account"
+        tools:layout="@layout/fragment_account">
+        <action
+            android:id="@+id/action_navigation_account_to_tratk_auth_fragment"
+            app:destination="@id/trakt_auth_fragment" />
+    </fragment>
 
     <fragment
         android:id="@+id/collection_fragment"
         android:name="hu.csabapap.seriesreminder.ui.main.collection.CollectionFragment"
         tools:layout="@layout/fragment_collection" />
+
+    <fragment
+        android:id="@+id/trakt_auth_fragment"
+        android:name="hu.csabapap.seriesreminder.ui.traktauth.TraktAuthenticationFragment"
+        tools:layout="@layout/fragment_trakt_authentication" />
 </navigation>

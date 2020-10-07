@@ -42,7 +42,7 @@ class CreateNotificationAlarmUseCase @Inject constructor(
         workManager.cancelWorkById(UUID.fromString(notification.workerId))
         val episode = episodesRepository.getEpisodeByAbsNumber(showId, episodeNumber) ?: return
         val requestId = createAlarm(show, episode.absNumber, notification.delay) ?: return
-        val updatedNotification = notification.copy(workerId = requestId)
+        val updatedNotification = notification.copy(workerId = requestId) // TODO fix episode number in notification
         notificationsRepository.update(updatedNotification)
         Timber.d("notification alert created")
     }

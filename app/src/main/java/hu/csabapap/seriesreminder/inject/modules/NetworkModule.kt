@@ -2,11 +2,12 @@ package hu.csabapap.seriesreminder.inject.modules
 
 import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
 import com.squareup.moshi.Moshi
+import com.uwetrottmann.trakt5.TraktV2
 import dagger.Module
 import dagger.Provides
 import hu.csabapap.seriesreminder.BuildConfig
 import hu.csabapap.seriesreminder.data.ApplicationJsonAdapterFactory
-import hu.csabapap.seriesreminder.data.network.services.*
+import hu.csabapap.seriesreminder.data.repositories.loggedinuser.LoggedInUserRepository
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -14,6 +15,7 @@ import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
 import timber.log.Timber
 import javax.inject.Named
+import javax.inject.Singleton
 
 @Module
 class NetworkModule {
@@ -38,14 +40,30 @@ class NetworkModule {
         }
     }
 
+    @Provides @Named("auth")
+    fun providesTraktAuthHeaderInterceptor(loggedInUserRepository: LoggedInUserRepository): Interceptor {
+        return Interceptor { chain ->
+            val request = chain.request()
+            if (loggedInUserRepository.isLoggedIn()) {
+                val newRequest = request.newBuilder()
+                        .header("Authorization", "Bearer ${loggedInUserRepository.loggedInUser()?.accessToken ?: ""}")
+                        .build()
+                chain.proceed(newRequest)
+            } else {
+                chain.proceed(request)
+            }
+        }
+    }
+
     @Provides
-    fun providesOkHttp(traktApiInterceptor: Interceptor): OkHttpClient {
+    fun providesOkHttp(traktApiInterceptor: Interceptor, @Named("auth") traktAuthInterceptor: Interceptor): OkHttpClient {
         val loggingInterceptor : HttpLoggingInterceptor = HttpLoggingInterceptor(
                 HttpLoggingInterceptor.Logger { Timber.tag("TraktOkHttp").d(it) })
                 .setLevel(HttpLoggingInterceptor.Level.BODY)
         return OkHttpClient.Builder()
                 .addInterceptor(loggingInterceptor)
                 .addInterceptor(traktApiInterceptor)
+                .addInterceptor(traktAuthInterceptor)
                 .build()
     }
 
@@ -61,37 +79,38 @@ class NetworkModule {
     }
 
     @Provides
-    fun trendingShowsService(@Named("trakt") retrofit: Retrofit): TrendingShowsService {
-        return retrofit.create(TrendingShowsService::class.java)
+    fun logInterceptor(): HttpLoggingInterceptor {
+        return HttpLoggingInterceptor(
+                HttpLoggingInterceptor.Logger { Timber.tag("TraktOkHttp").d(it) })
+                .setLevel(HttpLoggingInterceptor.Level.BODY)
+    }
+
+    @Singleton
+    @Provides
+    fun provideTrakt(logInterceptor: HttpLoggingInterceptor): TraktV2 {
+        return object : TraktV2(
+                BuildConfig.TRAKT_CLIENT_ID,
+                BuildConfig.TRAKT_SECRET_ID,
+                BuildConfig.TRAKT_REDIRECT_URL) {
+            override fun setOkHttpClientDefaults(builder: OkHttpClient.Builder) {
+                super.setOkHttpClientDefaults(builder)
+                builder.addInterceptor(logInterceptor)
+            }
+        }
     }
 
     @Provides
-    fun popularShowsService(@Named("trakt") retrofit: Retrofit): PopularShowsService {
-        return retrofit.create(PopularShowsService::class.java)
-    }
+    fun provideTraktShowsService(trakt: TraktV2) = trakt.shows()
 
     @Provides
-    fun relatedShowsService(@Named("trakt") retrofit: Retrofit): RelatedShowsService {
-        return retrofit.create(RelatedShowsService::class.java)
-    }
+    fun provideTraktepisodesService(trakt: TraktV2) = trakt.episodes()
 
     @Provides
-    fun episodesService(@Named("trakt") retrofit: Retrofit): EpisodesService {
-        return retrofit.create(EpisodesService::class.java)
-    }
+    fun provideTraktSeasonsService(trakt: TraktV2) = trakt.seasons()
 
     @Provides
-    fun seasonsService(@Named("trakt") retrofit: Retrofit): SeasonsService {
-        return retrofit.create(SeasonsService::class.java)
-    }
+    fun providesUserService(trakt: TraktV2) = trakt.users()
 
     @Provides
-    fun showService(@Named("trakt") retrofit: Retrofit): ShowsService {
-        return retrofit.create(ShowsService::class.java)
-    }
-
-    @Provides
-    fun searchService(@Named("trakt") retrofit: Retrofit): SearchService {
-        return retrofit.create(SearchService::class.java)
-    }
+    fun provedesSeratchService(trakt: TraktV2) = trakt.search()
 }

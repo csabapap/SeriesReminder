@@ -39,4 +39,8 @@ class LocalEpisodesDataSource @Inject constructor(private val episodesDao: Episo
     suspend fun getUpcomingEpisode(showId: Int): EpisodeWithShow? {
         return episodesDao.getUpcomingEpisode(showId)
     }
+
+    suspend fun getNextUpcomingEpisode(showId: Int): SREpisode? {
+        return episodesDao.getNextUpcomingShowId(showId)
+    }
 }
