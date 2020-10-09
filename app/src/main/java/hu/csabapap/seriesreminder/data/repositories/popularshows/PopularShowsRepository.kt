@@ -70,9 +70,10 @@ class PopularShowsRepository @Inject constructor(private val localPopularDataSou
         if (result is Result.Success) {
             val popularShows = result.data
             val popularShowItems = popularShows.map {
-                showsRepository.getShowWithImages(it.ids.trakt, it.ids.tvdb)
+                showsRepository.getShowWithImages(it.ids.trakt, it.ids.tvdb) ?: return@map null
                 mapToSRPopularItem(it.ids.trakt, page)
             }
+                    .filterNotNull()
             localPopularDataSource.insertShows(page, popularShowItems)
             Timber.d("populars shows loaded in %d ms", (System.currentTimeMillis() - start))
         }
