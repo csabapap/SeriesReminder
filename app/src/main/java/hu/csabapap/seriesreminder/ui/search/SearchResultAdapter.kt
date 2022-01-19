@@ -53,10 +53,12 @@ class SearchResultAdapter: RecyclerView.Adapter<SearchResultAdapter.ResultVH>() 
 
     inner class ResultVH(itemView: View): RecyclerView.ViewHolder(itemView) {
         fun bind(searchResult: SrSearchResult, position: Int) {
-            Picasso.with(context)
-                    .load(getPosterUrl(searchResult.show.ids.tvdb))
+            searchResult.show.ids?.tvdb?.let { tvdbId ->
+                Picasso.with(context)
+                    .load(getPosterUrl(tvdbId))
                     .transform(RoundedTransformation(itemView.toPixelFromDip(2f)))
                     .into(itemView.poster)
+            }
             itemView.show_title.text = searchResult.show.title
             itemView.overview.text = searchResult.show.overview
             if (searchResult.inCollection) {
