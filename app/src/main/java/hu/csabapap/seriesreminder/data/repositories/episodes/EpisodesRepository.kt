@@ -56,14 +56,14 @@ class EpisodesRepository @Inject constructor(
         localDataSource.saveImage(tvdbId, url)
     }
 
-    fun mapToSREpisode(episode: Episode, showId: Int, absNumber: Int) : SREpisode {
+    fun mapToSREpisode(episode: Episode, showId: Int) : SREpisode {
         return SREpisode(null,
                 episode.season,
                 episode.number,
                 episode.title,
                 episode.ids.trakt,
                 episode.ids.tvdb,
-                episode.number_abs ?: absNumber,
+                episode.number_abs ?: 0,
                 episode.overview,
                 episode.first_aired,
                 episode.updated_at.toString(),
