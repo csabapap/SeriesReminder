@@ -56,21 +56,21 @@ class SeasonsRepository @Inject constructor(private val seasonsDao: SeasonsDao,
         val seasons = (result as Result.Success).data
         var absNumber = 0
         return seasons
-            .filter { it.number != 0 && it.episodes != null}
+            .filter { it.number != 0 && it.episodes != null }
             .map { mapToSRSeasons(it, showId) }
             .sortedBy { season -> season.number }
-                .map {season ->
-                    season.episodes = season.episodes.sortedBy { episode -> episode.number }
-                            .map episodeMap@{ episode ->
-                                absNumber += 1
-                                return@episodeMap if (episode.absNumber == 0) {
-                                    episode.copy(absNumber = absNumber)
-                                } else {
-                                    episode
-                                }
-                            }
-                    season
-                }
+            .map { season ->
+                season.episodes = season.episodes.sortedBy { episode -> episode.number }
+                    .map episodeMap@{ episode ->
+                        absNumber += 1
+                        return@episodeMap if (episode.absNumber == 0) {
+                            episode.copy(absNumber = absNumber)
+                        } else {
+                            episode
+                        }
+                    }
+                season
+            }
     }
 
     fun getSeasonsLiveData(showId: Int): LiveData<List<SRSeason>> {
@@ -80,10 +80,8 @@ class SeasonsRepository @Inject constructor(private val seasonsDao: SeasonsDao,
     private fun mapToSRSeasons(season: Season, showId: Int): SRSeason {
         val episodes = mutableListOf<SREpisode>()
         if (season.episodes.isNullOrEmpty().not()) {
-            var absNumber = 0
             season.episodes.forEach {
-                absNumber++
-                episodes.add(episodesRepository.mapToSREpisode(it, showId, absNumber))
+                episodes.add(episodesRepository.mapToSREpisode(it, showId))
             }
         }
         val srSeason = SRSeason(null,
