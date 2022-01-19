@@ -1,5 +1,6 @@
 package hu.csabapap.seriesreminder.data.repositories.episodes
 
+import com.uwetrottmann.trakt5.entities.Episode
 import hu.csabapap.seriesreminder.data.Result
 import hu.csabapap.seriesreminder.data.db.daos.NextEpisodeDao
 import hu.csabapap.seriesreminder.data.db.entities.SREpisode
@@ -55,14 +56,14 @@ class EpisodesRepository @Inject constructor(
         localDataSource.saveImage(tvdbId, url)
     }
 
-    fun mapToSREpisode(episode: com.uwetrottmann.trakt5.entities.Episode, showId: Int) : SREpisode {
+    fun mapToSREpisode(episode: Episode, showId: Int, absNumber: Int) : SREpisode {
         return SREpisode(null,
                 episode.season,
                 episode.number,
                 episode.title,
                 episode.ids.trakt,
                 episode.ids.tvdb,
-                episode.number_abs,
+                episode.number_abs ?: absNumber,
                 episode.overview,
                 episode.first_aired,
                 episode.updated_at.toString(),
