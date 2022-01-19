@@ -55,12 +55,11 @@ class SeasonsRepository @Inject constructor(private val seasonsDao: SeasonsDao,
         }
         val seasons = (result as Result.Success).data
         var absNumber = 0
-        return seasons.map {
-            mapToSRSeasons(it, showId)
-        }.sortedBy { season -> season.number }
+        return seasons
+            .filter { it.number != 0 && it.episodes != null}
+            .map { mapToSRSeasons(it, showId) }
+            .sortedBy { season -> season.number }
                 .map {season ->
-                    if (season.number == 0) return@map season
-
                     season.episodes = season.episodes.sortedBy { episode -> episode.number }
                             .map episodeMap@{ episode ->
                                 absNumber += 1
@@ -80,9 +79,11 @@ class SeasonsRepository @Inject constructor(private val seasonsDao: SeasonsDao,
 
     private fun mapToSRSeasons(season: Season, showId: Int): SRSeason {
         val episodes = mutableListOf<SREpisode>()
-        if (season.episodes.isEmpty().not()) {
+        if (season.episodes.isNullOrEmpty().not()) {
+            var absNumber = 0
             season.episodes.forEach {
-                episodes.add(episodesRepository.mapToSREpisode(it, showId))
+                absNumber++
+                episodes.add(episodesRepository.mapToSREpisode(it, showId, absNumber))
             }
         }
         val srSeason = SRSeason(null,
