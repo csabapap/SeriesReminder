@@ -10,6 +10,7 @@ import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AlertDialog
 import androidx.core.app.ActivityOptionsCompat
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.palette.graphics.Palette
@@ -82,7 +83,9 @@ class ShowDetailsActivity : DaggerAppCompatActivity() {
         val layoutManager = related_shows.layoutManager as LinearLayoutManager
         layoutManager.orientation = RecyclerView.HORIZONTAL
         val dividerItemDecoration = DividerItemDecoration(this, layoutManager.orientation)
-        dividerItemDecoration.setDrawable(this.getDrawable(R.drawable.vertical_separator))
+        ContextCompat.getDrawable(this, R.drawable.vertical_separator)?.let {
+            dividerItemDecoration.setDrawable(it)
+        }
         related_shows.addItemDecoration(dividerItemDecoration)
 
         viewModel.getShow(showId)
@@ -156,8 +159,8 @@ class ShowDetailsActivity : DaggerAppCompatActivity() {
         return true
     }
 
-    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
-        when(item?.itemId ?: -1) {
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when(item.itemId) {
             R.id.remove_from_collection -> {
                 viewModel.removeFromCollection(showId)
                 finish()

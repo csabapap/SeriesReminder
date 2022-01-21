@@ -12,7 +12,8 @@ class NotificationReceiver : BroadcastReceiver() {
 
     override fun onReceive(context: Context, intent: Intent) {
         val serviceIntent = Intent(context, ReminderService::class.java)
-        serviceIntent.putExtras(intent.extras)
+        val extras = intent.extras ?: return
+        serviceIntent.putExtras(extras)
         ContextCompat.startForegroundService(context, serviceIntent)
     }
 }

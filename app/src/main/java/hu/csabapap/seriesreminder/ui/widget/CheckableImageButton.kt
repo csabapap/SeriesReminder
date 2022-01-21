@@ -48,7 +48,7 @@ class CheckableImageButton @JvmOverloads constructor(context: Context,
         if (state == null) return
         if (state is Bundle) {
             _checked = state.getBoolean("checked")
-            val superState = state.getParcelable("superState") as Parcelable
+            val superState = state.getParcelable<Parcelable>("superState")
             super.onRestoreInstanceState(superState)
             return
         }
