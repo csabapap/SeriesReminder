@@ -49,7 +49,9 @@ class HomeCardsAdapter(private val listener: CardClickListener)
             val layoutManager = discoverCardVH.itemView.rv_shows.layoutManager as LinearLayoutManager
             layoutManager.orientation = LinearLayoutManager.HORIZONTAL
             val dividerItemDecoration = DividerItemDecoration(context, layoutManager.orientation)
-            dividerItemDecoration.setDrawable(context.getDrawable(R.drawable.vertical_separator))
+            ContextCompat.getDrawable(context, R.drawable.vertical_separator)?.let {
+                dividerItemDecoration.setDrawable(it)
+            }
             discoverCardVH.itemView.rv_shows.addItemDecoration(dividerItemDecoration)
             discoverCardVH.itemView.more_btn.setOnClickListener {
                 val position = discoverCardVH.layoutPosition

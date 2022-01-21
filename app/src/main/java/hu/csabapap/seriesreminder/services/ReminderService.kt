@@ -31,7 +31,7 @@ class ReminderService : DaggerService() {
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         intent?.apply {
             val id = getIntExtra(Reminder.SHOW_ID, -1)
-            val title = getStringExtra(Reminder.SHOW_TITLE)
+            val title = getStringExtra(Reminder.SHOW_TITLE) ?: ""
 
             displayNotification(id, title)
             getNextEpisode(id)

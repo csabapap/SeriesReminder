@@ -62,8 +62,8 @@ class EpisodeActivity : DaggerAppCompatActivity() {
         viewModel.getEpisode(showId, seasonNumber, episodeNumber)
     }
 
-    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
-        val id = item?.itemId ?: return super.onOptionsItemSelected(item)
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        val id = item.itemId
         when (id) {
             android.R.id.home -> {
                 finish()
