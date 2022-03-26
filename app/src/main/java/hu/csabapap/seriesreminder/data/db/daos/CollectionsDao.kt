@@ -15,6 +15,9 @@ interface CollectionsDao {
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     fun insert(collectionItem: CollectionEntry): Long
 
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    fun insertAll(collectionItem: List<CollectionEntry>)
+
     @Query("SELECT * FROM collection ORDER BY added DESC")
     fun getCollection() : DataSource.Factory<Int, CollectionItem>
 

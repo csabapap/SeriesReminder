@@ -14,6 +14,10 @@ class CollectionRepository @Inject constructor(private val collectionsDao: Colle
         return collectionsDao.insert(item)
     }
 
+    fun saveAll(items: List<CollectionEntry>) {
+        return collectionsDao.insertAll(items)
+    }
+
     fun getCollections() : DataSource.Factory<Int, CollectionItem> {
         return collectionsDao.getCollection()
     }

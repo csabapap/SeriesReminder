@@ -2,6 +2,7 @@ package hu.csabapap.seriesreminder.data.db.daos
 
 import androidx.lifecycle.LiveData
 import androidx.room.*
+import androidx.room.OnConflictStrategy.REPLACE
 import hu.csabapap.seriesreminder.data.db.entities.SRSeason
 import hu.csabapap.seriesreminder.data.db.relations.SeasonWithEpisodes
 import kotlinx.coroutines.coroutineScope
@@ -26,7 +27,7 @@ abstract class SeasonsDao {
     @Query("SELECT * FROM seasons WHERE show_id = :showId AND number = :season LIMIT 1")
     abstract suspend fun getSeasonWithEpisodes(showId: Int, season: Int): SeasonWithEpisodes?
 
-    @Update
+    @Update(onConflict = REPLACE)
     abstract suspend fun update(season: SRSeason)
 
     @Update

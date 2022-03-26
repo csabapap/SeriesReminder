@@ -45,6 +45,10 @@ class ShowsRepository @Inject constructor(private val tvdbApi: TvdbApi,
         showDao.insertOrUpdateShow(show)
     }
 
+    fun insertShows(shows: List<SRShow>) {
+        showDao.insertOrUpdateShows(shows)
+    }
+
     private fun insertOrUpdateShow(show: SRShow): SRShow {
         Timber.d("insert or update show: %d", show.traktId)
         return showDao.insertOrUpdateShow(show)

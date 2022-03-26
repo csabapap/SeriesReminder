@@ -29,4 +29,15 @@ abstract class SRShowDao {
             show
         }
     }
+
+    @Transaction
+    open fun insertOrUpdateShows(shows: List<SRShow>) {
+        shows.forEach {
+            if (it.id == null) {
+                insert(it)
+            } else {
+                updateShow(it)
+            }
+        }
+    }
 }

@@ -115,4 +115,8 @@ class SeasonsRepository @Inject constructor(private val seasonsDao: SeasonsDao,
 
         seasonsDao.upsert(seasonsToSave)
     }
+
+    suspend fun upsertSeasons(seasons: List<SRSeason>) {
+        seasonsDao.upsert(seasons)
+    }
 }
