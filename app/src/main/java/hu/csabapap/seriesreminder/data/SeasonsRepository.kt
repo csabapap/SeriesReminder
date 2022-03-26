@@ -32,7 +32,7 @@ class SeasonsRepository @Inject constructor(private val seasonsDao: SeasonsDao,
         if (images != null) {
             return images.data.groupBy {
                 it.subKey
-            }.mapValues { it.value.maxBy { image -> image.ratingsInfo.average } }
+            }.mapValues { it.value.maxByOrNull { image -> image.ratingsInfo.average } }
         }
         return emptyMap()
     }

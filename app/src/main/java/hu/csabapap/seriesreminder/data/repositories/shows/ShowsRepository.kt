@@ -54,7 +54,7 @@ class ShowsRepository @Inject constructor(private val tvdbApi: TvdbApi,
         return safeApiCall({
             val show = remoteDataSource.showCall(traktId).execute().body()
             val images = tvdbApi.images(tvdbId)
-            val bestVotedImage = images?.data?.maxBy { image ->
+            val bestVotedImage = images?.data?.maxByOrNull { image ->
                 image.ratingsInfo.average
             }
             return@safeApiCall Result.Success(mapToSRShow(show!!, bestVotedImage))

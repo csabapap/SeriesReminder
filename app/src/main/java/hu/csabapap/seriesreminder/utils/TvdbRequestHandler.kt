@@ -32,7 +32,7 @@ class TvdbRequestHandler @Inject constructor(private val tvdbApi: TvdbApi,
         val response = tvdbApi.imagesCall(tvdbId, type).execute()
         val responseBody = response.body()
         responseBody?.let {
-            val popularImage = it.data.maxBy { image ->
+            val popularImage = it.data.maxByOrNull { image ->
                 image.ratingsInfo.average
             }
 

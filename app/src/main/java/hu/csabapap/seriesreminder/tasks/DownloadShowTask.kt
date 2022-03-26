@@ -33,10 +33,10 @@ class DownloadShowTask(private val showId: Int): Task {
         val posters = tvdbApi.images(show.tvdbId, "poster") ?: return
         val covers = tvdbApi.images(show.tvdbId, "fanart") ?: return
 
-        val popularPoster = posters.data.maxBy { image ->
+        val popularPoster = posters.data.maxByOrNull { image ->
             image.ratingsInfo.average
         }
-        val popularCover = covers.data.maxBy { image ->
+        val popularCover = covers.data.maxByOrNull { image ->
             image.ratingsInfo.average
         }
 
