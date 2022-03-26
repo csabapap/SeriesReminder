@@ -78,8 +78,8 @@ class ShowsRepository @Inject constructor(private val tvdbApi: TvdbApi,
             updateProperty(this::homepage, show.homepage ?: "")
             updateProperty(this::updatedAt, show.updated_at)
             show.airs?.let {
-                val updateVal = AiringTime(it.day,
-                        it.time, it.timezone)
+                val updateVal = AiringTime(it.day ?: "",
+                        it.time ?: "", it.timezone ?: "")
                 updateProperty(this::airingTime, updateVal)
             }
             images?.let {
