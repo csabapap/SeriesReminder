@@ -6,17 +6,20 @@ import org.threeten.bp.LocalDateTime
 import org.threeten.bp.ZoneId
 import org.threeten.bp.ZonedDateTime
 import org.threeten.bp.format.DateTimeFormatter
+import java.util.*
 
 val dayAndTimeFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("EEEE H:mm")
 
 fun getAirDateTimeInCurrentTimeZone(localDateTime: LocalDateTime,
                                     airingTime: AiringTime,
                                     localZoneId: ZoneId = ZoneId.systemDefault())
-        : ZonedDateTime {
+        : ZonedDateTime? {
     val zoneId = ZoneId.of(airingTime.timezone)
     val localZonedDateTime = ZonedDateTime.of(localDateTime, localZoneId)
     var airingDateTime = localZonedDateTime.withZoneSameInstant(zoneId)
-    while (airingDateTime.dayOfWeek != DayOfWeek.valueOf(airingTime.day.toUpperCase())) {
+    val day = airingTime.day.uppercase(Locale.getDefault())
+    if (day.isEmpty()) return null
+    while (airingDateTime.dayOfWeek != DayOfWeek.valueOf(day)) {
         airingDateTime = airingDateTime.plusDays(1)
     }
     val (hours, minutes) = toTime(airingTime.time)
@@ -32,7 +35,8 @@ fun getAirDateTimeInCurrentTimeZone(localDateTime: LocalDateTime,
     return airDateTime.withZoneSameInstant(localZoneId)
 }
 
-fun getDayAndTimeString(dateTime: ZonedDateTime): String {
+fun getDayAndTimeString(dateTime: ZonedDateTime?): String {
+    if (dateTime == null) return ""
     return dayAndTimeFormatter.format(dateTime)
 }
 

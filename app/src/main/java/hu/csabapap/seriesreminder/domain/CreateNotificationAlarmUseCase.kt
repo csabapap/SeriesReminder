@@ -57,6 +57,7 @@ class CreateNotificationAlarmUseCase @Inject constructor(
 
     private fun createAlarm(show: SRShow, episodeNumber: Int, aheadOfTime: Int): String? {
         val airDateTime = getAirDateTimeInCurrentTimeZone(LocalDateTime.now(), show.airingTime)
+                ?: return null
         val currentDateTime = ZonedDateTime.now(ZoneId.systemDefault())
         val duration = if (BuildConfig.DEBUG) {
             5000

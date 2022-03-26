@@ -70,16 +70,18 @@ class EpisodeCardsAdapter: RecyclerView.Adapter<EpisodeCardsAdapter.CardVH>() {
             itemView.episode_info.text = episodeInfo
             show.apply {
                 val nextAirDateTime = getAirDateTimeInCurrentTimeZone(LocalDateTime.now(),airingTime)
-                        .toOffsetDateTime()
-                val diffInDays = nextAirDateTime.diffInDays()
-                if (diffInDays > 0) {
-                    itemView.airs_in_text.text = "in $diffInDays days"
-                } else {
-                    val diffInHours = nextAirDateTime.diffInHours()
-                    if (diffInHours > 0) {
-                        itemView.airs_in_text.text = "in $diffInHours hours"
+                        ?.toOffsetDateTime()
+                if (nextAirDateTime != null) {
+                    val diffInDays = nextAirDateTime.diffInDays()
+                    if (diffInDays > 0) {
+                        itemView.airs_in_text.text = "in $diffInDays days"
                     } else {
-                        itemView.airs_in_text.text = "in less then an hour"
+                        val diffInHours = nextAirDateTime.diffInHours()
+                        if (diffInHours > 0) {
+                            itemView.airs_in_text.text = "in $diffInHours hours"
+                        } else {
+                            itemView.airs_in_text.text = "in less then an hour"
+                        }
                     }
                 }
                 itemView.show_poster.loadFromTmdbUrl(tvdbId, R.drawable.placeholder_bg, object: Callback {
