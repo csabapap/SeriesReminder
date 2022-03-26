@@ -40,8 +40,14 @@ class GetWatchedShowUseCase @Inject constructor(
 
         val seasonsFromWeb = seasonsRepository.getSeasonsFromWeb(show.traktId) ?: return null
         val seasonImages = seasonsRepository.getSeasonImages(newShow.tvdbId)
+        val fallbackSeasonPoster = popularPoster?.thumbnail ?: ""
 
-        return ShowWithSeasonsAndImagesFromTrakt(newShow, SeasonsWithImages(showId, seasonsFromWeb, seasonImages))
+        return ShowWithSeasonsAndImagesFromTrakt(newShow,
+                SeasonsWithImages(
+                        showId,
+                        seasonsFromWeb,
+                        seasonImages,
+                        fallbackSeasonPoster))
     }
 }
 
@@ -53,4 +59,6 @@ data class ShowWithSeasonsAndImagesFromTrakt(
 data class SeasonsWithImages(
         val showTraktId: Int,
         val seasons: List<SRSeason>,
-        val seasonsImages: Map<String, Image?>)
+        val seasonsImages: Map<String, Image?>,
+        val fallbackPoster: String = ""
+)

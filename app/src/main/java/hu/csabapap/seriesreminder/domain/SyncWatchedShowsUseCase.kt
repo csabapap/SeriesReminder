@@ -55,12 +55,14 @@ class SyncWatchedShowsUseCase @Inject constructor(
                 val seasonsFromWeb = watchedShowsFromTratk.mapNotNull { it?.seasonsWithImages }
                 val allSeasonsToSave = seasonsFromWeb.map { remoteSeasonWithImages ->
                     val localSeasonsMap = seasonsRepository.getSeasonsFromDb(remoteSeasonWithImages.showTraktId)
-                            ?.associateBy { remoteSeasonWithImages.showTraktId } ?: emptyMap()
+                            ?.associateBy { it.traktId } ?: emptyMap()
                     remoteSeasonWithImages.seasons.map { season ->
-                        val localSeason = localSeasonsMap[remoteSeasonWithImages.showTraktId]
+                        val localSeason = localSeasonsMap[season.traktId]
                         val image = remoteSeasonWithImages.seasonsImages[season.number.toString()]
-                        season.copy(id = localSeason?.id, fileName = image?.fileName ?: "", thumbnail = image?.thumbnail
-                                ?: "", nmbOfWatchedEpisodes = localSeason?.nmbOfWatchedEpisodes ?: 0)
+                        season.copy(id = localSeason?.id,
+                                fileName = image?.fileName ?: remoteSeasonWithImages.fallbackPoster,
+                                thumbnail = image?.thumbnail ?: remoteSeasonWithImages.fallbackPoster,
+                                nmbOfWatchedEpisodes = localSeason?.nmbOfWatchedEpisodes ?: 0)
                     }
                 }.flatten()
                 seasonsRepository.upsertSeasons(allSeasonsToSave)
