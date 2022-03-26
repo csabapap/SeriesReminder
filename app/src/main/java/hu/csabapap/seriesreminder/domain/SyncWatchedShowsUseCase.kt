@@ -14,7 +14,8 @@ import javax.inject.Inject
 class SyncWatchedShowsUseCase @Inject constructor(
         private val loggedInUserRepository: LoggedInUserRepository,
         private val collectionRepository: CollectionRepository,
-        private val traktUsers: Users
+        private val traktUsers: Users,
+        private val addShowToCollectionUseCase: AddShowToCollectionUseCase
 ) {
     suspend fun sync() {
         if (!loggedInUserRepository.isLoggedIn()) return
@@ -28,15 +29,16 @@ class SyncWatchedShowsUseCase @Inject constructor(
             val data = result.data
             val collectionMap = collectionRepository.getCollectionsSuspendable().associateBy { it.entry?.showId }
             data.forEach {
-                if (!collectionMap.containsKey(it.show.ids.trakt)){
-                    Timber.d("${it.show.title} watched show is not in collection")
+                val show = it.show ?: return@forEach
+                val traktId = show.ids?.trakt ?: return@forEach
+                if (!collectionMap.containsKey(traktId)){
+                    Timber.d("${show.title} watched show is not in collection")
+                    addShowToCollectionUseCase.addShow(traktId)
                 } else {
-                    Timber.d("${it.show.title} watched show is in collection")
+                    Timber.d("${show.title} watched show is in collection")
                 }
             }
         }
-
-
     }
 
     suspend fun watchedShowsFromTrakt() = safeApiCall({
