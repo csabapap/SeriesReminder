@@ -16,6 +16,6 @@ abstract class ShowDetailsModule {
     @Binds
     @Named("ShowDetailsViewModelFactory")
     abstract fun providesViewModelFactory(showDetailsViewModelProvider: ShowDetailsViewModelProvider)
-            : ViewModelProvider.Factory
+            : ShowDetailsViewModelProvider
 
 }

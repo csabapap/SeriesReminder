@@ -68,7 +68,7 @@ class CollectionFragment : DaggerFragment(), CollectionAdapter.CollectionItemCli
         if (context is CollectionItemClickListener) {
             mListener = context
         } else {
-            throw RuntimeException(context!!.toString() + " must implement OnFragmentInteractionListener")
+            throw RuntimeException("$context must implement OnFragmentInteractionListener")
         }
     }
 

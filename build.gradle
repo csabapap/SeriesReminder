@@ -5,7 +5,7 @@ buildscript {
     ext.versions = [
             "support": '27.1.1',
             "constraintLayout" : '1.1.0',
-            "dagger" : '2.16',
+            "dagger" : '2.41',
             "rxJava" : '2.1.6',
             "retrofit" : '2.9.0',
             "room": '2.4.2',

@@ -16,8 +16,8 @@ class SeasonsViewModelProvider @Inject constructor(private val showsRepository: 
                                                    private val dispatchers: AppCoroutineDispatchers)
     : ViewModelProvider.NewInstanceFactory() {
 
-    override fun <T : ViewModel?> create(modelClass: Class<T>): T {
-        return SeasonsViewModel(showsRepository, watchedEpisodesRepository, setEpisodeWatchedUseCase,
+    override fun <T : ViewModel> create(modelClass: Class<T>): T =
+        SeasonsViewModel(showsRepository, watchedEpisodesRepository, setEpisodeWatchedUseCase,
                 removeEpisodeFromWatchedUseCase, dispatchers) as T
-    }
+
 }
