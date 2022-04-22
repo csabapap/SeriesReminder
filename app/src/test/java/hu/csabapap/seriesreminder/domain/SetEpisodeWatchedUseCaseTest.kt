@@ -1,9 +1,11 @@
 package hu.csabapap.seriesreminder.domain
 
 import com.nhaarman.mockitokotlin2.*
+import com.uwetrottmann.trakt5.TraktV2
 import hu.csabapap.seriesreminder.data.SeasonsRepository
 import hu.csabapap.seriesreminder.data.repositories.shows.ShowsRepository
 import hu.csabapap.seriesreminder.data.repositories.WatchedEpisodesRepository
+import hu.csabapap.seriesreminder.data.repositories.loggedinuser.LoggedInUserRepository
 import hu.csabapap.seriesreminder.mindhunterEpisode
 import hu.csabapap.seriesreminder.mindhunterSeason
 import kotlinx.coroutines.runBlocking
@@ -14,9 +16,11 @@ class SetEpisodeWatchedUseCaseTest {
     private val showsRepository: ShowsRepository = mock()
     private val seasonsRepository: SeasonsRepository = mock()
     private val watchedRepository: WatchedEpisodesRepository = mock()
+    private val loggedInUserRepository: LoggedInUserRepository = mock()
+    private val trakt: TraktV2 = mock()
 
     private val watchedEpisodeUseCase = SetEpisodeWatchedUseCase(showsRepository,
-            seasonsRepository, watchedRepository)
+            seasonsRepository, watchedRepository, loggedInUserRepository, trakt)
 
     @Test
     fun `should not increase watched episode number when insert fails`() = runBlocking {
