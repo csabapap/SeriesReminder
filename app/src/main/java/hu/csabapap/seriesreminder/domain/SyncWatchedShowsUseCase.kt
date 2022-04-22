@@ -7,6 +7,8 @@ import hu.csabapap.seriesreminder.data.CollectionRepository
 import hu.csabapap.seriesreminder.data.Result
 import hu.csabapap.seriesreminder.data.SeasonsRepository
 import hu.csabapap.seriesreminder.data.db.entities.CollectionEntry
+import hu.csabapap.seriesreminder.data.db.entities.SRSeason
+import hu.csabapap.seriesreminder.data.repositories.episodes.EpisodesRepository
 import hu.csabapap.seriesreminder.data.repositories.loggedinuser.LoggedInUserRepository
 import hu.csabapap.seriesreminder.data.repositories.shows.ShowsRepository
 import hu.csabapap.seriesreminder.utils.safeApiCall
@@ -24,7 +26,8 @@ class SyncWatchedShowsUseCase @Inject constructor(
         private val traktUsers: Users,
         private val getWatchedShowUseCase: GetWatchedShowUseCase,
         private val showsRepository: ShowsRepository,
-        private val seasonsRepository: SeasonsRepository
+        private val seasonsRepository: SeasonsRepository,
+        private val episodesRepository: EpisodesRepository
 ) {
     suspend fun sync() {
         val start = System.currentTimeMillis()
@@ -66,6 +69,26 @@ class SyncWatchedShowsUseCase @Inject constructor(
                     }
                 }.flatten()
                 seasonsRepository.upsertSeasons(allSeasonsToSave)
+
+                val episodesToSave = seasonsFromWeb.map { seasonsWithImages ->
+                    val seasonsWithCheckedAbsNumber = setEpisodeAbsNumberIfNotExists(seasonsWithImages.seasons)
+
+                    val episodes = seasonsWithCheckedAbsNumber.map { season ->
+                        season.episodes
+                    }
+                            .flatten()
+
+                    val localSeasons = seasonsRepository.getSeasonsFromDb(seasonsWithImages.showTraktId)?.associateBy { season -> season.number }
+                            ?: return@map null
+                    episodes.mapNotNull episodeMap@ { episode ->
+                        val localSeason = localSeasons[episode. season] ?: return@episodeMap null
+                        episode.copy(seasonId = localSeason.id!!)
+                    }
+                }
+                        .filterNotNull()
+                        .flatten()
+                episodesRepository.saveEpisodes(episodesToSave)
+
                 Timber.d("nmb of watched shows from trakt (${watchedShowsFromTratk.size}) inserted in: ${System.currentTimeMillis() - start}ms")
             }
         }
@@ -78,4 +101,23 @@ class SyncWatchedShowsUseCase @Inject constructor(
         }
         return@safeApiCall Result.Error(HttpException(response))
     }, "error during getting watched shows")
+
+    private fun setEpisodeAbsNumberIfNotExists(seasons: List<SRSeason>): List<SRSeason> {
+        var absNumber = 0
+        return seasons.sortedBy { season -> season.number }
+                .map {season ->
+                    if (season.number == 0) return@map season
+
+                    season.episodes = season.episodes.sortedBy { episode -> episode.number }
+                            .map episodeMap@{ episode ->
+                                absNumber += 1
+                                return@episodeMap if (episode.absNumber == 0) {
+                                    episode.copy(absNumber = absNumber)
+                                } else {
+                                    episode
+                                }
+                            }
+                    season
+                }
+    }
 }
