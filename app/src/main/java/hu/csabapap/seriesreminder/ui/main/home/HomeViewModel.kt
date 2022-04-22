@@ -135,9 +135,12 @@ class HomeViewModel @Inject constructor(private val trendingShowsRepository: Tre
     private fun refresh() {
         scope.launch(dispatchers.io) {
             val trendingShowsResult = trendingShowsRepository.refreshTrendingShow()
-            if (trendingShowsResult is Result.Success)
             withContext(dispatchers.main) {
-                Timber.d("nmb of shows loaded: %d", trendingShowsResult.data.size)
+                if (trendingShowsResult is Result.Success) {
+                    Timber.d("nmb of shows loaded: %d", trendingShowsResult.data.size)
+                } else {
+                    _viewStateLiveData.postValue(HideTrendingSection)
+                }
             }
         }
 

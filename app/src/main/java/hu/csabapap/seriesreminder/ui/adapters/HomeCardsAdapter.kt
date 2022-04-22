@@ -132,6 +132,12 @@ class HomeCardsAdapter(private val listener: CardClickListener)
         notifyDataSetChanged()
     }
 
+    fun removeCard(cardType: Int) {
+        val trendingCard = cardItems.find { it.type == cardType }
+        cardItems.remove(trendingCard)
+        notifyDataSetChanged()
+    }
+
     inner class DiscoverCardVH(itemView: View, type: Int) : RecyclerView.ViewHolder(itemView) {
 
         val previewAdapter = DiscoverPreviewAdapter(type)

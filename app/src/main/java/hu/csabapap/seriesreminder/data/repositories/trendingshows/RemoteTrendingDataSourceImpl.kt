@@ -16,7 +16,7 @@ class RemoteTrendingDataSourceImpl @Inject constructor(private val showsServices
 
     private fun requestPaginatedTrendingShows(page: Int = 1, limit: Int = 15)
     : Result<List<TrendingShow>>{
-        val response = showsServices.trending(page, limit, Extended.FULL).execute()
+        val response = showsServices.trending(page, limit, null).execute()
         if (response.isSuccessful) {
             val data = response.body()
             if (data != null) {
