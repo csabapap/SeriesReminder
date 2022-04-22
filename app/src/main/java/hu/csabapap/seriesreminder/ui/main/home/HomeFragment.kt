@@ -165,6 +165,7 @@ class HomeFragment: DaggerFragment(),
                     state.items, CardItem.POPULAR_CARD_TYPE, CardItem.PRIORITY_POPULAR))
             is MyShowsState -> Timber.d("display shows for popular shows")
             is NextEpisodesState -> cardsAdapter.addCard(NextEpisodesCardItem(state.episodes, CardItem.NEXT_EPISODES_TYPE))
+            HideTrendingSection -> cardsAdapter.removeCard(CardItem.TRENDING_CARD_TYPE)
         }.exhaustive
     }
 }
