@@ -74,7 +74,7 @@ android {
     }
 
     lintOptions {
-        disable 'RestrictedApi', 'LogNotTimber', 'StringFormatInTimber', 'ThrowableNotAtBeginning', 'BinaryOperationInTimber', 'TimberArgCount', 'TimberArgTypes', 'TimberTagLength'
+        disable 'RestrictedApi', 'LogNotTimber', 'StringFormatInTimber', 'ThrowableNotAtBeginning', 'BinaryOperationInTimber', 'TimberArgCount', 'TimberArgTypes', 'TimberTagLength', 'TimberExceptionLogging'
     }
 
     testOptions {
