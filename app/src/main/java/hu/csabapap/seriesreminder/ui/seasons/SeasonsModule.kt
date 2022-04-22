@@ -14,5 +14,5 @@ abstract class SeasonsModule {
     @Binds
     @Named("SeasonsViewModelFactory")
     abstract fun providesViewModelFactory(showDetailsViewModelProvider: SeasonsViewModelProvider)
-            : ViewModelProvider.Factory
+            : SeasonsViewModelProvider
 }

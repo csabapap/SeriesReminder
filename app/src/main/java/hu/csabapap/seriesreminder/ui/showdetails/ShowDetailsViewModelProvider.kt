@@ -26,7 +26,7 @@ class ShowDetailsViewModelProvider @Inject constructor(
     : ViewModelProvider.NewInstanceFactory() {
 
     @Suppress( "UNCHECKED_CAST")
-    override fun <T : ViewModel?> create(modelClass: Class<T>): T {
+    override fun <T : ViewModel> create(modelClass: Class<T>): T {
         return ShowDetailsViewModel(showsRepository, seasonsRepository, episodesRepository,
                 collectionRepository, notificationsRepository, relatedShowsRepository,
                 setEpisodeWatchedUseCase, createNotificationAlarmUseCase, dispatchers) as T

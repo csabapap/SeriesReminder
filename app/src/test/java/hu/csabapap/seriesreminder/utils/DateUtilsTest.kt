@@ -14,8 +14,8 @@ class DateUtilsTest {
         val airingTime = AiringTime("Friday", "21:00", "America/New_York")
         val localDateTime = LocalDateTime.of(2020, 3, 1, 12, 0)
         val calculatedDateTime = getAirDateTimeInCurrentTimeZone(localDateTime, airingTime, ZoneId.of("UTC"))
-        assertEquals(DayOfWeek.SATURDAY, calculatedDateTime.dayOfWeek)
-        assertEquals(2, calculatedDateTime.hour)
+        assertEquals(DayOfWeek.SATURDAY, calculatedDateTime?.dayOfWeek)
+        assertEquals(2, calculatedDateTime?.hour)
     }
 
     @Test
@@ -26,6 +26,6 @@ class DateUtilsTest {
             localDateTime = localDateTime.plusDays(1)
         }
         val calculatedDateTime = getAirDateTimeInCurrentTimeZone(localDateTime, airingTime, localZoneId = ZoneId.of("UTC"))
-        assertEquals(localDateTime.dayOfMonth, calculatedDateTime.dayOfMonth)
+        assertEquals(localDateTime.dayOfMonth, calculatedDateTime?.dayOfMonth)
     }
 }
