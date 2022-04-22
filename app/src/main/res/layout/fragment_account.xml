@@ -42,6 +42,19 @@
         </LinearLayout>
     </androidx.appcompat.widget.Toolbar>
 
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/welcome_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="32dp"
+        android:textSize="24sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/collection_toolbar"
+        tools:text="Hello, username" />
+
     <Button
         android:id="@+id/connect_trakt"
         android:layout_width="wrap_content"

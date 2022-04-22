@@ -11,14 +11,16 @@ class LoggedInUserRepository @Inject constructor(private val preferences: Shared
 
     var onUserStateChanged: ((Boolean) -> Unit)? = null
 
-    var loggedIn: Boolean by Delegates.observable(false, { _, oldValue, newValue ->
+    var loggedIn: Boolean by Delegates.observable(false) { _, oldValue, newValue ->
         if (oldValue != newValue) {
             onUserStateChanged?.invoke(newValue)
         }
-    })
+    }
 
-    fun saveUser(accessToken: String, refreshToken: String) {
+    fun saveUser(username: String, slug: String, accessToken: String, refreshToken: String) {
         preferences.edit()
+                .putString("username", username)
+                .putString("slug", slug)
                 .putString("access_token", accessToken)
                 .putString("refresh_token", refreshToken)
                 .apply()
@@ -26,6 +28,8 @@ class LoggedInUserRepository @Inject constructor(private val preferences: Shared
     }
 
     fun loggedInUser(): LoggedInUser? {
+        val username = preferences.getString("username", "") ?: ""
+        val slug = preferences.getString("slug", "") ?: ""
         val accessToken = preferences.getString("access_token", "") ?: ""
         val refreshToken = preferences.getString("refresh_token", "") ?: ""
         if (accessToken.isEmpty() || refreshToken.isEmpty()) {
@@ -33,13 +37,15 @@ class LoggedInUserRepository @Inject constructor(private val preferences: Shared
             return null
         }
         loggedIn = true
-        return LoggedInUser(accessToken, refreshToken)
+        return LoggedInUser(username, slug, accessToken, refreshToken)
     }
 
     fun isLoggedIn() = loggedInUser() != null
 
     fun logout() {
         preferences.edit()
+                .remove("username")
+                .remove("slug")
                 .remove("access_token")
                 .remove("refresh_token")
                 .apply()

@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import androidx.navigation.fragment.findNavController
+import com.google.android.material.textview.MaterialTextView
 import dagger.android.support.DaggerFragment
 import hu.csabapap.seriesreminder.R
 import hu.csabapap.seriesreminder.data.repositories.loggedinuser.LoggedInUserRepository
@@ -17,6 +18,7 @@ class AccountFragment : DaggerFragment() {
     lateinit var loggedInUserRepository: LoggedInUserRepository
 
     lateinit var connectButton: Button
+    lateinit var welcomeMessage: MaterialTextView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -41,19 +43,30 @@ class AccountFragment : DaggerFragment() {
                 findNavController().navigate(R.id.action_navigation_account_to_tratk_auth_fragment)
             }
         }
+        welcomeMessage = view.findViewById(R.id.welcome_tv)
     }
 
     override fun onResume() {
         super.onResume()
         loggedInUserRepository.onUserStateChanged = {isLoggedIn ->
-            if (isLoggedIn) {
-                connectButton.text = "disconnect from trakt"
-            } else {
-                connectButton.text = "log in to trakt.tv"
-            }
+            updateTraktAuthButton(isLoggedIn)
+            displayWelcomeMessage(isLoggedIn)
         }
+        displayWelcomeMessage(loggedInUserRepository.isLoggedIn())
+        updateTraktAuthButton(loggedInUserRepository.isLoggedIn())
+    }
 
-        if (loggedInUserRepository.isLoggedIn()) {
+    private fun displayWelcomeMessage(loggedIn: Boolean) {
+        if (loggedIn) {
+            welcomeMessage.visibility = View.VISIBLE
+            welcomeMessage.text = "Hello, ${loggedInUserRepository.loggedInUser()?.username}"
+        } else {
+            welcomeMessage.visibility = View.GONE
+        }
+    }
+
+    private fun updateTraktAuthButton(isLoggedIn: Boolean) {
+        if (isLoggedIn) {
             connectButton.text = "disconnect from trakt"
         } else {
             connectButton.text = "log in to trakt.tv"
