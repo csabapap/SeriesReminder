@@ -1,7 +1,6 @@
 package hu.csabapap.seriesreminder.domain
 
 import com.uwetrottmann.trakt5.entities.UserSlug
-import com.uwetrottmann.trakt5.enums.Extended
 import com.uwetrottmann.trakt5.services.Users
 import hu.csabapap.seriesreminder.data.CollectionRepository
 import hu.csabapap.seriesreminder.data.Result
@@ -27,7 +26,8 @@ class SyncWatchedShowsUseCase @Inject constructor(
         private val getWatchedShowUseCase: GetWatchedShowUseCase,
         private val showsRepository: ShowsRepository,
         private val seasonsRepository: SeasonsRepository,
-        private val episodesRepository: EpisodesRepository
+        private val episodesRepository: EpisodesRepository,
+        private val setEpisodeWatchedUseCase: SetEpisodeWatchedUseCase
 ) {
     suspend fun sync() {
         val start = System.currentTimeMillis()
@@ -39,9 +39,9 @@ class SyncWatchedShowsUseCase @Inject constructor(
             return
         }
         if (result is Result.Success) {
-            val data = result.data
+            val watchedData = result.data
             coroutineScope {
-                val watchedShowsFromTratk = data.map {
+                val watchedShowsFromTratk = watchedData.map {
                     async {
                         val id = it.show?.ids?.trakt ?: return@async null
                         getWatchedShowUseCase(id)
@@ -89,13 +89,26 @@ class SyncWatchedShowsUseCase @Inject constructor(
                         .flatten()
                 episodesRepository.saveEpisodes(episodesToSave)
 
+                watchedData.mapNotNull { show ->
+                    show.seasons?.mapNotNull { season ->
+                        season.episodes?.map episodeMap@ { episode ->
+                            val showId = show.show?.ids?.trakt ?: return@episodeMap
+                            val seasonNumber = season.number ?: return@episodeMap
+                            val episodeNumber = episode.number ?: return@episodeMap
+                            val savedEpisode = episodesRepository.getEpisode(showId, seasonNumber, episodeNumber)
+                            if (savedEpisode != null) {
+                                setEpisodeWatchedUseCase(savedEpisode.episode)
+                            }
+                        }
+                    }
+                }
                 Timber.d("nmb of watched shows from trakt (${watchedShowsFromTratk.size}) inserted in: ${System.currentTimeMillis() - start}ms")
             }
         }
     }
 
-    suspend fun watchedShowsFromTrakt() = safeApiCall({
-        val response = traktUsers.watchedShows(UserSlug.ME, Extended.NOSEASONS).execute()
+    private suspend fun watchedShowsFromTrakt() = safeApiCall({
+        val response = traktUsers.watchedShows(UserSlug.ME, null).execute()
         if (response.isSuccessful) {
             return@safeApiCall Result.Success(response.body() ?: emptyList())
         }
