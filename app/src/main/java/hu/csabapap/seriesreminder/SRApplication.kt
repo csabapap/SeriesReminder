@@ -2,8 +2,8 @@ package hu.csabapap.seriesreminder
 
 import androidx.work.Configuration
 import androidx.work.WorkManager
-import com.jakewharton.picasso.OkHttp3Downloader
 import com.jakewharton.threetenabp.AndroidThreeTen
+import com.squareup.picasso.OkHttp3Downloader
 import com.squareup.picasso.Picasso
 import dagger.android.AndroidInjector
 import dagger.android.support.DaggerApplication

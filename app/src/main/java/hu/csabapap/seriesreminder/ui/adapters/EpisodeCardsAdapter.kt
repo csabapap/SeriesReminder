@@ -15,6 +15,7 @@ import hu.csabapap.seriesreminder.extensions.loadFromTmdbUrl
 import hu.csabapap.seriesreminder.utils.getAirDateTimeInCurrentTimeZone
 import kotlinx.android.synthetic.main.item_episode_card.view.*
 import org.threeten.bp.LocalDateTime
+import java.lang.Exception
 
 class EpisodeCardsAdapter: RecyclerView.Adapter<EpisodeCardsAdapter.CardVH>() {
 
@@ -89,7 +90,7 @@ class EpisodeCardsAdapter: RecyclerView.Adapter<EpisodeCardsAdapter.CardVH>() {
 
                     }
 
-                    override fun onError() {
+                    override fun onError(e: Exception?) {
 
                     }
                 })

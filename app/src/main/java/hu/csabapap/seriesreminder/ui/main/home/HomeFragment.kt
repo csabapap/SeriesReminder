@@ -73,6 +73,7 @@ class HomeFragment: DaggerFragment(),
         return inflater.inflate(R.layout.fragment_home, container, false)
     }
 
+    @Deprecated("Deprecated in Java")
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 

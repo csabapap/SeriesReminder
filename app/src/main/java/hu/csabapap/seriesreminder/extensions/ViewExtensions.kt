@@ -10,7 +10,7 @@ import hu.csabapap.seriesreminder.data.network.getPosterUrl
 
 
 fun ImageView.loadFromTmdbUrl(tvdbId: Int, placeholder: Int? = null, callback: Callback? = null) {
-    Picasso.with(context)
+    Picasso.get()
             .load(getPosterUrl(tvdbId))
             .let { requestCreator ->
                 placeholder?.let {

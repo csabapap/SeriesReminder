@@ -38,6 +38,7 @@ import hu.csabapap.seriesreminder.services.workers.SyncShowsWorker
 import hu.csabapap.seriesreminder.tasks.DownloadShowTask
 import hu.csabapap.seriesreminder.utils.AddShow
 import kotlinx.android.synthetic.main.activity_add_show.*
+import java.lang.Exception
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 import javax.inject.Named
@@ -106,6 +107,13 @@ class AddShowActivity : DaggerAppCompatActivity() {
         }
 
         motion_layout.setTransitionListener(object : MotionLayout.TransitionListener {
+            override fun onTransitionStarted(
+                motionLayout: MotionLayout?,
+                startId: Int,
+                endId: Int
+            ) {
+
+            }
 
             @SuppressLint("RestrictedApi")
             override fun onTransitionChange(p0: MotionLayout?, p1: Int, p2: Int, p3: Float) {
@@ -126,6 +134,15 @@ class AddShowActivity : DaggerAppCompatActivity() {
                         fab_add_show.visibility = View.VISIBLE
                     }
                 }
+            }
+
+            override fun onTransitionTrigger(
+                motionLayout: MotionLayout?,
+                triggerId: Int,
+                positive: Boolean,
+                progress: Float
+            ) {
+
             }
         })
     }
@@ -175,7 +192,7 @@ class AddShowActivity : DaggerAppCompatActivity() {
                 generatePalette(bitmap)
             }
 
-            override fun onError() {
+            override fun onError(e: Exception?) {
 
             }
         }))
@@ -184,7 +201,7 @@ class AddShowActivity : DaggerAppCompatActivity() {
         } else {
             getThumbnailUrl(srShow.coverThumb)
         }
-        Picasso.with(this)
+        Picasso.get()
                 .load(url)
                 .into(cover)
     }

@@ -15,18 +15,18 @@
             <KeyAttribute
                 android:alpha="0"
                 app:framePosition="20"
-                app:target="@id/cover_overflow" />
+                app:motionTarget="@id/cover_overflow" />
             <KeyPosition
                 app:keyPositionType="deltaRelative"
                 app:percentX="1"
                 app:framePosition="50"
-                app:target="@+id/back_button"/>
+                app:motionTarget="@+id/back_button"/>
 
             <KeyAttribute
                 app:keyPositionType="deltaRelative"
                 android:alpha="0"
                 app:framePosition="80"
-                app:target="@id/toolbar"/>
+                app:motionTarget="@id/toolbar"/>
         </KeyFrameSet>
     </Transition>
 

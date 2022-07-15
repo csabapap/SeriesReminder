@@ -78,7 +78,7 @@ class SeasonsAdapter(val seasons: List<SRSeason>): RecyclerView.Adapter<SeasonsA
 
         val posterUrl = getThumbnailUrl(season.thumbnail)
 
-        Picasso.with(context)
+        Picasso.get()
                 .load(posterUrl)
                 .into(holder.poster)
     }

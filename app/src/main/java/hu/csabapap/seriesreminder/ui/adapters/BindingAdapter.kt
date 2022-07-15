@@ -23,7 +23,7 @@ fun setImageUri(view: ImageView, showItem: ShowItem) {
         getThumbnailUrl(showItem.poster)
     }
 
-    Picasso.with(view.context)
+    Picasso.get()
             .load(url)
             .placeholder(R.color.light_grey)
             .into(view)
@@ -37,7 +37,7 @@ fun setImageUri(view: ImageView, showItem: SRShow) {
         getThumbnailUrl(showItem.posterThumb)
     }
 
-    Picasso.with(view.context)
+    Picasso.get()
             .load(url)
             .placeholder(R.color.light_grey)
             .into(view)

@@ -69,7 +69,7 @@ class EpisodesAdapter(val episodes: MutableList<EpisodeItem>): RecyclerView.Adap
             }
         }
 
-        Picasso.with(context)
+        Picasso.get()
                 .load(getEpisodeUrl(episode.tvdbId))
                 .into(holder.episodeArt)
     }
