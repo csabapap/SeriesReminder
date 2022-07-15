@@ -36,7 +36,7 @@ class TvdbApi {
                         authToken = tokenResponse.token
                         token = authToken
                     }
-                    response.request().newBuilder()
+                    response.request.newBuilder()
                             .header("Authorization", "Bearer $token")
                             .build()
                 }

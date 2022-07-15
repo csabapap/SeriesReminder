@@ -156,7 +156,7 @@ class ShowDetailsActivity : DaggerAppCompatActivity() {
         viewModel.loadNextEpisode(showId)
     }
 
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.menu_show_details, menu)
         return true
     }
@@ -223,7 +223,7 @@ class ShowDetailsActivity : DaggerAppCompatActivity() {
 
             isReminderCreatable = it.status == "returning series"
 
-            Picasso.with(this)
+            Picasso.get()
                     .load(posterUrl)
                     .into(poster, object: Callback {
                         override fun onSuccess() {
@@ -248,7 +248,7 @@ class ShowDetailsActivity : DaggerAppCompatActivity() {
                                 }
                             }
                         }
-                        override fun onError() {
+                        override fun onError(e: Exception?) {
 
                         }
                     })
@@ -257,7 +257,7 @@ class ShowDetailsActivity : DaggerAppCompatActivity() {
             } else {
                 getThumbnailUrl(it.cover)
             }
-            Picasso.with(this)
+            Picasso.get()
                     .load(url)
                     .into(cover)
         }
@@ -267,7 +267,7 @@ class ShowDetailsActivity : DaggerAppCompatActivity() {
         next_episode_content.visibility = View.VISIBLE
         next_episode_title.text = getString(R.string.episode_title_with_numbers)
                 .format(episode.season, episode.number, episode.title)
-        Picasso.with(this)
+        Picasso.get()
                 .load(getEpisodeUrl(episode.tvdbId))
                 .into(episode_art)
 

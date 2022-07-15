@@ -16,7 +16,7 @@ class EpisodeViewModelProvider @Inject constructor(
 ): ViewModelProvider.NewInstanceFactory() {
 
     @Suppress("UNCHECKED_CAST")
-    override fun <T : ViewModel?> create(modelClass: Class<T>): T {
+    override fun <T : ViewModel> create(modelClass: Class<T>): T {
         return EpisodeViewModel(episodesRepository, setEpisodeWatchedUseCase,
                 removeEpisodeFromWatchedUseCase, dispatchers) as T
     }

@@ -96,7 +96,7 @@ class EpisodeActivity : DaggerAppCompatActivity() {
         } else {
             getFullSizeUrl(show?.cover)
         }
-        Picasso.with(this)
+        Picasso.get()
                 .load(image)
                 .placeholder(R.color.dark_grey)
                 .into(episode_art)

@@ -15,6 +15,7 @@ import kotlinx.android.synthetic.main.item_episode_card.view.show_poster
 import kotlinx.android.synthetic.main.item_episode_card.view.title
 import kotlinx.android.synthetic.main.item_next_episode.view.*
 import timber.log.Timber
+import java.lang.Exception
 
 class NextEpisodesAdapter: RecyclerView.Adapter<NextEpisodesAdapter.NextEpisodeVH>() {
 
@@ -71,14 +72,14 @@ class NextEpisodesAdapter: RecyclerView.Adapter<NextEpisodesAdapter.NextEpisodeV
             itemView.episode_info.text = episodeInfo
             itemView.set_watched.isChecked = false
             itemView.show_title.text = nextEpisode.showTitle
-            Picasso.with(context)
+            Picasso.get()
                     .load(getThumbnailUrl(nextEpisode.poster))
                     .into(itemView.show_poster, object: Callback {
                         override fun onSuccess() {
                             Timber.d("success")
                         }
 
-                        override fun onError() {
+                        override fun onError(e: Exception?) {
                             Timber.d("error")
                         }
                     })

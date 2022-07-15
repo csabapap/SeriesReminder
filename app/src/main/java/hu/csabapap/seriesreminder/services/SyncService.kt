@@ -24,6 +24,7 @@ class SyncService : DaggerIntentService("SyncService") {
     @Inject
     lateinit var episodesRepository: EpisodesRepository
 
+    @Deprecated("Deprecated in Java")
     override fun onHandleIntent(intent: Intent?) {
         if (intent != null) {
             val action = intent.action
