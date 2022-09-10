@@ -5,9 +5,9 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import dagger.android.support.DaggerFragment
 import hu.csabapap.seriesreminder.R
@@ -24,17 +24,10 @@ class CollectionFragment : DaggerFragment(), CollectionAdapter.CollectionItemCli
 
     @field:[Inject Named("Main")]
     lateinit var mainViewModelProvider: ViewModelProvider.Factory
-    private lateinit var collectionViewModel: CollectionViewModel
+    private val collectionViewModel: CollectionViewModel by viewModels { mainViewModelProvider }
 
     private var mListener: CollectionItemClickListener? = null
     private val adapter = CollectionAdapter()
-
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        collectionViewModel = ViewModelProviders.of(this, mainViewModelProvider)
-                .get(CollectionViewModel::class.java)
-    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
