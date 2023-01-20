@@ -2,12 +2,15 @@ package hu.csabapap.seriesreminder.ui.addshow
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import hu.csabapap.seriesreminder.data.repositories.shows.ShowsRepository
 import hu.csabapap.seriesreminder.tasks.Task
 import hu.csabapap.seriesreminder.tasks.TaskExecutor
+import hu.csabapap.seriesreminder.ui.main.home.HomeViewState
+import hu.csabapap.seriesreminder.ui.main.home.MyShowsState
 import hu.csabapap.seriesreminder.utils.AppCoroutineDispatchers
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
@@ -17,17 +20,17 @@ class AddShowViewModel(
         private val dispatchers: AppCoroutineDispatchers
 ): ViewModel() {
 
-    private val job = Job()
-    private val scope = CoroutineScope(dispatchers.main + job)
-
     val showLiveData = MutableLiveData<AddShowState>()
+    private val _uiState = MutableStateFlow<AddShowState>(Loading)
+    val uiState: StateFlow<AddShowState>
+        get() = _uiState
 
     fun getShow(showId: Int) {
-        scope.launch(dispatchers.io) {
+        viewModelScope.launch(dispatchers.io) {
             val show = showsRepository.getShow(showId)
             withContext(dispatchers.main) {
                 if (show != null) {
-                    showLiveData.value = DisplayShow(show)
+                    _uiState.value = DisplayShow(show)
                 }
             }
         }

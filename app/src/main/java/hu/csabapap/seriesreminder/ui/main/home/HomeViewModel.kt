@@ -1,9 +1,6 @@
 package hu.csabapap.seriesreminder.ui.main.home
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.Transformations
-import androidx.lifecycle.ViewModel
+import androidx.lifecycle.*
 import com.uwetrottmann.trakt5.TraktV2
 import hu.csabapap.seriesreminder.data.CollectionRepository
 import hu.csabapap.seriesreminder.data.Result
@@ -20,7 +17,6 @@ import hu.csabapap.seriesreminder.ui.adapters.items.ShowItem
 import hu.csabapap.seriesreminder.utils.AppCoroutineDispatchers
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
@@ -65,8 +61,13 @@ class HomeViewModel @Inject constructor(private val trendingShowsRepository: Tre
         }
     }
 
+    fun getShows() {
+        getTrendingShows()
+        getPopularShows()
+    }
+
     fun getUpcomingEpisodes() {
-        scope.launch(dispatchers.main) {
+        viewModelScope.launch {
             episodesRepository.getUpcomingEpisodesFlow()
                     .collect { upcomingEpisodes ->
                         if (upcomingEpisodes.isNotEmpty()) {
@@ -90,7 +91,7 @@ class HomeViewModel @Inject constructor(private val trendingShowsRepository: Tre
     private fun getTrendingShows() {
         _viewStateLiveData.value = DisplayTrendingLoader
 
-        scope.launch(dispatchers.main) {
+        viewModelScope.launch {
             trendingShowsRepository.getTrendingShowsFlow()
                     .map { trendingShows ->
                         trendingShows?.map {
@@ -113,7 +114,7 @@ class HomeViewModel @Inject constructor(private val trendingShowsRepository: Tre
 
     private fun getPopularShows() {
         _viewStateLiveData.value = DisplayPopularLoader
-        scope.launch(dispatchers.main) {
+        viewModelScope.launch  {
             popularShowsRepository.getPopularShowsFlow()
                     .map { trendingShows ->
                         trendingShows.map {

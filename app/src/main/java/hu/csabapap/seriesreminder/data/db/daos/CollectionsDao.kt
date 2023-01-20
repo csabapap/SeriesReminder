@@ -36,6 +36,9 @@ interface CollectionsDao {
     @Query("SELECT * FROM collection ORDER BY added LIMIT :limit")
     fun getCollectionGridItems(limit: Int) : LiveData<List<MyShowGridItem>>
 
+    @Query("SELECT * FROM collection ORDER BY added LIMIT :limit")
+    fun getMyShowsGridItems(limit: Int) : List<MyShowGridItem>
+
     @Query("SELECT show_id  FROM collection WHERE show_id IN (:showIds)")
     suspend fun getIdsFromCollection(showIds: List<Int>) : List<Int>?
 
