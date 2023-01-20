@@ -7,3 +7,5 @@ sealed class AddShowState
 data class DisplayShow(val show: SRShow): AddShowState()
 
 object Close: AddShowState()
+
+object Loading: AddShowState()

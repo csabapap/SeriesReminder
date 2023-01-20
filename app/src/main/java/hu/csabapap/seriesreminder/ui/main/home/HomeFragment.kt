@@ -98,9 +98,9 @@ class HomeFragment: DaggerFragment(),
 
         homeViewModel.myShowsLiveData.observe(viewLifecycleOwner, Observer {
             it.apply {
-                if (isEmpty().not()) {
+                if (isNotEmpty()) {
                     cardsAdapter.addCard(DiscoverCardItem(getString(R.string.title_my_shows), it,
-                            CardItem.MY_SHOWS_TYPE, CardItem.PRIORITY_MEDIUM))
+                        CardItem.MY_SHOWS_TYPE, CardItem.PRIORITY_MEDIUM))
                 }
             }
         })
@@ -126,6 +126,7 @@ class HomeFragment: DaggerFragment(),
 
     override fun onStart() {
         super.onStart()
+        homeViewModel.getShows()
         homeViewModel.getUpcomingEpisodes()
         homeViewModel.getNextEpisodes()
         homeViewModel.syncWatchedShows()
