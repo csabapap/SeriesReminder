@@ -7,7 +7,7 @@ import android.graphics.Bitmap
 import android.graphics.drawable.BitmapDrawable
 import android.os.Bundle
 import androidx.activity.viewModels
-import androidx.compose.material.MaterialTheme
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.ui.platform.ComposeView
 import androidx.lifecycle.ViewModelProvider
 import androidx.palette.graphics.Palette
@@ -18,11 +18,14 @@ import com.squareup.picasso.Callback
 import com.squareup.picasso.Picasso
 import dagger.android.support.DaggerAppCompatActivity
 import hu.csabapap.seriesreminder.R
+import hu.csabapap.seriesreminder.SRApplication
 import hu.csabapap.seriesreminder.data.db.entities.SRShow
 import hu.csabapap.seriesreminder.data.network.getCoverUrl
 import hu.csabapap.seriesreminder.data.network.getThumbnailUrl
 import hu.csabapap.seriesreminder.extensions.loadFromTmdbUrl
+import hu.csabapap.seriesreminder.services.SyncService
 import hu.csabapap.seriesreminder.services.workers.SyncShowsWorker
+import hu.csabapap.seriesreminder.tasks.DownloadShowTask
 import hu.csabapap.seriesreminder.utils.AddShow
 import kotlinx.android.synthetic.main.activity_add_show.*
 import java.util.concurrent.TimeUnit
@@ -31,7 +34,7 @@ import javax.inject.Named
 
 class AddShowActivity : DaggerAppCompatActivity() {
 
-    @Inject @field:Named("AddShowViewModelFactory")
+    @Inject @Named("AddShowViewModelFactory")
     lateinit var viewModelProvider: ViewModelProvider.Factory
 
     private val addShowViewModel: AddShowViewModel by viewModels { viewModelProvider }
@@ -44,11 +47,6 @@ class AddShowActivity : DaggerAppCompatActivity() {
 
         initParams(intent.extras)
 
-//        toolbar.apply {
-//            setNavigationIcon(R.drawable.ic_arrow_back_24dp)
-//            setNavigationOnClickListener {finish()}
-//        }
-
         setContentView(
             ComposeView(this).apply {
                 setContent {
@@ -56,80 +54,24 @@ class AddShowActivity : DaggerAppCompatActivity() {
                         viewModel = addShowViewModel,
                         imageColorState = ImageColorState(
                             this@AddShowActivity,
-                            MaterialTheme.colors.primary,
-                            MaterialTheme.colors.onPrimary
+                            MaterialTheme.colorScheme.primary,
+                            MaterialTheme.colorScheme.onPrimary
                         ),
+                        onAddShowClick = { addShow() },
                         onBackPress = { finish() }
                     )
                 }
             })
+    }
 
-//        fab_add_show.setOnClickListener {
-//            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-//                val drawable = fab_add_show.drawable as AnimatedVectorDrawable
-//                drawable.registerAnimationCallback((object: Animatable2.AnimationCallback() {
-//                    override fun onAnimationEnd(drawable: Drawable?) {
-//                        finishWithResult()
-//                    }
-//                }))
-//                drawable.start()
-//            } else {
-//                val drawable = fab_add_show.drawable as AnimatedVectorDrawableCompat
-//                drawable.registerAnimationCallback((object: Animatable2Compat.AnimationCallback() {
-//                    override fun onAnimationEnd(drawable: Drawable?) {
-//                        finishWithResult()
-//                    }
-//                }))
-//                drawable.start()
-//            }
-//
-//            val task = DownloadShowTask(showId)
-//            (application as SRApplication).appComponent.inject(task)
-//            addShowViewModel.syncShow(task)
-//            SyncService.syncShow(this)
-//
-//            startSyncWorkManager()
-//        }
+    private fun addShow() {
+        val task = DownloadShowTask(showId)
+        (application as SRApplication).appComponent.inject(task)
+        addShowViewModel.syncShow(task)
+        SyncService.syncShow(this)
 
-//        motion_layout.setTransitionListener(object : MotionLayout.TransitionListener {
-//            override fun onTransitionStarted(
-//                motionLayout: MotionLayout?,
-//                startId: Int,
-//                endId: Int
-//            ) {
-//
-//            }
-//
-//            @SuppressLint("RestrictedApi")
-//            override fun onTransitionChange(p0: MotionLayout?, p1: Int, p2: Int, p3: Float) {
-//                if (poster.y <= toolbar.height + toolbar.y) {
-//                    fab_add_show.hide()
-//                } else {
-//                    fab_add_show.show()
-//                }
-//            }
-//
-//            @SuppressLint("RestrictedApi")
-//            override fun onTransitionCompleted(p0: MotionLayout?, id: Int) {
-//                when (id) {
-//                    R.id.collapsed -> {
-//                        fab_add_show.visibility = View.GONE
-//                    }
-//                    R.id.expanded -> {
-//                        fab_add_show.visibility = View.VISIBLE
-//                    }
-//                }
-//            }
-//
-//            override fun onTransitionTrigger(
-//                motionLayout: MotionLayout?,
-//                triggerId: Int,
-//                positive: Boolean,
-//                progress: Float
-//            ) {
-//
-//            }
-//        })
+        startSyncWorkManager()
+        finishWithResult()
     }
 
     private fun startSyncWorkManager() {

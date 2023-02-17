@@ -1,20 +1,19 @@
 package hu.csabapap.seriesreminder.ui.addshow
 
 import android.content.Context
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.*
+import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Shape
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.core.graphics.drawable.toBitmap
 import androidx.palette.graphics.Palette
@@ -33,12 +32,13 @@ import kotlinx.coroutines.withContext
 fun AddShowScreenUi(
     viewModel: AddShowViewModel,
     imageColorState: ImageColorState,
+    onAddShowClick: () -> Unit,
     onBackPress: () -> Unit
 ) {
 
     val state by viewModel.uiState.collectAsState()
     when (val result = state) {
-        is DisplayShow -> ShowDetails(result.show, imageColorState, onBackPress)
+        is DisplayShow -> ShowDetails(result.show, imageColorState, onAddShowClick, onBackPress)
         else -> Text(text = "something something")
     }
 }
@@ -47,11 +47,11 @@ fun AddShowScreenUi(
 fun ShowDetails(
     show: SRShow,
     imageColorState: ImageColorState,
+    onAddShowClick: () -> Unit,
     onBackPress: () -> Unit
 ) {
     Column(
         modifier = Modifier
-            .background(Color.Green)
     ) {
         Box(contentAlignment = Alignment.TopStart) {
             AddShowHeader(show, imageColorState)
@@ -67,7 +67,7 @@ fun ShowDetails(
                 }
             }
         }
-        Text(text = "something something")
+        ShowDetails(show = show, onAddShowClick)
     }
 }
 
@@ -88,7 +88,7 @@ fun AddShowHeader(
             modifier = Modifier
                 .height(260.dp)
                 .fillMaxWidth()
-                .background(MaterialTheme.colors.primary)) {
+                .background(MaterialTheme.colorScheme.primary)) {
             Card(modifier = Modifier
                 .width(120.dp)
                 .height(180.dp)) {
@@ -110,10 +110,55 @@ fun DynamicallyColoredHeader(
     colorState: ImageColorState,
     content: @Composable () -> Unit
 ) {
-    MaterialTheme(colors = MaterialTheme.colors.copy(
+    MaterialTheme(colorScheme = MaterialTheme.colorScheme.copy(
         primary = colorState.color,
         onPrimary = colorState.onColor
     ), content = content)
+}
+
+@Composable
+fun ShowDetails(
+    show: SRShow,
+    onAddShowClick: () -> Unit
+) {
+    Column(
+        modifier = Modifier.padding(16.dp)
+    ) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = CenterVertically
+        ) {
+            Text(
+                text = show.title, style = MaterialTheme.typography.displaySmall, modifier = Modifier.fillMaxWidth(0.75f)
+            )
+            Box(
+                modifier = Modifier
+                    .padding(PaddingValues(start = 8.dp, top = 8.dp))
+                    .width(48.dp)
+                    .height(48.dp)
+                    .clip(CircleShape)
+                    .background(Color.Black),
+            ) {
+                IconButton(onClick = onAddShowClick) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_add_24dp),
+                        tint = Color.White,
+                        contentDescription = null
+                    )
+                }
+            }
+        }
+        Spacer(modifier = Modifier.height(24.dp))
+        Text(text = stringResource(id = R.string.ratings), style = MaterialTheme.typography.labelMedium)
+        Text(text = String.format(stringResource(R.string.ratings_value), show.ratingPercentage(), show.votes))
+        Spacer(modifier = Modifier.height(16.dp))
+        Text(text = stringResource(id = R.string.genres), style = MaterialTheme.typography.labelMedium)
+        Text(text = show.genres)
+        Spacer(modifier = Modifier.height(16.dp))
+        Text(text = stringResource(id = R.string.overview_label), style = MaterialTheme.typography.labelMedium)
+        Text(text = show.overview)
+    }
 }
 
 class ImageColorState(

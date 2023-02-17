@@ -32,6 +32,10 @@ data class SRShow(
     @Ignore
     var inCollection: Boolean = false
 
+    fun ratingPercentage(): Int {
+        return (rating * 10).toInt()
+    }
+
     fun <T> updateProperty(entryVar : KMutableProperty0<T>, updateVal: T) {
         when {
             updateVal != null -> entryVar.set(updateVal)
