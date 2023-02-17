@@ -27,7 +27,7 @@ class SyncWatchedShowsUseCase @Inject constructor(
         private val showsRepository: ShowsRepository,
         private val seasonsRepository: SeasonsRepository,
         private val episodesRepository: EpisodesRepository,
-        private val setEpisodeWatchedUseCase: SetEpisodeWatchedUseCase
+        private val saveWatchedEpisodeInDbUseCase: SaveWatchedEpisodeInDbUseCase
 ) {
     suspend fun sync() {
         val start = System.currentTimeMillis()
@@ -97,7 +97,7 @@ class SyncWatchedShowsUseCase @Inject constructor(
                             val episodeNumber = episode.number ?: return@episodeMap
                             val savedEpisode = episodesRepository.getEpisode(showId, seasonNumber, episodeNumber)
                             if (savedEpisode != null) {
-                                setEpisodeWatchedUseCase(savedEpisode.episode)
+                                saveWatchedEpisodeInDbUseCase(savedEpisode.episode)
                             }
                         }
                     }
