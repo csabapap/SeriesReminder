@@ -27,7 +27,7 @@ def traktRedirectUrl = propOrDef('series_reminder.redirect_url', "")
 def tvdbClientId = propOrDef('series_reminder.tvdb_client_id', "")
 
 android {
-    compileSdkVersion 32
+    compileSdkVersion 33
     dataBinding {
         enabled = true
     }
@@ -137,7 +137,9 @@ dependencies {
     // Integration with activities
     implementation 'androidx.activity:activity-compose:1.5.1'
     // Compose Material Design
-    implementation 'androidx.compose.material:material:1.2.1'
+//    implementation 'androidx.compose.material:material:1.2.1'
+    implementation "androidx.compose.material3:material3:1.0.1"
+    implementation "androidx.compose.material3:material3-window-size-class:1.0.1"
     // Animations
     implementation 'androidx.compose.animation:animation:1.2.1'
     // Tooling support (Previews, etc.)
