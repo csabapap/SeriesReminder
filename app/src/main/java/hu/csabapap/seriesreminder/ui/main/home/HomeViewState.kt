@@ -4,6 +4,7 @@ import hu.csabapap.seriesreminder.data.db.entities.SRNextEpisode
 import hu.csabapap.seriesreminder.ui.adapters.items.ShowItem
 
 sealed class HomeViewState
+object InitialState: HomeViewState()
 object DisplayTrendingLoader: HomeViewState()
 object DisplayPopularLoader: HomeViewState()
 data class TrendingState(val items: List<ShowItem>): HomeViewState()

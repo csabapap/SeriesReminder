@@ -6,9 +6,12 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.ui.platform.ComposeView
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.ViewModelProviders
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.snackbar.Snackbar
@@ -25,6 +28,8 @@ import hu.csabapap.seriesreminder.ui.adapters.items.CardItem
 import hu.csabapap.seriesreminder.ui.adapters.items.DiscoverCardItem
 import hu.csabapap.seriesreminder.ui.adapters.items.NextEpisodesCardItem
 import hu.csabapap.seriesreminder.ui.adapters.items.UpcomingEpisodeCardItem
+import hu.csabapap.seriesreminder.ui.addshow.AddShowScreenUi
+import hu.csabapap.seriesreminder.ui.addshow.ImageColorState
 import hu.csabapap.seriesreminder.utils.Collectible
 import hu.csabapap.seriesreminder.utils.Episode
 import kotlinx.android.synthetic.main.fragment_home.*
@@ -40,19 +45,12 @@ class HomeFragment: DaggerFragment(),
 
     @field:[Inject Named("Main")]
     lateinit var mainViewModelProvider: ViewModelProvider.Factory
-    private lateinit var homeViewModel: HomeViewModel
+    private val homeViewModel: HomeViewModel by viewModels{ mainViewModelProvider }
 
     lateinit var layoutManager: LinearLayoutManager
     private val cardsAdapter = HomeCardsAdapter(this)
 
     private var listener: HomeFragmentListener? = null
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        homeViewModel = ViewModelProviders.of(this, mainViewModelProvider)
-                .get(HomeViewModel::class.java)
-        setHasOptionsMenu(true)
-    }
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -70,58 +68,64 @@ class HomeFragment: DaggerFragment(),
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.fragment_home, container, false)
-    }
-
-    @Deprecated("Deprecated in Java")
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-
-        cardsAdapter.previewShowListener = this
-        cardsAdapter.episodesClickListener = this
-        cardsAdapter.nextEpisodesClickListener = object: NextEpisodesAdapter.NextEpisodeClickListener {
-            override fun onItemClick(nextEpisode: SRNextEpisode) {
-                val activity = activity
-                if (activity != null) {
-                    Episode.start(activity, nextEpisode.showId, nextEpisode.season, nextEpisode.number)
-                }
-            }
-
-            override fun onSetAsWatchedButtonClick(nextEpisode: SRNextEpisode) {
-                homeViewModel.setEpisodeWatched(nextEpisode)
-                val message = String.format(getString(R.string.episode_number), nextEpisode.season, nextEpisode.number) + " set as watched"
-                view?.let {
-                    Snackbar.make(it, message, Snackbar.LENGTH_SHORT).show()
-                }
+        return ComposeView(requireContext()).apply {
+            setContent {
+                HomeScreenUi(
+                    viewModel = homeViewModel
+                )
             }
         }
-
-        homeViewModel.myShowsLiveData.observe(viewLifecycleOwner, Observer {
-            it.apply {
-                if (isNotEmpty()) {
-                    cardsAdapter.addCard(DiscoverCardItem(getString(R.string.title_my_shows), it,
-                        CardItem.MY_SHOWS_TYPE, CardItem.PRIORITY_MEDIUM))
-                }
-            }
-        })
-
-        homeViewModel.upcomingEpisodesLiveData.observe(viewLifecycleOwner, Observer {
-            it?.apply {
-                cardsAdapter.addCard(UpcomingEpisodeCardItem(it, CardItem.UPCOMING_EPISODE_TYPE))
-            }
-        })
-
-        homeViewModel.viewStateLiveData.observe(viewLifecycleOwner, Observer {
-            updateState(it)
-        })
     }
+
+//    @Deprecated("Deprecated in Java")
+//    override fun onActivityCreated(savedInstanceState: Bundle?) {
+//        super.onActivityCreated(savedInstanceState)
+//
+//        cardsAdapter.previewShowListener = this
+//        cardsAdapter.episodesClickListener = this
+//        cardsAdapter.nextEpisodesClickListener = object: NextEpisodesAdapter.NextEpisodeClickListener {
+//            override fun onItemClick(nextEpisode: SRNextEpisode) {
+//                val activity = activity
+//                if (activity != null) {
+//                    Episode.start(activity, nextEpisode.showId, nextEpisode.season, nextEpisode.number)
+//                }
+//            }
+//
+//            override fun onSetAsWatchedButtonClick(nextEpisode: SRNextEpisode) {
+//                homeViewModel.setEpisodeWatched(nextEpisode)
+//                val message = String.format(getString(R.string.episode_number), nextEpisode.season, nextEpisode.number) + " set as watched"
+//                view?.let {
+//                    Snackbar.make(it, message, Snackbar.LENGTH_SHORT).show()
+//                }
+//            }
+//        }
+//
+//        homeViewModel.myShowsLiveData.observe(viewLifecycleOwner, Observer {
+//            it.apply {
+//                if (isNotEmpty()) {
+//                    cardsAdapter.addCard(DiscoverCardItem(getString(R.string.title_my_shows), it,
+//                        CardItem.MY_SHOWS_TYPE, CardItem.PRIORITY_MEDIUM))
+//                }
+//            }
+//        })
+//
+//        homeViewModel.upcomingEpisodesLiveData.observe(viewLifecycleOwner, Observer {
+//            it?.apply {
+//                cardsAdapter.addCard(UpcomingEpisodeCardItem(it, CardItem.UPCOMING_EPISODE_TYPE))
+//            }
+//        })
+//
+//        homeViewModel.viewStateLiveData.observe(viewLifecycleOwner, Observer {
+//            updateState(it)
+//        })
+//    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        home_recycler_view.adapter = cardsAdapter
-        home_recycler_view.isNestedScrollingEnabled = false
-        layoutManager = home_recycler_view.layoutManager as LinearLayoutManager
-        layoutManager.orientation = RecyclerView.VERTICAL
+//        home_recycler_view.adapter = cardsAdapter
+//        home_recycler_view.isNestedScrollingEnabled = false
+//        layoutManager = home_recycler_view.layoutManager as LinearLayoutManager
+//        layoutManager.orientation = RecyclerView.VERTICAL
     }
 
     override fun onStart() {
@@ -168,6 +172,7 @@ class HomeFragment: DaggerFragment(),
             is MyShowsState -> Timber.d("display shows for popular shows")
             is NextEpisodesState -> cardsAdapter.addCard(NextEpisodesCardItem(state.episodes, CardItem.NEXT_EPISODES_TYPE))
             HideTrendingSection -> cardsAdapter.removeCard(CardItem.TRENDING_CARD_TYPE)
+            is InitialState -> { }
         }.exhaustive
     }
 }

@@ -14,9 +14,13 @@ import hu.csabapap.seriesreminder.domain.SetEpisodeWatchedUseCase
 import hu.csabapap.seriesreminder.domain.SyncShowsUseCase
 import hu.csabapap.seriesreminder.domain.SyncWatchedShowsUseCase
 import hu.csabapap.seriesreminder.ui.adapters.items.ShowItem
+import hu.csabapap.seriesreminder.ui.addshow.AddShowState
+import hu.csabapap.seriesreminder.ui.addshow.Loading
 import hu.csabapap.seriesreminder.utils.AppCoroutineDispatchers
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
@@ -26,7 +30,7 @@ import javax.inject.Inject
 
 class HomeViewModel @Inject constructor(private val trendingShowsRepository: TrendingShowsRepository,
                                         private val popularShowsRepository: PopularShowsRepository,
-                                        collectionRepository: CollectionRepository,
+                                        private val collectionRepository: CollectionRepository,
                                         private val episodesRepository: EpisodesRepository,
                                         private val setEpisodeWatchedUseCase: SetEpisodeWatchedUseCase,
                                         private val syncShowsUseCase: SyncShowsUseCase,
@@ -41,6 +45,10 @@ class HomeViewModel @Inject constructor(private val trendingShowsRepository: Tre
     private val _viewStateLiveData = MutableLiveData<HomeViewState>()
     val viewStateLiveData: LiveData<HomeViewState>
         get() = _viewStateLiveData
+
+    private val _uiState = MutableStateFlow<HomeViewState>(InitialState)
+    val uiState: StateFlow<HomeViewState>
+        get() = _uiState
 
     init {
         getTrendingShows()
@@ -64,6 +72,23 @@ class HomeViewModel @Inject constructor(private val trendingShowsRepository: Tre
     fun getShows() {
         getTrendingShows()
         getPopularShows()
+        getCollection()
+    }
+
+    private fun getCollection() {
+        viewModelScope.launch {
+            val items = collectionRepository.getCollectionsSuspendable()
+                .map {
+                    ShowItem(it.show!!.traktId,
+                        it.show!!.tvdbId,
+                        it.show!!.title,
+                        it.show!!.posterThumb,
+                        true)
+                }
+            withContext(dispatchers.main) {
+                _uiState.value = MyShowsState(items)
+            }
+        }
     }
 
     fun getUpcomingEpisodes() {
