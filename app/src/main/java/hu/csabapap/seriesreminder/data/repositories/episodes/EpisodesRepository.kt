@@ -64,7 +64,7 @@ class EpisodesRepository @Inject constructor(
                 episode.ids.trakt,
                 episode.ids.tvdb ?: -1,
                 episode.number_abs ?: 0,
-                episode.overview,
+                episode.overview ?: "",
                 episode.first_aired,
                 episode.updated_at.toString(),
                 episode.rating.toFloat(),
