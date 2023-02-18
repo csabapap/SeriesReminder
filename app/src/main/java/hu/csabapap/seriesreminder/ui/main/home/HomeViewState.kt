@@ -15,5 +15,6 @@ object HideTrendingSection: HomeViewState()
 
 data class ContentLoaded(
     val myShows: List<ShowItem> = emptyList(),
-    val trendingShows: List<ShowItem> = emptyList()
+    val trendingShows: List<ShowItem> = emptyList(),
+    val popularShows: List<ShowItem> = emptyList()
 ): HomeViewState()

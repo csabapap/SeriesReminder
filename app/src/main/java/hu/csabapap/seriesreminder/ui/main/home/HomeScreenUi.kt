@@ -1,8 +1,11 @@
 package hu.csabapap.seriesreminder.ui.main.home
 
+import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -24,12 +27,18 @@ fun HomeScreenUi(
     val state by viewModel.uiState.collectAsState()
     when (val newState = state) {
         is ContentLoaded -> {
-            Column(modifier = Modifier.fillMaxHeight()) {
+            Column(modifier = Modifier
+                .fillMaxHeight()
+                .verticalScroll(rememberScrollState())
+            ) {
                 if (newState.myShows.isNotEmpty()) {
                     MyShowsCard(newState.myShows)
                 }
                 if (newState.trendingShows.isNotEmpty()) {
                     TrendingShows(newState.trendingShows)
+                }
+                if (newState.popularShows.isNotEmpty()) {
+                    TrendingShows(newState.popularShows)
                 }
             }
         }
@@ -65,6 +74,24 @@ fun TrendingShows(items: List<ShowItem>) {
     ) {
         Text(
             text = stringResource(id = R.string.title_trending),
+            style = MaterialTheme.typography.titleLarge,
+            modifier = Modifier.padding(horizontal = 16.dp)
+        )
+        Spacer(modifier = Modifier.height(8.dp))
+        CollectionList(items = items)
+    }
+}
+
+@Composable
+fun PopularShowsShows(items: List<ShowItem>) {
+
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 24.dp)
+    ) {
+        Text(
+            text = stringResource(id = R.string.title_popular),
             style = MaterialTheme.typography.titleLarge,
             modifier = Modifier.padding(horizontal = 16.dp)
         )

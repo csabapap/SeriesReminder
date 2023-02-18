@@ -43,8 +43,6 @@ class HomeViewModel @Inject constructor(private val trendingShowsRepository: Tre
     private val job = Job()
     private val scope = CoroutineScope(dispatchers.main + job)
     private val _viewStateLiveData = MutableLiveData<HomeViewState>()
-    val viewStateLiveData: LiveData<HomeViewState>
-        get() = _viewStateLiveData
 
     private val _uiState = MutableStateFlow<HomeViewState>(InitialState)
     val uiState: StateFlow<HomeViewState>
@@ -147,8 +145,10 @@ class HomeViewModel @Inject constructor(private val trendingShowsRepository: Tre
                         }.filterNotNull()
                     }
                     .distinctUntilChanged()
-                    .collect {
-                        _viewStateLiveData.value = PopularState(it)
+                    .collect {popularShows ->
+                        _uiState.value = lastContentLoadedState.copy(popularShows = popularShows).also {
+                            lastContentLoadedState = it
+                        }
                     }
         }
     }
