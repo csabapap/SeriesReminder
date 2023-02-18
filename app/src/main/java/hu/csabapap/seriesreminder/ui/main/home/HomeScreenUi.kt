@@ -1,6 +1,5 @@
 package hu.csabapap.seriesreminder.ui.main.home
 
-import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
@@ -32,13 +31,13 @@ fun HomeScreenUi(
                 .verticalScroll(rememberScrollState())
             ) {
                 if (newState.myShows.isNotEmpty()) {
-                    MyShowsCard(newState.myShows)
+                    ShowsSection(stringResource(id = R.string.title_my_shows), newState.myShows)
                 }
                 if (newState.trendingShows.isNotEmpty()) {
-                    TrendingShows(newState.trendingShows)
+                    ShowsSection(stringResource(id = R.string.title_trending), newState.trendingShows)
                 }
                 if (newState.popularShows.isNotEmpty()) {
-                    TrendingShows(newState.popularShows)
+                    ShowsSection(stringResource(id = R.string.title_popular), newState.popularShows)
                 }
             }
         }
@@ -47,51 +46,14 @@ fun HomeScreenUi(
 }
 
 @Composable
-fun MyShowsCard(items: List<ShowItem>) {
-
+fun ShowsSection(sectionTitle: String, items: List<ShowItem>) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
             .padding(vertical = 24.dp)
     ) {
         Text(
-            text = stringResource(id = R.string.title_my_shows),
-            style = MaterialTheme.typography.titleLarge,
-            modifier = Modifier.padding(horizontal = 16.dp)
-        )
-        Spacer(modifier = Modifier.height(8.dp))
-        CollectionList(items = items)
-    }
-}
-
-@Composable
-fun TrendingShows(items: List<ShowItem>) {
-
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 24.dp)
-    ) {
-        Text(
-            text = stringResource(id = R.string.title_trending),
-            style = MaterialTheme.typography.titleLarge,
-            modifier = Modifier.padding(horizontal = 16.dp)
-        )
-        Spacer(modifier = Modifier.height(8.dp))
-        CollectionList(items = items)
-    }
-}
-
-@Composable
-fun PopularShowsShows(items: List<ShowItem>) {
-
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 24.dp)
-    ) {
-        Text(
-            text = stringResource(id = R.string.title_popular),
+            text = sectionTitle,
             style = MaterialTheme.typography.titleLarge,
             modifier = Modifier.padding(horizontal = 16.dp)
         )
