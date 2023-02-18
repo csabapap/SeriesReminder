@@ -71,7 +71,10 @@ class HomeFragment: DaggerFragment(),
         return ComposeView(requireContext()).apply {
             setContent {
                 HomeScreenUi(
-                    viewModel = homeViewModel
+                    viewModel = homeViewModel,
+                    onShowItemClick = {
+                        Collectible.start(requireContext(), it.traktId, it.inCollection)
+                    }
                 )
             }
         }

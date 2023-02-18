@@ -1,5 +1,6 @@
 package hu.csabapap.seriesreminder.ui.main.home
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
@@ -21,7 +22,8 @@ import hu.csabapap.seriesreminder.ui.adapters.items.ShowItem
 
 @Composable
 fun HomeScreenUi(
-    viewModel: HomeViewModel
+    viewModel: HomeViewModel,
+    onShowItemClick: (item: ShowItem) -> Unit
 ) {
     val state by viewModel.uiState.collectAsState()
     when (val newState = state) {
@@ -31,13 +33,21 @@ fun HomeScreenUi(
                 .verticalScroll(rememberScrollState())
             ) {
                 if (newState.myShows.isNotEmpty()) {
-                    ShowsSection(stringResource(id = R.string.title_my_shows), newState.myShows)
+                    ShowsSection(stringResource(id = R.string.title_my_shows), newState.myShows, onShowItemClick)
                 }
                 if (newState.trendingShows.isNotEmpty()) {
-                    ShowsSection(stringResource(id = R.string.title_trending), newState.trendingShows)
+                    ShowsSection(
+                        stringResource(id = R.string.title_trending),
+                        newState.trendingShows,
+                        onShowItemClick
+                    )
                 }
                 if (newState.popularShows.isNotEmpty()) {
-                    ShowsSection(stringResource(id = R.string.title_popular), newState.popularShows)
+                    ShowsSection(
+                        stringResource(id = R.string.title_popular),
+                        newState.popularShows,
+                        onShowItemClick
+                    )
                 }
             }
         }
@@ -46,7 +56,11 @@ fun HomeScreenUi(
 }
 
 @Composable
-fun ShowsSection(sectionTitle: String, items: List<ShowItem>) {
+fun ShowsSection(
+    sectionTitle: String,
+    items: List<ShowItem>,
+    onShowItemClick: (item: ShowItem) -> Unit
+) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -58,23 +72,24 @@ fun ShowsSection(sectionTitle: String, items: List<ShowItem>) {
             modifier = Modifier.padding(horizontal = 16.dp)
         )
         Spacer(modifier = Modifier.height(8.dp))
-        CollectionList(items = items)
+        CollectionList(items = items, onItemClick = onShowItemClick)
     }
 }
 
 @Composable
-fun CollectionList(items: List<ShowItem>) {
+fun CollectionList(items: List<ShowItem>, onItemClick: (item: ShowItem) -> Unit) {
     LazyRow(
         modifier = Modifier,
         contentPadding = PaddingValues(horizontal = 16.dp),
-        horizontalArrangement = Arrangement.spacedBy(8.dp)
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         items(
             items = items,
-            key = {item -> item.traktId}
+            key = {item -> item.traktId},
         ) {
             ShowListItem(
-                item = it
+                item = it,
+                onItemClick
             )
         }
     }
@@ -82,7 +97,8 @@ fun CollectionList(items: List<ShowItem>) {
 
 @Composable
 fun ShowListItem(
-    item: ShowItem
+    item: ShowItem,
+    onShowItemClick: (item: ShowItem) -> Unit
 ) {
     AsyncImage(
         model = getThumbnailUrl(item.poster),
@@ -91,5 +107,8 @@ fun ShowListItem(
         modifier = Modifier
             .width(100.dp)
             .height(150.dp)
+            .clickable {
+                onShowItemClick(item)
+            }
     )
 }
