@@ -49,6 +49,7 @@ class HomeViewModel @Inject constructor(private val trendingShowsRepository: Tre
     private val _uiState = MutableStateFlow<HomeViewState>(InitialState)
     val uiState: StateFlow<HomeViewState>
         get() = _uiState
+    var lastContentLoadedState: ContentLoaded = ContentLoaded()
 
     init {
         getTrendingShows()
@@ -58,16 +59,6 @@ class HomeViewModel @Inject constructor(private val trendingShowsRepository: Tre
     }
 
     val upcomingEpisodesLiveData = MutableLiveData<List<EpisodeWithShow>>()
-
-    val myShowsLiveData: LiveData<List<ShowItem>> = Transformations.map(collectionRepository.getCollectionGridItems()) {
-        result -> result.map {
-            ShowItem(it.show!!.traktId,
-                    it.show!!.tvdbId,
-                    it.show!!.title,
-                    it.show!!.posterThumb,
-                    true)
-        }
-    }
 
     fun getShows() {
         getTrendingShows()
@@ -86,7 +77,9 @@ class HomeViewModel @Inject constructor(private val trendingShowsRepository: Tre
                         true)
                 }
             withContext(dispatchers.main) {
-                _uiState.value = MyShowsState(items)
+                _uiState.value = lastContentLoadedState.copy(myShows = items).also {
+                    lastContentLoadedState = it
+                }
             }
         }
     }
@@ -129,9 +122,11 @@ class HomeViewModel @Inject constructor(private val trendingShowsRepository: Tre
                         }?.filterNotNull()
                     }
                     .distinctUntilChanged()
-                    .collect {
-                        if (it != null) {
-                            _viewStateLiveData.value = TrendingState(it)
+                    .collect { trendingShows ->
+                        if (trendingShows != null) {
+                            _uiState.value = lastContentLoadedState.copy(trendingShows = trendingShows).also {
+                                lastContentLoadedState = it
+                            }
                         }
                     }
         }

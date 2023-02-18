@@ -173,6 +173,7 @@ class HomeFragment: DaggerFragment(),
             is NextEpisodesState -> cardsAdapter.addCard(NextEpisodesCardItem(state.episodes, CardItem.NEXT_EPISODES_TYPE))
             HideTrendingSection -> cardsAdapter.removeCard(CardItem.TRENDING_CARD_TYPE)
             is InitialState -> { }
+            is ContentLoaded -> { }
         }.exhaustive
     }
 }

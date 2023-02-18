@@ -1,7 +1,6 @@
 package hu.csabapap.seriesreminder.ui.main.home
 
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.MaterialTheme
@@ -24,26 +23,70 @@ fun HomeScreenUi(
 ) {
     val state by viewModel.uiState.collectAsState()
     when (val newState = state) {
-        is MyShowsState -> CollectionList(newState.items)
+        is ContentLoaded -> {
+            Column(modifier = Modifier.fillMaxHeight()) {
+                if (newState.myShows.isNotEmpty()) {
+                    MyShowsCard(newState.myShows)
+                }
+                if (newState.trendingShows.isNotEmpty()) {
+                    TrendingShows(newState.trendingShows)
+                }
+            }
+        }
         else -> { }// NO-OP
     }
 }
 
 @Composable
+fun MyShowsCard(items: List<ShowItem>) {
+
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 24.dp)
+    ) {
+        Text(
+            text = stringResource(id = R.string.title_my_shows),
+            style = MaterialTheme.typography.titleLarge,
+            modifier = Modifier.padding(horizontal = 16.dp)
+        )
+        Spacer(modifier = Modifier.height(8.dp))
+        CollectionList(items = items)
+    }
+}
+
+@Composable
+fun TrendingShows(items: List<ShowItem>) {
+
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 24.dp)
+    ) {
+        Text(
+            text = stringResource(id = R.string.title_trending),
+            style = MaterialTheme.typography.titleLarge,
+            modifier = Modifier.padding(horizontal = 16.dp)
+        )
+        Spacer(modifier = Modifier.height(8.dp))
+        CollectionList(items = items)
+    }
+}
+
+@Composable
 fun CollectionList(items: List<ShowItem>) {
-    Column {
-        Text(text = stringResource(id = R.string.title_my_shows), style = MaterialTheme.typography.titleMedium)
-        LazyRow(
-            modifier = Modifier
+    LazyRow(
+        modifier = Modifier,
+        contentPadding = PaddingValues(horizontal = 16.dp),
+        horizontalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
+        items(
+            items = items,
+            key = {item -> item.traktId}
         ) {
-            items(
-                items = items,
-                key = {item -> item.traktId}
-            ) {
-                ShowListItem(
-                    item = it
-                )
-            }
+            ShowListItem(
+                item = it
+            )
         }
     }
 }
@@ -56,6 +99,8 @@ fun ShowListItem(
         model = getThumbnailUrl(item.poster),
         contentDescription = null,
         contentScale = ContentScale.Crop,
-        modifier = Modifier.width(64.dp)
+        modifier = Modifier
+            .width(100.dp)
+            .height(150.dp)
     )
 }
