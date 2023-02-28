@@ -17,6 +17,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import hu.csabapap.seriesreminder.R
+import hu.csabapap.seriesreminder.data.db.entities.SRNextEpisode
 import hu.csabapap.seriesreminder.data.network.getThumbnailUrl
 import hu.csabapap.seriesreminder.ui.adapters.items.ShowItem
 
@@ -32,6 +33,9 @@ fun HomeScreenUi(
                 .fillMaxHeight()
                 .verticalScroll(rememberScrollState())
             ) {
+                if (newState.nextEpisodes.isNotEmpty()) {
+                    NextEpisodesSection(sectionTitle = stringResource(id = R.string.overview_next_episode), items = newState.nextEpisodes)
+                }
                 if (newState.myShows.isNotEmpty()) {
                     ShowsSection(stringResource(id = R.string.title_my_shows), newState.myShows, onShowItemClick)
                 }
@@ -52,6 +56,26 @@ fun HomeScreenUi(
             }
         }
         else -> { }// NO-OP
+    }
+}
+
+@Composable
+fun NextEpisodesSection(
+    sectionTitle: String,
+    items: List<SRNextEpisode>,
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 24.dp)
+    ) {
+        Text(
+            text = sectionTitle,
+            style = MaterialTheme.typography.titleLarge,
+            modifier = Modifier.padding(horizontal = 16.dp)
+        )
+        Spacer(modifier = Modifier.height(8.dp))
+        NextEpisodesList(items = items)
     }
 }
 
@@ -111,4 +135,39 @@ fun ShowListItem(
                 onShowItemClick(item)
             }
     )
+}
+
+@Composable
+fun NextEpisodesList(
+    items: List<SRNextEpisode>
+) {
+    LazyRow(
+        modifier = Modifier,
+        contentPadding = PaddingValues(horizontal = 16.dp),
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+    ) {
+        items(
+            items = items,
+            key = {item -> item.episodeId},
+        ) {
+            EpisodeListItem(
+                item = it,
+            )
+        }
+    }
+}
+
+@Composable
+fun EpisodeListItem(
+    item: SRNextEpisode
+) {
+    Row {
+        AsyncImage(
+            model = getThumbnailUrl(item.poster),
+            contentDescription = null,
+            contentScale = ContentScale.Crop,
+            modifier = Modifier.width(64.dp)
+        )
+        Text(text = item.episodeTitle)
+    }
 }

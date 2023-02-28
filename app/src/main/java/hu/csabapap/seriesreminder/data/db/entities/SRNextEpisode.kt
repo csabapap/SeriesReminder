@@ -7,4 +7,5 @@ data class SRNextEpisode(
     val season: Int,
     val number: Int,
     val absNumber: Int,
-    val episodeTitle: String)
+    val episodeTitle: String,
+    val episodeId: Int)

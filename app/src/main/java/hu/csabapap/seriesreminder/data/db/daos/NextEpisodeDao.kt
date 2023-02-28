@@ -14,7 +14,7 @@ interface NextEpisodeDao {
     fun insert(nextEpisode: NextEpisodeEntry)
 
     @Query("SELECT shows.trakt_id AS showId, shows.title AS showTitle, shows.poster_thumb as poster, " +
-            "episodes.season AS season, episodes.number AS number, " +
+            "episodes.season AS season, episodes.number AS number, episodes.trakt_id AS episodeId, " +
             "episodes.abs_number AS absNumber, episodes.title AS episodeTitle" +
             " FROM episodes JOIN shows ON episodes.show_id = shows.trakt_id AND " +
             "episodes.abs_number = shows.next_episode " +

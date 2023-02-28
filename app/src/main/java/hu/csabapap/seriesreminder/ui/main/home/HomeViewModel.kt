@@ -94,13 +94,12 @@ class HomeViewModel @Inject constructor(private val trendingShowsRepository: Tre
     }
 
     fun getNextEpisodes() {
-        scope.launch(dispatchers.io) {
+        viewModelScope.launch {
             val nextEpisodes: List<SRNextEpisode> = episodesRepository.getNextEpisodes()
-            withContext(dispatchers.main) {
-                if (nextEpisodes.isNotEmpty()) {
-                    _viewStateLiveData.value = NextEpisodesState(nextEpisodes)
-                }
+            if (nextEpisodes.isNotEmpty()) {
+                _uiState.value = lastContentLoadedState.copy(nextEpisodes = nextEpisodes)
             }
+
         }
     }
 
