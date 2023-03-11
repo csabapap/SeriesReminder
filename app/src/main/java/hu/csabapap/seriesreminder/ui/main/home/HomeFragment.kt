@@ -6,34 +6,18 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.ui.platform.ComposeView
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import com.google.android.material.snackbar.Snackbar
 import dagger.android.support.DaggerFragment
-import hu.csabapap.seriesreminder.R
-import hu.csabapap.seriesreminder.data.db.entities.SRNextEpisode
 import hu.csabapap.seriesreminder.data.db.relations.EpisodeWithShow
-import hu.csabapap.seriesreminder.extensions.exhaustive
 import hu.csabapap.seriesreminder.ui.adapters.DiscoverPreviewAdapter
 import hu.csabapap.seriesreminder.ui.adapters.EpisodeCardsAdapter
 import hu.csabapap.seriesreminder.ui.adapters.HomeCardsAdapter
-import hu.csabapap.seriesreminder.ui.adapters.NextEpisodesAdapter
-import hu.csabapap.seriesreminder.ui.adapters.items.CardItem
-import hu.csabapap.seriesreminder.ui.adapters.items.DiscoverCardItem
-import hu.csabapap.seriesreminder.ui.adapters.items.NextEpisodesCardItem
-import hu.csabapap.seriesreminder.ui.adapters.items.UpcomingEpisodeCardItem
-import hu.csabapap.seriesreminder.ui.addshow.AddShowScreenUi
-import hu.csabapap.seriesreminder.ui.addshow.ImageColorState
 import hu.csabapap.seriesreminder.utils.Collectible
 import hu.csabapap.seriesreminder.utils.Episode
 import kotlinx.android.synthetic.main.fragment_home.*
-import timber.log.Timber
 import javax.inject.Inject
 import javax.inject.Named
 
@@ -48,7 +32,6 @@ class HomeFragment: DaggerFragment(),
     private val homeViewModel: HomeViewModel by viewModels{ mainViewModelProvider }
 
     lateinit var layoutManager: LinearLayoutManager
-    private val cardsAdapter = HomeCardsAdapter(this)
 
     private var listener: HomeFragmentListener? = null
 
@@ -103,33 +86,12 @@ class HomeFragment: DaggerFragment(),
 //            }
 //        }
 //
-//        homeViewModel.myShowsLiveData.observe(viewLifecycleOwner, Observer {
-//            it.apply {
-//                if (isNotEmpty()) {
-//                    cardsAdapter.addCard(DiscoverCardItem(getString(R.string.title_my_shows), it,
-//                        CardItem.MY_SHOWS_TYPE, CardItem.PRIORITY_MEDIUM))
-//                }
-//            }
-//        })
-//
 //        homeViewModel.upcomingEpisodesLiveData.observe(viewLifecycleOwner, Observer {
 //            it?.apply {
 //                cardsAdapter.addCard(UpcomingEpisodeCardItem(it, CardItem.UPCOMING_EPISODE_TYPE))
 //            }
 //        })
-//
-//        homeViewModel.viewStateLiveData.observe(viewLifecycleOwner, Observer {
-//            updateState(it)
-//        })
 //    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-//        home_recycler_view.adapter = cardsAdapter
-//        home_recycler_view.isNestedScrollingEnabled = false
-//        layoutManager = home_recycler_view.layoutManager as LinearLayoutManager
-//        layoutManager.orientation = RecyclerView.VERTICAL
-    }
 
     override fun onStart() {
         super.onStart()
@@ -159,24 +121,5 @@ class HomeFragment: DaggerFragment(),
         if (activity != null) {
             Episode.start(activity, entry.showId, entry.season, entry.number)
         }
-    }
-
-    private fun updateState(state: HomeViewState) {
-        Timber.d("view state: $state")
-        when (state) {
-            DisplayTrendingLoader -> cardsAdapter.addCard(DiscoverCardItem(getString(R.string.title_trending), emptyList(),
-                    CardItem.TRENDING_CARD_TYPE, CardItem.PRIORITY_TRENDING))
-            DisplayPopularLoader -> cardsAdapter.addCard(DiscoverCardItem(getString(R.string.title_popular), emptyList(),
-                    CardItem.POPULAR_CARD_TYPE, CardItem.PRIORITY_POPULAR))
-            is TrendingState -> cardsAdapter.addCard(DiscoverCardItem(getString(R.string.title_trending),
-                    state.items, CardItem.TRENDING_CARD_TYPE, CardItem.PRIORITY_TRENDING))
-            is PopularState -> cardsAdapter.addCard(DiscoverCardItem(getString(R.string.title_popular),
-                    state.items, CardItem.POPULAR_CARD_TYPE, CardItem.PRIORITY_POPULAR))
-            is MyShowsState -> Timber.d("display shows for popular shows")
-            is NextEpisodesState -> cardsAdapter.addCard(NextEpisodesCardItem(state.episodes, CardItem.NEXT_EPISODES_TYPE))
-            HideTrendingSection -> cardsAdapter.removeCard(CardItem.TRENDING_CARD_TYPE)
-            is InitialState -> { }
-            is ContentLoaded -> { }
-        }.exhaustive
     }
 }
