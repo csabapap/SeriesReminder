@@ -62,7 +62,7 @@ class SyncShowsUseCase @Inject constructor(val showsRepository: ShowsRepository,
                     coroutineScope {
                         val episodesWithImages = episodes.map { episode ->
                             async {
-                                val result = episodesRepository.fetchEpisodeImage(show.tvdbId)
+                                val result = episodesRepository.fetchEpisodeImage(episode.tvdbId)
                                 val episodeImage = when (result) {
                                     is Result.Success -> result.data
                                     is Result.Error -> ""
