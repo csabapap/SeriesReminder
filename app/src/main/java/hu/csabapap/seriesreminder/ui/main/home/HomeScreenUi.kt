@@ -164,15 +164,23 @@ fun EpisodeListItem(
     item: SRNextEpisode
 ) {
     Card {
-        Column {
+        Column(modifier = Modifier.width(272.dp).height(196.dp)) {
             AsyncImage(
                 model = "$TVDB_BANNER_URL${item.episodeImage}",
                 contentDescription = null,
                 contentScale = ContentScale.Crop,
-                modifier = Modifier.width(120.dp)
+                modifier = Modifier.height(120.dp)
             )
-            Text(text = item.episodeTitle)
-            Text(text = item.showTitle)
+            Text(
+                text = item.episodeTitle,
+                style = MaterialTheme.typography.titleMedium,
+                modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
+            )
+            Text(
+                text = item.showTitle,
+                style = MaterialTheme.typography.bodyMedium,
+                modifier = Modifier.padding(start = 16.dp, end = 16.dp, bottom = 8.dp)
+            )
         }
     }
 }
