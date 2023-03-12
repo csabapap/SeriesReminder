@@ -10,7 +10,9 @@ import androidx.compose.ui.platform.ComposeView
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.android.material.snackbar.Snackbar
 import dagger.android.support.DaggerFragment
+import hu.csabapap.seriesreminder.R
 import hu.csabapap.seriesreminder.data.db.relations.EpisodeWithShow
 import hu.csabapap.seriesreminder.ui.adapters.DiscoverPreviewAdapter
 import hu.csabapap.seriesreminder.ui.adapters.EpisodeCardsAdapter
@@ -57,6 +59,13 @@ class HomeFragment: DaggerFragment(),
                     viewModel = homeViewModel,
                     onShowItemClick = {
                         Collectible.start(requireContext(), it.traktId, it.inCollection)
+                    },
+                    setEpisodeAsWatched = { nextEpisode ->
+                        homeViewModel.setEpisodeWatched(nextEpisode)
+                        val message = String.format(getString(R.string.episode_number), nextEpisode.season, nextEpisode.number) + " set as watched"
+                        view?.let {
+                            Snackbar.make(it, message, Snackbar.LENGTH_SHORT).show()
+                        }
                     }
                 )
             }
@@ -74,14 +83,6 @@ class HomeFragment: DaggerFragment(),
 //                val activity = activity
 //                if (activity != null) {
 //                    Episode.start(activity, nextEpisode.showId, nextEpisode.season, nextEpisode.number)
-//                }
-//            }
-//
-//            override fun onSetAsWatchedButtonClick(nextEpisode: SRNextEpisode) {
-//                homeViewModel.setEpisodeWatched(nextEpisode)
-//                val message = String.format(getString(R.string.episode_number), nextEpisode.season, nextEpisode.number) + " set as watched"
-//                view?.let {
-//                    Snackbar.make(it, message, Snackbar.LENGTH_SHORT).show()
 //                }
 //            }
 //        }

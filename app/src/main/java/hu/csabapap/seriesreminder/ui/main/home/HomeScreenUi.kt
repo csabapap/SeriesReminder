@@ -6,14 +6,14 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Card
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
@@ -26,7 +26,8 @@ import hu.csabapap.seriesreminder.ui.adapters.items.ShowItem
 @Composable
 fun HomeScreenUi(
     viewModel: HomeViewModel,
-    onShowItemClick: (item: ShowItem) -> Unit
+    onShowItemClick: (item: ShowItem) -> Unit,
+    setEpisodeAsWatched: (nextEpisode: SRNextEpisode) -> Unit
 ) {
     val state by viewModel.uiState.collectAsState()
     when (val newState = state) {
@@ -36,7 +37,11 @@ fun HomeScreenUi(
                 .verticalScroll(rememberScrollState())
             ) {
                 if (newState.nextEpisodes.isNotEmpty()) {
-                    NextEpisodesSection(sectionTitle = stringResource(id = R.string.overview_next_episode), items = newState.nextEpisodes)
+                    NextEpisodesSection(
+                        sectionTitle = stringResource(id = R.string.overview_next_episode),
+                        items = newState.nextEpisodes,
+                        setEpisodeAsWatched
+                    )
                 }
                 if (newState.myShows.isNotEmpty()) {
                     ShowsSection(stringResource(id = R.string.title_my_shows), newState.myShows, onShowItemClick)
@@ -65,6 +70,7 @@ fun HomeScreenUi(
 fun NextEpisodesSection(
     sectionTitle: String,
     items: List<SRNextEpisode>,
+    setEpisodeAsWatched: (SRNextEpisode) -> Unit,
 ) {
     Column(
         modifier = Modifier
@@ -77,7 +83,10 @@ fun NextEpisodesSection(
             modifier = Modifier.padding(horizontal = 16.dp)
         )
         Spacer(modifier = Modifier.height(8.dp))
-        NextEpisodesList(items = items)
+        NextEpisodesList(
+            items = items,
+            setEpisodeAsWatched
+        )
     }
 }
 
@@ -141,7 +150,8 @@ fun ShowListItem(
 
 @Composable
 fun NextEpisodesList(
-    items: List<SRNextEpisode>
+    items: List<SRNextEpisode>,
+    setEpisodeAsWatched: (SRNextEpisode) -> Unit
 ) {
     LazyRow(
         modifier = Modifier,
@@ -154,6 +164,7 @@ fun NextEpisodesList(
         ) {
             EpisodeListItem(
                 item = it,
+                setEpisodeAsWatched
             )
         }
     }
@@ -161,26 +172,42 @@ fun NextEpisodesList(
 
 @Composable
 fun EpisodeListItem(
-    item: SRNextEpisode
+    item: SRNextEpisode,
+    setEpisodeAsWatched: (SRNextEpisode) -> Unit
 ) {
     Card {
-        Column(modifier = Modifier.width(272.dp).height(196.dp)) {
+        Column(modifier = Modifier
+            .width(272.dp)
+            .height(196.dp)) {
             AsyncImage(
                 model = "$TVDB_BANNER_URL${item.episodeImage}",
                 contentDescription = null,
                 contentScale = ContentScale.Crop,
                 modifier = Modifier.height(120.dp)
             )
-            Text(
-                text = item.episodeTitle,
-                style = MaterialTheme.typography.titleMedium,
-                modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
-            )
-            Text(
-                text = item.showTitle,
-                style = MaterialTheme.typography.bodyMedium,
-                modifier = Modifier.padding(start = 16.dp, end = 16.dp, bottom = 8.dp)
-            )
+            Row {
+                Column(modifier = Modifier
+                    .padding(top = 8.dp, bottom = 8.dp)
+                    .fillMaxWidth(0.75f)) {
+                    Text(
+                        text = item.episodeTitle,
+                        style = MaterialTheme.typography.titleMedium,
+                        modifier = Modifier.padding(horizontal = 16.dp)
+                    )
+                    Text(
+                        text = item.showTitle,
+                        style = MaterialTheme.typography.bodyMedium,
+                        modifier = Modifier.padding(start = 16.dp, end = 16.dp)
+                    )
+                }
+                IconButton(onClick = {setEpisodeAsWatched(item)}) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_check_24dp),
+                        tint = Color.White,
+                        contentDescription = null
+                    )
+                }
+            }
         }
     }
 }
