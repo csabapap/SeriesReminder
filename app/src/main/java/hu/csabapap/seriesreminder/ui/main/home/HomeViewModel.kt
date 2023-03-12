@@ -1,6 +1,8 @@
 package hu.csabapap.seriesreminder.ui.main.home
 
-import androidx.lifecycle.*
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.uwetrottmann.trakt5.TraktV2
 import hu.csabapap.seriesreminder.data.CollectionRepository
 import hu.csabapap.seriesreminder.data.Result
@@ -14,8 +16,6 @@ import hu.csabapap.seriesreminder.domain.SetEpisodeWatchedUseCase
 import hu.csabapap.seriesreminder.domain.SyncShowsUseCase
 import hu.csabapap.seriesreminder.domain.SyncWatchedShowsUseCase
 import hu.csabapap.seriesreminder.ui.adapters.items.ShowItem
-import hu.csabapap.seriesreminder.ui.addshow.AddShowState
-import hu.csabapap.seriesreminder.ui.addshow.Loading
 import hu.csabapap.seriesreminder.utils.AppCoroutineDispatchers
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
@@ -75,9 +75,7 @@ class HomeViewModel @Inject constructor(private val trendingShowsRepository: Tre
                         true)
                 }
             withContext(dispatchers.main) {
-                _uiState.value = lastContentLoadedState.copy(myShows = items).also {
-                    lastContentLoadedState = it
-                }
+                updateUiState(lastContentLoadedState.copy(myShows = items))
             }
         }
     }
@@ -97,9 +95,8 @@ class HomeViewModel @Inject constructor(private val trendingShowsRepository: Tre
         viewModelScope.launch {
             val nextEpisodes: List<SRNextEpisode> = episodesRepository.getNextEpisodes()
             if (nextEpisodes.isNotEmpty()) {
-                _uiState.value = lastContentLoadedState.copy(nextEpisodes = nextEpisodes)
+                updateUiState(lastContentLoadedState.copy(nextEpisodes = nextEpisodes))
             }
-
         }
     }
 
@@ -121,9 +118,7 @@ class HomeViewModel @Inject constructor(private val trendingShowsRepository: Tre
                     .distinctUntilChanged()
                     .collect { trendingShows ->
                         if (trendingShows != null) {
-                            _uiState.value = lastContentLoadedState.copy(trendingShows = trendingShows).also {
-                                lastContentLoadedState = it
-                            }
+                            updateUiState(lastContentLoadedState.copy(trendingShows = trendingShows))
                         }
                     }
         }
@@ -145,9 +140,7 @@ class HomeViewModel @Inject constructor(private val trendingShowsRepository: Tre
                     }
                     .distinctUntilChanged()
                     .collect {popularShows ->
-                        _uiState.value = lastContentLoadedState.copy(popularShows = popularShows).also {
-                            lastContentLoadedState = it
-                        }
+                        updateUiState(lastContentLoadedState.copy(popularShows = popularShows))
                     }
         }
     }
@@ -175,6 +168,14 @@ class HomeViewModel @Inject constructor(private val trendingShowsRepository: Tre
     private fun syncShows() {
         scope.launch(dispatchers.io) {
             syncShowsUseCase.syncShows()
+        }
+    }
+
+    private fun updateUiState(state: HomeViewState) {
+        _uiState.value = state.also {
+            if (it is ContentLoaded) {
+                lastContentLoadedState = it
+            }
         }
     }
 
