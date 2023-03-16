@@ -7,7 +7,6 @@ import com.uwetrottmann.trakt5.TraktV2
 import hu.csabapap.seriesreminder.data.CollectionRepository
 import hu.csabapap.seriesreminder.data.Result
 import hu.csabapap.seriesreminder.data.db.entities.SRNextEpisode
-import hu.csabapap.seriesreminder.data.db.relations.EpisodeWithShow
 import hu.csabapap.seriesreminder.data.repositories.episodes.EpisodesRepository
 import hu.csabapap.seriesreminder.data.repositories.loggedinuser.LoggedInUserRepository
 import hu.csabapap.seriesreminder.data.repositories.popularshows.PopularShowsRepository
@@ -56,8 +55,6 @@ class HomeViewModel @Inject constructor(private val trendingShowsRepository: Tre
         syncShows()
     }
 
-    val upcomingEpisodesLiveData = MutableLiveData<List<EpisodeWithShow>>()
-
     fun getShows() {
         getTrendingShows()
         getPopularShows()
@@ -83,11 +80,11 @@ class HomeViewModel @Inject constructor(private val trendingShowsRepository: Tre
     fun getUpcomingEpisodes() {
         viewModelScope.launch {
             episodesRepository.getUpcomingEpisodesFlow()
-                    .collect { upcomingEpisodes ->
-                        if (upcomingEpisodes.isNotEmpty()) {
-                            upcomingEpisodesLiveData.value = upcomingEpisodes
-                        }
+                .collect { upcomingEpisodes ->
+                    if (upcomingEpisodes.isNotEmpty()) {
+                        updateUiState(lastContentLoadedState.copy(upcomingEpisodes = upcomingEpisodes))
                     }
+                }
         }
     }
 

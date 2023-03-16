@@ -14,7 +14,7 @@ data class EpisodeWithShow(
         val watchedEpisode: List<WatchedEpisode>?) {
 
     val show: SRShow?
-        get() = shows?.getOrNull(0)
+        get() = shows?.firstOrNull()
 
     fun isWatched(): Boolean {
         return watchedEpisode != null && watchedEpisode.isNotEmpty()

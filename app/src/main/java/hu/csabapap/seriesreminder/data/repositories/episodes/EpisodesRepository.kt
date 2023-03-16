@@ -3,10 +3,17 @@ package hu.csabapap.seriesreminder.data.repositories.episodes
 import com.uwetrottmann.trakt5.entities.Episode
 import hu.csabapap.seriesreminder.data.Result
 import hu.csabapap.seriesreminder.data.db.daos.NextEpisodeDao
+import hu.csabapap.seriesreminder.data.db.entities.AiringTime
 import hu.csabapap.seriesreminder.data.db.entities.SREpisode
 import hu.csabapap.seriesreminder.data.db.relations.EpisodeWithShow
 import hu.csabapap.seriesreminder.data.network.TvdbApi
+import hu.csabapap.seriesreminder.extensions.diffInDays
+import hu.csabapap.seriesreminder.extensions.diffInHours
+import hu.csabapap.seriesreminder.ui.main.home.UpcomingEpisode
+import hu.csabapap.seriesreminder.utils.getAirDateTimeInCurrentTimeZone
 import hu.csabapap.seriesreminder.utils.safeApiCall
+import kotlinx.coroutines.flow.map
+import org.threeten.bp.LocalDateTime
 import javax.inject.Inject
 
 class EpisodesRepository @Inject constructor(
@@ -39,6 +46,19 @@ class EpisodesRepository @Inject constructor(
     }
 
     fun getUpcomingEpisodesFlow(limit: Int = 3) = localDataSource.getUpcomingEpisodesFlow(limit)
+        .map {upcomingEpisodes -> // TODO this mapping maybe not belongs to here
+            upcomingEpisodes
+                .map {
+                    val show = it.show ?: return@map null
+                    UpcomingEpisode(
+                        show.traktId,
+                        it.episode.traktId,
+                        show.title,
+                        it.episode.title,
+                        getReadableAirsIn(show.airingTime))
+                }
+                .filterNotNull()
+        }
 
     suspend fun getNextEpisodes() = nextEpisodeDao.getNextEpisodeInWatchList()
 
@@ -80,5 +100,24 @@ class EpisodesRepository @Inject constructor(
 
     suspend fun getUpcomingEpisode(showId: Int): EpisodeWithShow? {
         return localDataSource.getUpcomingEpisode(showId)
+    }
+
+    private fun getReadableAirsIn(airingTime: AiringTime): String {
+        val nextAirDateTime = getAirDateTimeInCurrentTimeZone(LocalDateTime.now(),airingTime)
+            ?.toOffsetDateTime()
+        if (nextAirDateTime != null) {
+            val diffInDays = nextAirDateTime.diffInDays()
+            return if (diffInDays > 0) {
+                "in $diffInDays days"
+            } else {
+                val diffInHours = nextAirDateTime.diffInHours()
+                if (diffInHours > 0) {
+                    "in $diffInHours hours"
+                } else {
+                    "in less then an hour"
+                }
+            }
+        }
+        return ""
     }
 }

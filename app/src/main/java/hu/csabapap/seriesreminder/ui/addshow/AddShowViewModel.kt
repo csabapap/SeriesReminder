@@ -6,8 +6,6 @@ import androidx.lifecycle.viewModelScope
 import hu.csabapap.seriesreminder.data.repositories.shows.ShowsRepository
 import hu.csabapap.seriesreminder.tasks.Task
 import hu.csabapap.seriesreminder.tasks.TaskExecutor
-import hu.csabapap.seriesreminder.ui.main.home.HomeViewState
-import hu.csabapap.seriesreminder.ui.main.home.MyShowsState
 import hu.csabapap.seriesreminder.utils.AppCoroutineDispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
