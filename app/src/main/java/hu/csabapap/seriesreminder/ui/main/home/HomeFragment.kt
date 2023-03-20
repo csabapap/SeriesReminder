@@ -60,6 +60,12 @@ class HomeFragment: DaggerFragment(),
                     onShowItemClick = {
                         Collectible.start(requireContext(), it.traktId, it.inCollection)
                     },
+                    onNextEpisodeClick = {
+                        val activity = activity
+                        if (activity != null) {
+                            Episode.start(activity, it.showId, it.season, it.number)
+                        }
+                    },
                     setEpisodeAsWatched = { nextEpisode ->
                         homeViewModel.setEpisodeWatched(nextEpisode)
                         val message = String.format(getString(R.string.episode_number), nextEpisode.season, nextEpisode.number) + " set as watched"
@@ -80,10 +86,7 @@ class HomeFragment: DaggerFragment(),
 //        cardsAdapter.episodesClickListener = this
 //        cardsAdapter.nextEpisodesClickListener = object: NextEpisodesAdapter.NextEpisodeClickListener {
 //            override fun onItemClick(nextEpisode: SRNextEpisode) {
-//                val activity = activity
-//                if (activity != null) {
-//                    Episode.start(activity, nextEpisode.showId, nextEpisode.season, nextEpisode.number)
-//                }
+
 //            }
 //        }
 //

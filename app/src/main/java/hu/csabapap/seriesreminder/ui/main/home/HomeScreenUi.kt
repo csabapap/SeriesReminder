@@ -27,6 +27,7 @@ import hu.csabapap.seriesreminder.ui.adapters.items.ShowItem
 fun HomeScreenUi(
     viewModel: HomeViewModel,
     onShowItemClick: (item: ShowItem) -> Unit,
+    onNextEpisodeClick: (nextEpisode: SRNextEpisode) -> Unit,
     setEpisodeAsWatched: (nextEpisode: SRNextEpisode) -> Unit
 ) {
     val state by viewModel.uiState.collectAsState()
@@ -40,6 +41,7 @@ fun HomeScreenUi(
                     NextEpisodesSection(
                         sectionTitle = stringResource(id = R.string.overview_next_episode),
                         items = newState.nextEpisodes,
+                        onNextEpisodeClick,
                         setEpisodeAsWatched
                     )
                 }
@@ -70,6 +72,7 @@ fun HomeScreenUi(
 fun NextEpisodesSection(
     sectionTitle: String,
     items: List<SRNextEpisode>,
+    onNextEpisodeClick: (SRNextEpisode) -> Unit,
     setEpisodeAsWatched: (SRNextEpisode) -> Unit,
 ) {
     Column(
@@ -85,6 +88,7 @@ fun NextEpisodesSection(
         Spacer(modifier = Modifier.height(8.dp))
         NextEpisodesList(
             items = items,
+            onNextEpisodeClick,
             setEpisodeAsWatched
         )
     }
@@ -151,6 +155,7 @@ fun ShowListItem(
 @Composable
 fun NextEpisodesList(
     items: List<SRNextEpisode>,
+    onNextEpisodeClick: (nextEpisode: SRNextEpisode) -> Unit,
     setEpisodeAsWatched: (SRNextEpisode) -> Unit
 ) {
     LazyRow(
@@ -164,6 +169,7 @@ fun NextEpisodesList(
         ) {
             EpisodeListItem(
                 item = it,
+                onNextEpisodeClick,
                 setEpisodeAsWatched
             )
         }
@@ -173,6 +179,7 @@ fun NextEpisodesList(
 @Composable
 fun EpisodeListItem(
     item: SRNextEpisode,
+    onNextEpisodeClick: (nextEpisode: SRNextEpisode) -> Unit,
     setEpisodeAsWatched: (SRNextEpisode) -> Unit
 ) {
     Card {
@@ -184,6 +191,7 @@ fun EpisodeListItem(
                 contentDescription = null,
                 contentScale = ContentScale.Crop,
                 modifier = Modifier.height(120.dp)
+                    .clickable { onNextEpisodeClick(item) },
             )
             Row {
                 Column(modifier = Modifier
