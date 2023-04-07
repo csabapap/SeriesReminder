@@ -23,6 +23,7 @@ import hu.csabapap.seriesreminder.data.network.TVDB_BANNER_URL
 import hu.csabapap.seriesreminder.data.network.getThumbnailUrl
 import hu.csabapap.seriesreminder.ui.adapters.items.ShowItem
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreenUi(
     viewModel: HomeViewModel,
@@ -37,6 +38,9 @@ fun HomeScreenUi(
                 .fillMaxHeight()
                 .verticalScroll(rememberScrollState())
             ) {
+                CenterAlignedTopAppBar(
+                    title = {Text(text = stringResource(id = R.string.app_name)) }
+                )
                 if (newState.nextEpisodes.isNotEmpty()) {
                     NextEpisodesSection(
                         sectionTitle = stringResource(id = R.string.overview_next_episode),
