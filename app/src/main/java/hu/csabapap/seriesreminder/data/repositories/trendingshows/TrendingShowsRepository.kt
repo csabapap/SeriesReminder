@@ -87,7 +87,7 @@ class TrendingShowsRepository @Inject constructor(
                 .map {
                     val traktId = it.show?.ids?.trakt ?: return@map null
                     val tvdbId = it.show?.ids?.tvdb ?: return@map null
-                    showsRepository.getShowWithImages(traktId, tvdbId)
+                    showsRepository.getShowWithImages(traktId, tvdbId) ?: return@map null
                     mapToSRTrendingShow(traktId, it.watchers, lastPage)
                 }.filterNotNull()
         localTrendingDataSource.insertShows(lastPage, srTrendingItems)

@@ -55,7 +55,9 @@ class EpisodesRepository @Inject constructor(
                         it.episode.traktId,
                         show.title,
                         it.episode.title,
-                        getReadableAirsIn(show.airingTime))
+                        getReadableAirsIn(show.airingTime),
+                        it.episode.image,
+                    )
                 }
                 .filterNotNull()
         }

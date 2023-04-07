@@ -45,6 +45,12 @@ fun HomeScreenUi(
                         setEpisodeAsWatched
                     )
                 }
+                if (newState.upcomingEpisodes.isNotEmpty()) {
+                    UpcomingEpisodesSection(
+                        sectionTitle = stringResource(id = R.string.upcoming_episodes),
+                        items = newState.upcomingEpisodes
+                    )
+                }
                 if (newState.myShows.isNotEmpty()) {
                     ShowsSection(stringResource(id = R.string.title_my_shows), newState.myShows, onShowItemClick)
                 }
@@ -90,6 +96,28 @@ fun NextEpisodesSection(
             items = items,
             onNextEpisodeClick,
             setEpisodeAsWatched
+        )
+    }
+}
+
+@Composable
+fun UpcomingEpisodesSection(
+    sectionTitle: String,
+    items: List<UpcomingEpisode>,
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 24.dp)
+    ) {
+        Text(
+            text = sectionTitle,
+            style = MaterialTheme.typography.titleLarge,
+            modifier = Modifier.padding(horizontal = 16.dp)
+        )
+        Spacer(modifier = Modifier.height(8.dp))
+        UpcomingEpisodesList(
+            items = items
         )
     }
 }
@@ -190,7 +218,8 @@ fun EpisodeListItem(
                 model = "$TVDB_BANNER_URL${item.episodeImage}",
                 contentDescription = null,
                 contentScale = ContentScale.Crop,
-                modifier = Modifier.height(120.dp)
+                modifier = Modifier
+                    .height(120.dp)
                     .clickable { onNextEpisodeClick(item) },
             )
             Row {
@@ -209,6 +238,67 @@ fun EpisodeListItem(
                     )
                 }
                 IconButton(onClick = {setEpisodeAsWatched(item)}) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_check_24dp),
+                        tint = Color.White,
+                        contentDescription = null
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun UpcomingEpisodesList(
+    items: List<UpcomingEpisode>
+) {
+    LazyRow(
+        modifier = Modifier,
+        contentPadding = PaddingValues(horizontal = 16.dp),
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+    ) {
+        items(
+            items = items,
+            key = {item -> item.episodeId},
+        ) {
+            UpcomingEpisodeListItem(
+                item = it,
+            )
+        }
+    }
+}
+
+@Composable
+fun UpcomingEpisodeListItem(
+    item: UpcomingEpisode,
+) {
+    Card {
+        Column(modifier = Modifier
+            .width(272.dp)
+            .height(196.dp)) {
+            AsyncImage(
+                model = "$TVDB_BANNER_URL${item.image}",
+                contentDescription = null,
+                contentScale = ContentScale.Crop,
+                modifier = Modifier.height(120.dp),
+            )
+            Row {
+                Column(modifier = Modifier
+                    .padding(top = 8.dp, bottom = 8.dp)
+                    .fillMaxWidth(0.75f)) {
+                    Text(
+                        text = item.episodeTitle,
+                        style = MaterialTheme.typography.titleMedium,
+                        modifier = Modifier.padding(horizontal = 16.dp)
+                    )
+                    Text(
+                        text = item.showTitle,
+                        style = MaterialTheme.typography.bodyMedium,
+                        modifier = Modifier.padding(start = 16.dp, end = 16.dp)
+                    )
+                }
+                IconButton(onClick = { }) {
                     Icon(
                         painter = painterResource(id = R.drawable.ic_check_24dp),
                         tint = Color.White,

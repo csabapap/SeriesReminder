@@ -5,5 +5,6 @@ data class UpcomingEpisode(
     val episodeId: Int,
     val showTitle: String,
     val episodeTitle: String,
-    val airsIn: String
+    val airsIn: String,
+    val image: String,
 )
