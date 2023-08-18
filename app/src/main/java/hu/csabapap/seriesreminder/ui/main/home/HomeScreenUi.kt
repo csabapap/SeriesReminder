@@ -282,7 +282,7 @@ fun UpcomingEpisodeListItem(
             .width(272.dp)
             .height(196.dp)) {
             AsyncImage(
-                model = "$TVDB_BANNER_URL${item.image}",
+                model = "$TVDB_BANNER_URL${item.getEpisodeImage()}",
                 contentDescription = null,
                 contentScale = ContentScale.Crop,
                 modifier = Modifier.height(120.dp),
@@ -300,13 +300,6 @@ fun UpcomingEpisodeListItem(
                         text = item.showTitle,
                         style = MaterialTheme.typography.bodyMedium,
                         modifier = Modifier.padding(start = 16.dp, end = 16.dp)
-                    )
-                }
-                IconButton(onClick = { }) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.ic_check_24dp),
-                        tint = Color.White,
-                        contentDescription = null
                     )
                 }
             }

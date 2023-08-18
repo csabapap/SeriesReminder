@@ -46,21 +46,6 @@ class EpisodesRepository @Inject constructor(
     }
 
     fun getUpcomingEpisodesFlow(limit: Int = 3) = localDataSource.getUpcomingEpisodesFlow(limit)
-        .map {upcomingEpisodes -> // TODO this mapping maybe not belongs to here
-            upcomingEpisodes
-                .map {
-                    val show = it.show ?: return@map null
-                    UpcomingEpisode(
-                        show.traktId,
-                        it.episode.traktId,
-                        show.title,
-                        it.episode.title,
-                        getReadableAirsIn(show.airingTime),
-                        it.episode.image,
-                    )
-                }
-                .filterNotNull()
-        }
 
     suspend fun getNextEpisodes() = nextEpisodeDao.getNextEpisodeInWatchList()
 
